@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<T3DataStructure>
+	<meta type="array">
+		<langDisable>1</langDisable>
+	</meta>
+	<ROOT type="array">
+		<el type="array">
+			<field_content type="array">
+				<TCEforms type="array">
+					<config type="array">
+						<type>none</type>
+					</config>
+				</TCEforms>
+			</field_content>
+		</el>
+	</ROOT>
+</T3DataStructure>

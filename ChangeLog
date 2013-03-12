@@ -1,0 +1,219 @@
+1.4.0 2013-03-08 Jo Hasenau <info@cybeercraft.de>
+
+    Fixed: Issue #46060 Allowed param in backend_layout is not respected
+    Fixed: Issue #46027 tx_gridelements_layoutsetup and Singleton
+    Fixed: Issue #45912 Save flexform when creating gridelements CE with drag&drop feature
+    Fixed: Issue #45911 "Invalid value" when adding a gridelements CE in another gridelements CE
+    Fixed: Issue #45768 Wrong position of icons
+    Fixed: Issue #45650 Content element type select shows "INVALID VALUE"
+    Fixed: Issue #45594 No drop zone when create a grid CE with the new content icon at the top of the page
+    Fixed: Issue #45593 cType is lost when adding new element from the "New record after this one" icon
+    Added: Feature #45592 Add an option to show empty column in frontend
+    Fixed: Issue #45546 "Copy content from another page" Bug
+    Fixed: Issue #45461 Column order is broken in frontend
+    Fixed: Issue #45385 Content element type select shows "INVALID VALUE" after installing gridelements
+    Fixed: Issue #45344 TCAdefaults not taken into Account
+    Fixed: Issue #45229 Collapse icon for long tables doubled
+    Fixed: Issue #45080 Allow to xclass existing xclass
+    Fixed: Issue #44782 Gridelements removes all CTypes
+    Fixed: Issue #44780 MySQL error at opening an CE
+    Fixed: Issue #44707 Backend List View on page with Grid FCE List View Blank
+    Fixed: Issue #44486 New Content Element - select type [ INVALID VALUE ("text")]
+    Fixed: Issue #44437 Problems when configuring more than one grid as "not assigned"
+    Fixed: Issue #43553 Database is not extended upon installation within V 6.0.1dev
+    Fixed: Issue #43202 child elements in grid containers, not visible in workspace
+    Fixed: Issue #42675 CEs not shown in Web -> List
+    Fixed: Issue #42637 Gridelements disable alle BE Item previews...
+    Added: Suggestion #42494 Performance: Add index to tt_content::tx_gridelements_container
+    Fixed: Issue #42137 cObj:parentRecordNumber remains 1
+    Fixed: Issue #41937 Wrong cell insertion for colPos > 255
+    Fixed: Issue #41588 Errors in documentation
+    Added: Feature #41390 Dutch translation locallang_db.xml
+    Added: Feature #41342 "Language"-View
+    Fixed: Issue #40875 FE, Call to undefined method tslib_cObj::getCurrentTable
+    Fixed: Issue #40839 Fileupload in Flexform stores absolute filepath
+    Fixed: Issue #40049 tx_gridelements_TCEmainHook->getAvailableColumns throws errors
+    Added: Feature #40008 Flexform input can be file, use this or the raw input
+    Added: Feature #40007 accept include typoscript file references
+    Added: Feature #40006 Allow rendering of content using Fluid
+    Added: Feature #39887 Semantic grid by awareness of content
+    Fixed: Issue #39693 Exception from tx_gridelements_drawItemHook when reference is deleted
+    Added: Feature #39672 flexform typoscript example
+    Fixed: Issue #39601 new_content_el Wizard does not work if TYPO3 is installed in subfolder of webroot
+    Fixed: Issue #39333 Class tx_gridelements_layoutsetup does not exist
+    Fixed: Issue #39259 Hidden content element can not be moved with drag and drop
+    Fixed: Issue #39257 JS error with copy/paste, when backend column is "Nicht zugewiesen"
+    Fixed: Issue #39251 Images fails in 6.0
+    Fixed: Issue #39094 col Pos gets lost after cut and paste
+    Fixed: Issue #39064 "Top Level Layout" has no effect while d'n'd
+    Fixed: Issue #38943 Gridelement column lost on element edit with no right on the field colpos
+    Fixed: Issue #37999 Integration of CSH-File ominous
+    Fixed: Issue #37883 Unable to un-hide CE after translation in gridlement
+    Fixed: Issue #37878 Backend: Column relation lost after translation
+    Added: Feature #37876 Backend: Pagemodul language view
+    Fixed: Issue #37486 Conflict with foreign_table and itemsProcFunc
+    Fixed: Issue #37371 Drag'n Drop and Workspaces
+    Added: Feature #37350 Get a reference to content from a given page
+    Fixed: Issue #37232 Rendering problem grids ans typoscript
+    Added: Feature #36948 Make nested content elements collapsible
+    Fixed: Issue #36910 Problems with translation
+    Fixed: Issue #36803 possible to define a storagepage for the gridelements
+    Added: Feature #36725 Improve rendering
+    Fixed: Issue #36551 Assignment of CE grid elements to grid container not working
+    Added: Feature #36332 Default 'NEW' header for grid element
+    Fixed: Issue #36330 Warning in page module with TYPO3 4.7
+    Fixed: Issue #35997 Copy & paste into grid columns does not work for translated elements
+    Added: Feature #35994 Have the page jump to the drop position after reloading
+    Added: Feature #35967 Make path to skin CSS configurable in EM
+    Fixed: Issue #35958 Error Drag & drop in 6.0
+    Added: Feature #35948 Implement a "get me a copy from another page" function
+    Added: Feature #35946 Resize the drop zones to make them accessible
+    Added: Feature #35670 Add flexform configuration as a file
+    Fixed: Issue #34109 PHP Warning: strcmp() expects parameter 1 to be string
+    Added: Feature #33940 Multiple selection for "Allowed CE"
+    Fixed: Issue #33329 Content not visible in backend or frontend grid after creating it in the backend grid
+    Added: Feature #32388 Sorting of CE
+    Added: Feature #30227 Show grid elements as folders containing elements when in list view
+
+1.3.12	2012-04-27 Jo Hasenau  <info@cybercraft.de>
+
+	*	fixed broken D&D move actions introduced with 1.3.10
+
+1.3.11	2012-04-25 Jo Hasenau  <info@cybercraft.de>
+
+	*	fixed dependency issues
+	*	fixed manual
+	*	fixed coding guideline issues
+
+1.3.10	2012-04-18 Rocco Georgi  <rocco@pavingways.com>, Jo Hasenau  <info@cybercraft.de>
+
+	*	fixed issue #35959 Localize labels completely (Thanks to Marc von Schalscha)
+	*	fixed issue #36144 Move in list-view: moved elements are still there
+
+1.3.7	2012-04-16 Jo Hasenau  <info@cybercraft.de>
+
+	*	added manual.sxw and manual.pdf - TypoScript and TSconfig sections still missing
+	*	prepared tce_main hook functions for an upcoming patch that will fix problems while importing T3D packages containing grid elements
+
+1.3.6	2012-03-30 Jo Hasenau  <info@cybercraft.de>
+
+	*	fixed problems with Grid Container column being "not allowed" in case people were using no backend layout but their own TSconfig for colPos items
+
+1.3.5	2012-03-28 Jo Hasenau  <info@cybercraft.de>
+
+	*	fixed problems while moving records introduced with the last fix
+
+1.3.4	2012-03-23 Jo Hasenau  <info@cybercraft.de>
+
+	*	fixed problems while moving records
+	*	fixed problems while moving records between pages
+
+1.3.3	2012-03-13 Rocco Georgi  <rocco@pavingways.com>, Jo Hasenau  <info@cybercraft.de>
+
+	* 	fixed issue #34934 Does not scroll during drag
+	* 	fixed issue #34719 Removed TS for non existing HTML template
+	* 	fixed issue #34785 user setting (hideColumnheaders) does not work
+	* 	fixed issue #34868 wrong tabindex of wizard input fields
+	* 	fixed issue #34810 copy/cut/paste problems with multiple clicks on the copy/cut links of the same element
+	* 	fixed issue #34810 copy/paste problem across pages (insert on copy source page)
+	*	some trailing whitespace cleanup
+
+1.3.2	2012-03-06 Jo Hasenau  <info@cybercraft.de>
+
+	*	fixed missing class instantiation
+
+1.3.1	2012-03-06 Jo Hasenau  <info@cybercraft.de>
+
+	*	Removed console log and debug output
+
+1.3.0	2012-03-05 Jo Hasenau  <info@cybercraft.de>
+
+	*	Fixed Bug #34045 Bug when no translation exists
+	*	Fixed Bug #34109 PHP Warning: strcmp() expects parameter 1 to be string
+	*	Fixed Bug #33364 Drag and drop initiation breaks with "cannot call hasClass on null"
+	*	Fixed Bug #34045 Bug when no translation exists
+	*	Feature #32354 Show Grid Layout
+	*	Fixed Bug #32355 Grid Columns lost
+	*	Fixed Bug #33388 Drop zone - sorting related
+	*	Fixed Bug #32388 Sorting of CE
+	*	Feature #33389 Add new content element within container
+	*	Fixed Bug #33490 Attribute name of "icon(s)" in class.tx_gridelements_layoutsetup.php
+	*	Fixed Bug #33402 Column layout broken if page languages overview is selected
+
+1.2.3	Jo Hasenau  <info@cybercraft.de>
+
+	* Fixed: Issue #33319 by reverting the particular file to version 1.1.0
+
+1.2.2	Jo Hasenau  <info@cybercraft.de>
+
+	* Fixed: Issue #33301 getLL has been replaced with a non existing function name
+
+1.2.1	Jo Hasenau  <info@cybercraft.de>
+
+	* Fixed: Empty columns show their numbers in the FE
+
+1.2.0	Jo Hasenau  <info@cybercraft.de>, Rocco Georgi <rocco@pavingways.com>, Arno Dudek <webmaster@adgrafik.at>, Julian Kleinhans
+
+	* Added: Issue #32835 Missing language overlay and versioning preview support
+	* Fixed: Removal of unused variables and code cleanup
+	* Fixed: Sorting problem with nested grid tables that don't use ascending column order
+	* Fixed: Issue #32241 bug in class.tx_gridelements_tcemainhook.php
+	* Fixed: Issue #32355 Grid columns lost
+	* Fixed: Issue #31804 Error while saving container
+	* Added: Issue #30830 Localized column name
+	* Fixed: Issue #30923 Wrong column wrapping
+	* Added: Paste reference after for click menus
+	* Added: Issue #32510 Parent data access
+	* Added: Paste reference into for page and grid columns
+	* Added: Usage of large icons for the drag in wizard overlays
+
+1.1.0	2011-11-07 Jo Hasenau  <info@cybercraft.de>, Rocco Georgi <rocco@pavingways.com>
+
+	* Fixed: $BACK_PATH issue with symlinked filesystem, now there's a $BACK_PATH_ABS variable - only used for PHP requires
+	* Fixed: backend layout wizard was linked to typo3/ext for some reason, path edited to use t3lib_extMgm::extRelPath($_EXTKEY)
+	* Fixed: handling of "unused elements" in colPos -2 is wrong
+	* Fixed: number of child elements is not updated while creating new children
+	* Added: server time for future reload-less DnD (page edit time will be compared against this)
+	* Added: templates for future reload-less DnD of new content elements
+	* Added: options to switch reloads and templates off for future reload-less DnD
+	* Added: exclude current parent of dragged element from targets (drop now has no effect/does not reload)
+	
+1.0.0	2011-10-10 Jo Hasenau  <info@cybercraft.de>, Rocco Georgi <rocco@pavingways.com>
+
+	* Fixed different bugs with D&D in IE8
+	* Fixed the handling of the layout wizard BACK_PATH for global and local installs of the extension
+	* Fixed bug: Dragging in of new elements after elements outside of grid containers does not work
+
+0.6.0	2011-10-09 Jo Hasenau  <info@cybercraft.de>
+
+	* Drag In of new content elements complete
+	* Just activate the drag in wizard by clicking on the "create new content element" icon on top of the page
+
+0.5.0	2011-10-09 Jo Hasenau  <info@cybercraft.de>
+
+	* lots of improvements to the D&D feature
+	* Drag & Drop works properly now including copying with CTRL-key pressed
+	* Grid containers are updated and logged as well during actions of a child element between one or two container(s)
+	* Basic concept for Drag In of new elements is already in the code base but still deactivated
+	* Still some cosmetical things to do
+
+
+0.4.0	2011-09-19 Rocco Georgi <rocco@pavingways.com>
+
+	* added basic JS for drag-and-drop
+
+0.3.0	2011-09-16 Jo Hasenau  <info@cybercraft.de>
+
+	* Just a double upload during the security fix phase
+
+0.2.0	2011-09-06 Jo Hasenau  <info@cybercraft.de>
+
+	* Security fix
+
+0.1.0 	2011-09-06 Jo Hasenau  <info@cybercraft.de>
+
+	* Initial upload. Grid view for CE works completely.
+	* D&D, FE output via TS/plugin and manual still pending.
+	* Can be installed together with TV but will disable some of the TV hooks, which is the reason for the message during the install.
+	* So you can still migrate from TV to the new structures before removing TV.
+

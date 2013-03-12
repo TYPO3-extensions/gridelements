@@ -1,0 +1,129 @@
+.x-dd-dragger {
+	display: inline-block;
+	position: relative;
+	background: red;
+	opacity: 0.5;
+}
+.x-dd-tpl {
+	display: none;
+}
+.x-dd-droptargetarea {
+	visibility: hidden;
+	color: #9c8c2c;
+	background-color: #fefecb;
+	text-align: center;
+	position: relative;
+	margin: 2px 0;
+	border: 1px dotted #dfc054;
+}
+.x-dd-droptargetarea.x-dd-showdroptarget {
+	visibility: visible;
+}
+.x-dd-droptargetarea.x-dd-showdroptarget.x-dd-overdroparea {
+	background: #b27f43;
+	color: white;
+}
+.x-dd-dragging {
+	opacity: 0.6;
+	filter: alpha(opacity=60);
+	z-index: 100000;
+}
+.x-dd-dragging .x-dd-droptargetarea {
+	visibility: hidden;
+	display: none;
+}
+
+.x-dd-defaulttpl {
+	background: white;
+	color: red;
+	font-weight: bold;
+}
+.x-dd-draggableitem {
+	display: inline-block;
+}
+.x-dd-draggableitem div {
+	display: inline-block;
+	vertical-align: top;
+	margin-right: 10px;
+}
+.x-dd-droptargetgroup {
+	background: url('/typo3/clear.gif');
+}
+
+#x-dd-draggablecontainer {
+	visibility: hidden;
+	position: absolute;
+	height: auto;
+	top: 52px;
+	left: 0px;
+	width: 100%;
+	z-index: 3;
+	/* setting overflow makes items disappear when dragging
+	 * solution:  when dragging starts, put the element right after body in DOM
+	 */
+}
+
+#x-dd-draggablecontainer .typo3-dyntabmenu-tabs {
+	margin:  0px 24px 0px 11px;
+}
+
+#x-dd-draggablecontainer .typo3-dyntabmenu-tabs a {
+	padding: 0px 5px;
+	font-weight: bold;
+}
+
+#x-dd-draggablecontainer .typo3-dyntabmenu-divs {
+	margin:  0px 24px 0px 11px;
+}
+
+#x-dd-draggablecontainer .typo3-dyntabmenu-divs .c-tablayer {
+	display: block;
+	width: 100%;
+}
+
+#x-dd-draggablecontainer .typo3-dyntabmenu-divs .x-dd-new-element-link {
+	display: inline-block;
+	vertical-align: top;
+	margin:  0px;
+	padding: 0px;
+}
+
+#x-dd-draggablecontainer .typo3-dyntabmenu-divs a {
+	display: inline-block;
+	vertical-align: top;
+	margin:  1px 0px 0px 0px;
+	padding: 2px 0px 2px 3px;
+}
+
+#x-dd-draggablecontainer .typo3-dyntabmenu-divs a img {
+	margin: 0px;
+}
+
+#x-dd-draggablecontainer .typo3-dyntabmenu-divs a.x-dd-draggableitem img {
+	width: 24px;
+	height: 24px;
+}
+
+#x-dd-draggablecontainer .typo3-dyntabmenu-divs .c-tablayer div {
+	cursor: pointer;
+}
+.x-dd-draggableiteminfo > div {
+	padding: 10px 5px 5px 0px;
+	width: 95%;
+	float: left;
+}
+.x-dd-draggableiteminfo > br {
+	clear: both;
+	line-height: 1px;
+	font-size: 1px;
+	height: 1px;
+}
+.x-dd-draggableiteminfoimg {
+	padding: 0 10px 0 0;
+	width: 68px;
+	height: auto;
+	float: left;
+}
+.draggableiteminfotext {
+	float: right;
+}
