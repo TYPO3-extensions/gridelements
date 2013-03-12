@@ -78,11 +78,11 @@ if(typeof GridElementsDD === "undefined"){
 		var contentElements = Ext.select('.t3-page-ce').elements;
 		Ext.each(contentElements, function(contentElement){
 			Ext.get(contentElement).addListener('mouseenter', function(e, t){
-				if(this.select('> .t3-page-ce-header').first()) {
-					this.select('> .t3-page-ce-header').first().addClass('t3-page-ce-header-active');
+				if(this.select('> div > .t3-page-ce-header').first()) {
+					this.select('> div > .t3-page-ce-header').first().addClass('t3-page-ce-header-active');
 				}
-				if(this.select('> .t3-page-ce-body').first()) {
-					this.select('> .t3-page-ce-body').first().addClass('t3-page-ce-body-active');
+				if(this.select('> div > .t3-page-ce-body').first()) {
+					this.select('> div > .t3-page-ce-body').first().addClass('t3-page-ce-body-active');
 				}
 
 				var gridTable = this.select('> .t3-page-ce-body table.t3-gridTable').first();
@@ -91,11 +91,11 @@ if(typeof GridElementsDD === "undefined"){
 				}
 			});
 			Ext.get(contentElement).addListener('mouseleave', function(e, t){
-				if(this.select('> .t3-page-ce-header').first()) {
-					this.select('> .t3-page-ce-header').first().removeClass('t3-page-ce-header-active');
+				if(this.select('> div > .t3-page-ce-header').first()) {
+					this.select('> div > .t3-page-ce-header').first().removeClass('t3-page-ce-header-active');
 				}
-				if(this.select('> .t3-page-ce-body').first()) {
-					this.select('> .t3-page-ce-body').first().removeClass('t3-page-ce-body-active');
+				if(this.select('> div > .t3-page-ce-body').first()) {
+					this.select('> div > .t3-page-ce-body').first().removeClass('t3-page-ce-body-active');
 				}
 
 				var gridTable = this.select('> .t3-page-ce-body table.t3-gridTable').first();

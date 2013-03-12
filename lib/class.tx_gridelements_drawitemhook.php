@@ -298,8 +298,8 @@ class tx_gridelements_drawItemHook implements tx_cms_layout_tt_content_drawItemH
 				$statusHidden = $parentObject->isDisabled('tt_content', $itemRow)
 					? ' t3-page-ce-hidden'
 					: '';
-				$gridContent[$colPos] .= '<div class="t3-page-ce' . $statusHidden . '">' .
-					$this->renderSingleElementHTML($parentObject, $itemRow) .	'</div></div>';
+				$gridContent[$colPos] .= '<div class="t3-page-ce' . $statusHidden . '"><div class="t3-page-ce-dragitem">' .
+					$this->renderSingleElementHTML($parentObject, $itemRow) .	'</div></div></div>';
 				$editUidList[$colPos] .= $editUidList[$colPos]
 					? ',' . $itemRow['uid']
 					: $itemRow['uid'];
@@ -553,9 +553,9 @@ class tx_gridelements_drawItemHook implements tx_cms_layout_tt_content_drawItemH
 			(!empty($itemRow['_ORIG_uid'])
 				? ' class="ver-element"'
 				: '') .
-			'>' .
+			'><div class="t3-page-ce-body-inner t3-page-ce-body-inner-' . $itemRow['CType'] . '">' .
 			$parentObject->tt_content_drawItem($itemRow, $isRTE) .
-			'</div>';
+			'</div></div>';
 		return $singleElementHTML;
 	}
 }
