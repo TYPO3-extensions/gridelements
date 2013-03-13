@@ -7,9 +7,11 @@ if(typeof GridElementsDD === "undefined"){
 	top.geSprites = {};
 	top.backPath = '';
 
-	top.TYPO3.Components.PageModule = {
-		enableDragDrop: function() {
-			return true;
+	if(top.TYPO3.Components !== undefined) {
+		top.TYPO3.Components.PageModule = {
+			enableDragDrop: function() {
+				return true;
+			}
 		}
 	}
 
