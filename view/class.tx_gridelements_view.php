@@ -298,7 +298,7 @@ class tx_gridelements_view extends tslib_cObj {
 		$parentGridData = array();
 
 		foreach($data as $key => $value) {
-			if(strncmp($key, 'parentgrid_', 11) !== 0 && strncmp($key, 'tx_gridelements_view_', 21) !== 0) {
+			if(strpos($key, 'parentgrid_') !== 0 && strpos($key, 'tx_gridelements_view_') !== 0) {
 				$parentGridData['parentgrid_'.$key] = $value;
 			}
 		}
