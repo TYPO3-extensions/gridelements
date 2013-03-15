@@ -295,12 +295,45 @@ class tx_gridelements_view extends tslib_cObj {
 	 */
 	public function getParentGridData($data = array()) {
 
-		$parentGridData = array();
+		// filter out existing superfluous keys to reduce memory load
+		// String comparisons are way too expensive, so we go for unset within some loops
+		foreach($data['tx_gridelements_view_children'] as $child) {
+			unset($data['tx_gridelements_view_child_' . $child['uid']]);
+		}
+		foreach($data['tx_gridelements_view_columns'] as $column => $conteent) {
+			unset($data['tx_gridelements_view_column_' . $column]);
+		}
 
+		unset($data['tx_gridelements_view_children']);
+		unset($data['tx_gridelements_view_columns']);
+
+		// Set parentgrid data for the first time
+		$parentGridData = $this->setParentGridData($data);
+
+		// Now we can remove any parentgrid_parentgrid_ keys
+		foreach($parentGridData as $key => $value) {
+			unset($data[$key]);
+		}
+
+		// Set parentgrid data for the first time
+		$parentGridData = $this->setParentGridData($data);
+
+		unset($data);
+
+		return $parentGridData;
+	}
+
+	/**
+	 *
+	 *
+	 * @param array $data
+	 * @return array
+	 */
+	public function setParentGridData($data = array()) {
+
+		$parentGridData = array();
 		foreach($data as $key => $value) {
-			if(strpos($key, 'parentgrid_') !== 0 && strpos($key, 'tx_gridelements_view_') !== 0) {
-				$parentGridData['parentgrid_'.$key] = $value;
-			}
+			$parentGridData['parentgrid_'.$key] = $value;
 		}
 
 		unset($data);
@@ -312,6 +345,7 @@ class tx_gridelements_view extends tslib_cObj {
 	/**
 	 * renders the columns of the grid container and returns the actual content
 	 *
+	 * @param $columns
 	 * @param array $child
 	 * @param array $parentGridData
 	 * @param array $parentRecordNumbers
