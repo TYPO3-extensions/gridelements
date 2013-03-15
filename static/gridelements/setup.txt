@@ -59,6 +59,7 @@ tt_content.shortcut.20 {
 	}
 }
 
+plugin.tx_gridelements_pi1 >
 tt_content.gridelements_pi1 >
 tt_content.gridelements_pi1 = COA
 tt_content.gridelements_pi1 {
@@ -70,9 +71,9 @@ tt_content.gridelements_pi1 {
 			userFunc = tx_gridelements_view->main
 			setup {
 				default < lib.gridelements.defaultGridSetup
-				123 < .default
-
 			}
 		}
 	}
 }
+
+tt_content.gridelements_view < tt_content.gridelements_pi1
