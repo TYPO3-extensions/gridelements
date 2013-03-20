@@ -22,7 +22,7 @@
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-class tx_gridelements_wizarditemshookTest extends Tx_Extbase_Tests_Unit_BaseTestCase {
+class tx_gridelements_wizarditemshookTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 
 	/**
 	 * @var t3lib_db
@@ -56,7 +56,7 @@ class tx_gridelements_wizarditemshookTest extends Tx_Extbase_Tests_Unit_BaseTest
 	 * test removing empty headers from wizard
 	 */
 	public function testRemoveEmptyHeadersFromWizard() {
-		$itemsHook = t3lib_div::makeInstance('tx_gridelements_wizardItemsHook');
+		$itemsHook = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_gridelements_wizardItemsHook');
 
 		$wizardItems['test']['header'] = 'Header without element';
 		$wizardItems['common']['header'] = 'Content elements';
@@ -77,7 +77,7 @@ class tx_gridelements_wizarditemshookTest extends Tx_Extbase_Tests_Unit_BaseTest
 	 * test remove disallowed wizard items
 	 */
 	public function testRemoveDisallowedWizardItems() {
-		$itemsHook = t3lib_div::makeInstance('tx_gridelements_wizardItemsHook');
+		$itemsHook = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_gridelements_wizardItemsHook');
 
 		$allowed[] = 'text';
 		$allowed[] = 'login';
@@ -102,7 +102,7 @@ class tx_gridelements_wizarditemshookTest extends Tx_Extbase_Tests_Unit_BaseTest
 	 * test add grid items to wizard
 	 */
 	public function testAddGridItemsToWizard() {
-		$itemsHook = t3lib_div::makeInstance('tx_gridelements_wizardItemsHook');
+		$itemsHook = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_gridelements_wizardItemsHook');
 		$language = $this->getMock('language', array('sL'));
 		$language
 			->expects($this->once())
@@ -154,7 +154,7 @@ class tx_gridelements_wizarditemshookTest extends Tx_Extbase_Tests_Unit_BaseTest
 	 * @test
 	 */
 	public function testAddGridValuesToWizardItems() {
-		$ttContent = t3lib_div::makeInstance('tx_gridelements_wizardItemsHook');
+		$ttContent = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_gridelements_wizardItemsHook');
 
 		$wizardItems = array();
 		$container = 0;

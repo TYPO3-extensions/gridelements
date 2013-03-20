@@ -22,7 +22,7 @@
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-class tx_gridelements_tcemain_abstractTest extends Tx_Extbase_Tests_Unit_BaseTestCase {
+class tx_gridelements_tcemain_abstractTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 
 	/**
 	 * test get table
@@ -30,7 +30,7 @@ class tx_gridelements_tcemain_abstractTest extends Tx_Extbase_Tests_Unit_BaseTes
 	 * @test
 	 */
 	public function testGetTable() {
-		$hook = t3lib_div::makeInstance('tx_gridelements_tcemain_abstract');
+		$hook = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_gridelements_tcemain_abstract');
 		$table = 'tt_content';
 		$hook->setTable($table);
 		$result = $hook->getTable();
@@ -43,7 +43,7 @@ class tx_gridelements_tcemain_abstractTest extends Tx_Extbase_Tests_Unit_BaseTes
 	 * @test
 	 */
 	public function testGetPageUid() {
-		$hook = t3lib_div::makeInstance('tx_gridelements_tcemain_abstract');
+		$hook = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_gridelements_tcemain_abstract');
 		$pageUid = 123;
 		$hook->setPageUid($pageUid);
 		$result = $hook->getPageUid();
@@ -56,8 +56,8 @@ class tx_gridelements_tcemain_abstractTest extends Tx_Extbase_Tests_Unit_BaseTes
 	 * @test
 	 */
 	public function testGetTceMain() {
-		$hook = t3lib_div::makeInstance('tx_gridelements_tcemain_abstract');
-		$tceMain = t3lib_div::makeInstance('t3lib_TCEmain');
+		$hook = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_gridelements_tcemain_abstract');
+		$tceMain = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('t3lib_TCEmain');
 		$hook->setTceMain($tceMain);
 		$result = $hook->getTceMain();
 		$this->assertEquals($tceMain, $result);
@@ -69,7 +69,7 @@ class tx_gridelements_tcemain_abstractTest extends Tx_Extbase_Tests_Unit_BaseTes
 	 * @test
 	 */
 	public function testDoGridContainerUpdate() {
-		$hook = t3lib_div::makeInstance('tx_gridelements_tcemain_abstract');
+		$hook = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_gridelements_tcemain_abstract');
 		$t3lib_db = $this->getMock('t3lib_db', array('exec_UPDATEquery'));
 		$t3lib_db
 			->expects($this->never())
@@ -80,7 +80,7 @@ class tx_gridelements_tcemain_abstractTest extends Tx_Extbase_Tests_Unit_BaseTes
 		$containerUpdateArray = array();
 		$hook->doGridContainerUpdate($containerUpdateArray);
 
-		$hook = t3lib_div::makeInstance('tx_gridelements_tcemain_abstract');
+		$hook = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_gridelements_tcemain_abstract');
 		$t3lib_db = $this->getMock('t3lib_db', array('exec_UPDATEquery'));
 		$t3lib_db
 			->expects($this->exactly(4))

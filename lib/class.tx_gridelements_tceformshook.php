@@ -56,7 +56,7 @@ class tx_gridelements_TCEformsHook {
 	public function init($pageUid) {
 		if (!$this->layoutSetup instanceof tx_gridelements_layoutsetup) {
 			$this->injectLayoutSetup(
-				t3lib_div::makeInstance('tx_gridelements_layoutsetup')
+				\TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_gridelements_layoutsetup')
 					->init($pageUid)
 			);
 		}

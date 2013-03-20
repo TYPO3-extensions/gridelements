@@ -35,7 +35,7 @@ class tx_gridelements_pagerendererhook {
 	 * wrapper function called by hook (t3lib_pageRenderer->render-preProcess)
 	 *
 	 * @param	array	            $parameters: An array of available parameters
-	 * @param	\t3lib_PageRenderer $pageRenderer: The parent object that triggered this hook
+	 * @param	\TYPO3\CMS\Core\Page\PageRenderer $pageRenderer: The parent object that triggered this hook
 	 * @return	void
 	 */
 	public function addJSCSS($parameters, &$pageRenderer) {
@@ -47,18 +47,18 @@ class tx_gridelements_pagerendererhook {
 	 * method that adds JS files within the page renderer
 	 *
 	 * @param	array	            $parameters: An array of available parameters while adding JS to the page renderer
-	 * @param	\t3lib_PageRenderer $pageRenderer: The parent object that triggered this hook
+	 * @param	\TYPO3\CMS\Core\Page\PageRenderer $pageRenderer: The parent object that triggered this hook
 	 * @return	void
 	 */
 	protected function addJS($parameters, &$pageRenderer) {
 
-		$formprotection = t3lib_formprotection_Factory::get();
+		$formprotection = \TYPO3\CMS\Core\FormProtection\FormProtectionFactory::get();
 
 		if (count($parameters['jsFiles'])) {
 
 			if (method_exists($GLOBALS['SOBE']->doc, 'issueCommand')) {
-				/** @var t3lib_clipboard $clipObj  */
-				$clipObj = t3lib_div::makeInstance('t3lib_clipboard');		// Start clipboard
+				/** @var \TYPO3\CMS\Backend\Clipboard\Clipboard $clipObj  */
+				$clipObj = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Backend\Clipboard\Clipboard');		// Start clipboard
 				$clipObj->initializeClipboard();
 
 				$clipBoardHasContent = false;
@@ -79,7 +79,7 @@ class tx_gridelements_pagerendererhook {
 
 				// add JavaScript library
 				$pageRenderer->addJsFile(
-					$GLOBALS['BACK_PATH'] . t3lib_extMgm::extRelPath('gridelements') . 'res/js/dbNewContentElWizardFixDTM.js',
+					$GLOBALS['BACK_PATH'] . \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath('gridelements') . 'res/js/dbNewContentElWizardFixDTM.js',
 					$type = 'text/javascript',
 					$compress = TRUE,
 					$forceOnTop = FALSE,
@@ -88,7 +88,7 @@ class tx_gridelements_pagerendererhook {
 
 				// add JavaScript library
 				$pageRenderer->addJsFile(
-					$GLOBALS['BACK_PATH'] . t3lib_extMgm::extRelPath('gridelements') . 'res/js/GridElementsDD.js',
+					$GLOBALS['BACK_PATH'] . \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath('gridelements') . 'res/js/GridElementsDD.js',
 					$type = 'text/javascript',
 					$compress = TRUE,
 					$forceOnTop = FALSE,
@@ -97,7 +97,7 @@ class tx_gridelements_pagerendererhook {
 
 				// add JavaScript library
 				$pageRenderer->addJsFile(
-					$GLOBALS['BACK_PATH'] . t3lib_extMgm::extRelPath('gridelements') . 'res/js/GridElementsListView.js',
+					$GLOBALS['BACK_PATH'] . \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath('gridelements') . 'res/js/GridElementsListView.js',
 					$type = 'text/javascript',
 					$compress = TRUE,
 					$forceOnTop = FALSE,
@@ -118,7 +118,7 @@ class tx_gridelements_pagerendererhook {
 
 				# add l10n support to TYPO3 global - 4.6.x brings this, for 4.5 we fake it
 				if(TYPO3_branch < '4.5'){
-					$pageRenderer->addJsFile('../' . t3lib_extMgm::siteRelPath('lang') . 'res/js/be/typo3lang.js');
+					$pageRenderer->addJsFile('../' . \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::siteRelPath('lang') . 'res/js/be/typo3lang.js');
 					$pRaddExtOnReadyCode = "";
 				} else {
 					$pRaddExtOnReadyCode = "
@@ -133,14 +133,14 @@ class tx_gridelements_pagerendererhook {
 
 
 				$allowedCTypesClassesByColPos = array();
-				$layoutSetup = t3lib_div::callUserFunction('EXT:cms/classes/class.tx_cms_backendlayout.php:tx_cms_BackendLayout->getSelectedBackendLayout', intval(t3lib_div::_GP('id')), $this);
+				$layoutSetup = \TYPO3\CMS\Core\Utility\GeneralUtility::callUserFunction('EXT:cms/classes/class.tx_cms_backendlayout.php:tx_cms_BackendLayout->getSelectedBackendLayout', intval(\TYPO3\CMS\Core\Utility\GeneralUtility::_GP('id')), $this);
 				if (is_array($layoutSetup)) {
 					foreach($layoutSetup['__config']['backend_layout.']['rows.'] as $rows){
 						foreach($rows as $row){
 							foreach($row as $col){
 								$classes = '';
 								if($col['allowed']){
-									$allowed = t3lib_div::trimExplode(',', $col['allowed'], 1);
+									$allowed = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',', $col['allowed'], 1);
 									foreach($allowed as $ctype){
 										$classes .= 't3-allow-' . $ctype . ' ';
 									}
@@ -152,7 +152,7 @@ class tx_gridelements_pagerendererhook {
 						}
 					}
 				}
-				
+
 				// add Ext.onReady() code from file
 				$pageRenderer->addExtOnReadyCode(
 					// add some more JS here
@@ -164,7 +164,7 @@ class tx_gridelements_pagerendererhook {
 						top.pasteTpl = top.copyURL.replace('DDcopy=1', 'reference=DD_REFYN').replace('&redirect=1', '');
 						top.DDtceActionToken = '" . $formprotection->generateToken('tceAction') . "';
 						top.DDtoken = '" . $formprotection->generateToken('editRecord') . "';
-						top.DDpid = '" . intval(t3lib_div::_GP('id')) . "';
+						top.DDpid = '" . intval(\TYPO3\CMS\Core\Utility\GeneralUtility::_GP('id')) . "';
 						top.DDclipboardfilled = '" . ($clipBoardHasContent ? $clipBoardHasContent : 'false') . "';
 						top.DDclipboardElId = '" . $intFirstCBEl . "';
 					" .
@@ -184,20 +184,20 @@ class tx_gridelements_pagerendererhook {
 						array(
 							$GLOBALS['BE_USER']->uc['dragAndDropHideNewElementWizardInfoOverlay'] ? 'top.skipDraggableDetails = true;' : 'top.skipDraggableDetails = false;',
 							// set extension path
-							t3lib_div::locationHeaderUrl('/' . t3lib_extMgm::siteRelPath('gridelements')),
+							\TYPO3\CMS\Core\Utility\GeneralUtility::locationHeaderUrl('/' . \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::siteRelPath('gridelements')),
 							// set current server time, format matches "+new Date" in JS, accuracy in seconds is fine
 							time() . '000',
 							// add sprite icon classes
 							"top.geSprites = {
-								copyfrompage: '" . t3lib_iconWorks::getSpriteIconClasses('extensions-gridelements-copyfrompage') . "',
-								pastecopy: '" . t3lib_iconWorks::getSpriteIconClasses('extensions-gridelements-pastecopy') . "',
-								pasteref: '" . t3lib_iconWorks::getSpriteIconClasses('extensions-gridelements-pasteref') . "',
+								copyfrompage: '" . \TYPO3\CMS\Backend\Utility\IconUtility::getSpriteIconClasses('extensions-gridelements-copyfrompage') . "',
+								pastecopy: '" . \TYPO3\CMS\Backend\Utility\IconUtility::getSpriteIconClasses('extensions-gridelements-pastecopy') . "',
+								pasteref: '" . \TYPO3\CMS\Backend\Utility\IconUtility::getSpriteIconClasses('extensions-gridelements-pasteref') . "',
 							};",
 							"top.backPath = '" . $GLOBALS['BACK_PATH'] . "';"
 						),
 						// load content from file
 						file_get_contents(
-							t3lib_extMgm::extPath('gridelements') . 'res/js/GridElementsDD_onReady.js'
+							\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('gridelements') . 'res/js/GridElementsDD_onReady.js'
 						)
 					),
 					true
@@ -210,7 +210,7 @@ class tx_gridelements_pagerendererhook {
 	 * method that adds CSS files within the page renderer
 	 *
 	 * @param	array	            $parameters: An array of available parameters while adding CSS to the page renderer
-	 * @param	\t3lib_PageRenderer $pageRenderer: The parent object that triggered this hook
+	 * @param	\TYPO3\CMS\Core\Page\PageRenderer $pageRenderer: The parent object that triggered this hook
 	 * @return	void
 	 */
 	protected function addCSS($parameters, &$pageRenderer) {
@@ -223,8 +223,8 @@ class tx_gridelements_pagerendererhook {
 				if (substr($filename, 0, 4) == 'EXT:') { // extension
 					list($extKey, $local) = explode('/', substr($filename, 4), 2);
 					$filename = '';
-					if (strcmp($extKey, '') && t3lib_extMgm::isLoaded($extKey) && strcmp($local, '')) {
-						$filename = t3lib_extMgm::extRelPath($extKey) . $local;
+					if (strcmp($extKey, '') && \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded($extKey) && strcmp($local, '')) {
+						$filename = \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath($extKey) . $local;
 					}
 				}
 				$pageRenderer->addCssFile($filename, 'stylesheet', 'screen');

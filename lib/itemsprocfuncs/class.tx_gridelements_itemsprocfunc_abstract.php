@@ -74,8 +74,8 @@ class tx_gridelements_itemsprocfunc_abstract {
 			);
 
 			if ($backendLayout) {
-				/** @var t3lib_TSparser $parser  */
-				$parser = t3lib_div::makeInstance('t3lib_TSparser');
+				/** @var \TYPO3\CMS\Core\TypoScript\Parser\TypoScriptParser $parser  */
+				$parser = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Core\TypoScript\Parser\TypoScriptParser');
 				$parser->parse($backendLayout['config']);
 
 				$backendLayout['__config'] = $parser->setup;
@@ -88,7 +88,7 @@ class tx_gridelements_itemsprocfunc_abstract {
 						if (isset($row['columns.']) && is_array($row['columns.'])) {
 							foreach ($row['columns.'] as $column) {
 								$backendLayout['__items'][] = array(
-									t3lib_div::isFirstPartOfStr($column['name'], 'LLL:')
+									\TYPO3\CMS\Core\Utility\GeneralUtility::isFirstPartOfStr($column['name'], 'LLL:')
 										? $GLOBALS['LANG']->sL($column['name']) : $column['name'],
 									$column['colPos'],
 									NULL,
@@ -114,7 +114,7 @@ class tx_gridelements_itemsprocfunc_abstract {
 	 * @return array
 	 */
 	public function getRootline($pageUid) {
-		return t3lib_BEfunc::BEgetRootLine($pageUid);
+		return \TYPO3\CMS\Backend\Utility\BackendUtility::BEgetRootLine($pageUid);
 	}
 }
 

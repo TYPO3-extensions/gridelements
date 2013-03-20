@@ -40,14 +40,14 @@ class tx_gridelements_ajax {
 	 * Initialize method
 	 *
 	 * @param	array		$params not used yet
-	 * @param	TYPO3AJAX	$ajaxObj the parent ajax object
+	 * @param	\TYPO3\CMS\Core\Http\AjaxRequestHandler	$ajaxObj the parent ajax object
 	 * @return void
 	 */
-	public function init($params, TYPO3AJAX &$ajaxObj) {
+	public function init($params, \TYPO3\CMS\Core\Http\AjaxRequestHandler &$ajaxObj) {
 
 		// fill local params because that's not done in typo3/ajax.php yet ($params is always empty)
 		foreach ($this->validParams as $validParam){
-			$gpValue = t3lib_div::_GP($validParam);
+			$gpValue = \TYPO3\CMS\Core\Utility\GeneralUtility::_GP($validParam);
 			if ($gpValue !== NULL){
 				$this->paramValues[$validParam] = $gpValue;
 			}
@@ -62,10 +62,10 @@ class tx_gridelements_ajax {
 	/**
 	 * Creates the content depending on the 'cmd' parameter and fills $ajaxObj
 	 *
-	 * @param	TYPO3AJAX $ajaxObj
+	 * @param	\TYPO3\CMS\Core\Http\AjaxRequestHandler $ajaxObj
 	 * @return	void
 	 **/
-	protected function dispatch(TYPO3AJAX &$ajaxObj) {
+	protected function dispatch(\TYPO3\CMS\Core\Http\AjaxRequestHandler &$ajaxObj) {
 		if (!is_string($this->paramValues['cmd'])) {
 			$ajaxObj->addContent('error', array('message' => 'cmd is not a string'));
 		} else {
@@ -80,10 +80,10 @@ class tx_gridelements_ajax {
 	/**
 	 * get list rows
 	 *
-	 * @param	TYPO3AJAX $ajaxObj the parent ajax object
+	 * @param	\TYPO3\CMS\Core\Http\AjaxRequestHandler $ajaxObj the parent ajax object
 	 * @return	void
 	 */
-	public function getListRows(TYPO3AJAX &$ajaxObj) {
+	public function getListRows(\TYPO3\CMS\Core\Http\AjaxRequestHandler &$ajaxObj) {
 		$uid = (int) $this->getParamValue('uid');
 		if ($uid > 0) {
 			$table = (string) $this->getParamValue('table');
@@ -97,10 +97,10 @@ class tx_gridelements_ajax {
 			$this->initializeTemplateContainer();
 
 			$elementChilds = tx_gridelements_helper::getInstance()->getChildren(
-				$table, $uid, t3lib_div::_GP('sortField'), (int) t3lib_div::_GP('sortRev')
+				$table, $uid, \TYPO3\CMS\Core\Utility\GeneralUtility::_GP('sortField'), (int) \TYPO3\CMS\Core\Utility\GeneralUtility::_GP('sortRev')
 			);
 
-			$row = t3lib_BEfunc::getRecord($table, $uid);
+			$row = \TYPO3\CMS\Backend\Utility\BackendUtility::getRecord($table, $uid);
 			$recordList = $this->getRecordList($table, $uid, $row);
 
 			if ($recordList instanceof localRecordList) {
@@ -108,7 +108,7 @@ class tx_gridelements_ajax {
 				foreach ($elementChilds as $elementChild) {
 					$listRows[] = $recordList->renderListRow(
 						$elementChild->getTable(),
-						t3lib_BEfunc::getRecord($elementChild->getTable(), $elementChild->getId()),
+						\TYPO3\CMS\Backend\Utility\BackendUtility::getRecord($elementChild->getTable(), $elementChild->getId()),
 						0,
 						$GLOBALS['TCA'][$table]['ctrl']['label'],
 						$GLOBALS['TCA'][$table]['ctrl']['thumbnail'],
@@ -126,6 +126,9 @@ class tx_gridelements_ajax {
 	/**
 	 * initialize and return localRecordList
 	 *
+	 * @param string $table
+	 * @param int $uid
+	 * @param array $row
 	 * @return	localRecordList
 	 */
 	private function getRecordList($table, $uid, $row) {
@@ -135,20 +138,20 @@ class tx_gridelements_ajax {
 
 		// todo
 		// GPvars:
-#		$this->pointer = t3lib_div::_GP('pointer');
-#		$this->imagemode = t3lib_div::_GP('imagemode');
-#		$this->search_field = t3lib_div::_GP('search_field');
-#		$this->search_levels = t3lib_div::_GP('search_levels');
-#		$this->showLimit = t3lib_div::_GP('showLimit');
-#		$this->returnUrl = t3lib_div::sanitizeLocalUrl(t3lib_div::_GP('returnUrl'));
+#		$this->pointer = \TYPO3\CMS\Core\Utility\GeneralUtility::_GP('pointer');
+#		$this->imagemode = \TYPO3\CMS\Core\Utility\GeneralUtility::_GP('imagemode');
+#		$this->search_field = \TYPO3\CMS\Core\Utility\GeneralUtility::_GP('search_field');
+#		$this->search_levels = \TYPO3\CMS\Core\Utility\GeneralUtility::_GP('search_levels');
+#		$this->showLimit = \TYPO3\CMS\Core\Utility\GeneralUtility::_GP('showLimit');
+#		$this->returnUrl = \TYPO3\CMS\Core\Utility\GeneralUtility::sanitizeLocalUrl(\TYPO3\CMS\Core\Utility\GeneralUtility::_GP('returnUrl'));
 
-#		$this->clear_cache = t3lib_div::_GP('clear_cache');
-#		$this->cmd = t3lib_div::_GP('cmd');
-#		$this->cmd_table = t3lib_div::_GP('cmd_table');
-		$cmd_table = t3lib_div::_GP('cmd_table');
+#		$this->clear_cache = \TYPO3\CMS\Core\Utility\GeneralUtility::_GP('clear_cache');
+#		$this->cmd = \TYPO3\CMS\Core\Utility\GeneralUtility::_GP('cmd');
+#		$this->cmd_table = \TYPO3\CMS\Core\Utility\GeneralUtility::_GP('cmd_table');
+		$cmd_table = \TYPO3\CMS\Core\Utility\GeneralUtility::_GP('cmd_table');
 
 		// Loading current page record and checking access:
-		$pageinfo = t3lib_BEfunc::readPageAccess($row['pid'], $permsClause);
+		$pageinfo = \TYPO3\CMS\Backend\Utility\BackendUtility::readPageAccess($row['pid'], $permsClause);
 		$access = is_array($pageinfo) ? 1 : 0;
 
 		if ($access)	{
@@ -158,19 +161,19 @@ class tx_gridelements_ajax {
 			// Set predefined value for LocalizationView:
 
 			// Initialize the dblist object:
-			/** @var $dblist localRecordList */
-			$dblist = t3lib_div::makeInstance('localRecordList');
+			/** @var $dblist \TYPO3\CMS\Recordlist\RecordList\DatabaseRecordList */
+			$dblist = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Recordlist\RecordList\DatabaseRecordList');
 			$dblist->calcPerms = $GLOBALS['BE_USER']->calcPerms($pageinfo);
 			$dblist->thumbs = $GLOBALS['BE_USER']->uc['thumbnailsByDefault'];
 
 			$modName = 'web_list';
 			$MOD_MENU = array('bigControlPanel' => '', 'clipBoard' => '', 'localization' => '');
 			// Loading module configuration:
-			$modTSconfig = t3lib_BEfunc::getModTSconfig($uid,'mod.' . $modName);
+			$modTSconfig = \TYPO3\CMS\Backend\Utility\BackendUtility::getModTSconfig($uid,'mod.' . $modName);
 
 
 			// todo: bring GP settings from outer list to the ajax request
-			$MOD_SETTINGS = t3lib_BEfunc::getModuleData($MOD_MENU, t3lib_div::_GP('SET'), $modName);
+			$MOD_SETTINGS = \TYPO3\CMS\Backend\Utility\BackendUtility::getModuleData($MOD_MENU, \TYPO3\CMS\Core\Utility\GeneralUtility::_GP('SET'), $modName);
 
 			$dblist->allFields = ($MOD_SETTINGS['bigControlPanel'] || $table) ? 1 : 0;
 			$dblist->localizationView = $MOD_SETTINGS['localization'];
@@ -183,8 +186,8 @@ class tx_gridelements_ajax {
 			$dblist->tableTSconfigOverTCA = $modTSconfig['properties']['table.'];
 			$dblist->clickTitleMode = $modTSconfig['properties']['clickTitleMode'];
 			$dblist->alternateBgColors=$modTSconfig['properties']['alternateBgColors']?1:0;
-			$dblist->allowedNewTables = t3lib_div::trimExplode(',', $modTSconfig['properties']['allowedNewTables'], 1);
-			$dblist->deniedNewTables = t3lib_div::trimExplode(',', $modTSconfig['properties']['deniedNewTables'], 1);
+			$dblist->allowedNewTables = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',', $modTSconfig['properties']['allowedNewTables'], 1);
+			$dblist->deniedNewTables = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',', $modTSconfig['properties']['deniedNewTables'], 1);
 			$dblist->newWizards=$modTSconfig['properties']['newWizards']?1:0;
 
 			$dblist->pageRow = $pageinfo;
@@ -193,16 +196,16 @@ class tx_gridelements_ajax {
 			$dblist->modTSconfig = $modTSconfig;
 
 			// Clipboard is initialized:
-			$dblist->clipObj = t3lib_div::makeInstance('t3lib_clipboard');		// Start clipboard
+			$dblist->clipObj = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Backend\Clipboard\Clipboard');		// Start clipboard
 			$dblist->clipObj->initializeClipboard();	// Initialize - reads the clipboard content from the user session
 
 			// todo
 			// Clipboard actions are handled:
-			$CB = t3lib_div::_GET('CB');	// CB is the clipboard command array
+			$CB = \TYPO3\CMS\Core\Utility\GeneralUtility::_GET('CB');	// CB is the clipboard command array
 			if ($this->cmd=='setCB') {
 				// CBH is all the fields selected for the clipboard, CBC is the checkbox fields which were checked. By merging we get a full array of checked/unchecked elements
 				// This is set to the 'el' array of the CB after being parsed so only the table in question is registered.
-				$CB['el'] = $dblist->clipObj->cleanUpCBC(array_merge((array)t3lib_div::_POST('CBH'),(array)t3lib_div::_POST('CBC')),$cmd_table);
+				$CB['el'] = $dblist->clipObj->cleanUpCBC(array_merge((array)\TYPO3\CMS\Core\Utility\GeneralUtility::_POST('CBH'),(array)\TYPO3\CMS\Core\Utility\GeneralUtility::_POST('CBC')),$cmd_table);
 			}
 			if (!$MOD_SETTINGS['clipBoard']) {
 				$CB['setP']='normal';
@@ -256,7 +259,7 @@ class tx_gridelements_ajax {
 
 		// Create an instance of the document template object
 		require_once(PATH_typo3 . 'template.php');
-		$GLOBALS['SOBE']->doc = t3lib_div::makeInstance('template');
+		$GLOBALS['SOBE']->doc = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Backend\Template\DocumentTemplate');
 	}
 
 

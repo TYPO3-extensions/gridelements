@@ -22,7 +22,7 @@
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-class tx_gridelements_ttContentTest extends Tx_Extbase_Tests_Unit_BaseTestCase {
+class tx_gridelements_ttContentTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 
 	/**
 	 * @var t3lib_db
@@ -51,7 +51,7 @@ class tx_gridelements_ttContentTest extends Tx_Extbase_Tests_Unit_BaseTestCase {
 	 * @test
 	 */
 	public function testColumnsItemsProcFunc() {
-		$ttContent = t3lib_div::makeInstance('tx_gridelements_tt_content');
+		$ttContent = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_gridelements_tt_content');
 
 		$layoutSetup = $this->getMock('tx_gridelements_layoutsetup');
 		$ttContent->injectLayoutSetup($layoutSetup);
@@ -138,7 +138,7 @@ class tx_gridelements_ttContentTest extends Tx_Extbase_Tests_Unit_BaseTestCase {
 	 * @test
 	 */
 	public function testContainerItemsProcFunc() {
-		$ttContent = t3lib_div::makeInstance('tx_gridelements_tt_content');
+		$ttContent = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_gridelements_tt_content');
 
 		$layoutSetup = $this->getMock('tx_gridelements_layoutsetup');
 		$ttContent->injectLayoutSetup($layoutSetup);
@@ -200,7 +200,7 @@ class tx_gridelements_ttContentTest extends Tx_Extbase_Tests_Unit_BaseTestCase {
 	 * @test
 	 */
 	public function testLayoutItemsProcFunc() {
-		$ttContent = t3lib_div::makeInstance('tx_gridelements_tt_content');
+		$ttContent = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_gridelements_tt_content');
 
 		$returnValue['0']['0'] = 'Hello world';
 		$returnValue['0']['1'] = 123;

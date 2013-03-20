@@ -34,7 +34,7 @@
  * @package	TYPO3
  * @subpackage	tx_gridelements
  */
-class tx_gridelements_view extends tslib_cObj {
+class tx_gridelements_view extends \TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer {
 
 	public $prefixId = 'tx_gridelements_view'; // Same as class name
 	public $scriptRelPath = 'view/class.tx_gridelements_view.php'; // Path to this script relative to the extension dir.
@@ -62,7 +62,7 @@ class tx_gridelements_view extends tslib_cObj {
 		$layout = $this->cObj->data['tx_gridelements_backend_layout'];
 
 		/** @var tx_gridelements_layoutsetup $layoutSetup  */
-		$layoutSetup = t3lib_div::makeInstance('tx_gridelements_layoutsetup');
+		$layoutSetup = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_gridelements_layoutsetup');
 		$layoutSetup->init($this->cObj->data['pid'], $conf);
 
 		$availableColumns = $layoutSetup->getLayoutColumns($layout);
@@ -77,7 +77,7 @@ class tx_gridelements_view extends tslib_cObj {
 			// we need a sorting columns array to make sure that the columns are rendered in the order
 			// that they have been created in the grid wizard but still be able to get all children
 			// within just one SELECT query
-			$sortColumns = t3lib_div::trimExplode(',', $csvColumns);
+			$sortColumns = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',', $csvColumns);
 
 			$this->renderChildrenIntoParentColumns($typoScriptSetup, $sortColumns, $availableColumns);
 			unset($children);
@@ -446,7 +446,7 @@ class tx_gridelements_view extends tslib_cObj {
 	function initPIflexForm($field='pi_flexform')	{
 		// Converting flexform data into array:
 		if (!is_array($this->cObj->data[$field]) && $this->cObj->data[$field])	{
-			$this->cObj->data[$field] = t3lib_div::xml2array($this->cObj->data[$field]);
+			$this->cObj->data[$field] = \TYPO3\CMS\Core\Utility\GeneralUtility::xml2array($this->cObj->data[$field]);
 			if (!is_array($this->cObj->data[$field]))	$this->cObj->data[$field]=array();
 		}
 	}
@@ -482,10 +482,10 @@ class tx_gridelements_view extends tslib_cObj {
 
 		$tempArr=$sheetArray;
 		foreach($fieldNameArr as $k => $v)	{
-			if(t3lib_div::compat_version('4.6')) {
-				$checkedValue = t3lib_utility_Math::canBeInterpretedAsInteger($v);
+			if(\TYPO3\CMS\Core\Utility\GeneralUtility::compat_version('4.6')) {
+				$checkedValue =  \TYPO3\CMS\Core\Utility\MathUtility::canBeInterpretedAsInteger($v);
 			} else {
-				$checkedValue = t3lib_div::testInt($v);
+				$checkedValue = \TYPO3\CMS\Core\Utility\GeneralUtility::testInt($v);
 			}
 			if ($checkedValue)	{
 				if (is_array($tempArr))	{

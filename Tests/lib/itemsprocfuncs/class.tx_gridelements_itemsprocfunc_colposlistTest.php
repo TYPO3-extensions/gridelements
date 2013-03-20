@@ -22,7 +22,7 @@
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-class tx_gridelements_itemsprocfunc_colposlistTest extends Tx_Extbase_Tests_Unit_BaseTestCase {
+class tx_gridelements_itemsprocfunc_colposlistTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 
 	/**
 	 * @var t3lib_db

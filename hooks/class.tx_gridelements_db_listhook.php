@@ -38,7 +38,7 @@ class tx_gridelements_db_ListHook {
 	var $beFunc;
 
 	public function __construct() {
-		$this->beFunc = t3lib_div::makeInstance('t3lib_BEfunc');
+		$this->beFunc = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Backend\Utility\BackendUtility');
 	}
 
 	/**
@@ -72,7 +72,7 @@ class tx_gridelements_db_ListHook {
 	 * @return string
 	 */
 	public function addValueToList($list, $value) {
-		$parts = t3lib_div::trimExplode(',', $list, TRUE);
+		$parts = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',', $list, TRUE);
 		array_unshift($parts, $value);
 		return implode(',', array_unique($parts));
 	}

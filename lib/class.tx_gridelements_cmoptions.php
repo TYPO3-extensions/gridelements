@@ -10,13 +10,13 @@
 class tx_gridelements_cmoptions {
 
 	/**
-	 * @param clickMenu $backRef
+	 * @param \TYPO3\CMS\Backend\ClickMenu\ClickMenu $backRef
 	 * @param array $menuItems
 	 * @param string $table
 	 * @param integer $uid
 	 * @return array
 	 */
-	public function main(clickMenu &$backRef, array $menuItems, $table, $uid) {
+	public function main(\TYPO3\CMS\Backend\ClickMenu\ClickMenu &$backRef, array $menuItems, $table, $uid) {
 		global $BE_USER;
 
 		// add copied item handler to "(un)copy" link in clickmenu

@@ -31,7 +31,7 @@ class tx_gridelements_itemsprocfunc_CTypeList extends tx_gridelements_itemsprocf
 	 */
 	public function init($pageUid) {
 		if (!$this->layoutSetup instanceof tx_gridelements_layoutsetup) {
-			$this->layoutSetup = t3lib_div::makeInstance('tx_gridelements_layoutsetup')
+			$this->layoutSetup = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_gridelements_layoutsetup')
 				->init($pageUid);
 		}
 	}
@@ -77,7 +77,7 @@ class tx_gridelements_itemsprocfunc_CTypeList extends tx_gridelements_itemsprocf
 		}
 		if(isset($backendLayout)) {
 			foreach($items as $key => $item) {
-				if(!(t3lib_div::inList($backendLayout['columns'][$column], $item[1]) || t3lib_div::inList($backendLayout['columns'][$column], '*'))) {
+				if(!(\TYPO3\CMS\Core\Utility\GeneralUtility::inList($backendLayout['columns'][$column], $item[1]) || \TYPO3\CMS\Core\Utility\GeneralUtility::inList($backendLayout['columns'][$column], '*'))) {
 					unset($items[$key]);
 				}
 			}

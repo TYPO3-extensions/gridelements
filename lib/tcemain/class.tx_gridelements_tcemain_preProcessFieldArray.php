@@ -43,7 +43,7 @@ class tx_gridelements_tcemain_preProcessFieldArray extends tx_gridelements_tcema
 	 * @param	array $fieldArray: The array of fields and values that have been saved to the datamap
 	 * @param	string $table: The name of the table the data should be saved to
 	 * @param	integer $id: The parent uid of either the page or the container we are currently working on
-	 * @param	\t3lib_TCEmain $parentObj: The parent object that triggered this hook
+	 * @param	\TYPO3\CMS\Core\DataHandling\DataHandler $parentObj: The parent object that triggered this hook
 	 * @return void
 	 */
 	public function preProcessFieldArray(&$fieldArray, $table, $id, &$parentObj) {
@@ -74,7 +74,7 @@ class tx_gridelements_tcemain_preProcessFieldArray extends tx_gridelements_tcema
 	 */
 	public function processFieldArrayForTtContent(array &$fieldArray) {
 		if ($this->getTable() == 'tt_content') {
-			$pid = intval(t3lib_div::_GET('DDinsertNew'));
+			$pid = intval(\TYPO3\CMS\Core\Utility\GeneralUtility::_GET('DDinsertNew'));
 
 			if($fieldArray['tx_gridelements_backend_layout']) {
 				$GLOBALS['TCA']['tt_content']['columns']['pi_flexform']['config']['ds']['*,gridelements_pi1'] = $this->layoutSetup->getFlexformConfiguration($fieldArray['tx_gridelements_backend_layout']);
@@ -110,14 +110,14 @@ class tx_gridelements_tcemain_preProcessFieldArray extends tx_gridelements_tcema
 		}
 
 		if ($pid < 0) {
-			$record = t3lib_beFunc::getRecord('tt_content', abs($pid), 'pid');
+			$record = \TYPO3\CMS\Backend\Utility\BackendUtility::getRecord('tt_content', abs($pid), 'pid');
 			$id = $record['pid'];
 			unset($record);
 		} else {
 			$id = intval($pid);
 		}
 
-		$pageTS = t3lib_beFunc::getPagesTSconfig($id);
+		$pageTS = \TYPO3\CMS\Backend\Utility\BackendUtility::getPagesTSconfig($id);
 
 		if (isset($pageTS['TCAdefaults.'])) {
 			$TCAPageTSOverride = $pageTS['TCAdefaults.'];
@@ -131,8 +131,8 @@ class tx_gridelements_tcemain_preProcessFieldArray extends tx_gridelements_tcema
 		}
 
 		// Default values as submitted:
-		$this->defVals = t3lib_div::_GP('defVals');
-		$this->overrideVals = t3lib_div::_GP('overrideVals');
+		$this->defVals = \TYPO3\CMS\Core\Utility\GeneralUtility::_GP('defVals');
+		$this->overrideVals = \TYPO3\CMS\Core\Utility\GeneralUtility::_GP('overrideVals');
 		if (!is_array($this->defVals) && is_array($this->overrideVals))	{
 			$this->defVals = $this->overrideVals;
 		}
@@ -147,10 +147,10 @@ class tx_gridelements_tcemain_preProcessFieldArray extends tx_gridelements_tcema
 		// Fetch default values if a previous record exists
 		if ($pid < 0 && $GLOBALS['TCA']['tt_content']['ctrl']['useColumnsForDefaultValues']) {
 			// Fetches the previous record:
-			$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery('*', 'tt_content', 'uid=' . abs($id) . t3lib_BEfunc::deleteClause('tt_content'));
+			$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery('*', 'tt_content', 'uid=' . abs($id) . \TYPO3\CMS\Backend\Utility\BackendUtility::deleteClause('tt_content'));
 			if ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res)) {
 				// Gets the list of fields to copy from the previous record.
-				$fArr = t3lib_div::trimExplode(',', $GLOBALS['TCA']['tt_content']['ctrl']['useColumnsForDefaultValues'], 1);
+				$fArr = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',', $GLOBALS['TCA']['tt_content']['ctrl']['useColumnsForDefaultValues'], 1);
 				foreach ($fArr as $theF) {
 					if (isset($GLOBALS['TCA']['tt_content']['columns'][$theF])) {
 						$newRow[$theF] = $row[$theF];
@@ -170,7 +170,7 @@ class tx_gridelements_tcemain_preProcessFieldArray extends tx_gridelements_tcema
 
 	public function getDefaultFlexformValues(&$fieldArray) {
 		foreach($GLOBALS['TCA']['tt_content']['columns']['pi_flexform']['config']['ds'] as $key => $dataStructure) {
-			$types = t3lib_div::trimExplode(',', $key);
+			$types = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',', $key);
 			if(($types[0] == $fieldArray['list_type'] || $types[0] == '*') && ($types[1] == $fieldArray['CType'] || $types[1] == '*')) {
 				$fieldArray['pi_flexform'] = $this->extractDefaultDataFromDatastructure($dataStructure);
 			}
@@ -188,7 +188,7 @@ class tx_gridelements_tcemain_preProcessFieldArray extends tx_gridelements_tcema
 		$returnXML = '';
 		$sheetArray = array();
 		if($dataStructure) {
-			$structureArray = t3lib_div::xml2array($dataStructure);
+			$structureArray = \TYPO3\CMS\Core\Utility\GeneralUtility::xml2array($dataStructure);
 			if(!isset($structureArray['sheets']) && isset($structureArray['ROOT'])) {
 				$structureArray['sheets']['sDEF']['ROOT'] = $structureArray['ROOT'];
 				unset($structureArray['ROOT']);
@@ -209,7 +209,7 @@ class tx_gridelements_tcemain_preProcessFieldArray extends tx_gridelements_tcema
 				};
 			}
 			if(count($sheetArray) > 0) {
-				$flexformTools = t3lib_div::makeInstance('t3lib_flexformtools');
+				$flexformTools = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Core\Configuration\FlexForm\FlexFormTools');
 				$returnXML = $flexformTools->flexArray2Xml($sheetArray, true);
 			}
 		}
@@ -242,7 +242,7 @@ class tx_gridelements_tcemain_preProcessFieldArray extends tx_gridelements_tcema
 	 */
 	public function setFieldEntriesForTargets(array &$fieldArray, $pid) {
 		if (count($fieldArray) && strpos($fieldArray['pid'], 'x') !== false) {
-			$target = t3lib_div::trimExplode('x', $fieldArray['pid']);
+			$target = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode('x', $fieldArray['pid']);
 			$fieldArray['pid'] = $pid;
 			$targetUid = abs(intval($target[0]));
 			$this->setFieldEntriesForColumnTargets($fieldArray, $targetUid, $target);
@@ -638,7 +638,7 @@ class tx_gridelements_tcemain_preProcessFieldArray extends tx_gridelements_tcema
 				}
 			}
 
-			foreach (t3lib_div::trimExplode(',', $tsConfig['properties']['removeItems'], 1) as $removeId) {
+			foreach (\TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',', $tsConfig['properties']['removeItems'], 1) as $removeId) {
 				foreach ($tcaColumns as $key => $item) {
 					if ($item[1] == $removeId) {
 						unset($tcaColumns[$key]);
@@ -662,7 +662,6 @@ class tx_gridelements_tcemain_preProcessFieldArray extends tx_gridelements_tcema
 	 *
 	 * @param   int     $layout: The selected backend layout of the grid container or the page
 	 * @param   string  $table: The name of the table to get the layout from
-	 * @param   int     $id: the uid of the parent container - being the page id for the table "pages"
 	 * @return  array   $availableColumns: The columns available for the selected layout
 	 *
 	 */
@@ -676,7 +675,7 @@ class tx_gridelements_tcemain_preProcessFieldArray extends tx_gridelements_tcema
 		$availableColumns = array();
 
 		if (isset($backendLayout['config']) && $backendLayout['config']) {
-			$parser = t3lib_div::makeInstance('t3lib_TSparser');
+			$parser = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Core\TypoScript\Parser\TypoScriptParser');
 			$parser->parse($backendLayout['config']);
 
 			$backendLayout['__config'] = $parser->setup;

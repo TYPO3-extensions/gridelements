@@ -22,7 +22,7 @@
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-class tx_gridelements_tceformshookTest extends Tx_Extbase_Tests_Unit_BaseTestCase {
+class tx_gridelements_tceformshookTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 
 	/**
 	 * test get single field before render
@@ -30,7 +30,7 @@ class tx_gridelements_tceformshookTest extends Tx_Extbase_Tests_Unit_BaseTestCas
 	 * @test
 	 */
 	public function testGetSingleFieldBeforeRender() {
-		$hook = t3lib_div::makeInstance('tx_gridelements_TCEformsHook');
+		$hook = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_gridelements_TCEformsHook');
 
 		$expectedTable = $table = 'tt_content';
 		$expectedField = $field = 'bodytext';

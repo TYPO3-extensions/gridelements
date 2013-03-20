@@ -40,15 +40,15 @@ class tx_gridelements_tcemain_processCmdmap extends tx_gridelements_tcemain_abst
 	 * @param int               $id: The id of the record that is going to be copied
 	 * @param string            $value: The value that has been sent with the copy command
 	 * @param boolean           $commandIsProcessed: A switch to tell the parent object, if the record has been copied
-	 * @param t3lib_TCEmain     $parentObj: The parent object that triggered this hook
+	 * @param \TYPO3\CMS\Core\DataHandling\DataHandler     $parentObj: The parent object that triggered this hook
 	 * @return	void
 	 *
 	 */
-	public function processCmdmap($command, $table, $id, $value, &$commandIsProcessed, t3lib_TCEmain $parentObj) {
+	public function processCmdmap($command, $table, $id, $value, &$commandIsProcessed, \TYPO3\CMS\Core\DataHandling\DataHandler $parentObj) {
 		$this->init($table, $id, $parentObj);
 		// @todo Either create a new command map type, e.g. "reference" and process it with a hook instead of using $_GET //olly
-		$DDcopy = intval(t3lib_div::_GET('DDcopy'));
-		$reference = intval(t3lib_div::_GET('reference'));
+		$DDcopy = intval(\TYPO3\CMS\Core\Utility\GeneralUtility::_GET('DDcopy'));
+		$reference = intval(\TYPO3\CMS\Core\Utility\GeneralUtility::_GET('reference'));
 		$containerUpdateArray = array();
 
 		if ($command == 'copy' &&
@@ -65,7 +65,7 @@ class tx_gridelements_tcemain_processCmdmap extends tx_gridelements_tcemain_abst
 				$overrideArray = array();
 
 				if($reference == 1) {
-					t3lib_div::loadTCA('tt_content');
+					\TYPO3\CMS\Core\Utility\GeneralUtility::loadTCA('tt_content');
 					foreach($GLOBALS['TCA']['tt_content']['columns'] as $key => $column) {
 						if(strpos(',' . $GLOBALS['TCA']['tt_content']['ctrl']['copyAfterDuplFields'] . ',', ',' . $key . ',') === FALSE) {
 							$overrideArray[$key] = '';
@@ -77,7 +77,7 @@ class tx_gridelements_tcemain_processCmdmap extends tx_gridelements_tcemain_abst
 				}
 
 				if (strpos($value, 'x') !== false) {
-					$valueArray = t3lib_div::trimExplode('x', $value);
+					$valueArray = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode('x', $value);
 					$overrideArray['sorting'] = 0;
 
 					if ((intval($valueArray[0]) > 0 && $valueArray[1] != '') || (abs($valueArray[0]) == $id)) {
@@ -95,7 +95,7 @@ class tx_gridelements_tcemain_processCmdmap extends tx_gridelements_tcemain_abst
 				} else {
 					$this->getTceMain()->copyRecord($table, $id, $value, 1, $overrideArray);
 					if(intval($value) < 0) {
-						$targetRecord = t3lib_BEfunc::getRecordWSOL('tt_content', -$value, 'tx_gridelements_container');
+						$targetRecord = \TYPO3\CMS\Backend\Utility\BackendUtility::getRecordWSOL('tt_content', -$value, 'tx_gridelements_container');
 						if($targetRecord['tx_gridelements_container'] > 0) {
 							$containerUpdateArray[$targetRecord['tx_gridelements_container']] = 1;
 							$this->doGridContainerUpdate($containerUpdateArray);

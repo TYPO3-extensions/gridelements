@@ -103,7 +103,7 @@ $TCA['tx_gridelements_backend_layout'] = array(
 						'title' => 'LLL:EXT:cms/locallang_tca.xml:backend_layout.wizard',
 						'type' => 'popup',
 						'icon' => 'sysext/cms/layout/wizard_backend_layout.png',
-						'script' => t3lib_extMgm::extRelPath('gridelements') . 'lib/wizard_gridelements_backend_layout.php',
+						'script' => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath('gridelements') . 'lib/wizard_gridelements_backend_layout.php',
 						'JSopenParams' => 'height=800,width=800,status=0,menubar=0,scrollbars=0',
 					),
 				),
@@ -138,7 +138,7 @@ $TCA['tx_gridelements_backend_layout'] = array(
 	),
 	'types' => array(
 		'1' => array(
-			'showitem' => 
+			'showitem' =>
 				'--palette--;LLL:EXT:gridelements/locallang_db.xml:tx_gridelements_backend_layout;general,
 				--palette--;LLL:EXT:gridelements/locallang_db.xml:tx_gridelements_backend_layout.palette.appearance;appearance,
 				--div--;LLL:EXT:gridelements/locallang_db.xml:tx_gridelements_backend_layout.div.configuartion, top_level_layout, config, --palette--;LLL:EXT:gridelements/locallang_db.xml:tx_gridelements_backend_layout.ce_configuration;flexform,

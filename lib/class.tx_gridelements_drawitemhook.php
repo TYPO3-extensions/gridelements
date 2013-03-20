@@ -1,6 +1,6 @@
 <?php
 
-require_once(t3lib_extMgm::extPath('cms') . 'layout/interfaces/interface.tx_cms_layout_tt_content_drawitemhook.php');
+require_once(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('backend') . 'Classes/View/PageLayoutViewDrawItemHookInterface.php');
 
 /**
  * Class/Function which manipulates the rendering of item example content and replaces it with a grid of child elements.
@@ -9,7 +9,7 @@ require_once(t3lib_extMgm::extPath('cms') . 'layout/interfaces/interface.tx_cms_
  * @package		TYPO3
  * @subpackage	tx_gridelements
  */
-class tx_gridelements_drawItemHook implements tx_cms_layout_tt_content_drawItemHook {
+class tx_gridelements_drawItemHook implements \TYPO3\CMS\Backend\View\PageLayoutViewDrawItemHookInterface {
 
 	/**
 	 * @var language
@@ -17,12 +17,12 @@ class tx_gridelements_drawItemHook implements tx_cms_layout_tt_content_drawItemH
 	var $lang;
 
 	/**
-	 * @var t3lib_queryGenerator
+	 * @var \TYPO3\CMS\Core\Database\QueryGenerator
 	 */
 	protected $tree;
 
 	public function __construct() {
-		$this->lang = t3lib_div::makeInstance('language');
+		$this->lang = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Lang\LanguageService');
 		$this->lang->init($GLOBALS['BE_USER']->uc['lang']);
 	}
 
@@ -39,8 +39,8 @@ class tx_gridelements_drawItemHook implements tx_cms_layout_tt_content_drawItemH
 	 */
 	public function preProcess(\TYPO3\CMS\Backend\View\PageLayoutView &$parentObject, &$drawItem, &$headerContent, &$itemContent, array &$row) {
 		if ($row['CType']) {
-			$showHidden = $parentObject->tt_contentConfig['showHidden'] ? '' : t3lib_BEfunc::BEenableFields('tt_content');
-			$deleteClause = t3lib_BEfunc::deleteClause('tt_content');
+			$showHidden = $parentObject->tt_contentConfig['showHidden'] ? '' : \TYPO3\CMS\Backend\Utility\BackendUtility::BEenableFields('tt_content');
+			$deleteClause = \TYPO3\CMS\Backend\Utility\BackendUtility::deleteClause('tt_content');
 
 			if($GLOBALS['BE_USER']->uc['hideContentPreview']) {
 				$drawItem = FALSE;
@@ -50,7 +50,7 @@ class tx_gridelements_drawItemHook implements tx_cms_layout_tt_content_drawItemH
 				case 'gridelements_pi1':
 					$drawItem = FALSE;
 					$itemContent .= $this->renderCTypeGridelements($parentObject, $row, $showHidden, $deleteClause);
-					$refIndexObj = t3lib_div::makeInstance('t3lib_refindex');
+					$refIndexObj = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Core\Database\ReferenceIndex');
 					/* @var $refIndexObj t3lib_refindex */
 					$refIndexObj->updateRefIndexTable('tt_content', $row['uid']);
 					break;
@@ -66,13 +66,13 @@ class tx_gridelements_drawItemHook implements tx_cms_layout_tt_content_drawItemH
 	/**
 	 * renders the HTML output for elements of the CType gridelements_pi1
 	 *
-	 * @param tx_cms_layout     $parentObject: The parent object that triggered this hook
+	 * @param \TYPO3\CMS\Backend\View\PageLayoutView     $parentObject: The parent object that triggered this hook
 	 * @param array             $row: The current data row for this item
 	 * @param string            $showHidden: query String containing enable fields
 	 * @param string            $deleteClause: query String to check for deleted items
 	 * @return string           $itemContent: The HTML output for elements of the CType gridelements_pi1
 	 */
-	public function renderCTypeGridelements(tx_cms_layout $parentObject, &$row, &$showHidden, &$deleteClause) {
+	public function renderCTypeGridelements(\TYPO3\CMS\Backend\View\PageLayoutView $parentObject, &$row, &$showHidden, &$deleteClause) {
 		$head = array();
 		$gridContent = array();
 		$editUidList = array();
@@ -82,7 +82,7 @@ class tx_gridelements_drawItemHook implements tx_cms_layout_tt_content_drawItemH
 		// get the layout record for the selected backend layout if any
 		$gridContainerId = $row['uid'];
 		/** @var $layoutSetup tx_gridelements_layoutsetup */
-		$layoutSetup = t3lib_div::makeInstance('tx_gridelements_layoutsetup');
+		$layoutSetup = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_gridelements_layoutsetup');
 		$gridElement = $layoutSetup->init($row['pid'])->cacheCurrentParent($gridContainerId, TRUE);
 		$layoutUid = $gridElement['tx_gridelements_backend_layout'];
 		$layout = $layoutSetup->getLayoutSetup($layoutUid);
@@ -117,16 +117,16 @@ class tx_gridelements_drawItemHook implements tx_cms_layout_tt_content_drawItemH
 	/**
 	 * renders the HTML output for elements of the CType shortcut
 	 *
-	 * @param tx_cms_layout     $parentObject: The parent object that triggered this hook
+	 * @param \TYPO3\CMS\Backend\View\PageLayoutView     $parentObject: The parent object that triggered this hook
 	 * @param array             $row: The current data row for this item
 	 * @param string            $showHidden: query String containing enable fields
 	 * @param string            $deleteClause: query String to check for deleted items
 	 * @return string           $shortcutContent: The HTML output for elements of the CType shortcut
 	 */
-	public function renderCTypeShortcut(tx_cms_layout $parentObject, &$row, &$showHidden, &$deleteClause) {
+	public function renderCTypeShortcut(\TYPO3\CMS\Backend\View\PageLayoutView $parentObject, &$row, &$showHidden, &$deleteClause) {
 		$shortcutContent = '';
 		if ($row['records']) {
-			$shortcutItems = t3lib_div::trimExplode(',', $row['records']);
+			$shortcutItems = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',', $row['records']);
 			$collectedItems = array();
 			foreach ($shortcutItems as $shortcutItem) {
 				if (strpos($shortcutItem, 'pages_') !== FALSE) {
@@ -184,14 +184,14 @@ class tx_gridelements_drawItemHook implements tx_cms_layout_tt_content_drawItemH
 	/**
 	 * Directly returns the items for a single column if the rendering mode is set to single columns only
 	 *
-	 * @param tx_cms_layout $parentObject: The parent object that triggered this hook
+	 * @param \TYPO3\CMS\Backend\View\PageLayoutView $parentObject: The parent object that triggered this hook
 	 * @param array $colPosValues: The column positions that have been found for that layout
 	 * @param array $row: The current data row for the container item
 	 * @param string $showHidden: query String containing enable fields
 	 * @param string $deleteClause: query String to check for deleted items
 	 * @return array collected items for this column
 	 */
-	public function setSingleColPosItems(tx_cms_layout $parentObject, &$colPosValues, &$row, $showHidden, $deleteClause) {
+	public function setSingleColPosItems(\TYPO3\CMS\Backend\View\PageLayoutView $parentObject, &$colPosValues, &$row, $showHidden, $deleteClause) {
 		// Due to the pid being "NOT USED" in makeQueryArray we have to set pidSelect here
 		$originalPidSelect = $parentObject->pidSelect;
 		$parentObject->pidSelect = 'pid = ' . $row['pid'];
@@ -218,7 +218,7 @@ class tx_gridelements_drawItemHook implements tx_cms_layout_tt_content_drawItemH
 	/**
 	 * renders the columns of a grid layout
 	 *
-	 * @param tx_cms_layout		$parentObject: The parent object that triggered this hook
+	 * @param \TYPO3\CMS\Backend\View\PageLayoutView		$parentObject: The parent object that triggered this hook
 	 * @param array				$colPosValues: The column positions we want to get the content for
 	 * @param array				$gridContent: The rendered content data of the grid columns
 	 * @param array				$row: The current data row for the container item
@@ -229,7 +229,7 @@ class tx_gridelements_drawItemHook implements tx_cms_layout_tt_content_drawItemH
 	 * @param string			$deleteClause: query String to check for deleted items
 	 * @return void
 	 */
-	public function renderGridColumns(tx_cms_layout $parentObject, &$colPosValues, &$gridContent, &$row, &$editUidList, &$singleColumn, &$head, $showHidden, $deleteClause) {
+	public function renderGridColumns(\TYPO3\CMS\Backend\View\PageLayoutView $parentObject, &$colPosValues, &$gridContent, &$row, &$editUidList, &$singleColumn, &$head, $showHidden, $deleteClause) {
 		foreach ($colPosValues as $colPos => $values) {
 			// first we have to create the column content separately for each column
 			// so we can check for the first and the last element to provide proper sorting
@@ -250,14 +250,14 @@ class tx_gridelements_drawItemHook implements tx_cms_layout_tt_content_drawItemH
 	/**
 	 * Collects tt_content data from a single tt_content element
 	 *
-	 * @param tx_cms_layout		$parentObject: The parent object that triggered this hook
+	 * @param \TYPO3\CMS\Backend\View\PageLayoutView		$parentObject: The parent object that triggered this hook
 	 * @param int			   	$colPos: The column position to collect the items for
 	 * @param array			 	$row: The current data row for the container item
 	 * @param string			$showHidden: query String containing enable fields
 	 * @param string			$deleteClause: query String to check for deleted items
 	 * @return array			collected items for the given column
 	 */
-	public function collectItemsForColumn(tx_cms_layout $parentObject, &$colPos, &$row, &$showHidden, &$deleteClause) {
+	public function collectItemsForColumn(\TYPO3\CMS\Backend\View\PageLayoutView $parentObject, &$colPos, &$row, &$showHidden, &$deleteClause) {
 		// Due to the pid being "NOT USED" in makeQueryArray we have to set pidSelect here
 		$originalPidSelect = $parentObject->pidSelect;
 		$parentObject->pidSelect = 'pid = ' . $row['pid'];
@@ -285,14 +285,14 @@ class tx_gridelements_drawItemHook implements tx_cms_layout_tt_content_drawItemH
 	/**
 	 * renders a single column of a grid layout and sets the edit uid list
 	 *
-	 * @param tx_cms_layout     $parentObject: The parent object that triggered this hook
+	 * @param \TYPO3\CMS\Backend\View\PageLayoutView     $parentObject: The parent object that triggered this hook
 	 * @param array             $items: The content data of the column to be rendered
 	 * @param int               $colPos: The column position we want to get the content for
 	 * @param array             $gridContent: The rendered content data of the grid column
 	 * @param array             $editUidList: determines if we will get edit icons or not
 	 * @return void
 	 */
-	public function renderSingleGridColumn(tx_cms_layout $parentObject, &$items, &$colPos, &$gridContent, &$editUidList) {
+	public function renderSingleGridColumn(\TYPO3\CMS\Backend\View\PageLayoutView $parentObject, &$items, &$colPos, &$gridContent, &$editUidList) {
 		foreach ($items as $itemRow) {
 			if (is_array($itemRow)) {
 				$statusHidden = $parentObject->isDisabled('tt_content', $itemRow)
@@ -310,7 +310,7 @@ class tx_gridelements_drawItemHook implements tx_cms_layout_tt_content_drawItemH
 	/**
 	 * Sets the headers for a grid before content and headers are put together
 	 *
-	 * @param tx_cms_layout     $parentObject: The parent object that triggered this hook
+	 * @param \TYPO3\CMS\Backend\View\PageLayoutView     $parentObject: The parent object that triggered this hook
 	 * @param array             $head: The collected item data rows
 	 * @param int               $colPos: The column position we want to get a header for
 	 * @param array             $row: The current data row for the container item
@@ -318,7 +318,7 @@ class tx_gridelements_drawItemHook implements tx_cms_layout_tt_content_drawItemH
 	 * @param array             $editUidList: determines if we will get edit icons or not
 	 * @return void
 	 */
-	public function setColumnHeader(tx_cms_layout $parentObject, &$head, &$colPos, &$row, &$name, &$editUidList) {
+	public function setColumnHeader(\TYPO3\CMS\Backend\View\PageLayoutView $parentObject, &$head, &$colPos, &$row, &$name, &$editUidList) {
 		$specificUid = tx_gridelements_helper::getInstance()->getSpecificUid($row);
 
 		if ($colPos < 32768) {
@@ -346,7 +346,7 @@ class tx_gridelements_drawItemHook implements tx_cms_layout_tt_content_drawItemH
 	 * @param string $colName Column name
 	 * @param string $editParams Edit params (Syntax: &edit[...] for alt_doc.php)
 	 * @param string $newParams New element params (Syntax: &edit[...] for alt_doc.php)
-	 * @param tx_cms_layout $parentObject
+	 * @param \TYPO3\CMS\Backend\View\PageLayoutView $parentObject
 	 * @return string HTML table
 	 */
 	function tt_content_drawColHeader($colName, $editParams, $newParams, &$parentObject) {
@@ -357,20 +357,20 @@ class tx_gridelements_drawItemHook implements tx_cms_layout_tt_content_drawItemH
 			// New record:
 			if ($newParams) {
 				$icons .= '<a href="#" onclick="' . htmlspecialchars($newParams) . '" title="' . $GLOBALS['LANG']->getLL('newInColumn', TRUE) . '">' .
-					t3lib_iconWorks::getSpriteIcon('actions-document-new') .
+					\TYPO3\CMS\Backend\Utility\IconUtility::getSpriteIcon('actions-document-new') .
 					'</a>';
 			}
 			// Edit whole of column:
 			if ($editParams) {
-				$icons .= '<a href="#" onclick="' . htmlspecialchars(t3lib_BEfunc::editOnClick($editParams, $parentObject->backPath)) . '" title="' . $GLOBALS['LANG']->getLL('editColumn', TRUE) . '">' .
-					t3lib_iconWorks::getSpriteIcon('actions-document-open') .
+				$icons .= '<a href="#" onclick="' . htmlspecialchars(\TYPO3\CMS\Backend\Utility\BackendUtility::editOnClick($editParams, $parentObject->backPath)) . '" title="' . $GLOBALS['LANG']->getLL('editColumn', TRUE) . '">' .
+					\TYPO3\CMS\Backend\Utility\IconUtility::getSpriteIcon('actions-document-open') .
 					'</a>';
 			}
 			$icons .= '<a href="#" class="toggle-content toggle-up" title="' . $this->lang->sL('LLL:EXT:gridelements/locallang_db.xml:tx_gridelements_togglecontent') . '">' .
-				t3lib_iconWorks::getSpriteIcon('actions-move-to-top') .
+				\TYPO3\CMS\Backend\Utility\IconUtility::getSpriteIcon('actions-move-to-top') .
 				'</a>';
 			$icons .= '<a href="#" class="toggle-content toggle-down" title="' . $this->lang->sL('LLL:EXT:gridelements/locallang_db.xml:tx_gridelements_togglecontent') . '">' .
-				t3lib_iconWorks::getSpriteIcon('actions-move-to-bottom') .
+				\TYPO3\CMS\Backend\Utility\IconUtility::getSpriteIcon('actions-move-to-bottom') .
 				'</a>';
 		}
 		if (strlen($icons)) {
@@ -436,7 +436,7 @@ class tx_gridelements_drawItemHook implements tx_cms_layout_tt_content_drawItemH
 				// which column should be displayed inside this cell
 				$columnKey = $columnConfig['colPos'] != '' ? intval($columnConfig['colPos']) : 32768;
 				// allowed CTypes
-				$allowedCTypes = t3lib_div::trimExplode(',', $columnConfig['allowed'], 1);
+				$allowedCTypes = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',', $columnConfig['allowed'], 1);
 				foreach($allowedCTypes as &$ctype){
 					$ctype = 't3-allow-' . $ctype;
 				}
@@ -485,8 +485,8 @@ class tx_gridelements_drawItemHook implements tx_cms_layout_tt_content_drawItemH
 	public function collectContentDataFromPages($shortcutItem, &$collectedItems, $recursive = 0, &$showHidden, &$deleteClause) {
 		$itemList = str_replace('pages_', '', $shortcutItem);
 		if ($recursive) {
-			if (!$this->tree instanceof t3lib_queryGenerator) {
-				$this->tree = t3lib_div::makeInstance('t3lib_queryGenerator');
+			if (!$this->tree instanceof \TYPO3\CMS\Core\Database\QueryGenerator) {
+				$this->tree = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('\TYPO3\CMS\Core\Database\QueryGenerator');
 			}
 			$itemList = $this->tree->getTreeList($itemList, intval($recursive), 0, 1);
 		}
@@ -501,7 +501,7 @@ class tx_gridelements_drawItemHook implements tx_cms_layout_tt_content_drawItemH
 		);
 		foreach ($itemRows as $itemRow) {
 			if($GLOBALS['BE_USER']->workspace > 0) {
-				t3lib_BEfunc::workspaceOL('tt_content', $itemRow, $GLOBALS['BE_USER']->workspace);
+				\TYPO3\CMS\Backend\Utility\BackendUtility::workspaceOL('tt_content', $itemRow, $GLOBALS['BE_USER']->workspace);
 			}
 			$itemRow['tx_gridelements_reference_container'] = $itemRow['pid'];
 			$collectedItems[] = $itemRow;
@@ -528,7 +528,7 @@ class tx_gridelements_drawItemHook implements tx_cms_layout_tt_content_drawItemH
 				$deleteClause
 		);
 		if($GLOBALS['BE_USER']->workspace > 0) {
-			t3lib_BEfunc::workspaceOL('tt_content', $itemRow, $GLOBALS['BE_USER']->workspace);
+			\TYPO3\CMS\Backend\Utility\BackendUtility::workspaceOL('tt_content', $itemRow, $GLOBALS['BE_USER']->workspace);
 		}
 		$collectedItems[] = $itemRow;
 	}
@@ -536,11 +536,11 @@ class tx_gridelements_drawItemHook implements tx_cms_layout_tt_content_drawItemH
 	/**
 	 * Renders the HTML code for a single tt_content element
 	 *
-	 * @param tx_cms_layout     $parentObject: The parent object that triggered this hook
+	 * @param \TYPO3\CMS\Backend\View\PageLayoutView     $parentObject: The parent object that triggered this hook
 	 * @param array             $itemRow: The data row to be rendered as HTML
 	 * @return string
 	 */
-	public function renderSingleElementHTML(tx_cms_layout $parentObject, $itemRow) {
+	public function renderSingleElementHTML(\TYPO3\CMS\Backend\View\PageLayoutView $parentObject, $itemRow) {
 		$singleElementHTML = $parentObject->tt_content_drawHeader(
 			$itemRow,
 			$parentObject->tt_contentConfig['showInfo']

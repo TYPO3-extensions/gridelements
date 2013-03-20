@@ -22,7 +22,7 @@
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-class tx_gridelements_tcemain_moveRecordTest extends Tx_Extbase_Tests_Unit_BaseTestCase {
+class tx_gridelements_tcemain_moveRecordTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 
 	/**
 	 * test create update array for splitted elements

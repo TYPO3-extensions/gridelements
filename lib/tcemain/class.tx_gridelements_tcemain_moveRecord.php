@@ -42,7 +42,7 @@ class tx_gridelements_tcemain_moveRecord extends tx_gridelements_tcemain_abstrac
 	 * @param array             $moveRec: An array of some values of the record that is going to be moved
 	 * @param int               $resolvedPid: The calculated id of the page the record should be moved to
 	 * @param boolean           $recordWasMoved: A switch to tell the parent object, if the record has been moved
-	 * @param t3lib_TCEmain     $parentObj
+	 * @param \TYPO3\CMS\Core\DataHandling\DataHandler     $parentObj
 	 * @return void
 	 */
 	public function moveRecord($table, $uid, &$destPid, &$propArr, &$moveRec, $resolvedPid, &$recordWasMoved, &$parentObj) {
@@ -50,7 +50,7 @@ class tx_gridelements_tcemain_moveRecord extends tx_gridelements_tcemain_abstrac
 		if ($table == 'tt_content' && !$this->getTceMain()->isImporting) {
 			$copyAfterDuplFields = $GLOBALS['TCA']['tt_content']['ctrl']['copyAfterDuplFields'];
 			$GLOBALS['TCA']['tt_content']['ctrl']['copyAfterDuplFields'] .= ',tx_gridelements_container,tx_gridelements_columns';
-			$cmd = t3lib_div::_GET('cmd');
+			$cmd = \TYPO3\CMS\Core\Utility\GeneralUtility::_GET('cmd');
 			$originalElement = $GLOBALS['TYPO3_DB']->exec_SELECTgetSingleRow(
 				'*',
 				'tt_content',
@@ -59,7 +59,7 @@ class tx_gridelements_tcemain_moveRecord extends tx_gridelements_tcemain_abstrac
 			$containerUpdateArray[$originalElement['tx_gridelements_container']] = -1;
 
 			if (strpos($cmd['tt_content'][$uid]['move'], 'x') !== false) {
-				$target = t3lib_div::trimExplode('x', $cmd['tt_content'][$uid]['move']);
+				$target = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode('x', $cmd['tt_content'][$uid]['move']);
 				$targetUid = abs(intval($target[0]));
 				$updateArray = $this->createUpdateArrayForSplitElements($uid, $destPid, $targetUid, $target, $containerUpdateArray);
 			} else if($cmd['tt_content'][$uid]['move']) {

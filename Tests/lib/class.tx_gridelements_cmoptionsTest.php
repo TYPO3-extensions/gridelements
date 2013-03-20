@@ -22,7 +22,7 @@
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-class tx_gridelements_cmoptionsTest extends Tx_Extbase_Tests_Unit_BaseTestCase {
+class tx_gridelements_cmoptionsTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 
 	/**
 	 * @var language
@@ -49,7 +49,7 @@ class tx_gridelements_cmoptionsTest extends Tx_Extbase_Tests_Unit_BaseTestCase {
 	 * test main method
 	 */
 	public function testMain() {
-		$cmOptions = t3lib_div::makeInstance('tx_gridelements_cmoptions');
+		$cmOptions = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_gridelements_cmoptions');
 
 		//$backRef = new clickMenu;
 		$backRef = $this->getMock('stdClass', array(), array(), 'clickMenu');

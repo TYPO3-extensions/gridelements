@@ -22,7 +22,7 @@
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-class tx_gridelements_tcemain_preProcessFieldArrayTest extends Tx_Extbase_Tests_Unit_BaseTestCase {
+class tx_gridelements_tcemain_preProcessFieldArrayTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 
 	/**
 	 * @var t3lib_db
@@ -51,7 +51,7 @@ class tx_gridelements_tcemain_preProcessFieldArrayTest extends Tx_Extbase_Tests_
 	 * @test
 	 */
 	public function testGetSubpagesRecursively() {
-		$preProcess = t3lib_div::makeInstance('tx_gridelements_tcemain_preProcessFieldArray');
+		$preProcess = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_gridelements_tcemain_preProcessFieldArray');
 
 		$t3lib_db = $this->getMock('t3lib_db', array('exec_SELECTgetRows'));
 		$t3lib_db
@@ -109,7 +109,7 @@ class tx_gridelements_tcemain_preProcessFieldArrayTest extends Tx_Extbase_Tests_
 	 * @test
 	 */
 	public function testGetAvailableColumns() {
-		$preProcess = t3lib_div::makeInstance('tx_gridelements_tcemain_preProcessFieldArray');
+		$preProcess = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_gridelements_tcemain_preProcessFieldArray');
 
 		$layout = '';
 		$table = '';

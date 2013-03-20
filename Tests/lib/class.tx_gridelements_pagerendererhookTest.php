@@ -22,7 +22,7 @@
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-class tx_gridelements_pagerendererhookTest extends Tx_Extbase_Tests_Unit_BaseTestCase {
+class tx_gridelements_pagerendererhookTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 
 	/**
 	 * @var tx_gridelements_pi1
@@ -34,10 +34,10 @@ class tx_gridelements_pagerendererhookTest extends Tx_Extbase_Tests_Unit_BaseTes
 
 
 	public function setUp() {
-		$GLOBALS['TSFE'] = t3lib_div::makeInstance('tslib_fe', $TYPO3_CONF_VARS, 0);
-		$GLOBALS['TSFE']->sys_page = t3lib_div::makeInstance('t3lib_pageSelect');
-		$this->view = t3lib_div::makeInstance('tx_gridelements_view');
-		$this->view->cObj = t3lib_div::makeInstance('tslib_cObj');
+		$GLOBALS['TSFE'] = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tslib_fe', $TYPO3_CONF_VARS, 0);
+		$GLOBALS['TSFE']->sys_page = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('t3lib_pageSelect');
+		$this->view = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_gridelements_view');
+		$this->view->cObj = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tslib_cObj');
 	}
 
 	public function tearDown() {

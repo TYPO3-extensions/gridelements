@@ -31,7 +31,7 @@ require_once(PATH_typo3 . 'interfaces/interface.cms_newcontentelementwizarditems
  * @package		TYPO3
  * @subpackage	tx_gridelements
  */
-class tx_gridelements_wizardItemsHook implements cms_newContentElementWizardsHook {
+class tx_gridelements_wizardItemsHook implements \TYPO3\CMS\Backend\Wizard\NewContentElementWizardHookInterface {
 
 	/**
 	 * @var tx_gridelements_layoutsetup
@@ -39,7 +39,7 @@ class tx_gridelements_wizardItemsHook implements cms_newContentElementWizardsHoo
 	protected $layoutSetup;
 
 	/**
-	 * @var t3lib_BEfunc
+	 * @var \TYPO3\CMS\Backend\Utility\BackendUtility
 	 */
 	protected $beFunc;
 
@@ -55,9 +55,9 @@ class tx_gridelements_wizardItemsHook implements cms_newContentElementWizardsHoo
 	/**
 	 * inject BE func
 	 *
-	 * @param t3lib_BEfunc $beFunc
+	 * @param \TYPO3\CMS\Backend\Utility\BackendUtility $beFunc
 	 */
-	public function injectBeFunc(t3lib_BEfunc $beFunc) {
+	public function injectBeFunc(\TYPO3\CMS\Backend\Utility\BackendUtility $beFunc) {
 		$this->beFunc = $beFunc;
 	}
 
@@ -68,10 +68,10 @@ class tx_gridelements_wizardItemsHook implements cms_newContentElementWizardsHoo
 	 */
 	public function init($pageUid) {
 		if (!$this->layoutSetup instanceof tx_gridelements_layoutsetup) {
-			$this->layoutSetup = t3lib_div::makeInstance('tx_gridelements_layoutsetup')->init($pageUid);
+			$this->layoutSetup = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_gridelements_layoutsetup')->init($pageUid);
 		}
-		if (!$this->beFunc instanceof t3lib_BEfunc) {
-			$this->beFunc = t3lib_div::makeInstance('t3lib_BEfunc');
+		if (!$this->beFunc instanceof \TYPO3\CMS\Backend\Utility\BackendUtility) {
+			$this->beFunc = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Backend\Utility\BackendUtility');
 		}
 	}
 
@@ -87,9 +87,9 @@ class tx_gridelements_wizardItemsHook implements cms_newContentElementWizardsHoo
 		$pageID = $parentObject->pageinfo['uid'];
 		$this->init($pageID);
 
-		$container = intval(t3lib_div::_GP('tx_gridelements_container'));
-		$column = intval(t3lib_div::_GP('tx_gridelements_columns'));
-		$allowed = t3lib_div::trimExplode(',', t3lib_div::_GP('tx_gridelements_allowed'), 1);
+		$container = intval(\TYPO3\CMS\Core\Utility\GeneralUtility::_GP('tx_gridelements_container'));
+		$column = intval(\TYPO3\CMS\Core\Utility\GeneralUtility::_GP('tx_gridelements_columns'));
+		$allowed = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',', \TYPO3\CMS\Core\Utility\GeneralUtility::_GP('tx_gridelements_allowed'), 1);
 
 		$this->removeDisallowedWizardItems($allowed, $wizardItems);
 
@@ -158,7 +158,7 @@ class tx_gridelements_wizardItemsHook implements cms_newContentElementWizardsHoo
 
 		$pageID = $parentObject->pageinfo['uid'];
 
-		$BEfunc = t3lib_div::makeInstance('t3lib_BEfunc');
+		$BEfunc = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Backend\Utility\BackendUtility');
 		$TSconfig = $BEfunc->getPagesTSconfig($pageID);
 
 		if($container && $TSconfig['TCEFORM.']['tt_content.']['tx_gridelements_backend_layout.']['itemsProcFunc.']['topLevelLayouts']) {
@@ -217,7 +217,7 @@ class tx_gridelements_wizardItemsHook implements cms_newContentElementWizardsHoo
 				if($item['icon'][0]) {
 					$wizardItems['gridelements_grid_' . $item['uid']]['icon'] = $item['icon'][0];
 				} else {
-					$wizardItems['gridelements_grid_' . $item['uid']]['icon'] = t3lib_extMgm::extRelPath('gridelements') . 'res/img/new_content_el.gif';
+					$wizardItems['gridelements_grid_' . $item['uid']]['icon'] = \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath('gridelements') . 'res/img/new_content_el.gif';
 				}
 				/*
 				if($container != 0) {

@@ -26,7 +26,7 @@
 require_once (PATH_typo3 . '/class.db_list.inc');
 require_once (PATH_typo3 . '/class.db_list_extra.inc');
 
-class tx_gridelements_db_listhookTest extends Tx_Extbase_Tests_Unit_BaseTestCase {
+class tx_gridelements_db_listhookTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 
 	/**
 	 * test make query array post
@@ -34,7 +34,7 @@ class tx_gridelements_db_listhookTest extends Tx_Extbase_Tests_Unit_BaseTestCase
 	 * @test
 	 */
 	public function testMakeQueryArrayPost() {
-		$dbList = t3lib_div::makeInstance('tx_gridelements_db_ListHook');
+		$dbList = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_gridelements_db_ListHook');
 
 		$queryParts = array(
 			'SELECT' => '*',
@@ -44,7 +44,7 @@ class tx_gridelements_db_listhookTest extends Tx_Extbase_Tests_Unit_BaseTestCase
 			'ORDERBY' => '',
 			'LIMIT' => ''
 		);
-		$parent = t3lib_div::makeInstance('ux_localRecordList');
+		$parent = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('ux_localRecordList');
 		$table = 'pages';
 		$pageId = 12;
 		$addWhere = 'AND hidden = 0';
@@ -106,7 +106,7 @@ class tx_gridelements_db_listhookTest extends Tx_Extbase_Tests_Unit_BaseTestCase
 	 * @test
 	 */
 	public function testAddValueToList() {
-		$dbList = t3lib_div::makeInstance('tx_gridelements_db_ListHook');
+		$dbList = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_gridelements_db_ListHook');
 
 		$list = 'uid,pid, bodytext, title';
 		$value = 'colPos';

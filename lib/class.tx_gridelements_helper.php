@@ -32,8 +32,8 @@ class tx_gridelements_helper {
 
 		if (trim($table) && $uid > 0) {
 
-			/** @var $dependency t3lib_utility_Dependency */
-			$dependency = t3lib_div::makeInstance('t3lib_utility_Dependency');
+			/** @var $dependency \TYPO3\CMS\Version\Dependency\DependencyResolver */
+			$dependency = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Version\Dependency\DependencyResolver');
 
 			$dependencyElement = $dependency->addElement($table, $uid);
 			$children = $dependencyElement->getChildren();

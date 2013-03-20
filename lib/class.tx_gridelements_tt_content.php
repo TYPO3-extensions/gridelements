@@ -55,7 +55,7 @@ class tx_gridelements_tt_content {
 	public function init($pageUid) {
 		if (!$this->layoutSetup instanceof tx_gridelements_layoutsetup) {
 			$this->injectLayoutSetup(
-				t3lib_div::makeInstance('tx_gridelements_layoutsetup')
+				\TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_gridelements_layoutsetup')
 					->init($pageUid)
 			);
 		}
@@ -70,15 +70,15 @@ class tx_gridelements_tt_content {
 	public function columnsItemsProcFunc(&$params) {
 		$this->init($params['row']['pid']);
 		$gridContainerId = intval($params['row']['tx_gridelements_container']);
-		
+
 		if ($gridContainerId > 0) {
 			$gridElement = $this->layoutSetup->cacheCurrentParent($gridContainerId, TRUE);
 			$params['items'] = $this->layoutSetup
 				->getLayoutColumnsSelectItems($gridElement['tx_gridelements_backend_layout']);
-				
+
 			if($params['row']['CType'] != '' && count($params['items']) > 0) {
 				foreach($params['items'] as $itemKey => $itemArray) {
-					if($itemArray[3] != '' && !t3lib_div::inList($itemArray[3], $params['row']['CType'])) {
+					if($itemArray[3] != '' && !\TYPO3\CMS\Core\Utility\GeneralUtility::inList($itemArray[3], $params['row']['CType'])) {
 						unset($params['items'][$itemKey]);
 					}
 				}
@@ -163,7 +163,7 @@ class tx_gridelements_tt_content {
 			foreach($params['items'] as $key => $container) {
 				$allowed = $layoutSetups[$containerRecords[$container[1]]['tx_gridelements_backend_layout']]['allowed'];
 				if($container[1] > 0 && $allowed) {
-					if(!t3lib_div::inList($allowed, $params['row']['CType']) && !t3lib_div::inList($allowed, '*')) {
+					if(!\TYPO3\CMS\Core\Utility\GeneralUtility::inList($allowed, $params['row']['CType']) && !\TYPO3\CMS\Core\Utility\GeneralUtility::inList($allowed, '*')) {
 						unset($params['items'][$key]);
 					}
 				}
@@ -184,7 +184,7 @@ class tx_gridelements_tt_content {
 		$layoutSelectItems = $this->layoutSetup
 			->getLayoutSelectItems($params['row']['colPos']);
 
-		$params['items'] = t3lib_div::keepItemsInArray($layoutSelectItems, $params['items'], TRUE);
+		$params['items'] = \TYPO3\CMS\Core\Utility\GeneralUtility::keepItemsInArray($layoutSelectItems, $params['items'], TRUE);
 	}
 
 	/**

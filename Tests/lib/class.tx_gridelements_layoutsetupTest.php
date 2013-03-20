@@ -22,7 +22,7 @@
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-class tx_gridelements_layoutsetupTest extends Tx_Extbase_Tests_Unit_BaseTestCase {
+class tx_gridelements_layoutsetupTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 
 	/**
 	 * test make query array post
@@ -39,7 +39,7 @@ class tx_gridelements_layoutsetupTest extends Tx_Extbase_Tests_Unit_BaseTestCase
 		$setup['2']['title'] = 'Grid-Sample';
 
 		$expectedSetup = $setup;
-		$layoutSetup = t3lib_div::makeInstance('tx_gridelements_layoutsetup');
+		$layoutSetup = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_gridelements_layoutsetup');
 		$layoutSetup->setLayoutSetup($setup);
 		$result = $layoutSetup->getLayoutSetup();
 		$this->assertEquals($expectedSetup, $result);
@@ -62,7 +62,7 @@ class tx_gridelements_layoutsetupTest extends Tx_Extbase_Tests_Unit_BaseTestCase
 		$setup['setup.']['default.'] = 'Hello';
 		$setup['setup.']['1.'] = 'world';
 
-		$layoutSetup = t3lib_div::makeInstance('tx_gridelements_layoutsetup');
+		$layoutSetup = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_gridelements_layoutsetup');
 		$layoutSetup->setTypoScriptSetup($setup);
 		$result = $layoutSetup->getTypoScriptSetup();
 		$expectedResult['columns.']['default.']['renderObj'] = '<tt_content';
@@ -95,7 +95,7 @@ class tx_gridelements_layoutsetupTest extends Tx_Extbase_Tests_Unit_BaseTestCase
 		$setup['1']['config']['rows.']['2']['columns.']['2']['colPos'] = 14;
 		$setup['1']['config']['rows.']['2']['columns.']['2']['allowed'] = 1;
 
-		$layoutSetup = t3lib_div::makeInstance('tx_gridelements_layoutsetup');
+		$layoutSetup = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_gridelements_layoutsetup');
 		$layoutSetup->setLayoutSetup($setup);
 		$result = $layoutSetup->getLayoutColumns();
 		$expectedResult = array();

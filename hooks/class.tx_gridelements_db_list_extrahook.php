@@ -32,7 +32,7 @@ require_once(PATH_typo3 . 'interfaces/interface.localrecordlist_actionsHook.php'
  * @package		TYPO3
  * @subpackage	tx_gridelements
  */
-class tx_gridelements_db_list_extraHook implements localRecordList_actionsHook {
+class tx_gridelements_db_list_extraHook implements \TYPO3\CMS\Recordlist\RecordList\RecordListHookInterface {
 
 	/**
 	 * modifies Web>List clip icons (copy, cut, paste, etc.) of a displayed row

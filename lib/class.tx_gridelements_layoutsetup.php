@@ -66,9 +66,9 @@ class tx_gridelements_layoutsetup {
 	}
 
 	/**
-	 * setter for layout setup
+	 * setter for typoscript setup
 	 *
-	 * @param array $layoutSetup
+	 * @param array $typoScriptSetup
 	 */
 	public function setTypoScriptSetup($typoScriptSetup) {
 		$this->typoScriptSetup = $typoScriptSetup;
@@ -146,7 +146,7 @@ class tx_gridelements_layoutsetup {
 	public function cacheCurrentParent($gridContainerId = 0, $doReturn = FALSE) {
 		if($gridContainerId > 0) {
 			if(!$GLOBALS['tx_gridelements']['parentElement'][$gridContainerId]) {
-				$GLOBALS['tx_gridelements']['parentElement'][$gridContainerId] = t3lib_BEfunc::getRecordWSOL('tt_content', $gridContainerId);
+				$GLOBALS['tx_gridelements']['parentElement'][$gridContainerId] = \TYPO3\CMS\Backend\Utility\BackendUtility::getRecordWSOL('tt_content', $gridContainerId);
 			}
 		}
 		if($doReturn === TRUE) {
@@ -239,11 +239,13 @@ class tx_gridelements_layoutsetup {
 	/**
 	 * Returns the item array for form field selection.
 	 *
+	 * @param int $colPos
+	 * @param array $excludeLayouts
 	 * @return  array
 	 */
 	public function getLayoutWizardItems($colPos, $excludeLayouts = array()) {
 		$wizardItems = array();
-		$excludeLayouts = array_flip(t3lib_div::trimExplode(',', $excludeLayouts));
+		$excludeLayouts = array_flip(\TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',', $excludeLayouts));
 		foreach ($this->layoutSetup as $layoutId => $item) {
 
 			if (($colPos == -1 && $item['top_level_layout']) || array_key_exists($item['uid'], $excludeLayouts)) {
@@ -273,13 +275,13 @@ class tx_gridelements_layoutsetup {
 		$layoutSetup = $this->getLayoutSetup($layoutId);
 		// Get flexform file from pi_flexform_ds if pi_flexform_ds_file not set and "FILE:" found in pi_flexform_ds for backward compatibility.
 		if ($layoutSetup['pi_flexform_ds_file']) {
-			$flexformConfiguration = t3lib_div::getURL(t3lib_div::getFileAbsFileName($layoutSetup['pi_flexform_ds_file']));
+			$flexformConfiguration = \TYPO3\CMS\Core\Utility\GeneralUtility::getURL(\TYPO3\CMS\Core\Utility\GeneralUtility::getFileAbsFileName($layoutSetup['pi_flexform_ds_file']));
 		} else if (strpos($layoutSetup['pi_flexform_ds'], 'FILE:') === 0) {
-			$flexformConfiguration = t3lib_div::getURL(t3lib_div::getFileAbsFileName(substr($layoutSetup['pi_flexform_ds'], 5)));
+			$flexformConfiguration = \TYPO3\CMS\Core\Utility\GeneralUtility::getURL(\TYPO3\CMS\Core\Utility\GeneralUtility::getFileAbsFileName(substr($layoutSetup['pi_flexform_ds'], 5)));
 		} else if ($layoutSetup['pi_flexform_ds']) {
 			$flexformConfiguration = $layoutSetup['pi_flexform_ds'];
 		} else {
-			$flexformConfiguration = t3lib_div::getURL(t3lib_div::getFileAbsFileName($this->flexformConfigurationPathAndFileName));
+			$flexformConfiguration = \TYPO3\CMS\Core\Utility\GeneralUtility::getURL(\TYPO3\CMS\Core\Utility\GeneralUtility::getFileAbsFileName($this->flexformConfigurationPathAndFileName));
 		}
 
 		return $flexformConfiguration;
@@ -293,11 +295,11 @@ class tx_gridelements_layoutsetup {
 	 */
 	protected function loadLayoutSetup($pageId) {
 		// Load page TSconfig.
-		$BEfunc = t3lib_div::makeInstance('t3lib_BEfunc');
+		$BEfunc = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Backend\Utility\BackendUtility');
 		$pageTSconfig = $BEfunc->getPagesTSconfig($pageId);
 
 		$excludeLayoutIds = isset($pageTSconfig['tx_gridelements.']['excludeLayoutIds'])
-			? t3lib_div::trimExplode(',', $pageTSconfig['tx_gridelements.']['excludeLayoutIds'])
+			? \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',', $pageTSconfig['tx_gridelements.']['excludeLayoutIds'])
 			: array();
 
 		$overruleRecords = (isset($pageTSconfig['tx_gridelements.']['overruleRecords']) && $pageTSconfig['tx_gridelements.']['overruleRecords'] == '1');
@@ -317,10 +319,10 @@ class tx_gridelements_layoutsetup {
 
 				// Parse icon path for records.
 				if($item['icon']) {
-					$icons = t3lib_div::trimExplode(',', $item['icon']);
+					$icons = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',', $item['icon']);
 					foreach($icons as &$icon) {
 						if (strpos($icon, 'EXT:') === 0) {
-							$icon = str_replace(PATH_site, '../', t3lib_div::getFileAbsFileName($icon));
+							$icon = str_replace(PATH_site, '../', \TYPO3\CMS\Core\Utility\GeneralUtility::getFileAbsFileName($icon));
 						}
 					}
 					$item['icon'] = $icons;
@@ -378,7 +380,7 @@ class tx_gridelements_layoutsetup {
 
 			// Prepend icon path for records.
 			if($item['icon']) {
-				$icons = t3lib_div::trimExplode(',', $item['icon']);
+				$icons = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',', $item['icon']);
 				foreach($icons as &$icon) {
 					$icon = '../' . $GLOBALS['TCA']['tx_gridelements_backend_layout']['ctrl']['selicon_field_path'] . '/' . htmlspecialchars($icon);
 				}
@@ -387,7 +389,7 @@ class tx_gridelements_layoutsetup {
 
 			// parse config
 			if ($item['config']) {
-				$parser = t3lib_div::makeInstance('t3lib_TSparser');
+				$parser = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Core\TypoScript\Parser\TypoScriptParser');
 				$parser->parse($parser->checkIncludeLines($item['config']));
 				if (isset($parser->setup['backend_layout.'])) {
 					$item['config'] = $parser->setup['backend_layout.'];
@@ -400,11 +402,11 @@ class tx_gridelements_layoutsetup {
 
 		if ($overruleRecords === TRUE) {
 			$this->setLayoutSetup(
-				t3lib_div::array_merge_recursive_overrule($gridLayoutConfig, $gridLayoutRecords)
+				\TYPO3\CMS\Core\Utility\GeneralUtility::array_merge_recursive_overrule($gridLayoutConfig, $gridLayoutRecords)
 			);
 		} else {
 			$this->setLayoutSetup(
-				t3lib_div::array_merge_recursive_overrule($gridLayoutRecords, $gridLayoutConfig)
+				\TYPO3\CMS\Core\Utility\GeneralUtility::array_merge_recursive_overrule($gridLayoutRecords, $gridLayoutConfig)
 			);
 		}
 	}

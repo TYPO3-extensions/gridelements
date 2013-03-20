@@ -23,9 +23,9 @@
 	 ***************************************************************/
 
 // Include classes
-require_once (PATH_typo3 . '/sysext/cms/layout/class.tx_cms_layout.php');
+require_once (PATH_typo3 . '/sysext/backend/Classes/View/PageLayoutView.php');
 
-class tx_gridelements_drawitemhookTest extends Tx_Extbase_Tests_Unit_BaseTestCase {
+class tx_gridelements_drawitemhookTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 
 	/**
 	 * test pre process with CType empty
@@ -43,7 +43,7 @@ class tx_gridelements_drawitemhookTest extends Tx_Extbase_Tests_Unit_BaseTestCas
 			->method('renderCTypeShortcut')
 			->will($this->returnValue('shortcut'));
 
-		$parentObject = t3lib_div::makeInstance('tx_cms_layout');
+		$parentObject = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Backend\View\PageLayoutView');
 		$drawItem = TRUE;
 		$headerContent = 'header';
 		$itemContent = '<li>Entry</li>';
@@ -72,7 +72,7 @@ class tx_gridelements_drawitemhookTest extends Tx_Extbase_Tests_Unit_BaseTestCas
 			->method('renderCTypeShortcut')
 			->will($this->returnValue('shortcut'));
 
-		$parentObject = t3lib_div::makeInstance('tx_cms_layout');
+		$parentObject = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Backend\View\PageLayoutView');
 		$drawItem = TRUE;
 		$headerContent = 'header';
 		$itemContent = '<li>Entry</li>';
@@ -102,7 +102,7 @@ class tx_gridelements_drawitemhookTest extends Tx_Extbase_Tests_Unit_BaseTestCas
 			->method('renderCTypeShortcut')
 			->will($this->returnValue('shortcut'));
 
-		$parentObject = t3lib_div::makeInstance('tx_cms_layout');
+		$parentObject = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Backend\View\PageLayoutView');
 		$drawItem = TRUE;
 		$headerContent = 'header';
 		$itemContent = '<li>Entry</li>';
@@ -122,7 +122,7 @@ class tx_gridelements_drawitemhookTest extends Tx_Extbase_Tests_Unit_BaseTestCas
 	 * @test
 	 */
 	public function testSetMultipleColPosValues() {
-		$drawItemHook = t3lib_div::makeInstance('tx_gridelements_drawItemHook');
+		$drawItemHook = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_gridelements_drawItemHook');
 
 		$parserRows = NULL;
 		$colPosValues = NULL;

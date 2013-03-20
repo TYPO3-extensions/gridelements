@@ -64,7 +64,7 @@ class tx_gridelements_itemsprocfunc_colPosList extends tx_gridelements_itemsproc
 		if($layout) {
 			if($CType != '' && count($layout['__items']) > 0) {
 				foreach($layout['__items'] as $itemKey => $itemArray) {
-					if($itemArray[3] != '' && !t3lib_div::inList($itemArray[3], $CType) && !t3lib_div::inList($itemArray[3], '*')) {
+					if($itemArray[3] != '' && !\TYPO3\CMS\Core\Utility\GeneralUtility::inList($itemArray[3], $CType) && !\TYPO3\CMS\Core\Utility\GeneralUtility::inList($itemArray[3], '*')) {
 						unset($layout['__items'][$itemKey]);
 					}
 				}

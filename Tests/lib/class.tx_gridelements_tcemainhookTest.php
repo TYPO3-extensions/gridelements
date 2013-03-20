@@ -22,7 +22,7 @@
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-class tx_gridelements_tcemainhookTest extends Tx_Extbase_Tests_Unit_BaseTestCase {
+class tx_gridelements_tcemainhookTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 
 	/**
 	 * @var t3lib_db
@@ -51,13 +51,13 @@ class tx_gridelements_tcemainhookTest extends Tx_Extbase_Tests_Unit_BaseTestCase
 	 * @test
 	 */
 	public function testProcessDatamapAfterDatabaseOperations() {
-		$hook = t3lib_div::makeInstance('tx_gridelements_TCEmainHook');
+		$hook = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_gridelements_TCEmainHook');
 
 		$status = '';
 		$table = '';
 		$id = 12;
 		$fieldArray = array();
-		$parentObj = t3lib_div::makeInstance('t3lib_TCEmain');
+		$parentObj = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('t3lib_TCEmain');
 		$parentObj->substNEWwithIDs[$id] = 'Hello world';
 		unset($GLOBALS['actionOnGridElement']);
 		$hook->processDatamap_afterDatabaseOperations($status, $table, $id, $fieldArray, $parentObj);
@@ -79,7 +79,7 @@ class tx_gridelements_tcemainhookTest extends Tx_Extbase_Tests_Unit_BaseTestCase
 	 * @test
 	 */
 	public function processDatamapPostProcessFieldArray() {
-		$hook = t3lib_div::makeInstance('tx_gridelements_TCEmainHook');
+		$hook = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_gridelements_TCEmainHook');
 
 		$status = '';
 		$table = 'tt_content';

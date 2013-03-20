@@ -22,7 +22,7 @@
 	 *  This copyright notice MUST APPEAR in all copies of the script!
 	 ***************************************************************/
 
-class tx_gridelements_db_list_extra_hookTest extends Tx_Extbase_Tests_Unit_BaseTestCase {
+class tx_gridelements_db_list_extra_hookTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 
 	/**
 	 * test make clip
@@ -30,7 +30,7 @@ class tx_gridelements_db_list_extra_hookTest extends Tx_Extbase_Tests_Unit_BaseT
 	 * @test
 	 */
 	public function testMakeClip() {
-		$dbList = t3lib_div::makeInstance('tx_gridelements_db_list_extraHook');
+		$dbList = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_gridelements_db_list_extraHook');
 
 		$table = 'pages';
 		$row = array(
@@ -50,7 +50,7 @@ class tx_gridelements_db_list_extra_hookTest extends Tx_Extbase_Tests_Unit_BaseT
 	 * @test
 	 */
 	public function testMakeControl() {
-		$dbList = t3lib_div::makeInstance('tx_gridelements_db_list_extraHook');
+		$dbList = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_gridelements_db_list_extraHook');
 
 		$table = 'pages';
 		$row = array(
@@ -70,7 +70,7 @@ class tx_gridelements_db_list_extra_hookTest extends Tx_Extbase_Tests_Unit_BaseT
 	 * @test
 	 */
 	public function testRenderListHeader() {
-		$dbList = t3lib_div::makeInstance('tx_gridelements_db_list_extraHook');
+		$dbList = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_gridelements_db_list_extraHook');
 
 		$table = 'pages';
 		$currentIdList = '12,23,34';
@@ -87,7 +87,7 @@ class tx_gridelements_db_list_extra_hookTest extends Tx_Extbase_Tests_Unit_BaseT
 	 * @test
 	 */
 	public function testRenderListHeaderActions() {
-		$dbList = t3lib_div::makeInstance('tx_gridelements_db_list_extraHook');
+		$dbList = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_gridelements_db_list_extraHook');
 
 		$table = 'pages';
 		$currentIdList = '12,23,34';

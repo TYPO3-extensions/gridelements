@@ -36,12 +36,12 @@ class tx_gridelements_tcemain_abstract {
 	protected $pageUid;
 
 	/**
-	 * @var t3lib_TCEmain
+	 * @var \TYPO3\CMS\Core\DataHandling\DataHandler
 	 */
 	protected $tceMain;
 
 	/**
-	 * @var t3lib_TCEForms
+	 * @var \TYPO3\CMS\Backend\Form\FormEngine
 	 */
 	protected $tceForms;
 
@@ -51,17 +51,17 @@ class tx_gridelements_tcemain_abstract {
 	protected $layoutSetup;
 
 	/**
-	 * @var t3lib_BEfunc
+	 * @var \TYPO3\CMS\Backend\Utility\BackendUtility
 	 */
 	protected $beFunc;
 
 	/**
 	 * inject tce forms
 	 *
-	 * @param t3lib_TCEForms $tceForms
+	 * @param \TYPO3\CMS\Backend\Form\FormEngine $tceForms
 	 * @return void
 	 */
-	public function injectTceForms(t3lib_TCEForms $tceForms) {
+	public function injectTceForms(\TYPO3\CMS\Backend\Form\FormEngine $tceForms) {
 		$this->tceForms = $tceForms;
 	}
 
@@ -90,23 +90,23 @@ class tx_gridelements_tcemain_abstract {
 	 *
 	 * @param   string $table: The name of the table the data should be saved to
 	 * @param   integer $pageUid: The uid of the page we are currently working on
-	 * @param   t3lib_TCEmain $tceMain
+	 * @param   \TYPO3\CMS\Core\DataHandling\DataHandler $tceMain
 	 * @return void
 	 */
-	public function init($table, $pageUid, t3lib_TCEmain $tceMain) {
+	public function init($table, $pageUid, \TYPO3\CMS\Core\DataHandling\DataHandler $tceMain) {
 		$this->setTable($table);
 		$this->setPageUid($pageUid);
 		$this->setTceMain($tceMain);
 		if (!$this->layoutSetup instanceof tx_gridelements_layoutsetup) {
 			$this->injectLayoutSetup(
-				t3lib_div::makeInstance('tx_gridelements_layoutsetup')->init($pageUid)
+				\TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_gridelements_layoutsetup')->init($pageUid)
 			);
 		}
 		if (!$this->beFunc instanceof wrapperForT3libBeFunc) {
-			$this->injectBeFunc(t3lib_div::makeInstance('wrapperForT3libBeFunc'));
+			$this->injectBeFunc(\TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('wrapperForT3libBeFunc'));
 		}
-		if (!$this->tceForms instanceof t3lib_TCEForms) {
-			$this->injectTceForms(t3lib_div::makeInstance('t3lib_TCEForms'));
+		if (!$this->tceForms instanceof \TYPO3\CMS\Backend\Form\FormEngine) {
+			$this->injectTceForms(\TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Backend\Form\FormEngine'));
 		}
 	}
 
@@ -151,17 +151,17 @@ class tx_gridelements_tcemain_abstract {
 	/**
 	 * setter for tceMain object
 	 *
-	 * @param t3lib_TCEmain $tceMain
+	 * @param \TYPO3\CMS\Core\DataHandling\DataHandler $tceMain
 	 * @return void
 	 */
-	public function setTceMain(t3lib_TCEmain $tceMain) {
+	public function setTceMain(\TYPO3\CMS\Core\DataHandling\DataHandler $tceMain) {
 		$this->tceMain = $tceMain;
 	}
 
 	/**
 	 * getter for tceMain
 	 *
-	 * @return t3lib_TCEmain tceMain
+	 * @return \TYPO3\CMS\Core\DataHandling\DataHandler tceMain
 	 */
 	public function getTceMain() {
 		return $this->tceMain;
@@ -171,7 +171,6 @@ class tx_gridelements_tcemain_abstract {
 	 * Function to handle record actions between different grid containers
 	 *
 	 * @param array $containerUpdateArray
-	 * @param integer $newElement: Set this to 1 for updates of newly inserted elements or -1 when elements are removed from a container
 	 * @internal param int $uid : The uid of the grid container that needs an update
 	 * @return void
 	 */
