@@ -29,7 +29,7 @@ if(typeof GridElementsDD === "undefined"){
 			var currentColClass = pageColumnsAllowedCTypes[i].split(':');
 			var currentCol = Ext.select('td.t3-page-column-' + currentColClass[0]);
 			Ext.each(currentCol, function(column) {
-				if(Ext.get(column).hasClass('t3-gridCell')) {
+				if(!Ext.get(column).hasClass('t3-gridCell')) {
 					Ext.get(column).addClass(currentColClass[1]);
 				}
 			});
