@@ -16,13 +16,13 @@ $EM_CONF[$_EXTKEY] = array(
 This approach is an alternative to TemplaVoila to store relations normalized in the database without using XML.',
 	'category' => 'be',
 	'shy' => 0,
-	'version' => '1.4.0',
+	'version' => '2.0.0-dev',
 	'dependencies' => 'cms',
 	'conflicts' => 'templavoila',
 	'priority' => 'bottom',
 	'loadOrder' => '',
 	'module' => '',
-	'state' => 'stable',
+	'state' => 'beta',
 	'uploadfolder' => 1,
 	'createDirs' => '',
 	'modify_tables' => 'tt_content',
@@ -37,10 +37,11 @@ This approach is an alternative to TemplaVoila to store relations normalized in 
 		'depends' => array(
 			'cms' => '',
 			'php' => '5.3.0-0.0.0',
-			'typo3' => '4.5.0-0.0.0',
+			'typo3' => '6.0.0-0.0.0',
 		),
 		'conflicts' => array(
 			'templavoila' => '',
+			'jfmulticontent' => '',
 		),
 		'suggests' => array(
 		),
