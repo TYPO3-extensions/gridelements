@@ -7,13 +7,11 @@ if(typeof GridElementsDD === "undefined"){
 	top.geSprites = {};
 	top.backPath = '';
 
-	if(top.TYPO3.Components !== undefined) {
-		top.TYPO3.Components.PageModule = {
-			enableDragDrop: function() {
-				return true;
-			}
+	if(typeof TYPO3.Components.PageModule.init !== 'undefined') {
+		TYPO3.Components.PageModule.init = function() {
+			this.enableHighlighting();
 		}
-	}
+	};
 
 	if(Ext.get('ext-cms-layout-db-layout-php')) {
 
