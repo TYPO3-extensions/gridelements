@@ -649,7 +649,7 @@ GridElementsDD = function() {
 				arrNewicons = [];
 
 			// add all other ”New" icons to array
-			Ext.each(Ext.select('.t3-icon-document-new', true, Ext.select('.t3-row-header').elements).elements, function(){
+			Ext.each(Ext.select('.t3-icon-document-new', true, Ext.select('.t3-page-ce-wrapper-new-ce').elements).elements, function(){
 				arrNewicons.push(this);
 			});
 
@@ -830,10 +830,10 @@ GridElementsDD = function() {
 		addPasteAndRefIcons: function(clipboardItemUid) {
 			// console.log('addPasteAndRefIcons reached');
 			// add paste icons to column headers
-			colHeader = Ext.select('.t3-page-colHeader').elements;
+			colHeader = Ext.select('.t3-page-ce-wrapper-new-ce').elements;
 			Ext.each(colHeader, function(currentColHeader) {
 				var dropZoneID = null,
-					parentCell = Ext.get(currentColHeader).parent();
+					parentCell = Ext.get(currentColHeader).parent('.t3-page-column');
 
 				if(Ext.get(parentCell).id.substr(0, 6) != 'column') {
 					var parentCellClass = Ext.get(parentCell).dom.className.split(' ');
@@ -849,7 +849,7 @@ GridElementsDD = function() {
 
 				// dropZoneID now has this format: column-1234567x0 or DD_PAGECOLUMNx0
 				// the number after the "x" can be positive and negative, e.g. DD_PAGECOLUMNx-2 for "unused elements"
-				var lastColHeaderLink = Ext.get(currentColHeader).select('.t3-page-colHeader-icons a:last').elements[0];
+				var lastColHeaderLink = Ext.get(currentColHeader).select('a:last').elements[0];
 
 				// add "paste copy" icon
 				var

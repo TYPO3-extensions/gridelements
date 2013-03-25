@@ -239,11 +239,9 @@ class tx_gridelements_drawItemHook implements \TYPO3\CMS\Backend\View\PageLayout
 				$items = array();
 			}
 			// if there are any items, we can create the HTML for them just like in the original TCEform
-			if (count($items) > 0) {
-				$this->renderSingleGridColumn($parentObject, $items, $colPos, $gridContent, $editUidList);
-			}
+			$this->renderSingleGridColumn($parentObject, $items, $colPos, $gridContent, $row, $editUidList);
 			// we will need a header for each of the columns to activate mass editing for elements of that column
-			$this->setColumnHeader($parentObject, $head, $colPos, $row, $values['name'], $editUidList);
+			$this->setColumnHeader($parentObject, $head, $colPos, $values['name'], $editUidList);
 		}
 	}
 
@@ -285,44 +283,20 @@ class tx_gridelements_drawItemHook implements \TYPO3\CMS\Backend\View\PageLayout
 	/**
 	 * renders a single column of a grid layout and sets the edit uid list
 	 *
-	 * @param \TYPO3\CMS\Backend\View\PageLayoutView     $parentObject: The parent object that triggered this hook
-	 * @param array             $items: The content data of the column to be rendered
-	 * @param int               $colPos: The column position we want to get the content for
-	 * @param array             $gridContent: The rendered content data of the grid column
-	 * @param array             $editUidList: determines if we will get edit icons or not
+	 * @param \TYPO3\CMS\Backend\View\PageLayoutView $parentObject: The parent object that triggered this hook
+	 * @param array $items: The content data of the column to be rendered
+	 * @param int $colPos: The column position we want to get the content for
+	 * @param array $gridContent: The rendered content data of the grid column
+	 * @param $row
+	 * @param array $editUidList: determines if we will get edit icons or not
 	 * @return void
 	 */
-	public function renderSingleGridColumn(\TYPO3\CMS\Backend\View\PageLayoutView $parentObject, &$items, &$colPos, &$gridContent, &$editUidList) {
-		foreach ($items as $itemRow) {
-			if (is_array($itemRow)) {
-				$statusHidden = $parentObject->isDisabled('tt_content', $itemRow)
-					? ' t3-page-ce-hidden'
-					: '';
-				$gridContent[$colPos] .= '<div class="t3-page-ce' . $statusHidden . '"><div class="t3-page-ce-dragitem">' .
-					$this->renderSingleElementHTML($parentObject, $itemRow) .	'</div></div></div>';
-				$editUidList[$colPos] .= $editUidList[$colPos]
-					? ',' . $itemRow['uid']
-					: $itemRow['uid'];
-			}
-		}
-	}
+	public function renderSingleGridColumn(\TYPO3\CMS\Backend\View\PageLayoutView $parentObject, &$items, &$colPos, &$gridContent, $row, &$editUidList) {
 
-	/**
-	 * Sets the headers for a grid before content and headers are put together
-	 *
-	 * @param \TYPO3\CMS\Backend\View\PageLayoutView     $parentObject: The parent object that triggered this hook
-	 * @param array             $head: The collected item data rows
-	 * @param int               $colPos: The column position we want to get a header for
-	 * @param array             $row: The current data row for the container item
-	 * @param string            $name: The name of the header
-	 * @param array             $editUidList: determines if we will get edit icons or not
-	 * @return void
-	 */
-	public function setColumnHeader(\TYPO3\CMS\Backend\View\PageLayoutView $parentObject, &$head, &$colPos, &$row, &$name, &$editUidList) {
 		$specificUid = tx_gridelements_helper::getInstance()->getSpecificUid($row);
 
 		if ($colPos < 32768) {
-			$newP = $parentObject->newContentElementOnClick(
+			$newParams = $parentObject->newContentElementOnClick(
 				$row['pid'],
 				'-1' .
 					'&tx_gridelements_container=' . $specificUid .
@@ -330,13 +304,67 @@ class tx_gridelements_drawItemHook implements \TYPO3\CMS\Backend\View\PageLayout
 				$parentObject->lP
 			);
 		}
+
+		$gridContent[$colPos] .= '
+			<div class="t3-page-ce">
+				<div>
+					<div class="t3-page-ce-dropzone">
+						<div class="t3-page-ce-wrapper-new-ce">
+							<a href="#" onclick="' . htmlspecialchars($newParams) . '" title="' . $GLOBALS['LANG']->getLL('newInColumn', TRUE) . '">' .
+								\TYPO3\CMS\Backend\Utility\IconUtility::getSpriteIcon('actions-document-new') .
+							'</a>
+						</div>
+					</div>
+				</div>
+			</div>';
+
+		if(count($items) > 0) {
+			foreach ($items as $itemRow) {
+				if (is_array($itemRow)) {
+					$statusHidden = $parentObject->isDisabled('tt_content', $itemRow)
+						? ' t3-page-ce-hidden'
+						: '';
+					$gridContent[$colPos] .= '
+				<div class="t3-page-ce' . $statusHidden . '"><div class="t3-page-ce-dragitem">' .
+						$this->renderSingleElementHTML($parentObject, $itemRow) . '</div></div>';
+					// New content element:
+					if ($parentObject->option_newWizard) {
+						$onClick = 'window.location.href=\'db_new_content_el.php?id=' . $itemRow['pid'] . '&sys_language_uid=' . $itemRow['sys_language_uid'] . '&colPos=' . $itemRow['colPos'] . '&uid_pid=' . -$itemRow['uid'] . '&returnUrl=' . rawurlencode(\TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv('REQUEST_URI')) . '\';';
+					} else {
+						$params = '&edit[tt_content][' . -$itemRow['uid'] . ']=new';
+						$onClick = \TYPO3\CMS\Backend\Utility\BackendUtility::editOnClick($params, $this->backPath);
+					}
+					$gridContent[$colPos] .= '
+				<div class="t3-page-ce-dropzone"><div class="t3-page-ce-wrapper-new-ce">
+					<a href="#" onclick="' . htmlspecialchars($onClick) . '" title="' . $GLOBALS['LANG']->getLL('newRecordHere', 1) . '">' . \TYPO3\CMS\Backend\Utility\IconUtility::getSpriteIcon('actions-document-new') . '</a>
+				</div></div></div>
+					';
+					$editUidList[$colPos] .= $editUidList[$colPos]
+						? ',' . $itemRow['uid']
+						: $itemRow['uid'];
+				}
+			}
+		}
+	}
+
+	/**
+	 * Sets the headers for a grid before content and headers are put together
+	 *
+	 * @param \TYPO3\CMS\Backend\View\PageLayoutView $parentObject: The parent object that triggered this hook
+	 * @param array $head: The collected item data rows
+	 * @param int $colPos: The column position we want to get a header for
+	 * @param string $name: The name of the header
+	 * @param array $editUidList: determines if we will get edit icons or not
+	 * @internal param array $row : The current data row for the container item
+	 * @return void
+	 */
+	public function setColumnHeader(\TYPO3\CMS\Backend\View\PageLayoutView $parentObject, &$head, &$colPos, &$name, &$editUidList) {
 		$head[$colPos] = $this->tt_content_drawColHeader(
 			$name,
 			($parentObject->doEdit && $editUidList[$colPos])
 				? '&edit[tt_content][' . $editUidList[$colPos] . ']=edit' .
 				$parentObject->pageTitleParamForAltDoc
 				: '',
-			$newP,
 			$parentObject);
 	}
 
@@ -345,21 +373,14 @@ class tx_gridelements_drawItemHook implements \TYPO3\CMS\Backend\View\PageLayout
 	 *
 	 * @param string $colName Column name
 	 * @param string $editParams Edit params (Syntax: &edit[...] for alt_doc.php)
-	 * @param string $newParams New element params (Syntax: &edit[...] for alt_doc.php)
 	 * @param \TYPO3\CMS\Backend\View\PageLayoutView $parentObject
 	 * @return string HTML table
 	 */
-	function tt_content_drawColHeader($colName, $editParams, $newParams, &$parentObject) {
+	function tt_content_drawColHeader($colName, $editParams, &$parentObject) {
 
 		$icons = '';
 		// Create command links:
 		if ($parentObject->tt_contentConfig['showCommands']) {
-			// New record:
-			if ($newParams) {
-				$icons .= '<a href="#" onclick="' . htmlspecialchars($newParams) . '" title="' . $GLOBALS['LANG']->getLL('newInColumn', TRUE) . '">' .
-					\TYPO3\CMS\Backend\Utility\IconUtility::getSpriteIcon('actions-document-new') .
-					'</a>';
-			}
 			// Edit whole of column:
 			if ($editParams) {
 				$icons .= '<a href="#" onclick="' . htmlspecialchars(\TYPO3\CMS\Backend\Utility\BackendUtility::editOnClick($editParams, $parentObject->backPath)) . '" title="' . $GLOBALS['LANG']->getLL('editColumn', TRUE) . '">' .

@@ -9,7 +9,7 @@ if(typeof GridElementsDD === "undefined"){
 
 	if(typeof TYPO3.Components.PageModule.init !== 'undefined') {
 		TYPO3.Components.PageModule.init = function() {
-			this.enableHighlighting();
+			// this.enableHighlighting();
 		}
 	};
 
@@ -84,6 +84,12 @@ if(typeof GridElementsDD === "undefined"){
 				if(this.select('> div > .t3-page-ce-body').first()) {
 					this.select('> div > .t3-page-ce-body').first().addClass('t3-page-ce-body-active');
 				}
+				if(this.select('> .t3-page-ce-dropzone > .t3-page-ce-wrapper-new-ce').first()) {
+					this.select('> .t3-page-ce-dropzone > .t3-page-ce-wrapper-new-ce').first().addClass('t3-page-ce-wrapper-new-ce-active');
+				}
+				if(Ext.get(this.findParent('.t3-page-column')).select('> div > div > .t3-page-ce-dropzone > .t3-page-ce-wrapper-new-ce').first()) {
+					Ext.get(this.findParent('.t3-page-column')).select('> div > div > .t3-page-ce-dropzone > .t3-page-ce-wrapper-new-ce').first().addClass('t3-page-ce-wrapper-new-ce-active');
+				}
 
 				var gridTable = this.select('> .t3-page-ce-body table.t3-gridTable').first();
 				if(gridTable){
@@ -96,6 +102,12 @@ if(typeof GridElementsDD === "undefined"){
 				}
 				if(this.select('> div > .t3-page-ce-body').first()) {
 					this.select('> div > .t3-page-ce-body').first().removeClass('t3-page-ce-body-active');
+				}
+				if(this.select('> .t3-page-ce-dropzone > .t3-page-ce-wrapper-new-ce').first()) {
+					this.select('> .t3-page-ce-dropzone > .t3-page-ce-wrapper-new-ce').first().removeClass('t3-page-ce-wrapper-new-ce-active');
+				}
+				if(Ext.get(this.findParent('.t3-page-column')).select('> div > div > .t3-page-ce-dropzone > .t3-page-ce-wrapper-new-ce').first()) {
+					Ext.get(this.findParent('.t3-page-column')).select('> div > div > .t3-page-ce-dropzone > .t3-page-ce-wrapper-new-ce').first().removeClass('t3-page-ce-wrapper-new-ce-active');
 				}
 
 				var gridTable = this.select('> .t3-page-ce-body table.t3-gridTable').first();

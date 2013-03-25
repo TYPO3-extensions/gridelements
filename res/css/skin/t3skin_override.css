@@ -45,7 +45,7 @@ td.t3-gridCell-unassigned div.t3-row-header div {
 	font-size: 13px;
 	padding-left: 0;
 	padding-right: 0;
-	min-width: 150px;
+	min-width: 170px;
 }
 
 .t3-page-ce .t3-page-ce-header-active {
@@ -57,10 +57,12 @@ td.t3-gridCell-unassigned div.t3-row-header div {
 
 .t3-row-header {
 	background-color: inherit;
+	cursor: move!important;
 }
 
 .t3-page-ce .t3-row-header {
 	visibility: hidden;
+	background: none;
 }
 
 .t3-page-ce.active .t3-row-header {
@@ -79,12 +81,43 @@ td.t3-gridCell-unassigned div.t3-row-header div {
 	visibility: hidden;
 }
 
+.t3-page-ce .ce-icons-left,
+.t3-page-ce .ce-icons {
+	float: none!important;
+}
+
+.t3-page-ce .ce-icons-left a,
+.t3-page-ce .ce-icons-left span,
+.t3-page-ce .ce-icons a {
+	float: none!important;
+	display: inline-block;
+}
+
+.t3-page-ce .t3-page-ce-icons-move {
+	float: right!important;
+}
+
 .t3-page-ce .t3-page-colHeader .t3-page-colHeader-icons {
 	visibility: hidden !important;
 }
 
-.t3-page-ce .t3-page-colHeader .t3-page-colHeader-icons-active {
+.t3-page-ce .t3-icon-gridelements-pastecopy,
+.t3-page-ce .t3-icon-gridelements-pasteref,
+.t3-page-ce .t3-icon-gridelements-copyfrompage {
+	visibility: hidden;
+}
+
+.t3-page-ce .t3-page-colHeader .t3-page-colHeader-icons-active,
+.t3-page-ce-wrapper-new-ce-active .t3-icon,
+.active .t3-page-colHeader .t3-page-colHeader-icons {
 	visibility: visible !important;
+	-webkit-transform: translateZ(0); /*fixes Chrome visibility bug*/
+}
+
+.active .t3-page-ce .t3-page-ce-wrapper-new-ce .t3-icon,
+.active .t3-page-ce .t3-page-colHeader .t3-page-colHeader-icons {
+	visibility: hidden !important;
+	-webkit-transform: translateZ(0); /*fixes Chrome visibility bug*/
 }
 
 .t3-page-ce-body-active {
@@ -115,7 +148,8 @@ td.t3-gridCell-unassigned div.t3-row-header div {
 .t3-page-colHeader-label {
 	white-space: nowrap;
 	text-align: center;
-	margin: 0 50px;
+	margin: 0 40px;
+	padding-left: 5px;
 }
 
 .t3-gridContainer--1 {
@@ -329,15 +363,8 @@ td.t3-gridCell-unassigned div.t3-row-header div {
 	background: #F8F8F8;
 }
 
-.active .t3-page-ce .t3-row-header .ce-icons, .active .t3-page-ce .t3-row-header .ce-icons-left {
-		visibility: hidden;
-}
-
-.t3-page-ce-header-active .ce-icons, .t3-page-ce-header-active .ce-icons-left {
-	visibility: visible;
-}
-
-
-.t3-page-ce-header-active .ce-icons, .t3-page-ce-header-active .ce-icons-left {
-	visibility: visible!important;
+.t3-page-colHeader,
+.t3-page-ce-dragitem {
+	padding-top: 10px!important;
+	cursor: default!important;
 }

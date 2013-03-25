@@ -40,13 +40,13 @@
 			<label index="hideContentPreview">Hide content element preview.</label>
 			<label index="tx_gridelements_clickmenu_pastereference">Paste reference after</label>
 			<label index="tx_gridelements_togglecontent">Toggle Content</label>
-			<label index="tx_gridelements_js.pastecopy">Paste copy into</label>
-			<label index="tx_gridelements_js.pasteref">Paste reference into</label>
+			<label index="tx_gridelements_js.pastecopy">Paste copy at this place</label>
+			<label index="tx_gridelements_js.pasteref">Paste reference at this place</label>
 			<label index="tx_gridelements_js.drophere">Drop Here</label>
 			<label index="tx_gridelements_js.missingcontenttemplate">Missing Content Template</label>
 			<label index="tx_gridelements_js.newcontentelementheader">New</label>
 			<label index="tx_gridelements_js.allowedElementTypes">Allowed CE</label>
-			<label index="tx_gridelements_js.copyfrompage">Copy content from another page</label>
+			<label index="tx_gridelements_js.copyfrompage">Copy content from another page to this place</label>
 			<label index="list.columnName">Column:</label>
 			<label index="list.collapseElement">Collapse /expand element</label>
 		</languageKey>
@@ -83,7 +83,7 @@
 			<label index="dragAndDropHideNewElementWizardInfoOverlay">Info-Overlays beim Drag-In-Wizard für neue Inhaltselemente ausblenden.</label>
 			<label index="hideColumnHeaders">Spaltenüberschriften ausblenden.</label>
 			<label index="hideContentPreview">Vorschau der Inhaltselemente ausblenden.</label>
-			<label index="tx_gridelements_clickmenu_pastereference">Verknüpfung danach einfügen</label>
+			<label index="tx_gridelements_clickmenu_pastereference">Referenz danach einfügen</label>
 			<label index="tx_gridelements_togglecontent">Inhaltsanzeige umschalten</label>
 			<label index="tx_gridelements_js.pastecopy">Kopie hier einfügen</label>
 			<label index="tx_gridelements_js.pasteref">Referenz hier einfügen</label>
@@ -91,7 +91,7 @@
 			<label index="tx_gridelements_js.missingcontenttemplate">Kein Content Template gefunden</label>
 			<label index="tx_gridelements_js.newcontentelementheader">Neu</label>
 			<label index="tx_gridelements_js.allowedElementTypes">Zulässige CE</label>
-			<label index="tx_gridelements_js.copyfrompage">Inhalt von anderer Seite kopieren</label>
+			<label index="tx_gridelements_js.copyfrompage">Inhalt von anderer Seite hierhin kopieren</label>
 			<label index="list.columnName">Spalte:</label>
 			<label index="list.collapseElement">Element auf- / zusammenklappen</label>
 		</languageKey>
@@ -134,7 +134,7 @@
 			<label index="tx_gridelements_js.missingcontenttemplate">Ontbrekend content sjabloon</label>
 			<label index="tx_gridelements_js.newcontentelementheader">Nieuw</label>
 			<label index="tx_gridelements_js.allowedElementTypes">Toegestane CE</label>
-			<label index="tx_gridelements_js.copyfrompage">[NL] Copy content from another page</label>
+			<label index="tx_gridelements_js.copyfrompage">[NL] Copy content from another page to this place</label>
 			<label index="list.columnName">Kolom:</label>
 			<label index="list.collapseElement">Samenvouwen / uitvouwen element</label>
 		</languageKey>
