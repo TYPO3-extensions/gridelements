@@ -638,7 +638,7 @@ GridElementsDD = function() {
 					rel: '',
 					cn: {
 						tag: 'span',
-						class: top.geSprites.copyfrompage,
+						'class': top.geSprites.copyfrompage,
 						html: '&nbsp;'
 					}
 				},
@@ -859,7 +859,7 @@ GridElementsDD = function() {
 						title: TYPO3.l10n.localize('tx_gridelements_js.pastecopy'),
 						cn: {
 							tag:'span',
-							class: top.geSprites.pastecopy,
+							'class': top.geSprites.pastecopy,
 							html:'&nbsp;'
 						}
 					},
@@ -893,7 +893,7 @@ GridElementsDD = function() {
 							title: TYPO3.l10n.localize('tx_gridelements_js.pasteref'),
 							cn: {
 								tag:'span',
-								class: top.geSprites.pasteref,
+								'class': top.geSprites.pasteref,
 								html:'&nbsp;'
 							}
 						},

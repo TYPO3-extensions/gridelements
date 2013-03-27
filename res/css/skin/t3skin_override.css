@@ -2,7 +2,8 @@
 	margin-top: 10px;
 }
 
-td.t3-page-column {
+td.t3-page-column,
+td.t3-page-lang-column {
 	max-width: none!important;
 	min-width: 0px!important;
 	padding: 0 10px 3px;
@@ -39,13 +40,14 @@ td.t3-gridCell-unassigned div.t3-row-header div {
 }
 
 .t3-page-colHeader {
-	border-bottom: 1px solid #5B5B5B;
+	border-bottom: none!important;
 	color: #aaaaaa !important;
 	font-family: Verdana,sans-serif;
 	font-size: 13px;
 	padding-left: 0;
 	padding-right: 0;
 	min-width: 170px;
+	margin-bottom: -2px;
 }
 
 .t3-page-ce .t3-page-ce-header-active {
@@ -136,6 +138,7 @@ td.t3-gridCell-unassigned div.t3-row-header div {
 .t3-page-colHeader {
 	margin-top: 5px;
 	margin-bottom: 0px;
+	padding-bottom: 2px;
 	background-image: inherit;
 }
 
@@ -334,7 +337,7 @@ td.t3-gridCell-unassigned div.t3-row-header div {
 	background-position: 0 -64px;
 }
 .t3-page-ce-dropzone {
-	margin: 3px 0px;
+	margin: 8px 0px 2px 0px;
 }
 
 .t3-gridCell .t3-page-colHeader {
@@ -365,6 +368,17 @@ td.t3-gridCell-unassigned div.t3-row-header div {
 
 .t3-page-colHeader,
 .t3-page-ce-dragitem {
-	padding-top: 10px!important;
+	padding: 0px!important;
 	cursor: default!important;
 }
+
+.t3-page-ce-wrapper {
+	margin-top: 0px;
+	margin-bottom: 5px;
+	padding: 0px 7px;
+}
+
+.t3-page-ce-body-inner {
+	padding: 5px 5px 0px 5px
+}
+

@@ -306,8 +306,8 @@ class tx_gridelements_drawItemHook implements \TYPO3\CMS\Backend\View\PageLayout
 		}
 
 		$gridContent[$colPos] .= '
+			<div class="t3-page-ce-wrapper">
 			<div class="t3-page-ce">
-				<div>
 					<div class="t3-page-ce-dropzone">
 						<div class="t3-page-ce-wrapper-new-ce">
 							<a href="#" onclick="' . htmlspecialchars($newParams) . '" title="' . $GLOBALS['LANG']->getLL('newInColumn', TRUE) . '">' .
@@ -315,7 +315,6 @@ class tx_gridelements_drawItemHook implements \TYPO3\CMS\Backend\View\PageLayout
 							'</a>
 						</div>
 					</div>
-				</div>
 			</div>';
 
 		if(count($items) > 0) {
@@ -345,6 +344,8 @@ class tx_gridelements_drawItemHook implements \TYPO3\CMS\Backend\View\PageLayout
 				}
 			}
 		}
+
+		$gridContent[$colPos] .= '</div>';
 	}
 
 	/**

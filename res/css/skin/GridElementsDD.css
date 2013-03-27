@@ -9,19 +9,22 @@
 }
 .x-dd-droptargetarea {
 	visibility: hidden;
-	color: #9c8c2c;
-	background-color: #fefecb;
+	color: #73ab61;
+	background-color: #c8d9c3;
 	text-align: center;
 	position: relative;
-	margin: 2px 0 -18px 0;
-	border: 1px dotted #dfc054;
+	margin: 2px 0px -25px 0px;
+	line-height: 17px;
+	height: 17px;
+	border: 1px dotted #73ab61;
 }
 .x-dd-droptargetarea.x-dd-showdroptarget {
 	visibility: visible;
+	z-index: 10000;
 }
 .x-dd-droptargetarea.x-dd-showdroptarget.x-dd-overdroparea {
-	background: #b27f43;
-	color: white;
+	background: #73ab61;
+	color: #ffffff;
 }
 .x-dd-dragging {
 	opacity: 0.6;
@@ -127,3 +130,4 @@
 .draggableiteminfotext {
 	float: right;
 }
+
