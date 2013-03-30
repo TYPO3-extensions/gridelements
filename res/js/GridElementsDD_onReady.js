@@ -75,6 +75,33 @@ if(typeof GridElementsDD === "undefined"){
 		});
 
 		// add "active" class to t3-page-ce-header/body on hover
+		var contentColumns = Ext.select('.t3-page-ce-wrapper').elements;
+		Ext.each(contentColumns, function(contentColumn){
+			Ext.get(contentColumn).addListener('mouseenter', function(e, t){
+				if(this.select('> .t3-page-ce-dropzone > .t3-page-ce-wrapper-new-ce').first()) {
+					this.select('> .t3-page-ce-dropzone > .t3-page-ce-wrapper-new-ce').first().addClass('t3-page-ce-wrapper-new-ce-active');
+				}
+				if(this.select('> div > .t3-page-ce-dropzone > .t3-page-ce-wrapper-new-ce').first()) {
+					this.select('> div > .t3-page-ce-dropzone > .t3-page-ce-wrapper-new-ce').first().addClass('t3-page-ce-wrapper-new-ce-active');
+				}
+				var gridTable = this.select('> .t3-page-ce-body table.t3-gridTable').first();
+				if(gridTable){
+					gridTable.select('> tbody > tr > td > .t3-page-colHeader > .t3-page-colHeader-icons').addClass('t3-page-colHeader-icons-active');
+				}
+			});
+			Ext.get(contentColumn).addListener('mouseleave', function(e, t){
+				if(this.select('> .t3-page-ce-dropzone > .t3-page-ce-wrapper-new-ce').first()) {
+					this.select('> .t3-page-ce-dropzone > .t3-page-ce-wrapper-new-ce').first().removeClass('t3-page-ce-wrapper-new-ce-active');
+				}
+				if(this.select('> div > .t3-page-ce-dropzone > .t3-page-ce-wrapper-new-ce').first()) {
+					this.select('> div > .t3-page-ce-dropzone > .t3-page-ce-wrapper-new-ce').first().removeClass('t3-page-ce-wrapper-new-ce-active');
+				}
+				var gridTable = this.select('> .t3-page-ce-body table.t3-gridTable').first();
+				if(gridTable){
+					gridTable.select('> tbody > tr > td > .t3-page-colHeader > .t3-page-colHeader-icons').removeClass('t3-page-colHeader-icons-active');
+				}
+			});
+		});
 		var contentElements = Ext.select('.t3-page-ce').elements;
 		Ext.each(contentElements, function(contentElement){
 			Ext.get(contentElement).addListener('mouseenter', function(e, t){
@@ -87,16 +114,12 @@ if(typeof GridElementsDD === "undefined"){
 				if(this.select('> div > .t3-page-ce-body').first()) {
 					this.select('> div > .t3-page-ce-body').first().addClass('t3-page-ce-body-active');
 				}
+				if(this.select('> .t3-page-ce-dropzone > .t3-page-ce-new-ce').first()) {
+					this.select('> .t3-page-ce-dropzone > .t3-page-ce-new-ce').first().addClass('t3-page-ce-new-ce-active');
+				}
 				if(this.select('> .t3-page-ce-dropzone > .t3-page-ce-wrapper-new-ce').first()) {
 					this.select('> .t3-page-ce-dropzone > .t3-page-ce-wrapper-new-ce').first().addClass('t3-page-ce-wrapper-new-ce-active');
 				}
-				if(Ext.get(this.findParent('.t3-page-column')) && Ext.get(this.findParent('.t3-page-column')).select('> div > div > .t3-page-ce-dropzone > .t3-page-ce-wrapper-new-ce').first()) {
-					Ext.get(this.findParent('.t3-page-column')).select('> div > div > .t3-page-ce-dropzone > .t3-page-ce-wrapper-new-ce').first().addClass('t3-page-ce-wrapper-new-ce-active');
-				}
-				if(Ext.get(this.findParent('.t3-page-lang-column')) && Ext.get(this.findParent('.t3-page-lang-column')).select('> div > div > .t3-page-ce-dropzone > .t3-page-ce-wrapper-new-ce').first()) {
-					Ext.get(this.findParent('.t3-page-lang-column')).select('> div > div > .t3-page-ce-dropzone > .t3-page-ce-wrapper-new-ce').first().addClass('t3-page-ce-wrapper-new-ce-active');
-				}
-
 				var gridTable = this.select('> .t3-page-ce-body table.t3-gridTable').first();
 				if(gridTable){
 					gridTable.select('> tbody > tr > td > .t3-page-colHeader > .t3-page-colHeader-icons').addClass('t3-page-colHeader-icons-active');
@@ -112,16 +135,12 @@ if(typeof GridElementsDD === "undefined"){
 				if(this.select('> div > .t3-page-ce-body').first()) {
 					this.select('> div > .t3-page-ce-body').first().removeClass('t3-page-ce-body-active');
 				}
+				if(this.select('> .t3-page-ce-dropzone > .t3-page-ce-new-ce').first()) {
+					this.select('> .t3-page-ce-dropzone > .t3-page-ce-new-ce').first().removeClass('t3-page-ce-new-ce-active');
+				}
 				if(this.select('> .t3-page-ce-dropzone > .t3-page-ce-wrapper-new-ce').first()) {
 					this.select('> .t3-page-ce-dropzone > .t3-page-ce-wrapper-new-ce').first().removeClass('t3-page-ce-wrapper-new-ce-active');
 				}
-				if(Ext.get(this.findParent('.t3-page-column')) && Ext.get(this.findParent('.t3-page-column')).select('> div > div > .t3-page-ce-dropzone > .t3-page-ce-wrapper-new-ce').first()) {
-					Ext.get(this.findParent('.t3-page-column')).select('> div > div > .t3-page-ce-dropzone > .t3-page-ce-wrapper-new-ce').first().removeClass('t3-page-ce-wrapper-new-ce-active');
-				}
-				if(Ext.get(this.findParent('.t3-page-lang-column')) && Ext.get(this.findParent('.t3-page-lang-column')).select('> div > div > .t3-page-ce-dropzone > .t3-page-ce-wrapper-new-ce').first()) {
-					Ext.get(this.findParent('.t3-page-lang-column')).select('> div > div > .t3-page-ce-dropzone > .t3-page-ce-wrapper-new-ce').first().removeClass('t3-page-ce-wrapper-new-ce-active');
-				}
-
 				var gridTable = this.select('> .t3-page-ce-body table.t3-gridTable').first();
 				if(gridTable){
 					gridTable.select('> tbody > tr > td > .t3-page-colHeader > .t3-page-colHeader-icons').removeClass('t3-page-colHeader-icons-active');

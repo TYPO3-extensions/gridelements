@@ -307,13 +307,11 @@ class tx_gridelements_drawItemHook implements \TYPO3\CMS\Backend\View\PageLayout
 
 		$gridContent[$colPos] .= '
 			<div class="t3-page-ce-wrapper">
-			<div class="t3-page-ce">
-					<div class="t3-page-ce-dropzone">
-						<div class="t3-page-ce-wrapper-new-ce">
-							<a href="#" onclick="' . htmlspecialchars($newParams) . '" title="' . $GLOBALS['LANG']->getLL('newInColumn', TRUE) . '">' .
+				<div class="t3-page-ce-dropzone">
+					<div class="t3-page-ce-wrapper-new-ce">
+						<a href="#" onclick="' . htmlspecialchars($newParams) . '" title="' . $GLOBALS['LANG']->getLL('newInColumn', TRUE) . '">' .
 								\TYPO3\CMS\Backend\Utility\IconUtility::getSpriteIcon('actions-document-new') .
-							'</a>
-						</div>
+						'</a>
 					</div>
 			</div>';
 
@@ -334,7 +332,7 @@ class tx_gridelements_drawItemHook implements \TYPO3\CMS\Backend\View\PageLayout
 						$onClick = \TYPO3\CMS\Backend\Utility\BackendUtility::editOnClick($params, $this->backPath);
 					}
 					$gridContent[$colPos] .= '
-				<div class="t3-page-ce-dropzone"><div class="t3-page-ce-wrapper-new-ce">
+				<div class="t3-page-ce-dropzone"><div class="t3-page-ce-new-ce">
 					<a href="#" onclick="' . htmlspecialchars($onClick) . '" title="' . $GLOBALS['LANG']->getLL('newRecordHere', 1) . '">' . \TYPO3\CMS\Backend\Utility\IconUtility::getSpriteIcon('actions-document-new') . '</a>
 				</div></div></div>
 					';

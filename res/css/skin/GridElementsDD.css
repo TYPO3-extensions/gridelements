@@ -13,9 +13,9 @@
 	background-color: #c8d9c3;
 	text-align: center;
 	position: relative;
-	margin: 2px 0px -25px 0px;
-	line-height: 17px;
-	height: 17px;
+	margin: 0px 0px 0px 0px;
+	line-height: 19px;
+	height: 19px;
 	border: 1px dotted #73ab61;
 }
 .x-dd-droptargetarea.x-dd-showdroptarget {
@@ -31,6 +31,7 @@
 	filter: alpha(opacity=60);
 	z-index: 100000;
 }
+.x-dd-dragging .t3-page-ce-dropzone,
 .x-dd-dragging .x-dd-droptargetarea {
 	visibility: hidden;
 	display: none;
