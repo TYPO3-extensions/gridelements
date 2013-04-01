@@ -1,4 +1,7 @@
 <?php
+
+namespace GridElementsTeam\Gridelements\Hooks;
+
 /***************************************************************
  *  Copyright notice
  *
@@ -30,7 +33,7 @@
  * @package		TYPO3
  * @subpackage	tx_gridelements
  */
-class tx_gridelements_db_ListHook {
+class AbstractDatabaseRecordListHook {
 
 	/**
 	 * @var t3lib_BEfunc
@@ -76,8 +79,4 @@ class tx_gridelements_db_ListHook {
 		array_unshift($parts, $value);
 		return implode(',', array_unique($parts));
 	}
-}
-
-if (defined('TYPO3_MODE') && isset($GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/gridelements/hooks/class.tx_gridelements_db_listhook.php'])) {
-	include_once($GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/gridelements/lib/class.tx_gridelements_db_listhook.php']);
 }

@@ -1,4 +1,7 @@
 <?php
+
+namespace GridElementsTeam\Gridelements\Helper;
+
 /**
  * Gridelements helper class
  *
@@ -6,10 +9,10 @@
  * @package     TYPO3
  * @subpackage  tx_gridelements
  */
-class tx_gridelements_helper {
+class Helper {
 
 	/**
-	 * @var tx_gridelements_helper
+	 * @var \GridElementsTeam\Gridelements\Helper\Helper
 	 */
 	protected static $instance = NULL;
 
@@ -17,10 +20,10 @@ class tx_gridelements_helper {
 	 * Get instance from the class.
 	 *
 	 * @static
-	 * @return	tx_gridelements_helper
+	 * @return	\GridElementsTeam\Gridelements\Helper\Helper
 	 */
 	public static function getInstance() {
-		if (!self::$instance instanceof tx_gridelements_helper) {
+		if (!self::$instance instanceof \GridElementsTeam\Gridelements\Helper\Helper) {
 			self::$instance = new self();
 		}
 
@@ -88,5 +91,4 @@ class tx_gridelements_helper {
 	public function getBackendUser() {
 		return $GLOBALS['BE_USER'];
 	}
-
 }

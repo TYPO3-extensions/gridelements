@@ -1,14 +1,17 @@
 <?php
+
+namespace GridElementsTeam\Gridelements\View;
+
 // load models and views
 
 /**
- * AJAX request disatcher
+ * AJAX request disatcher for record list
  *
  * @author      Dirk Hoffmann <dirk-hoffmann@telekom.de>
  * @package     TYPO3
  * @subpackage  tx_gridelements
  */
-class tx_gridelements_ajax {
+class AjaxRecordList {
 
 	/**
 	 * The content for the ajax output
@@ -90,20 +93,16 @@ class tx_gridelements_ajax {
 			$table = $table ? $table : 'tt_content';
 
 			$level = (int) $this->getParamValue('level');
-
-			require_once(PATH_typo3 . 'class.db_list.inc');
-			require_once(PATH_typo3 . 'class.db_list_extra.inc');
-
 			$this->initializeTemplateContainer();
 
-			$elementChilds = tx_gridelements_helper::getInstance()->getChildren(
+			$elementChilds = \GridElementsTeam\Gridelements\Helper\Helper::getInstance()->getChildren(
 				$table, $uid, \TYPO3\CMS\Core\Utility\GeneralUtility::_GP('sortField'), (int) \TYPO3\CMS\Core\Utility\GeneralUtility::_GP('sortRev')
 			);
 
 			$row = \TYPO3\CMS\Backend\Utility\BackendUtility::getRecord($table, $uid);
 			$recordList = $this->getRecordList($table, $uid, $row);
 
-			if ($recordList instanceof localRecordList) {
+			if ($recordList instanceof \TYPO3\CMS\Recordlist\RecordList\DatabaseRecordList) {
 				$level++;
 				foreach ($elementChilds as $elementChild) {
 					$listRows[] = $recordList->renderListRow(
@@ -240,11 +239,6 @@ class tx_gridelements_ajax {
 			$dblist->generateList();
 		}
 
-#		t3lib_utility_Debug::debug($modTSconfig);
-#		die;
-
-//		$recordList->clipObj->current = 'normal';
-
 		return $dblist;
 	}
 
@@ -255,11 +249,8 @@ class tx_gridelements_ajax {
 	 * @return	void
 	 */
 	public function initializeTemplateContainer() {
-		$GLOBALS['SOBE'] = new stdClass();
-
-		// Create an instance of the document template object
-		require_once(PATH_typo3 . 'template.php');
-		$GLOBALS['SOBE']->doc = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Backend\Template\DocumentTemplate');
+		$GLOBALS['SOBE'] = new \stdClass();
+		$GLOBALS['SOBE']->doc = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Backend\\Template\\DocumentTemplate');
 	}
 
 

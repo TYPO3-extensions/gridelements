@@ -1,4 +1,6 @@
 <?php
+namespace GridElementsTeam\Gridelements\Hooks;
+
 /***************************************************************
  *  Copyright notice
  *
@@ -29,7 +31,7 @@
  * @package		TYPO3
  * @subpackage	tx_gridelements
  */
-class tx_gridelements_pagerendererhook {
+class PageRendererHook {
 
 	/**
 	 * wrapper function called by hook (t3lib_pageRenderer->render-preProcess)

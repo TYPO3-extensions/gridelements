@@ -14,4 +14,10 @@ if (!defined('TYPO3_MODE')) {
 
 // register BE AJAX controller
 $TYPO3_CONF_VARS['BE']['AJAX']['tx_gridelements::controller'] =
-	\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath($_EXTKEY) . 'lib/class.tx_gridelements_ajax.php:tx_gridelements_ajax->init';
+	\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath($_EXTKEY) . 'Classes/View/AjaxRecordList.php:GridElementsTeam\\Gridelements\\View\\AjaxRecordList->init';
+
+// XCLASS
+$GLOBALS['TYPO3_CONF_VARS']['SYS']['Objects']['TYPO3\\CMS\\Recordlist\\RecordList\\DatabaseRecordList'] = array(
+	'className' => 'GridElementsTeam\\Gridelements\\Xclass\\DatabaseRecordList',
+);
+

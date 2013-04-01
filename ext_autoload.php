@@ -18,13 +18,7 @@ return array(
 	'tx_gridelements_tcemain_moverecord'				=> $extensionPath . 'lib/tcemain/class.tx_gridelements_tcemain_moveRecord.php',
 	'tx_gridelements_tt_content'						=> $extensionPath . 'lib/class.tx_gridelements_tt_content.php',
 	'tx_gridelements_wizarditemshook'					=> $extensionPath . 'lib/class.tx_gridelements_wizarditemshook.php',
-	'tx_gridelements_helper'							=> $extensionPath . 'lib/class.tx_gridelements_helper.php',
 	'tx_gridelements_view'								=> $extensionPath . 'view/class.tx_gridelements_view.php',
 	'wrapperfort3libbefunc'								=> $extensionPath . 'lib/wrapperForT3libBeFunc.php',
-
-	// hooks
-	'tx_gridelements_pagerendererhook'					=> $extensionPath . 'hooks/class.tx_gridelements_pagerendererhook.php',
-	'tx_gridelements_db_listhook'						=> $extensionPath . 'hooks/class.tx_gridelements_db_listhook.php',
-	'tx_gridelements_db_list_extrahook'					=> $extensionPath . 'hooks/class.tx_gridelements_db_list_extrahook.php',
 
 );

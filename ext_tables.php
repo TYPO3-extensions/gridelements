@@ -180,14 +180,14 @@ $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tceforms.php']['get
 
 $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['tx_templavoila_api']['apiIsRunningTCEmain'] = TRUE;
 
-$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_pagerenderer.php']['render-preProcess'][] = 'EXT:gridelements/hooks/class.tx_gridelements_pagerendererhook.php:tx_gridelements_pagerendererhook->addJSCSS';
+$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_pagerenderer.php']['render-preProcess'][] =
+	\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath($_EXTKEY) . 'Classes/Hooks/PageRendererHook.php:GridElementsTeam\\Gridelements\\Hooks\\PageRendererHook->addJSCSS';
 
-$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['typo3/class.db_list.inc']['makeQueryArray'][] = 'EXT:gridelements/hooks/class.tx_gridelements_db_listhook.php:tx_gridelements_db_listHook';
-$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['typo3/class.db_list_extra.inc']['actions'][] = 'EXT:gridelements/hooks/class.tx_gridelements_db_list_extrahook.php:tx_gridelements_db_list_extraHook';
+$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['typo3/class.db_list.inc']['makeQueryArray'][] =
+	\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath($_EXTKEY) . 'Classes/Hooks/AbstractDatabaseRecordListHook.php:GridElementsTeam\\Gridelements\\Hooks\\AbstractDatabaseRecordListHook';
 
-// XCLASS
-$GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['typo3/class.db_list_extra.inc'] = \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('gridelements').'xclass/class.ux_db_list_extra.php';
-
+$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['typo3/class.db_list_extra.inc']['actions'][] =
+	\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath($_EXTKEY) . 'Classes/Hooks/DatabaseRecordListHook.php:GridElementsTeam\\Gridelements\\Hooks\\DatabaseRecordListHook';
 
 $GLOBALS['TYPO3_USER_SETTINGS']['columns']['dragAndDropHideNewElementWizardInfoOverlay'] = array(
 	'type' => 'check',

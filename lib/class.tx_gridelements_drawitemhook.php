@@ -195,7 +195,7 @@ class tx_gridelements_drawItemHook implements \TYPO3\CMS\Backend\View\PageLayout
 		// Due to the pid being "NOT USED" in makeQueryArray we have to set pidSelect here
 		$originalPidSelect = $parentObject->pidSelect;
 		$parentObject->pidSelect = 'pid = ' . $row['pid'];
-		$specificUid = tx_gridelements_helper::getInstance()->getSpecificUid($row);
+		$specificUid = \GridElementsTeam\Gridelements\Helper\Helper::getInstance()->getSpecificUid($row);
 
 		$queryParts = $parentObject->makeQueryArray(
 			'tt_content',
@@ -260,7 +260,7 @@ class tx_gridelements_drawItemHook implements \TYPO3\CMS\Backend\View\PageLayout
 		$originalPidSelect = $parentObject->pidSelect;
 		$parentObject->pidSelect = 'pid = ' . $row['pid'];
 
-		$specificUid = tx_gridelements_helper::getInstance()->getSpecificUid($row);
+		$specificUid = \GridElementsTeam\Gridelements\Helper\Helper::getInstance()->getSpecificUid($row);
 		$queryParts = $parentObject->makeQueryArray(
 			'tt_content',
 			$row['pid'],
@@ -293,7 +293,7 @@ class tx_gridelements_drawItemHook implements \TYPO3\CMS\Backend\View\PageLayout
 	 */
 	public function renderSingleGridColumn(\TYPO3\CMS\Backend\View\PageLayoutView $parentObject, &$items, &$colPos, &$gridContent, $row, &$editUidList) {
 
-		$specificUid = tx_gridelements_helper::getInstance()->getSpecificUid($row);
+		$specificUid = \GridElementsTeam\Gridelements\Helper\Helper::getInstance()->getSpecificUid($row);
 
 		if ($colPos < 32768) {
 			$newParams = $parentObject->newContentElementOnClick(
@@ -415,7 +415,7 @@ class tx_gridelements_drawItemHook implements \TYPO3\CMS\Backend\View\PageLayout
 	 * @return string
 	 */
 	public function renderGridLayoutTable($layoutSetup, $row, $head, $gridContent) {
-		$specificUid = tx_gridelements_helper::getInstance()->getSpecificUid($row);
+		$specificUid = \GridElementsTeam\Gridelements\Helper\Helper::getInstance()->getSpecificUid($row);
 
 		$grid = '<div class="t3-gridContainer' .
 			($layoutSetup['frame']
