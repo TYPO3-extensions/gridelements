@@ -48,8 +48,12 @@ td.t3-gridCell-unassigned div.t3-row-header div {
 	padding-left: 0;
 	padding-right: 0;
 	min-width: 170px;
-	margin-bottom: -2px;
+	margin-top: 5px;
+	margin-bottom: 5px;
+	padding-bottom: 2px;
+	background-image: inherit;
 }
+
 
 .t3-page-ce .t3-page-ce-header-active {
 	background-color:#5b5b5b;
@@ -136,13 +140,6 @@ td.t3-gridCell-unassigned div.t3-row-header div {
 .t3-page-ce {
 	padding: 0 0px !important;
 	margin-bottom: 0px;
-}
-
-.t3-page-colHeader {
-	margin-top: 5px;
-	margin-bottom: 0px;
-	padding-bottom: 2px;
-	background-image: inherit;
 }
 
 .active .exampleContent .t3-page-colHeader {
@@ -342,10 +339,10 @@ td.t3-gridCell-unassigned div.t3-row-header div {
 .t3-page-ce-dropzone {
 	margin: -22px 0px 0px 0px;
 }
-
-.t3-gridCell .t3-page-colHeader {
-	padding-top: 6px!important;
+.t3-gridContainer .t3-gridContainer .t3-page-ce-dropzone {
+	margin: -17px 0px 0px 0px!important;
 }
+
 .t3-page-columns {
 	margin: 0!important;
 }
@@ -363,7 +360,11 @@ td.t3-gridCell-unassigned div.t3-row-header div {
 }
 
 .t3-page-ce-dragitem {
-	margin-bottom: 5px;
+	margin: 5px 0px!important;
+}
+
+.t3-gridContainer .t3-gridContainer .t3-page-ce-dragitem {
+	margin: 5px 0px 0px 0px!important;
 }
 
 .t3-page-ce-body-inner-gridelements_pi1 {
