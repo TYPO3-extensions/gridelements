@@ -114,6 +114,8 @@ td.t3-gridCell-unassigned div.t3-row-header div {
 	visibility: hidden;
 }
 
+.t3-page-ce-header-active .ce-icons,
+.t3-page-ce-header-active .ce-icons-left,
 .t3-page-ce .t3-page-colHeader .t3-page-colHeader-icons-active,
 .t3-page-ce-new-ce-active .t3-icon,
 .t3-page-ce-wrapper-new-ce-active .t3-icon,
