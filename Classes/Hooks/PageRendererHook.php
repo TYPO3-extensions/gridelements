@@ -41,8 +41,10 @@ class PageRendererHook {
 	 * @return	void
 	 */
 	public function addJSCSS($parameters, &$pageRenderer) {
-		$this->addJS($parameters, $pageRenderer);
-		$this->addCSS($parameters, $pageRenderer);
+		if($GLOBALS['MCONF']['name'] == 'web_layout' || $GLOBALS['MCONF']['name'] == 'web_list') {
+			$this->addJS($parameters, $pageRenderer);
+			$this->addCSS($parameters, $pageRenderer);
+		}
 	}
 
 	/**
