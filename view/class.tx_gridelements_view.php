@@ -210,11 +210,13 @@ class tx_gridelements_view extends \TYPO3\CMS\Frontend\ContentObject\ContentObje
 		$GLOBALS['TSFE']->cObjectDepthCounter += $counter;
 
 		// each of the children will now be rendered separately and the output will be added to it's particular column
-		foreach ($this->cObj->data['tx_gridelements_view_children'] as $child) {
-			$renderedChild = $child;
-			$this->renderChildIntoParentColumn($columns, $renderedChild, $parentGridData, $parentRecordNumbers, $typoScriptSetup);
-			$currentParentGrid['data']['tx_gridelements_view_child_' . $child['uid']] = $renderedChild;
-			unset($renderedChild);
+		if(count($this->cObj->data['tx_gridelements_view_children'])) {
+			foreach ($this->cObj->data['tx_gridelements_view_children'] as $child) {
+				$renderedChild = $child;
+				$this->renderChildIntoParentColumn($columns, $renderedChild, $parentGridData, $parentRecordNumbers, $typoScriptSetup);
+				$currentParentGrid['data']['tx_gridelements_view_child_' . $child['uid']] = $renderedChild;
+				unset($renderedChild);
+			}
 		}
 
 		// now we can reset the depth counter and the data array so that the element will behave just as usual
@@ -297,11 +299,15 @@ class tx_gridelements_view extends \TYPO3\CMS\Frontend\ContentObject\ContentObje
 
 		// filter out existing superfluous keys to reduce memory load
 		// String comparisons are way too expensive, so we go for unset within some loops
-		foreach($data['tx_gridelements_view_children'] as $child) {
-			unset($data['tx_gridelements_view_child_' . $child['uid']]);
+		if(count($data['tx_gridelements_view_children'])) {
+			foreach($data['tx_gridelements_view_children'] as $child) {
+				unset($data['tx_gridelements_view_child_' . $child['uid']]);
+			}
 		}
-		foreach($data['tx_gridelements_view_columns'] as $column => $conteent) {
-			unset($data['tx_gridelements_view_column_' . $column]);
+		if(count($data['tx_gridelements_view_columns'])) {
+			foreach($data['tx_gridelements_view_columns'] as $column => $conteent) {
+				unset($data['tx_gridelements_view_column_' . $column]);
+			}
 		}
 
 		unset($data['tx_gridelements_view_children']);
@@ -311,8 +317,10 @@ class tx_gridelements_view extends \TYPO3\CMS\Frontend\ContentObject\ContentObje
 		$parentGridData = $this->setParentGridData($data);
 
 		// Now we can remove any parentgrid_parentgrid_ keys
-		foreach($parentGridData as $key => $value) {
-			unset($data[$key]);
+		if(count($parentGridData)) {
+			foreach($parentGridData as $key => $value) {
+				unset($data[$key]);
+			}
 		}
 
 		// Set parentgrid data for the first time
@@ -396,22 +404,24 @@ class tx_gridelements_view extends \TYPO3\CMS\Frontend\ContentObject\ContentObje
 
 		$content = '';
 
-		foreach ($this->cObj->data['tx_gridelements_view_columns'] as $column => $columnContent) {
-			// if there are any columns available, we have to determine the corresponding TS setup
-			// and if there is none we are going to use the default setup
-			$tempSetup = isset($setup['columns.'][$column . '.'])
-				? $setup['columns.'][$column . '.']
-				: $setup['columns.']['default.'];
-			// now we just have to unset the renderObj
-			// before applying the rest of the keys via the usual stdWrap operations
-			unset($tempSetup['renderObj']);
-			unset($tempSetup['renderObj.']);
+		if(count($this->cObj->data['tx_gridelements_view_columns'])) {
+			foreach ($this->cObj->data['tx_gridelements_view_columns'] as $column => $columnContent) {
+				// if there are any columns available, we have to determine the corresponding TS setup
+				// and if there is none we are going to use the default setup
+				$tempSetup = isset($setup['columns.'][$column . '.'])
+					? $setup['columns.'][$column . '.']
+					: $setup['columns.']['default.'];
+				// now we just have to unset the renderObj
+				// before applying the rest of the keys via the usual stdWrap operations
+				unset($tempSetup['renderObj']);
+				unset($tempSetup['renderObj.']);
 
-			// we render each column into the column key to provide them prerendered for usage  with your own templating
-			$this->cObj->data['tx_gridelements_view_column_' . $column] = count($tempSetup)
-				? $this->cObj->stdWrap($columnContent, $tempSetup)
-				: $columnContent;
-			$content .= $this->cObj->data['tx_gridelements_view_column_' . $column];
+				// we render each column into the column key to provide them prerendered for usage  with your own templating
+				$this->cObj->data['tx_gridelements_view_column_' . $column] = count($tempSetup)
+					? $this->cObj->stdWrap($columnContent, $tempSetup)
+					: $columnContent;
+				$content .= $this->cObj->data['tx_gridelements_view_column_' . $column];
+			}
 		}
 
 		return $content;
@@ -482,11 +492,7 @@ class tx_gridelements_view extends \TYPO3\CMS\Frontend\ContentObject\ContentObje
 
 		$tempArr=$sheetArray;
 		foreach($fieldNameArr as $k => $v)	{
-			if(\TYPO3\CMS\Core\Utility\GeneralUtility::compat_version('4.6')) {
-				$checkedValue =  \TYPO3\CMS\Core\Utility\MathUtility::canBeInterpretedAsInteger($v);
-			} else {
-				$checkedValue = \TYPO3\CMS\Core\Utility\GeneralUtility::testInt($v);
-			}
+			$checkedValue =  \TYPO3\CMS\Core\Utility\MathUtility::canBeInterpretedAsInteger($v);
 			if ($checkedValue)	{
 				if (is_array($tempArr))	{
 					$c=0;

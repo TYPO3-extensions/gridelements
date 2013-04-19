@@ -48,7 +48,7 @@ class tx_gridelements_itemsprocfunc_CTypeList extends tx_gridelements_itemsprocf
 		} else {
 			// negative uid_pid values indicate that the element has been inserted after an existing element
 			// so there is no pid to get the backendLayout for and we have to get that first
-			$existingElement = $GLOBALS['TYPO3_DB']->exec_SELECTgetSingleRow('pid, CType', 'tt_content', 'uid=' . -(intval($params['row']['pid'])));
+			$existingElement = $GLOBALS['TYPO3_DB']->exec_SELECTgetSingleRow('pid, CType, colPos, tx_gridelements_container and tx_gridelements_columns', 'tt_content', 'uid=' . -(intval($params['row']['pid'])));
 			if ($existingElement['pid'] > 0) {
 				$this->checkForAllowedCTypes($params['items'], $existingElement['pid'], $existingElement['colPos'], $existingElement['tx_gridelements_container'], $existingElement['tx_gridelements_columns']);
 			}
