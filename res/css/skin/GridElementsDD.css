@@ -56,12 +56,12 @@
 
 #x-dd-draggablecontainer {
 	visibility: hidden;
-	position: absolute;
+	position: fixed;
 	height: auto;
 	top: 52px;
 	left: 0px;
 	width: 100%;
-	z-index: 3;
+	z-index: 20000;
 	/* setting overflow makes items disappear when dragging
 	 * solution:  when dragging starts, put the element right after body in DOM
 	 */

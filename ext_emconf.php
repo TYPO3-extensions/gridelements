@@ -13,12 +13,12 @@
 $EM_CONF[$_EXTKEY] = array(
 	'title' => 'Grid Elements',
 	'description' => 'This extension integrates the grid layout concept also to regular content elements - the grid elements.
-This approach is an alternative to TemplaVoila to store relations normalized in the database without using XML.',
+It offers a lot of new features like advanced drag & drop or real references, that improve the usability of the page and list module to speed up the daily work with the backend.',
 	'category' => 'be',
 	'shy' => 0,
 	'version' => '2.0.0-dev',
 	'dependencies' => 'cms',
-	'conflicts' => 'templavoila',
+	'conflicts' => 'templavoila,jfmulticontent',
 	'priority' => 'bottom',
 	'loadOrder' => '',
 	'module' => '',

@@ -197,13 +197,21 @@ if(typeof GridElementsDD === "undefined"){
 			]);
 		});
 
-		firstNewIconContainer = Ext.get('typo3-docheader-row1');
+		firstNewIconContainer = Ext.get(Ext.get('typo3-docheader').select('.left .buttongroup').elements[0]);
 
 		// get link around the "new content element" icon and if there is one do the magic
-		if(firstNewIconContainer && firstNewIconContainer.select('.t3-icon-document-new').elements[0] !== undefined) {
+		if(firstNewIconContainer) {
 
-				var
-					// create container for content draggables
+
+			var
+				lastIcon = Ext.get(firstNewIconContainer.select('.t3-icon:last').elements[0].parentNode.cloneNode(true));
+
+			lastIcon.set({onclick:'', title:''});
+			lastIcon.select('span').set({class:'t3-icon t3-icon-actions t3-icon-actions-document t3-icon-document-new'});
+			lastIcon.insertAfter(Ext.get(firstNewIconContainer.select('.t3-icon:last').elements[0].parentNode));
+
+			var
+			// create container for content draggables
 					draggableContainer = new Ext.Element(document.createElement ('div'), true),
 					firstNewIconLink = Ext.get(firstNewIconContainer.select('.t3-icon-document-new').elements[0].parentNode),
 					draggableContainerFilled = false;
@@ -212,7 +220,7 @@ if(typeof GridElementsDD === "undefined"){
 				Ext.get(draggableContainer).dom.id = 'x-dd-draggablecontainer';
 
 				// add draggables container to DOM, right after firstNewIconLink
-				draggableContainer.insertAfter(firstNewIconLink);
+				draggableContainer.insertBefore(Ext.get(Ext.get('typo3-inner-docbody').select('h2').elements[0]));
 
 			// define callback function executed when tempDiv (below) finishes loading
 			var fillDraggableContainer = function(tempDiv, success){
@@ -333,7 +341,7 @@ if(typeof GridElementsDD === "undefined"){
 			};
 			
 			if(top.draggableContainerActive) {
-				
+
 				// load HTML output from /typo3/sysext/cms/layout/db_new_content_el.php to temp element
 				// e.g. http://core-540-rgeorgi.typo3-entw.telekom.de/typo3/sysext/cms/layout/db_new_content_el.php?id=4722&colPos=1&sys_language_uid=0&uid_pid=4722
 				if(draggableContainerFilled == false) {
@@ -376,6 +384,9 @@ if(typeof GridElementsDD === "undefined"){
 				// show content draggables dialog instead
 				draggableContainer.toggle();
 				Ext.get(draggableContainer).dom.style.display = Ext.get(draggableContainer).dom.style.display == 'block' ? 'none' : 'block';
+
+				return false;
+
 			});
 
 		}

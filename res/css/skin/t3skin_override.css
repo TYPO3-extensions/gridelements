@@ -158,6 +158,14 @@ td.t3-gridCell-unassigned div.t3-row-header div {
 	padding-left: 5px;
 }
 
+.t3-gridContainer {
+	margin-top: 12px;
+}
+
+.t3-gridContainer .t3-gridContainer {
+	margin-top:6px;
+}
+
 .t3-gridContainer--1 {
 	border-style: solid;
 	border-width: 1px 1px 1px 1px;
