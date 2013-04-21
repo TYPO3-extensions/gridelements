@@ -32,17 +32,17 @@
 class tx_gridelements_tt_content {
 
 	/**
-	 * @var tx_gridelements_layoutsetup
+	 * @var \GridElementsTeam\Gridelements\Backend\LayoutSetup
 	 */
 	protected $layoutSetup;
 
 	/**
 	 * inject layout setup
 	 *
-	 * @param tx_gridelements_layoutsetup $layoutSetup
+	 * @param \GridElementsTeam\Gridelements\Backend\LayoutSetup $layoutSetup
 	 * @return void
 	 */
-	public function injectLayoutSetup(tx_gridelements_layoutsetup $layoutSetup) {
+	public function injectLayoutSetup(\GridElementsTeam\Gridelements\Backend\LayoutSetup $layoutSetup) {
 		$this->layoutSetup = $layoutSetup;
 	}
 
@@ -53,9 +53,9 @@ class tx_gridelements_tt_content {
 	 * @return void
 	 */
 	public function init($pageUid) {
-		if (!$this->layoutSetup instanceof tx_gridelements_layoutsetup) {
+		if (!$this->layoutSetup instanceof \GridElementsTeam\Gridelements\Backend\LayoutSetup) {
 			$this->injectLayoutSetup(
-				\TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_gridelements_layoutsetup')
+				\TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('GridElementsTeam\Gridelements\Backend\LayoutSetup')
 					->init($pageUid)
 			);
 		}

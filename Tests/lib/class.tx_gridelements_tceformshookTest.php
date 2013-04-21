@@ -69,7 +69,7 @@ class tx_gridelements_tceformshookTest extends \TYPO3\CMS\Extbase\Tests\Unit\Bas
 		);
 		$PA = NULL;
 		$expectedPA['fieldConf']['config']['ds']['*,gridelements_pi1'] = 'Hello world';
-		$layoutSetup = $this->getMock('tx_gridelements_layoutsetup', array('getFlexformConfiguration'));
+		$layoutSetup = $this->getMock('\GridElementsTeam\Gridelements\Backend\LayoutSetup', array('getFlexformConfiguration'));
 		$layoutSetup
 			->expects($this->once())
 			->method('getFlexformConfiguration')

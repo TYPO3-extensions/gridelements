@@ -74,7 +74,7 @@ class tx_gridelements_cmoptionsTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTe
 		$language
 			->expects($this->once())
 			->method('sL')
-			->with('LLL:EXT:gridelements/locallang_db.xml:tx_gridelements_clickmenu_pastereference')
+			->with('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tx_gridelements_clickmenu_pastereference')
 			->will($this->returnValue('past shortcut after'));
 		$GLOBALS['LANG'] = $language;
 		$menuItems['pasteafter'][0] = '<span class="t3-icon t3-icon-empty t3-icon-empty-empty t3-icon-empty c-roimg" id="roimg_7">&nbsp;</span><a href="#" onclick="if(top.content.list_frame &amp;&amp; confirm(String.fromCharCode(34,73,99,104,32,98,105,110,32,101,105,110,101,32,220,98,101,114,115,99,104,114,105,102,116,34,32,104,105,110,116,101,114,32,34,73,99,104,32,98,105,110,32,101,105,110,101,32,220,98,101,114,115,99,104,114,105,102,116,34,32,107,111,112,105,101,114,101,110,63))){top.content.list_frame.location.href=top.TS.PATH_typo3+\'tce_db.php?&amp;vC=02d761752c&amp;prErr=1&amp;uPT=1&amp;CB[paste]=tt_content%7C-254&amp;CB[pad]=normal&amp;formToken=566b4dcb108368a7f10d26116a59d19fac028852&amp;redirect=\'+top.rawurlencode(top.content.list_frame.document.location.pathname+top.content.list_frame.document.location.search); hideCM();}return false;" onmouseover="mo(7);" onmouseout="mout(7);">Einf&#xfc;gen nach <span class="t3-icon t3-icon-actions t3-icon-actions-document t3-icon-document-paste-after">&nbsp;</span></a>';

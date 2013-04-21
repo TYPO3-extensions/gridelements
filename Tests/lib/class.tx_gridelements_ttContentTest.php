@@ -53,7 +53,7 @@ class tx_gridelements_ttContentTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTe
 	public function testColumnsItemsProcFunc() {
 		$ttContent = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_gridelements_tt_content');
 
-		$layoutSetup = $this->getMock('tx_gridelements_layoutsetup');
+		$layoutSetup = $this->getMock('\GridElementsTeam\Gridelements\Backend\LayoutSetup');
 		$ttContent->injectLayoutSetup($layoutSetup);
 		$params['row']['tx_gridelements_container'] = 'Hello world';
 		$expectedParams = $params;
@@ -72,7 +72,7 @@ class tx_gridelements_ttContentTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTe
 				$this->returnValue(array('tx_gridelements_backend_layout' => '2'))
 			);
 		$GLOBALS['TYPO3_DB'] = $t3libDb;
-		$layoutSetup = $this->getMock('tx_gridelements_layoutsetup', array('getLayoutColumnsSelectItems'));
+		$layoutSetup = $this->getMock('\GridElementsTeam\Gridelements\Backend\LayoutSetup', array('getLayoutColumnsSelectItems'));
 		$layoutSetup
 			->expects($this->once())
 			->method('getLayoutColumnsSelectItems')
@@ -109,7 +109,7 @@ class tx_gridelements_ttContentTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTe
 		$returnValue[2][1] = '2';
 		$returnValue[2][2] = '';
 		$returnValue[2][3] = 'image,gridelements,form';
-		$layoutSetup = $this->getMock('tx_gridelements_layoutsetup', array('getLayoutColumnsSelectItems'));
+		$layoutSetup = $this->getMock('\GridElementsTeam\Gridelements\Backend\LayoutSetup', array('getLayoutColumnsSelectItems'));
 		$layoutSetup
 			->expects($this->once())
 			->method('getLayoutColumnsSelectItems')
@@ -140,7 +140,7 @@ class tx_gridelements_ttContentTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTe
 	public function testContainerItemsProcFunc() {
 		$ttContent = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_gridelements_tt_content');
 
-		$layoutSetup = $this->getMock('tx_gridelements_layoutsetup');
+		$layoutSetup = $this->getMock('\GridElementsTeam\Gridelements\Backend\LayoutSetup');
 		$ttContent->injectLayoutSetup($layoutSetup);
 		$params = array();
 		$ttContent->containerItemsProcFunc($params);
@@ -206,7 +206,7 @@ class tx_gridelements_ttContentTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTe
 		$returnValue['0']['1'] = 123;
 		$returnValue['0']['2'] = '';
 
-		$layoutSetup = $this->getMock('tx_gridelements_layoutsetup', array('getLayoutSelectItems'));
+		$layoutSetup = $this->getMock('\GridElementsTeam\Gridelements\Backend\LayoutSetup', array('getLayoutSelectItems'));
 		$layoutSetup
 			->expects($this->once())
 			->method('getLayoutSelectItems')
@@ -228,7 +228,7 @@ class tx_gridelements_ttContentTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTe
 		$returnValue['0']['1'] = 123;
 		$returnValue['0']['2'] = '';
 
-		$layoutSetup = $this->getMock('tx_gridelements_layoutsetup', array('getLayoutSelectItems'));
+		$layoutSetup = $this->getMock('\GridElementsTeam\Gridelements\Backend\LayoutSetup', array('getLayoutSelectItems'));
 		$layoutSetup
 			->expects($this->once())
 			->method('getLayoutSelectItems')

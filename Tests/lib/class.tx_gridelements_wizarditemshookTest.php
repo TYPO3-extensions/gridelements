@@ -107,7 +107,7 @@ class tx_gridelements_wizarditemshookTest extends \TYPO3\CMS\Extbase\Tests\Unit\
 		$language
 			->expects($this->once())
 			->method('sL')
-			->with($this->equalTo('LLL:EXT:gridelements/locallang_db.xml:tx_gridelements_backend_layout_wizard_label'))
+			->with($this->equalTo('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tx_gridelements_backend_layout_wizard_label'))
 			->will($this->returnValue('Rasterelemente'));
 		$GLOBALS['LANG'] = $language;
 
@@ -124,7 +124,7 @@ class tx_gridelements_wizarditemshookTest extends \TYPO3\CMS\Extbase\Tests\Unit\
 		$wizardItems['forms_login']['title'] = 'Login';
 		$wizardItems['forms_login']['description'] = 'Inserts a login/logout formular';
 		$wizardItems['gridelements']['header'] = 'Rasterelemente';
-		$wizardItems['gridelements_grid_1']['icon'] = '../typo3conf/ext/gridelements/res/img/new_content_el.gif';
+		$wizardItems['gridelements_grid_1']['icon'] = '../typo3conf/ext/gridelements/Resources/Public/Backend/Images/new_content_el.gif';
 		$wizardItems['gridelements_grid_1']['params'] = '&defVals[tt_content][CType]=gridelements_pi1&defVals[tt_content][tx_gridelements_backend_layout]=1';
 		$wizardItems['gridelements_grid_1']['title'] = 'News';
 		$wizardItems['gridelements_grid_1']['description'] = 'Inserts a news element';
@@ -138,7 +138,7 @@ class tx_gridelements_wizarditemshookTest extends \TYPO3\CMS\Extbase\Tests\Unit\
 		$language
 			->expects($this->once())
 			->method('sL')
-			->with($this->equalTo('LLL:EXT:gridelements/locallang_db.xml:tx_gridelements_backend_layout_wizard_label'))
+			->with($this->equalTo('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tx_gridelements_backend_layout_wizard_label'))
 			->will($this->returnValue('Rasterelemente'));
 		$GLOBALS['LANG'] = $language;
 		$newGridItem[0]['tll'] = '1';

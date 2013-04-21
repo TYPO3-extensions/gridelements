@@ -32,7 +32,7 @@ class tx_gridelements_cmoptions {
 			unset($menuItems['pasteafter']);
 			$menuItems['pasteafter'] = $parkItem;
 			if($backRef->clipObj->currentMode() == 'copy') {
-				$parkItem[1] = $GLOBALS['LANG']->sL('LLL:EXT:gridelements/locallang_db.xml:tx_gridelements_clickmenu_pastereference');
+				$parkItem[1] = $GLOBALS['LANG']->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tx_gridelements_clickmenu_pastereference');
 				$parkItem[3] = preg_replace('/formToken/', 'reference=1&formToken', $parkItem[3]);
 				$menuItems['pastereference'] = $parkItem;
 			}

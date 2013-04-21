@@ -1,0 +1,403 @@
+#typo3-inner-docbody {
+	margin-top: 10px;
+	display: table;
+	min-width: 95%;
+}
+
+td.t3-page-column,
+td.t3-page-lang-column {
+	max-width: none!important;
+	min-width: 0px!important;
+	padding: 0 10px 3px;
+}
+
+table.typo3-page-langMode {
+	width: 100%!important;
+}
+
+td.t3-gridCell-restricted,
+td.t3-gridCell-unassigned {
+	opacity: 0.4;
+	filter: alpha(opacity=40);
+	background-color: transparent;
+}
+
+td.t3-gridCell-restricted div.t3-row-header,
+td.t3-gridCell-unassigned div.t3-row-header {
+	opacity: 1;
+}
+
+td.t3-gridCell-restricted div.t3-row-header div,
+td.t3-gridCell-unassigned div.t3-row-header div {
+	opacity: 1;
+}
+
+.t3-dd-spacer {
+	height: 20px;
+}
+
+.t3-page-colHeader-icons {
+	position: relative;
+	left: 2px;
+}
+
+.t3-page-colHeader {
+	border-bottom: none!important;
+	color: #aaaaaa !important;
+	font-family: Verdana,sans-serif;
+	font-size: 13px;
+	padding-left: 0;
+	padding-right: 0;
+	min-width: 170px;
+	margin-top: 5px;
+	margin-bottom: 5px;
+	padding-bottom: 2px;
+	background-image: inherit;
+}
+
+
+.t3-page-ce .t3-page-ce-header-active {
+	background-color:#5b5b5b;
+	background-image:linear-gradient(center top,#7f7f7f 10%,#5b5b5b 100%);
+	background-image:-moz-linear-gradient(center top,#7f7f7f 10%,#5b5b5b 100%);
+	background-image:-webkit-gradient(linear,0% 0%,0% 100%,color-stop(0.1,#7f7f7f),color-stop(1,#5b5b5b));
+}
+
+.t3-row-header {
+	background-color: inherit;
+	cursor: move!important;
+}
+
+.t3-page-ce .t3-row-header {
+	visibility: hidden;
+	background: none;
+}
+
+.t3-page-ce.active .t3-row-header {
+	visibility: hidden;
+}
+
+.t3-page-ce .t3-page-colHeader {
+	visibility: visible !important;
+}
+
+.t3-page-ce .t3-page-ce-header-active .t3-row-header {
+	visibility: visible;
+}
+
+.t3-page-ce .t3-page-ce-header-active .t3-page-ce .t3-row-header {
+	visibility: hidden;
+}
+
+.t3-page-ce .ce-icons-left,
+.t3-page-ce .ce-icons {
+	float: none!important;
+}
+
+.t3-page-ce .ce-icons-left a,
+.t3-page-ce .ce-icons-left span,
+.t3-page-ce .ce-icons a {
+	float: none!important;
+	display: inline-block;
+}
+
+.t3-page-ce .t3-page-ce-icons-move {
+	float: right!important;
+}
+
+.t3-page-ce .t3-page-colHeader .t3-page-colHeader-icons {
+	visibility: hidden !important;
+}
+
+.t3-page-ce .t3-icon-gridelements-pastecopy,
+.t3-page-ce .t3-icon-gridelements-pasteref,
+.t3-page-ce .t3-icon-gridelements-copyfrompage {
+	visibility: hidden;
+}
+
+.t3-page-ce-header-active .ce-icons,
+.t3-page-ce-header-active .ce-icons-left,
+.t3-page-ce .t3-page-colHeader .t3-page-colHeader-icons-active,
+.t3-page-ce-new-ce-active .t3-icon,
+.t3-page-ce-wrapper-new-ce-active .t3-icon,
+.active .t3-page-colHeader .t3-page-colHeader-icons {
+	visibility: visible !important;
+	-webkit-transform: translateZ(0); /*fixes Chrome visibility bug*/
+}
+
+.active .t3-page-ce .t3-page-ce-new-ce .t3-icon,
+.active .t3-page-ce .t3-page-ce-wrapper-new-ce .t3-icon,
+.active .t3-page-ce .t3-page-colHeader .t3-page-colHeader-icons {
+	visibility: hidden !important;
+	-webkit-transform: translateZ(0); /*fixes Chrome visibility bug*/
+}
+
+.t3-page-ce-body-active {
+	border-color: #5B5B5B !important;
+}
+
+.active .t3-page-ce .t3-page-ce-body {
+	border-color: #E2E2E2;
+}
+
+.t3-page-ce {
+	padding: 0 0px !important;
+	margin-bottom: 0px;
+}
+
+.active .exampleContent .t3-page-colHeader {
+	xbackground-color:#5b5b5b;
+	xbackground-image:inherit;
+}
+
+
+.t3-page-colHeader-label {
+	white-space: nowrap;
+	text-align: center;
+	margin: 0 40px;
+	padding-left: 5px;
+}
+
+.t3-gridContainer {
+	margin-top: 12px;
+}
+
+.t3-gridContainer .t3-gridContainer {
+	margin-top:6px;
+}
+
+.t3-gridContainer--1 {
+	border-style: solid;
+	border-width: 1px 1px 1px 1px;
+	border-color: #999999;
+	margin: 2px 0px 0px 0px;
+}
+
+.t3-gridContainer-title--1 {
+	font-size: 10px;
+	font-weight: normal;
+	color: #494949;
+	background: none;
+	padding: 2px 5px;
+	margin: 0px;
+}
+
+.t3-gridContainer-1 {
+	border-style: solid;
+	border-width: 1px 1px 1px 1px;
+	border-color: #B48062;
+	margin: 2px 0px 0px 0px;
+}
+
+.t3-gridContainer-title-1 {
+	font-size: 10px;
+	font-weight: normal;
+	color: #5A4031;
+	background: #D9BFB0;
+	padding: 2px 5px;
+	margin: 0px;
+}
+
+.t3-gridContainer-2 {
+	border-style: solid;
+	border-width: 1px 1px 1px 1px;
+	border-color: #BABD5A;
+	margin: 2px 0px 0px 0px;
+}
+
+.t3-gridContainer-title-2 {
+	font-size: 10px;
+	font-weight: normal;
+	color: #5D5F2D;
+	background: #DCDEAC;
+	padding: 2px 5px;
+	margin: 0px;
+}
+
+.t3-gridContainer-3 {
+	border-style: solid;
+	border-width: 1px 1px 1px 1px;
+	border-color: #427BAB;
+	margin: 2px 0px 0px 0px;
+}
+
+.t3-gridContainer-title-3 {
+	font-size: 10px;
+	font-weight: normal;
+	color: #213E56;
+	background: #A0BDD5;
+	padding: 2px 5px;
+	margin: 0px;
+}
+
+.t3-page-ce-type {
+	white-space: nowrap!important;
+}
+
+.t3-gridContainer-noColumnHeaders .t3-page-colHeader {
+	background: none!important;
+	border: 0px!important;
+	margin-bottom: -8px;
+}
+
+.t3-gridContainer-noColumnHeaders .t3-gridCell {
+	border-right: 1px solid #CCC !important;
+}
+
+.t3-gridContainer-noColumnHeaders .t3-gridContainer-1 .t3-gridCell {
+	border-color: #B48062!important;
+}
+
+.t3-gridContainer-noColumnHeaders .t3-gridContainer-2 .t3-gridCell {
+	border-color: #BABD5A!important;
+}
+
+.t3-gridContainer-noColumnHeaders .t3-gridContainer-3 .t3-gridCell {
+	border-color: #427BAB!important;
+}
+
+.t3-gridContainer-noColumnHeaders .t3-page-colHeader .t3-page-colHeader-icons {
+	display: block!important;
+	z-index: 10000;
+}
+
+.t3-gridContainer-noColumnHeaders .t3-row-header .t3-page-colHeader-label {
+	display: none;
+}
+
+.t3-gridContainer-noColumnHeaders .t3-gridTable {
+	margin-right: -1px!important;
+	margin-left: 1px!important;
+}
+
+.exampleContent .reference {
+	position: relative;
+}
+
+.exampleContent .reference-overlay {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	width: 100%;
+	height: 100%;
+	background: #427BAB;
+	opacity: 0.15;
+}
+
+.exampleContent .container_reference .reference-overlay {
+	background: #BABD5A;
+}
+
+.exampleContent .reference .t3-page-ce-header .t3-row-header {
+	background: none!important;
+}
+
+.exampleContent .reference .t3-row-header a {
+	display: none!important;
+}
+
+.exampleContent .reference .reference {
+	opacity: 1;
+}
+
+.t3-gridCell-invisibleContent .t3-page-ce {
+	display: none!important;
+}
+
+.t3-gridCell-invisibleContent .t3-page-colHeader {
+	opacity: 0.5;
+}
+
+.t3-page-colHeader a.toggle-up {
+	display: block;
+	position: absolute;
+	right: 0px;
+}
+
+.t3-page-colHeader a.toggle-down {
+	display: none;
+	position: absolute;
+	right: 0px;
+}
+
+.t3-gridCell-invisibleContent .t3-page-colHeader a.toggle-up {
+	display: none;
+}
+
+.t3-gridCell-invisibleContent .t3-page-colHeader a.toggle-down {
+	display: block;
+}
+
+.t3-icon-extensions-gridelements {
+	background-image:url('../../Images/gridelements_sprite.png');
+}
+
+.t3-icon-gridelements-copyfrompage {
+	background-position: 0 0;
+}
+.t3-icon-gridelements-pastecopy {
+	background-position: 0 -16px;
+}
+.t3-icon-gridelements-pasteref {
+	background-position: 0 -32px;
+}
+.t3-icon-gridelements-reference {
+	background-position: 0 -48px;
+}
+.t3-icon-gridelements-someicon {
+	background-position: 0 -64px;
+}
+.t3-page-ce-dropzone {
+	margin: -22px 0px 0px 0px;
+}
+.t3-gridContainer .t3-gridContainer .t3-page-ce-dropzone {
+	margin: -17px 0px 0px 0px!important;
+}
+
+.t3-page-columns {
+	margin: 0!important;
+}
+
+.t3-page-column {
+	background: #F8F8F8;
+	border-left: 5px solid #F8F8F8!important;
+	border-right: 5px solid #F8F8F8!important;
+	padding: 0px 2px 5px!important;
+}
+
+.t3-page-ce {
+	margin: 5px 0px;
+	min-width: 180px;
+}
+
+.t3-page-ce-dragitem {
+	margin: 5px 0px!important;
+}
+
+.t3-gridContainer .t3-gridContainer .t3-page-ce-dragitem {
+	margin: 5px 0px 0px 0px!important;
+}
+
+.t3-page-ce-body-inner-gridelements_pi1 {
+	background: #FFF;
+}
+
+.t3-page-colHeader,
+.t3-page-ce-dragitem {
+	padding: 0px!important;
+	cursor: default!important;
+}
+
+.t3-page-ce-wrapper {
+	margin-top: 0px;
+	margin-bottom: 2px;
+	padding: 5px 0px 0px;
+}
+
+.t3-page-ce-body {
+	margin-bottom: 5px;
+}
+
+.t3-page-ce-body-inner {
+	padding: 4px;
+}

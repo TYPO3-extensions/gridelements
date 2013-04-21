@@ -121,7 +121,7 @@ class tx_gridelements_tcemain_preProcessFieldArrayTest extends \TYPO3\CMS\Extbas
 		$table = 'tt_content';
 		$tcaColumns['CSV'] = 'Hello world';
 		$expectedTcaColumns = 'Hello world';
-		$layoutSetup = $this->getMock('tx_gridelements_layoutsetup', array('getLayoutColumns'));
+		$layoutSetup = $this->getMock('\GridElementsTeam\Gridelements\Backend\LayoutSetup', array('getLayoutColumns'));
 		$layoutSetup
 			->expects($this->once())
 			->method('getLayoutColumns')

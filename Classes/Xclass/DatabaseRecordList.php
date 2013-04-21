@@ -309,7 +309,7 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
 							$this->showMoveUp = FALSE;
 							$column = \TYPO3\CMS\Backend\Utility\BackendUtility::getProcessedValueExtra($table, 'colPos', $row['colPos'], 100, $row['uid']);
 							$iOut .= '<tr><td></td><td colspan="' . (count($this->fieldArray)-1+$this->maxDepth) . '" style="padding:5px;"><br /><strong>' .
-								$GLOBALS['LANG']->sL('LLL:EXT:gridelements/locallang_db.xml:list.columnName') . ' ' .
+								$GLOBALS['LANG']->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:list.columnName') . ' ' .
 								(($column) ? $column : $row['colPos']) . '</strong></td></tr>';
 						} else {
 							$this->showMoveUp = TRUE;
@@ -831,7 +831,7 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
 
 				$contentCollapseIcon = '
 					<a href="javascript:GridElementsListView.elExpandCollapse(\'' .
-					$data['_EXPAND_ID_'] . '\',\'' . $sortField . '\', ' . $level . ')" title="' . $GLOBALS['LANG']->sL('LLL:EXT:gridelements/locallang_db.xml:list.collapseElement', TRUE) . '" rel="' . $data['_EXPAND_ID_'] . '">
+					$data['_EXPAND_ID_'] . '\',\'' . $sortField . '\', ' . $level . ')" title="' . $GLOBALS['LANG']->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:list.collapseElement', TRUE) . '" rel="' . $data['_EXPAND_ID_'] . '">
 						<span class="t3-icon t3-icon-actions t3-icon-actions-view t3-icon-pagetree-collapse collapseIcon">&nbsp;</span>
 					</a>
 				';

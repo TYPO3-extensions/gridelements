@@ -159,7 +159,7 @@ class tx_gridelements_itemsprocfunc_ctypelistTest extends \TYPO3\CMS\Extbase\Tes
 		$pageColumn = -5;
 		$gridContainerId = 2;
 		$gridColumn = 3;
-		$layoutSetup = $this->getMock('tx_gridelements_layoutsetup', array('getLayoutSetup'));
+		$layoutSetup = $this->getMock('\GridElementsTeam\Gridelements\Backend\LayoutSetup', array('getLayoutSetup'));
 		$layoutSetup
 			->expects($this->once())
 			->method('getLayoutSetup')
@@ -174,7 +174,7 @@ class tx_gridelements_itemsprocfunc_ctypelistTest extends \TYPO3\CMS\Extbase\Tes
 		$gridContainerId = 2;
 		$gridColumn = 3;
 		$returnValue['columns'][3] = '1,2';
-		$layoutSetup = $this->getMock('tx_gridelements_layoutsetup', array('getLayoutSetup'));
+		$layoutSetup = $this->getMock('\GridElementsTeam\Gridelements\Backend\LayoutSetup', array('getLayoutSetup'));
 		$layoutSetup
 			->expects($this->once())
 			->method('getLayoutSetup')
@@ -190,7 +190,7 @@ class tx_gridelements_itemsprocfunc_ctypelistTest extends \TYPO3\CMS\Extbase\Tes
 		$gridContainerId = 2;
 		$gridColumn = 3;
 		$returnValue['columns'][3] = '1,*';
-		$layoutSetup = $this->getMock('tx_gridelements_layoutsetup', array('getLayoutSetup'));
+		$layoutSetup = $this->getMock('\GridElementsTeam\Gridelements\Backend\LayoutSetup', array('getLayoutSetup'));
 		$layoutSetup
 			->expects($this->once())
 			->method('getLayoutSetup')
