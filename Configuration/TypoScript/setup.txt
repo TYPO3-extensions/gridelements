@@ -68,7 +68,7 @@ tt_content.gridelements_pi1 {
 	20 {
 		10 = USER
 		10 {
-			userFunc = tx_gridelements_view->main
+			userFunc = GridElementsTeam\Gridelements\Plugin\Gridelements->main
 			setup {
 				default < lib.gridelements.defaultGridSetup
 			}
