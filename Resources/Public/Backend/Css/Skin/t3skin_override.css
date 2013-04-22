@@ -63,7 +63,7 @@ td.t3-gridCell-unassigned div.t3-row-header div {
 	background-image:-webkit-gradient(linear,0% 0%,0% 100%,color-stop(0.1,#7f7f7f),color-stop(1,#5b5b5b));
 }
 
-.t3-row-header {
+.t3-gridContainer .t3-row-header {
 	background-color: inherit;
 	cursor: move!important;
 }
