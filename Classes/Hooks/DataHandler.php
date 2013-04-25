@@ -127,7 +127,7 @@ class DataHandler {
 	public function processCmdmap($command, $table, $id, $value, &$commandIsProcessed, \TYPO3\CMS\Core\DataHandling\DataHandler &$parentObj) {
 		/** @var $hook \GridElementsTeam\Gridelements\DataHandler\ProcessCmdmap */
 		$hook = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('GridElementsTeam\Gridelements\DataHandler\ProcessCmdmap');
-		$hook->processCmdmap($command, $table, $id, $value, $commandIsProcessed, $parentObj);
+		$hook->execute_processCmdmap($command, $table, $id, $value, $commandIsProcessed, $parentObj);
 	}
 
 }

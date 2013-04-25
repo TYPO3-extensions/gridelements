@@ -48,7 +48,7 @@ class ProcessCmdmap extends AbstractDataHandler {
 	 * @return	void
 	 *
 	 */
-	public function processCmdmap($command, $table, $id, $value, &$commandIsProcessed, \TYPO3\CMS\Core\DataHandling\DataHandler $parentObj) {
+	public function execute_processCmdmap($command, $table, $id, $value, &$commandIsProcessed, \TYPO3\CMS\Core\DataHandling\DataHandler &$parentObj=NULL) {
 		$this->init($table, $id, $parentObj);
 		// @todo Either create a new command map type, e.g. "reference" and process it with a hook instead of using $_GET //olly
 		$DDcopy = intval(\TYPO3\CMS\Core\Utility\GeneralUtility::_GET('DDcopy'));
