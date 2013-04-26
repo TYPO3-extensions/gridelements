@@ -50,7 +50,7 @@ class PreProcessFieldArray extends AbstractDataHandler {
 	 * @param	\TYPO3\CMS\Core\DataHandling\DataHandler $parentObj: The parent object that triggered this hook
 	 * @return void
 	 */
-	public function preProcessFieldArray(&$fieldArray, $table, $id, &$parentObj) {
+	public function execute_preProcessFieldArray(&$fieldArray, $table, $id, &$parentObj) {
 		$this->init($table, $id, $parentObj);
 		$this->saveCleanedUpFieldArray($fieldArray);
 		$this->processFieldArrayForTtContent($fieldArray);

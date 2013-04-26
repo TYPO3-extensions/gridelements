@@ -56,7 +56,7 @@ class MoveRecord extends AbstractDataHandler {
 	 * @param \TYPO3\CMS\Core\DataHandling\DataHandler     $parentObj
 	 * @return void
 	 */
-	public function moveRecord($table, $uid, &$destPid, &$propArr, &$moveRec, $resolvedPid, &$recordWasMoved, &$parentObj) {
+	public function execute_moveRecord($table, $uid, &$destPid, &$propArr, &$moveRec, $resolvedPid, &$recordWasMoved, &$parentObj) {
 		$this->init($table, $uid, $parentObj);
 		if ($table == 'tt_content' && !$this->getTceMain()->isImporting) {
 			$copyAfterDuplFields = $GLOBALS['TCA']['tt_content']['ctrl']['copyAfterDuplFields'];

@@ -52,7 +52,7 @@ class DataHandler {
 		if (($table == 'tt_content' || $table == 'pages') && !$parentObj->isImporting) {
 			/** @var $hook \GridElementsTeam\Gridelements\DataHandler\PreProcessFieldArray */
 			$hook = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('GridElementsTeam\Gridelements\DataHandler\PreProcessFieldArray');
-			$hook->preProcessFieldArray($fieldArray, $table, $id, $parentObj);
+			$hook->execute_preProcessFieldArray($fieldArray, $table, $id, $parentObj);
 		}
 	}
 
@@ -109,7 +109,7 @@ class DataHandler {
 	public function moveRecord($table, $uid, &$destPid, &$propArr, &$moveRec, $resolvedPid, &$recordWasMoved, \TYPO3\CMS\Core\DataHandling\DataHandler &$parentObj) {
 		/** @var $hook \GridElementsTeam\Gridelements\DataHandler\MoveRecord */
 		$hook = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('GridElementsTeam\Gridelements\DataHandler\MoveRecord');
-		$hook->moveRecord($table, $uid, $destPid, $propArr, $moveRec, $resolvedPid, $recordWasMoved, $parentObj);
+		$hook->execute_moveRecord($table, $uid, $destPid, $propArr, $moveRec, $resolvedPid, $recordWasMoved, $parentObj);
 	}
 
 	/**
