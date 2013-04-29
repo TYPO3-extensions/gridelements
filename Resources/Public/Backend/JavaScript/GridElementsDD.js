@@ -649,7 +649,7 @@ GridElementsDD = function() {
 				arrNewicons = [];
 
 			// add all other ”New" icons to array
-			Ext.each(Ext.select('.t3-icon-document-new', true, Ext.select('.t3-page-ce-wrapper-new-ce').elements).elements, function(){
+			Ext.each(Ext.select('.t3-icon-document-new', true, Ext.select('.t3-page-ce-wrapper-new-ce, .t3-page-ce-new-ce').elements).elements, function(){
 				arrNewicons.push(this);
 			});
 
@@ -830,12 +830,12 @@ GridElementsDD = function() {
 		addPasteAndRefIcons: function(clipboardItemUid) {
 			// console.log('addPasteAndRefIcons reached');
 			// add paste icons to column headers
-			colHeader = Ext.select('.t3-page-ce-wrapper-new-ce').elements;
+			colHeader = Ext.select('.t3-page-ce-wrapper-new-ce, .t3-page-ce-new-ce').elements;
 			Ext.each(colHeader, function(currentColHeader) {
 				var dropZoneID = null,
-					parentCell = Ext.get(currentColHeader).parent('.t3-page-column');
+					parentCell = Ext.get(currentColHeader).hasClass('t3-page-ce-new-ce') ? Ext.get(currentColHeader).parent('.t3-page-ce').select('.t3-icon-mimetypes').elements[0] : Ext.get(currentColHeader).parent('.t3-page-column');
 
-				if(Ext.get(parentCell).id.substr(0, 6) != 'column') {
+				if(Ext.get(currentColHeader).hasClass('t3-page-ce-wrapper-new-ce') && Ext.get(parentCell).id.substr(0, 6) != 'column') {
 					var parentCellClass = Ext.get(parentCell).dom.className.split(' ');
 					for(i = 0; i < parentCellClass.length; i++) {
 						if(parentCellClass[i].substr(0, 15) == 't3-page-column-') {
@@ -844,7 +844,11 @@ GridElementsDD = function() {
 						}
 					};
 				} else {
-					dropZoneID = '-' + Ext.get(parentCell).id.substr(7);
+					if(Ext.get(currentColHeader).hasClass('t3-page-ce-new-ce')) {
+						dropZoneID = '-' + parentCell.getAttribute('title').substr(3);
+					} else {
+						dropZoneID = '-' + Ext.get(parentCell).id.substr(7);
+					}
 				}
 
 				// dropZoneID now has this format: column-1234567x0 or DD_PAGECOLUMNx0

@@ -392,6 +392,7 @@ td.t3-gridCell-unassigned div.t3-row-header div {
 	margin-top: 0px;
 	margin-bottom: 2px;
 	padding: 5px 0px 0px;
+	min-height: 27px;
 }
 
 .t3-page-ce-body {
@@ -401,3 +402,8 @@ td.t3-gridCell-unassigned div.t3-row-header div {
 .t3-page-ce-body-inner {
 	padding: 4px;
 }
+
+.reference .x-dd-droptargetarea {
+	display: none!important;
+}
+
