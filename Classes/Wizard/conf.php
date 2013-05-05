@@ -1,10 +1,10 @@
 <?php
 if(strpos($_SERVER['SCRIPT_NAME'], 'typo3conf') === FALSE) {
-	$BACK_PATH = '../../../../../';
-	define('TYPO3_MOD_PATH', 'ext/gridelements/Classes/Backend/Wizards/');
+	$BACK_PATH = '../../../../';
+	define('TYPO3_MOD_PATH', 'ext/gridelements/Classes/Wizard/');
 } else {
-	$BACK_PATH = '../../../../../../typo3/';
-	define('TYPO3_MOD_PATH', '../typo3conf/ext/gridelements/Classes/Backend/Wizards/');
+	$BACK_PATH = '../../../../../typo3/';
+	define('TYPO3_MOD_PATH', '../typo3conf/ext/gridelements/Classes/Wizard/');
 }
 
 // symlink fix - set (and later use for require()) $BACK_PATH_ABS if $BACK_PATH is wrong

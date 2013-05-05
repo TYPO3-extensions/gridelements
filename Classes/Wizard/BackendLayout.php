@@ -263,7 +263,7 @@ class BackendLayout {
 		$content .= $this->doc->spacer(10);
 
 		$content .= '
-		<table border="0" width="100%" height="100%" id="outer_container">
+		<table border="0" width="100%" height="95%" id="outer_container">
 			<tr>
 				<td class="editor_cell">
 					<div id="editor">
@@ -271,20 +271,20 @@ class BackendLayout {
 				</td>
 				<td width="20" valign="center">
 					<a class="addCol" href="#" title="' . $GLOBALS['LANG']->getLL('grid_addColumn') . '" onclick="t3Grid.addColumn(); t3Grid.drawTable(\'editor\');">
-						<img src="../Resources/Public/Backend/Images/t3grid-tableright.png" border="0" />
+						<img src="../../Resources/Public/Backend/Images/t3grid-tableright.png" border="0" />
 					</a><br />
 					<a class="removeCol" href="#" title="' . $GLOBALS['LANG']->getLL('grid_removeColumn') . '" onclick="t3Grid.removeColumn(); t3Grid.drawTable(\'editor\');">
-						<img src="../Resources/Public/Backend/Images/t3grid-tableleft.png" border="0" />
+						<img src="../../Resources/Public/Backend/Images/t3grid-tableleft.png" border="0" />
 					</a>
 				</td>
 			</tr>
 			<tr>
 				<td colspan="2" height="20" align="center">
 					<a class="addCol" href="#" title="' . $GLOBALS['LANG']->getLL('grid_addRow') . '" onclick="t3Grid.addRow(); t3Grid.drawTable(\'editor\');">
-						<img src="../Resources/Public/Backend/Images/t3grid-tabledown.png" border="0" />
+						<img src="../../Resources/Public/Backend/Images/t3grid-tabledown.png" border="0" />
 					</a>
 					<a class="removeCol" href="#" title="' . $GLOBALS['LANG']->getLL('grid_removeRow') . '" onclick="t3Grid.removeRow(); t3Grid.drawTable(\'editor\');">
-						<img src="../Resources/Public/Backend/Images/t3grid-tableup.png" border="0" />
+						<img src="../../Resources/Public/Backend/Images/t3grid-tableup.png" border="0" />
 					</a>
 				</td>
 			</tr>
