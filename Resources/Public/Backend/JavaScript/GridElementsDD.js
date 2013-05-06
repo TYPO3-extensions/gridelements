@@ -830,88 +830,90 @@ GridElementsDD = function() {
 		addPasteAndRefIcons: function(clipboardItemUid) {
 			// console.log('addPasteAndRefIcons reached');
 			// add paste icons to column headers
-			colHeader = Ext.select('.t3-page-ce-wrapper-new-ce, .t3-page-ce-new-ce').elements;
-			Ext.each(colHeader, function(currentColHeader) {
-				var dropZoneID = null,
-					parentCell = Ext.get(currentColHeader).hasClass('t3-page-ce-new-ce') ? Ext.get(currentColHeader).parent('.t3-page-ce').select('.t3-icon-mimetypes').elements[0] : Ext.get(currentColHeader).parent('.t3-page-column');
+			if(clipboardItemUid.substr(0,5) != '_FILE') {
+				colHeader = Ext.select('.t3-page-ce-wrapper-new-ce, .t3-page-ce-new-ce').elements;
+				Ext.each(colHeader, function(currentColHeader) {
+					var dropZoneID = null,
+						parentCell = Ext.get(currentColHeader).hasClass('t3-page-ce-new-ce') ? Ext.get(currentColHeader).parent('.t3-page-ce').select('.t3-icon-mimetypes').elements[0] : Ext.get(currentColHeader).parent('.t3-page-column');
 
-				if(Ext.get(currentColHeader).hasClass('t3-page-ce-wrapper-new-ce') && Ext.get(parentCell).id.substr(0, 6) != 'column') {
-					var parentCellClass = Ext.get(parentCell).dom.className.split(' ');
-					for(i = 0; i < parentCellClass.length; i++) {
-						if(parentCellClass[i].substr(0, 15) == 't3-page-column-') {
-							// add page id - must be negative to identify it as a PID
-							dropZoneID = top.DDpid + 'x' + parentCellClass[i].substr(15);
-						}
-					};
-				} else {
-					if(Ext.get(currentColHeader).hasClass('t3-page-ce-new-ce')) {
-						dropZoneID = '-' + parentCell.getAttribute('title').substr(3);
+					if(Ext.get(currentColHeader).hasClass('t3-page-ce-wrapper-new-ce') && Ext.get(parentCell).id.substr(0, 6) != 'column') {
+						var parentCellClass = Ext.get(parentCell).dom.className.split(' ');
+						for(i = 0; i < parentCellClass.length; i++) {
+							if(parentCellClass[i].substr(0, 15) == 't3-page-column-') {
+								// add page id - must be negative to identify it as a PID
+								dropZoneID = top.DDpid + 'x' + parentCellClass[i].substr(15);
+							}
+						};
 					} else {
-						dropZoneID = '-' + Ext.get(parentCell).id.substr(7);
-					}
-				}
-
-				// dropZoneID now has this format: column-1234567x0 or DD_PAGECOLUMNx0
-				// the number after the "x" can be positive and negative, e.g. DD_PAGECOLUMNx-2 for "unused elements"
-				var lastColHeaderLink = Ext.get(currentColHeader).select('a:last').elements[0];
-
-				// add "paste copy" icon
-				var
-					pasteCopyIconConf = {
-						tag: 'a',
-						href: '#',
-						title: TYPO3.l10n.localize('tx_gridelements_js.pastecopy'),
-						cn: {
-							tag:'span',
-							'class': top.geSprites.pastecopy,
-							html:'&nbsp;'
+						if(Ext.get(currentColHeader).hasClass('t3-page-ce-new-ce')) {
+							dropZoneID = '-' + parentCell.getAttribute('title').substr(3);
+						} else {
+							dropZoneID = '-' + Ext.get(parentCell).id.substr(7);
 						}
-					},
-					pasteCopyIcon = Ext.DomHelper.insertAfter(lastColHeaderLink, pasteCopyIconConf, true);
+					}
 
-				if(top.DDclipboardfilled == 'move'){
+					// dropZoneID now has this format: column-1234567x0 or DD_PAGECOLUMNx0
+					// the number after the "x" can be positive and negative, e.g. DD_PAGECOLUMNx-2 for "unused elements"
+					var lastColHeaderLink = Ext.get(currentColHeader).select('a:last').elements[0];
 
-					// bind click event
-					pasteCopyIcon.on('click', function(){
-						GridElementsDD.ajaxThenReload(
-							top.moveURL.replace('DD_DRAG_UID', clipboardItemUid).replace('DD_DROP_UID', dropZoneID) + "&CB[paste]=tt_content%7C-" + clipboardItemUid + "&CB[pad]=normal"
-						);
-						return false;
-					});
-
-				} else if(top.DDclipboardfilled == 'copy'){
-
-					// bind click event
-					pasteCopyIcon.on('click', function(){
-						GridElementsDD.ajaxThenReload(
-							top.pasteTpl.replace('DD_REFYN', '0&DDcopy=1').replace('DD_DRAG_UID', clipboardItemUid).replace('DD_DROP_UID', dropZoneID)
-						);
-						return false;
-					});
-
-					// also add "paste reference" icon in this case
+					// add "paste copy" icon
 					var
-						pasteRefIconConf = {
+						pasteCopyIconConf = {
 							tag: 'a',
 							href: '#',
-							title: TYPO3.l10n.localize('tx_gridelements_js.pasteref'),
+							title: TYPO3.l10n.localize('tx_gridelements_js.pastecopy'),
 							cn: {
 								tag:'span',
-								'class': top.geSprites.pasteref,
+								'class': top.geSprites.pastecopy,
 								html:'&nbsp;'
 							}
 						},
-						pasteRefIcon = Ext.DomHelper.insertAfter(pasteCopyIcon, pasteRefIconConf, true);
+						pasteCopyIcon = Ext.DomHelper.insertAfter(lastColHeaderLink, pasteCopyIconConf, true);
 
-					// bind click event
-					pasteRefIcon.on('click', function(){
-						GridElementsDD.ajaxThenReload(
-							top.pasteTpl.replace('DD_REFYN', 1).replace('DD_DRAG_UID', clipboardItemUid).replace('DD_DROP_UID', dropZoneID)
-						);
-						return false;
-					});
-				}
-			});
+					if(top.DDclipboardfilled == 'move'){
+
+						// bind click event
+						pasteCopyIcon.on('click', function(){
+							GridElementsDD.ajaxThenReload(
+								top.moveURL.replace('DD_DRAG_UID', clipboardItemUid).replace('DD_DROP_UID', dropZoneID) + "&CB[paste]=tt_content%7C-" + clipboardItemUid + "&CB[pad]=normal"
+							);
+							return false;
+						});
+
+					} else if(top.DDclipboardfilled == 'copy'){
+
+						// bind click event
+						pasteCopyIcon.on('click', function(){
+							GridElementsDD.ajaxThenReload(
+								top.pasteTpl.replace('DD_REFYN', '0&DDcopy=1').replace('DD_DRAG_UID', clipboardItemUid).replace('DD_DROP_UID', dropZoneID)
+							);
+							return false;
+						});
+
+						// also add "paste reference" icon in this case
+						var
+							pasteRefIconConf = {
+								tag: 'a',
+								href: '#',
+								title: TYPO3.l10n.localize('tx_gridelements_js.pasteref'),
+								cn: {
+									tag:'span',
+									'class': top.geSprites.pasteref,
+									html:'&nbsp;'
+								}
+							},
+							pasteRefIcon = Ext.DomHelper.insertAfter(pasteCopyIcon, pasteRefIconConf, true);
+
+						// bind click event
+						pasteRefIcon.on('click', function(){
+							GridElementsDD.ajaxThenReload(
+								top.pasteTpl.replace('DD_REFYN', 1).replace('DD_DRAG_UID', clipboardItemUid).replace('DD_DROP_UID', dropZoneID)
+							);
+							return false;
+						});
+					}
+				});
+			}
 		},
 
 		ajaxThenReload: function(actionURL) {

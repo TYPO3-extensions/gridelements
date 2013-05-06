@@ -51,7 +51,7 @@
 	margin-right: 10px;
 }
 .x-dd-droptargetgroup {
-	background: url('/typo3/clear.gif');
+	background: url('../../Images/clear.gif');
 }
 
 #x-dd-draggablecontainer {

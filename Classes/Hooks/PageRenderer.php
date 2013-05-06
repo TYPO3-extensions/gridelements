@@ -138,7 +138,12 @@ class PageRenderer {
 								if($col['allowed']){
 									$allowed = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',', $col['allowed'], 1);
 									foreach($allowed as $ctype){
-										$classes .= 't3-allow-' . $ctype . ' ';
+										if($ctype == '*') {
+											$classes = 't3-allow-all';
+											break;
+										} else {
+											$classes .= 't3-allow-' . $ctype . ' ';
+										}
 									}
 								} else {
 									$classes = 't3-allow-all';

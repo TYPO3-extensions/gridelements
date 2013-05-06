@@ -137,10 +137,12 @@ class WizardItems implements \TYPO3\CMS\Backend\Wizard\NewContentElementWizardHo
 	 * @return void
 	 */
 	public function removeDisallowedWizardItems($allowed, &$wizardItems) {
-		foreach($wizardItems as $key => $wizardItem) {
-			if (!$wizardItems[$key]['header']) {
-				if (count($allowed) && !in_array($wizardItems[$key]['tt_content_defValues']['CType'], $allowed)){
-					unset($wizardItems[$key]);
+		if(!in_array('*', $allowed)) {
+			foreach($wizardItems as $key => $wizardItem) {
+				if (!$wizardItems[$key]['header']) {
+					if (count($allowed) && !in_array($wizardItems[$key]['tt_content_defValues']['CType'], $allowed)){
+						unset($wizardItems[$key]);
+					}
 				}
 			}
 		}

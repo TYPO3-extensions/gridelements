@@ -23,21 +23,21 @@ if(typeof GridElementsDD === "undefined"){
 		  })
 		});
 
-		// add "allowed ctypes" classes to pageColumns
-		var pageColumnsAllowedCTypes = top.pageColumnsAllowedCTypes.split('|');
-		for (var i = 0; i < pageColumnsAllowedCTypes.length; i++) {
-			var currentColClass = pageColumnsAllowedCTypes[i].split(':');
-			var currentCol = Ext.select('td.t3-page-column-' + currentColClass[0]);
-			Ext.each(currentCol, function(column) {
-				if(!Ext.get(column).hasClass('t3-gridCell')) {
-					Ext.get(column).addClass(currentColClass[1]);
-				}
-			});
-		}
-
-		// add topLevel class to pageColumns
 		var mainGrid = Ext.select('table.t3-page-columns, table.t3-page-langMode').elements[0];
 		if(mainGrid){
+			// add "allowed ctypes" classes to pageColumns
+			var pageColumnsAllowedCTypes = top.pageColumnsAllowedCTypes.split('|');
+			for (var i = 0; i < pageColumnsAllowedCTypes.length; i++) {
+				var currentColClass = pageColumnsAllowedCTypes[i].split(':');
+				var currentCol = Ext.get(mainGrid).select('> tbody > tr > td.t3-page-column-' + currentColClass[0]);
+				Ext.each(currentCol, function(column) {
+					if(Ext.get(column).hasClass('t3-gridCell')) {
+						Ext.get(column).addClass(currentColClass[1]);
+					}
+				});
+			}
+
+			// add topLevel class to pageColumns
 			var topLevelTDs = Ext.get(mainGrid).select('> tbody > tr > td');
 			Ext.each(topLevelTDs, function(topLevelTD){
 				Ext.get(topLevelTD).addClass('t3-gridTL');
