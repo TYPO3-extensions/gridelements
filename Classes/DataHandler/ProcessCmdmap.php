@@ -107,7 +107,20 @@ class ProcessCmdmap extends AbstractDataHandler {
 					}
 				}
 			} else {
-				$this->getTceMain()->copyRecord($table, $id, $value, 1);
+				if($value > 0) {
+					$overrideArray['tx_gridelements_container'] = 0;
+					$overrideArray['tx_gridelements_columns'] = 0;
+					$overrideArray['colPos'] = 0;
+					$overrideArray['sorting'] = 0;
+				}
+				$this->getTceMain()->copyRecord($table, $id, $value, 1, $overrideArray);
+				if(intval($value) < 0) {
+					$targetRecord = \TYPO3\CMS\Backend\Utility\BackendUtility::getRecordWSOL('tt_content', -$value, 'tx_gridelements_container');
+					if($targetRecord['tx_gridelements_container'] > 0) {
+						$containerUpdateArray[$targetRecord['tx_gridelements_container']] = 1;
+						$this->doGridContainerUpdate($containerUpdateArray);
+					}
+				}
 			}
 
 			$commandIsProcessed = true;
