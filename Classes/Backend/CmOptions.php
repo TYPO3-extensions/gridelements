@@ -1,5 +1,5 @@
 <?php
-
+namespace GridElementsTeam\Gridelements\Backend;
 /**
  * Class/Function which
  *
@@ -7,7 +7,7 @@
  * @package		TYPO3
  * @subpackage	tx_gridelements
  */
-class tx_gridelements_cmoptions {
+class CmOptions {
 
 	/**
 	 * @param \TYPO3\CMS\Backend\ClickMenu\ClickMenu $backRef
@@ -42,7 +42,7 @@ class tx_gridelements_cmoptions {
 
 }
 
-if (defined('TYPO3_MODE') && isset($GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/gridelements/lib/class.tx_gridelements_cmoptions.php'])) {
-	include_once($GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/gridelements/lib/class.tx_gridelements_cmoptions.php']);
+if (defined('TYPO3_MODE') && isset($GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/gridelements/Classes/Backend/CmOptions.php'])) {
+	include_once($GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/gridelements/Classes/Backend/CmOptions.php']);
 }
 ?>

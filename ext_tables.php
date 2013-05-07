@@ -30,7 +30,7 @@ $TCA['tx_gridelements_backend_layout'] = array(
 
 if (TYPO3_MODE == 'BE') {
 
-	include_once(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('gridelements') . 'lib/class.tx_gridelements_tt_content.php');
+	include_once(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('gridelements') . 'Classes/Backend/TtContent.php');
 
 }
 
@@ -210,8 +210,8 @@ $TBE_STYLES['skins']['gridelements']['name'] = 'gridelements';
 $TBE_STYLES['skins']['gridelements']['stylesheetDirectories']['structure'] = 'EXT:' . ($_EXTKEY) . '/Resources/Public/Backend/Css/Skin/';
 
 $GLOBALS['TBE_MODULES_EXT']['xMOD_alt_clickmenu']['extendCMclasses'][]=array(
-	'name' => 'tx_gridelements_cmoptions',
-	'path' => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath($_EXTKEY).'lib/class.tx_gridelements_cmoptions.php'
+	'name' => 'CmOptions',
+	'path' => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath($_EXTKEY).'Classes/Backend/CmOptions.php'
 );
 
 // add custom sprite icons

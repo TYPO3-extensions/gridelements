@@ -1,4 +1,5 @@
 <?php
+namespace GridElementsTeam\Gridelements\Backend;
 /***************************************************************
  *  Copyright notice
  *
@@ -29,7 +30,7 @@
  * @package		TYPO3
  * @subpackage	tx_gridelements
  */
-class tx_gridelements_tt_content {
+class TtContent {
 
 	/**
 	 * @var \GridElementsTeam\Gridelements\Backend\LayoutSetup
@@ -224,7 +225,7 @@ class tx_gridelements_tt_content {
 	}
 }
 
-if (defined('TYPO3_MODE') && isset($GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/gridelements/lib/class.tx_gridelements_tt_content.php'])) {
-	include_once($GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/gridelements/lib/class.tx_gridelements_tt_content.php']);
+if (defined('TYPO3_MODE') && isset($GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/gridelements/Classes/Backend/TtContent.php'])) {
+	include_once($GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/gridelements/Classes/Backend/TtContent.php']);
 }
 ?>
