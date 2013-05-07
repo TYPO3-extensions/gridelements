@@ -602,8 +602,16 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
 		if ($this->clipObj->current == 'normal') {
 			// Show copy/cut icons:
 			$isSel = (string) $this->clipObj->isSelected($table, $row['uid']);
-			$cells['copy'] = $isL10nOverlay ? $this->spaceIcon : '<a href="#" onclick="' . htmlspecialchars(('return jumpSelf(\'' . $this->clipObj->selUrlDB($table, $row['uid'], 1, ($isSel == 'copy'), array('returnUrl' => '')) . '\');')) . '" title="' . $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.php:cm.copy', TRUE) . '">' . (!$isSel == 'copy' ? \TYPO3\CMS\Backend\Utility\IconUtility::getSpriteIcon('actions-edit-copy') : \TYPO3\CMS\Backend\Utility\IconUtility::getSpriteIcon('actions-edit-copy-release')) . '</a>';
-			$cells['cut'] = $isL10nOverlay ? $this->spaceIcon : '<a href="#" onclick="' . htmlspecialchars(('return jumpSelf(\'' . $this->clipObj->selUrlDB($table, $row['uid'], 0, ($isSel == 'cut'), array('returnUrl' => '')) . '\');')) . '" title="' . $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.php:cm.cut', TRUE) . '">' . (!$isSel == 'cut' ? \TYPO3\CMS\Backend\Utility\IconUtility::getSpriteIcon('actions-edit-cut') : \TYPO3\CMS\Backend\Utility\IconUtility::getSpriteIcon('actions-edit-cut-release')) . '</a>';
+			if (stripos(t3lib_div::getIndpEnv('SCRIPT_NAME'), 'ajax') === false) {
+				$copyUrl = $this->clipObj->selUrlDB($table, $row['uid'], 1, ($isSel == 'copy'), array('returnUrl' => ''));
+				$cutUrl = $this->clipObj->selUrlDB($table, $row['uid'], 0, ($isSel == 'cut'), array('returnUrl' => ''));
+			} else {
+				$copyUrl = $this->selUrlDB($table, $row['uid'], $row['pid'], 1, ($isSel=='copy'));
+				$cutUrl = $this->selUrlDB($table, $row['uid'], $row['pid'], 0, ($isSel == 'cut'));
+			}
+
+			$cells['copy'] = $isL10nOverlay ? $this->spaceIcon : '<a href="#" onclick="' . htmlspecialchars(('return jumpSelf(\'' . $copyUrl . '\');')) . '" title="' . $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.php:cm.copy', TRUE) . '">' . (!$isSel == 'copy' ? \TYPO3\CMS\Backend\Utility\IconUtility::getSpriteIcon('actions-edit-copy') : \TYPO3\CMS\Backend\Utility\IconUtility::getSpriteIcon('actions-edit-copy-release')) . '</a>';
+			$cells['cut'] = $isL10nOverlay ? $this->spaceIcon : '<a href="#" onclick="' . htmlspecialchars(('return jumpSelf(\'' . $cutUrl . '\');')) . '" title="' . $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.php:cm.cut', TRUE) . '">' . (!$isSel == 'cut' ? \TYPO3\CMS\Backend\Utility\IconUtility::getSpriteIcon('actions-edit-cut') : \TYPO3\CMS\Backend\Utility\IconUtility::getSpriteIcon('actions-edit-cut-release')) . '</a>';
 		} else {
 			// For the numeric clipboard pads (showing checkboxes where one can select elements on/off)
 			// Setting name of the element in ->CBnames array:
@@ -940,4 +948,29 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
 			\TYPO3\CMS\Backend\Utility\BackendUtility::getUrlToken('tceAction');
 		return $rU;
 	}
+
+	/**
+	 * Returns the select-url for database elements
+	 *
+	 * @param string $table Table name
+	 * @param integer $uid Uid of record
+	 * @param integer $pid Pid of record
+	 * @param boolean $copy If set, copymode will be enabled
+	 * @param boolean $deselect If set, the link will deselect, otherwise select.
+	 * @param array $baseArray The base array of GET vars to be sent in addition. Notice that current GET vars WILL automatically be included.
+	 * @return string URL linking to the current script but with the CB array set to select the element with table/uid
+	 * @todo Define visibility
+	 */
+	function selUrlDB($table, $uid, $pid, $copy = 0, $deselect = 0, $baseArray = array()) {
+		$CB = array('el' => array(rawurlencode($table . '|' . $uid) => $deselect ? 0 : 1));
+		if ($copy) {
+			$CB['setCopyMode'] = 1;
+		}
+		$baseArray['M'] = web_list;
+		$baseArray['id'] = $pid;
+		$baseArray['CB'] = $CB;
+		unset($baseArray['returnUrl']);
+		return \TYPO3\CMS\Core\Utility\GeneralUtility::linkThisUrl('mod.php', $baseArray);
+	}
+
 }
