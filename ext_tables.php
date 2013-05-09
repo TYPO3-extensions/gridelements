@@ -51,7 +51,7 @@ $tempColumns = array(
 #					(tx_gridelements_backend_layout.pid = ###PAGE_TSCONFIG_ID### OR tx_gridelements_backend_layout.pid = ###STORAGE_PID### ) OR
 #					( ###PAGE_TSCONFIG_ID### = 0 AND tx_gridelements_backend_layout.pid = ###THIS_UID### )
 #				) AND tx_gridelements_backend_layout.hidden = 0 ORDER BY tx_gridelements_backend_layout.title',
-			'itemsProcFunc' => 'tx_gridelements_tt_content->layoutItemsProcFunc',
+			'itemsProcFunc' => 'GridElementsTeam\Gridelements\Backend\TtContent->layoutItemsProcFunc',
 			'size' => 1,
 			'selicon_cols' => 9,
 			'maxitems' => 1,
@@ -113,7 +113,7 @@ $tempColumns = array(
 				)
 				ORDER BY tt_content.header, tt_content.uid
 			',
-			'itemsProcFunc' => 'tx_gridelements_tt_content->containerItemsProcFunc',
+			'itemsProcFunc' => 'GridElementsTeam\Gridelements\Backend\TtContent->containerItemsProcFunc',
 			'size' => 1,
 			'minitems' => 0,
 			'maxitems' => 1,
@@ -124,7 +124,7 @@ $tempColumns = array(
 		'label' => 'LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tt_content.tx_gridelements_columns',
 		'config' => array(
 			'type' => 'select',
-			'itemsProcFunc' => 'tx_gridelements_tt_content->columnsItemsProcFunc',
+			'itemsProcFunc' => 'GridElementsTeam\Gridelements\Backend\TtContent->columnsItemsProcFunc',
 			'size' => 1,
 			'maxitems' => 1,
 		)
@@ -145,8 +145,8 @@ $TCA['tt_content']['ctrl']['typeicon_classes']['gridelements_pi1'] = 'tcarecords
 
 $TCA['tt_content']['types'][$_EXTKEY . '_pi1']['showitem'] = $TCA['tt_content']['types']['text']['showitem'];
 
-$TCA['tt_content']['columns']['colPos']['config']['itemsProcFunc'] = 'EXT:gridelements/Classes/Backend/ItemsProcFuncs/ColPosList.php:GridElementsTeam\\Gridelements\\Backend\\ItemsProcFuncs\\ColPosList->itemsProcFunc';
-$TCA['tt_content']['columns']['CType']['config']['itemsProcFunc'] = 'EXT:gridelements/Classes/Backend/ItemsProcFuncs/CTypeList.php:GridElementsTeam\\Gridelements\\Backend\\ItemsProcFuncs\\CTypeList->itemsProcFunc';
+$TCA['tt_content']['columns']['colPos']['config']['itemsProcFunc'] = 'GridElementsTeam\Gridelements\Backend\ItemsProcFuncs\ColPosList->itemsProcFunc';
+$TCA['tt_content']['columns']['CType']['config']['itemsProcFunc'] = 'GridElementsTeam\Gridelements\Backend\ItemsProcFuncs\CTypeList->itemsProcFunc';
 $TCA['tt_content']['columns']['pi_flexform']['config']['ds']['*,gridelements_pi1'] = '';
 $TCA['tt_content']['columns']['records']['config']['allowed'] .= ',pages';
 
