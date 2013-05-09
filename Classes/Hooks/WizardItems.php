@@ -84,26 +84,28 @@ class WizardItems implements \TYPO3\CMS\Backend\Wizard\NewContentElementWizardHo
 	 * @return void
 	 */
 	public function manipulateWizardItems(&$wizardItems, &$parentObject) {
-		$pageID = $parentObject->pageinfo['uid'];
-		$this->init($pageID);
+		if(!\TYPO3\CMS\Core\Utility\GeneralUtility::inList($GLOBALS['BE_USER']->groupData['explicit_allowdeny'], 'tt_content:CType:gridelements_pi1:DENY')) {
+			$pageID = $parentObject->pageinfo['uid'];
+			$this->init($pageID);
 
-		$container = intval(\TYPO3\CMS\Core\Utility\GeneralUtility::_GP('tx_gridelements_container'));
-		$column = intval(\TYPO3\CMS\Core\Utility\GeneralUtility::_GP('tx_gridelements_columns'));
-		$allowed = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',', \TYPO3\CMS\Core\Utility\GeneralUtility::_GP('tx_gridelements_allowed'), 1);
+			$container = intval(\TYPO3\CMS\Core\Utility\GeneralUtility::_GP('tx_gridelements_container'));
+			$column = intval(\TYPO3\CMS\Core\Utility\GeneralUtility::_GP('tx_gridelements_columns'));
+			$allowed = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',', \TYPO3\CMS\Core\Utility\GeneralUtility::_GP('tx_gridelements_allowed'), 1);
 
-		$this->removeDisallowedWizardItems($allowed, $wizardItems);
+			$this->removeDisallowedWizardItems($allowed, $wizardItems);
 
-		if(empty($allowed) || in_array('gridelements_pi1', $allowed)){
+			if(empty($allowed) || in_array('gridelements_pi1', $allowed)){
 
-			$excludeLayouts = $this->getExcludeLayouts($container, $parentObject);
+				$excludeLayouts = $this->getExcludeLayouts($container, $parentObject);
 
-			$gridItems = $this->layoutSetup->getLayoutWizardItems($parentObject->colPos, $excludeLayouts);
-			$this->addGridItemsToWizard($gridItems, $wizardItems);
+				$gridItems = $this->layoutSetup->getLayoutWizardItems($parentObject->colPos, $excludeLayouts);
+				$this->addGridItemsToWizard($gridItems, $wizardItems);
+			}
+
+			$this->addGridValuesToWizardItems($wizardItems, $container, $column);
+
+			$this->removeEmptyHeadersFromWizard($wizardItems);
 		}
-
-		$this->addGridValuesToWizardItems($wizardItems, $container, $column);
-
-		$this->removeEmptyHeadersFromWizard($wizardItems);
 	}
 
 	/**

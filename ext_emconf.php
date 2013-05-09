@@ -36,7 +36,8 @@ It offers a lot of new features like advanced drag & drop or real references, th
 	'constraints' => array(
 		'depends' => array(
 			'cms' => '',
-			'php' => '5.3.0-0.0.0',
+			'version' => '',
+			'php' => '5.3.3-0.0.0',
 			'typo3' => '6.0.0-0.0.0',
 		),
 		'conflicts' => array(
