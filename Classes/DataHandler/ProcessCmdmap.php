@@ -85,21 +85,18 @@ class ProcessCmdmap extends AbstractDataHandler {
 					$overrideArray['sorting'] = 0;
 
 					if ((intval($valueArray[0]) > 0 && $valueArray[1] != '') || (abs($valueArray[0]) == $id)) {
+						$targetTable = 'pages';
 						$overrideArray['tx_gridelements_container'] = 0;
 						$overrideArray['tx_gridelements_columns'] = 0;
 						$overrideArray['colPos'] = intval($valueArray[1]);
 					} else if ($valueArray[1] != '') {
+						$targetTable = 'tt_content';
 						$containerUpdateArray[abs($valueArray[0])] = 1;
 						$overrideArray['colPos'] = -1;
 						$overrideArray['tx_gridelements_container'] = abs($valueArray[0]);
 						$overrideArray['tx_gridelements_columns'] = intval($valueArray[1]);
 					}
-					if(intval($valueArray[0]) < 0) {
-						$targetTable = 'tt_content';
-					} else {
-						$targetTable = 'pages';
-					}
-					$targetRecord = t3lib_BEfunc::getRecordWSOL($targetTable, intval($valueArray[0]), 'sys_language_uid');
+					$targetRecord = \TYPO3\CMS\Backend\Utility\BackendUtility::getRecordWSOL($targetTable, abs($valueArray[0]), 'sys_language_uid');
 					$overrideArray['sys_language_uid'] = $targetRecord['sys_language_uid'];
 					$this->getTceMain()->copyRecord($table, $id, intval($valueArray[0]), 1, $overrideArray);
 					$this->doGridContainerUpdate($containerUpdateArray);
