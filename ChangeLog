@@ -1,3 +1,44 @@
+2.0.0 2013-05-12 Jo Hasenau <info@cybercraft.de>
+    Done: Task #44373 TYPO3 6.x compatibility
+    Fixed: Issue #48081	Select the Gridelement Layout "invalid value" gridelements 2-0
+    Fixed: Issue #47612	Folder "itemsprocfuncs" should be UpperCamelCase
+    Fixed: Issue #47574	Fatal Error: Argument 6 passed to ProcessCmdmap::processCmdmap() is None
+    Fixed: Issue #47544	Error "Calculated absolute path to t3lib directory does not exist." when opening the grid wizard
+    Fixed: Issue #47508	PHP fatal on creating new content element because of wrong folder name
+    Fixed: Issue #47506	PHP fatal in list module when ext:version is not loaded
+    Fixed: Issue #47497	Folder "itemsprocfuncs" should be camel cased
+    Fixed: Issue #47218	PHP Error Message
+    Fixed: Issue #46861	No Icons in Backend for CEs after installing gridelements
+    Fixed: Issue #46827	Old XCLASS method used
+    Fixed: Issue #46721	Fatal error on backend_layout update
+    Fixed: Issue #46678	Missing toolbar icons on mouseover
+    Fixed: Issue #46459	Fit namespaces of TYPO3 6.0
+    Fixed: Issue #46394	JS D'n'D errors
+    Fixed: Issue #46227	Layout wizard not working
+    Fixed: Issue #44534	The content element wizard always show ALL CEs
+    Fixed: Issue #44533	Modified TYPO3-Icons
+    Fixed: Issue #44530	Problem with Drag and Drop
+    Fixed: Issue #44529	missing icons and wrong color
+
+1.4.1 2013-05-09 Jo Hasenau <info@cybercraft.de>
+	Fixed: Issue #44243 Content not shown in FE without default language of it
+	Fixed: Issue #32784 New CE wizard - be_group
+	Fixed: Issue #47418 copy Element out of a gridelement "No valid ajaxID parameter given"
+	Fixed: Issue #46397 Kopieren nicht möglich
+	Fixed: Issue #46868 Allowed params is not respected if the colPos is the same
+	Fixed: Issue #46944 Allowed = * not working in BE-Layout
+	Fixed: Issue #46331 Paste icon is showed when files are in clipboard
+	Fixed: Issue #46312 CSS bug if TYPO3 is in subdirectory
+	Fixed: Issue #47415 Filtering of allowed CTypes fails due to error in sql syntax
+	Fixed: Issue #46408 "Paste Copy" and "Paste Reference" under pagemodul languageview not possible
+	Fixed: Issue #46175 t3lib_utility_Math not available in TYPO3 4.5
+	Fixed: Issue #46946 Creating new CE after an existing element failes
+	Fixed: Issue #47256 Problem with a foreach in tx_gridelements_view
+	Fixed: Issue #46766 Drag&Drop function not working after update to svn version 4572
+	Fixed: Issue #46254 Version number in em_conf.php in v1.4.0 tag incorrect
+	Fixed: Issue #46175 t3lib_utility_Math not available in TYPO3 4.5
+	Fixed: Issue #44784 required file wrapperForT3libBeFunc.php in Tests directory
+
 1.4.0 2013-03-08 Jo Hasenau <info@cybeercraft.de>
 
     Fixed: Issue #46060 Allowed param in backend_layout is not respected

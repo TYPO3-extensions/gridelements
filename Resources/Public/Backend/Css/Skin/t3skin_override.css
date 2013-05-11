@@ -67,7 +67,8 @@ td.t3-gridCell-unassigned div.t3-row-header div {
 	background-image:-webkit-gradient(linear,0% 0%,0% 100%,color-stop(0.1,#7f7f7f),color-stop(1,#5b5b5b));
 }
 
-.t3-gridContainer .t3-row-header {
+.t3-gridContainer .t3-row-header,
+.t3-lang-gridContainer .t3-row-header {
 	background-color: inherit;
 	cursor: move!important;
 }
@@ -162,11 +163,13 @@ td.t3-gridCell-unassigned div.t3-row-header div {
 	padding-left: 5px;
 }
 
-.t3-gridContainer {
+.t3-gridContainer,
+.t3-lang-gridContainer {
 	margin-top: 12px;
 }
 
-.t3-gridContainer .t3-gridContainer {
+.t3-gridContainer .t3-gridContainer,
+.t3-lang-gridContainer .t3-gridContainer {
 	margin-top:6px;
 }
 
@@ -354,7 +357,8 @@ td.t3-gridCell-unassigned div.t3-row-header div {
 .t3-page-ce-dropzone {
 	margin: -22px 0px 0px 0px;
 }
-.t3-gridContainer .t3-gridContainer .t3-page-ce-dropzone {
+.t3-gridContainer .t3-gridContainer .t3-page-ce-dropzone,
+.t3-lang-gridContainer .t3-gridContainer .t3-page-ce-dropzone {
 	margin: -17px 0px 0px 0px!important;
 }
 
@@ -362,7 +366,8 @@ td.t3-gridCell-unassigned div.t3-row-header div {
 	margin: 0!important;
 }
 
-.t3-page-column {
+.t3-page-column,
+.t3-page-lang-column {
 	background: #F8F8F8;
 	border-left: 5px solid #F8F8F8!important;
 	border-right: 5px solid #F8F8F8!important;
@@ -410,4 +415,3 @@ td.t3-gridCell-unassigned div.t3-row-header div {
 .reference .x-dd-droptargetarea {
 	display: none!important;
 }
-
