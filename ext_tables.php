@@ -210,8 +210,7 @@ $TBE_STYLES['skins']['gridelements']['name'] = 'gridelements';
 $TBE_STYLES['skins']['gridelements']['stylesheetDirectories']['structure'] = 'EXT:' . ($_EXTKEY) . '/Resources/Public/Backend/Css/Skin/';
 
 $GLOBALS['TBE_MODULES_EXT']['xMOD_alt_clickmenu']['extendCMclasses'][]=array(
-	'name' => 'CmOptions',
-	'path' => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath($_EXTKEY).'Classes/Backend/CmOptions.php'
+	'name' => 'GridElementsTeam\\Gridelements\\Backend\\CmOptions',
 );
 
 // add custom sprite icons
