@@ -15,6 +15,8 @@ if(typeof GridElementsDD === "undefined"){
 
 	if(Ext.get('ext-cms-layout-db-layout-php')) {
 
+		Ext.select('.t3-page-lang-column > br').remove();
+
 		// add action for show/hide gridColumn contents
 		var toggleIcons = Ext.select('.toggle-content').elements;
 		Ext.each(toggleIcons, function(el) {
@@ -165,6 +167,11 @@ if(typeof GridElementsDD === "undefined"){
 					};
 				} else {
 					dropZoneID = Ext.get(parentCell).id;
+				}
+				if(Ext.get(parentCell).hasClass('t3-page-lang-column')) {
+					var dropZone = Ext.get(parentCell).select('.t3-page-ce-dropzone').elements[0];
+					var dropZoneIdParts = dropZone.id.split('-page');
+					dropZoneID = 'DD_DROP_PIDx' + dropZoneIdParts[0].substr(7);
 				}
 				var currentDropZone = document.createElement('div');
 				Ext.get(currentDropZone).addClass([
