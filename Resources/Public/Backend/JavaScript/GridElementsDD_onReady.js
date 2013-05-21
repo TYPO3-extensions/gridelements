@@ -51,16 +51,16 @@ if(typeof GridElementsDD === "undefined"){
 		}
 
 		// add allowed ctypes to addNewButtons of gridColumns and contentElements
-		var rowHeaders = Ext.select('.t3-row-header').elements;
-		Ext.each(rowHeaders, function(rowHeader){
-			var rowHeaderLinkNew = Ext.get(rowHeader).select('a').first();
-			if(rowHeaderLinkNew !== null) {
-				var onClick = rowHeaderLinkNew.getAttribute('onclick');
+		var newCeWrappers = Ext.select('.t3-page-ce-wrapper-new-ce').elements;
+		Ext.each(newCeWrappers, function(newCeWrapper){
+			var newCeWrapperLinkNew = Ext.get(newCeWrapper).select('a').first();
+			if(newCeWrapperLinkNew !== null) {
+				var onClick = newCeWrapperLinkNew.getAttribute('onclick');
 				if (typeof onClick !== 'function' && onClick !== null && !onClick.match(/tx_gridelements_allowed=/)) {
-					var parentColumn = Ext.get(rowHeader).findParent('td.t3-gridCell', 4);
+					var parentColumn = Ext.get(newCeWrapper).findParent('td.t3-gridCell', 5);
 					if(parentColumn){
-						var allowedCTypes = [];
 						var currentClasses = Ext.get(parentColumn).dom.className.split(' ');
+						var allowedCTypes = new Array;
 						for (var i = 0; i < currentClasses.length; i++) {
 							var currentClass = currentClasses[i];
 							if(currentClass.substr(0, 9) == 't3-allow-'){
@@ -69,7 +69,7 @@ if(typeof GridElementsDD === "undefined"){
 						}
 						if(allowedCTypes[0] !== 'all'){
 							onClick = onClick.replace('db_new_content_el.php?', 'db_new_content_el.php?tx_gridelements_allowed=' + allowedCTypes.join(',') + '&');
-							rowHeaderLinkNew.set({onclick: onClick});
+							newCeWrapperLinkNew.set({onclick: onClick});
 						}
 					}
 				}
