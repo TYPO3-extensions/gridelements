@@ -1,3 +1,9 @@
+2.0.1 2013-05-22 Jo Hasenau <info@cybercraft.de>
+    Fixed: Issue #48410 New content element doesn't limit allowed types
+    Fixed: Issue #48371 Fatal error in page view when running on master / 6.2-to-be
+    Fixed: Issue #48136 Can't move Element to Position Zero
+    Fixed: Issue #48134 Click Menu does not work when GE 2.0 is installed
+
 2.0.0 2013-05-12 Jo Hasenau <info@cybercraft.de>
     Done: Task #44373 TYPO3 6.x compatibility
     Fixed: Issue #48081	Select the Gridelement Layout "invalid value" gridelements 2-0
