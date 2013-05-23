@@ -214,7 +214,7 @@ if(typeof GridElementsDD === "undefined"){
 				lastIcon = Ext.get(firstNewIconContainer.select('.t3-icon:last').elements[0].parentNode.cloneNode(true));
 
 			lastIcon.set({onclick:'', title:''});
-			lastIcon.select('span').set({class:'t3-icon t3-icon-actions t3-icon-actions-document t3-icon-document-new'});
+			lastIcon.select('span').set({"class":'t3-icon t3-icon-actions t3-icon-actions-document t3-icon-document-new'});
 			lastIcon.insertAfter(Ext.get(firstNewIconContainer.select('.t3-icon:last').elements[0].parentNode));
 
 			var
