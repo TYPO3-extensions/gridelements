@@ -187,7 +187,7 @@ if(typeof GridElementsDD === "undefined"){
 		// add dropzones within .t3-page-ce existing elements
 		var dropZoneEl = Ext.select('.t3-page-ce .t3-page-ce-body').elements;
 		Ext.each(dropZoneEl, function(currentElement){
-			var dropZoneID = Ext.get(currentElement).parent().select('.t3-page-ce-header span a span').elements[0].getAttribute('title');
+			var dropZoneID = Ext.get(currentElement).parent().select('.t3-page-ce-header span span').elements[0].getAttribute('title');
 			var currentDropZone = document.createElement('div');
 			currentDropZone.innerHTML = dropZoneTpl;
 			Ext.get(currentDropZone).select('div.x-dd-droptargetarea').set({title: dropZoneID});
