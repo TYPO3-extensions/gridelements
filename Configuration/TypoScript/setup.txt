@@ -29,7 +29,7 @@ lib.tt_content.shortcut.pages = COA
 lib.tt_content.shortcut.pages {
 	10 = USER
 	10 {
-		userFunc = tx_gridelements_view->user_getTreeList
+		userFunc = GridElementsTeam\Gridelements\Plugin\Gridelements->user_getTreeList
     }
 	20 = CONTENT
 	20 {

@@ -38,8 +38,8 @@ namespace GridElementsTeam\Gridelements\Plugin;
  */
 class Gridelements extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin {
 
-	public $prefixId = 'tx_gridelements_view'; // Same as class name
-	public $scriptRelPath = 'view/class.tx_gridelements_view.php'; // Path to this script relative to the extension dir.
+	public $prefixId = 'Gridelements'; // Same as class name
+	public $scriptRelPath = 'Classes/Plugin/Gridelements.php'; // Path to this script relative to the extension dir.
 	public $extKey = 'gridelements'; // The extension key.
 
 	/**
