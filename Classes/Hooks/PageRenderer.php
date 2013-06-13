@@ -192,7 +192,7 @@ class PageRenderer {
 							"top.geSprites = {
 								copyfrompage: '" . \TYPO3\CMS\Backend\Utility\IconUtility::getSpriteIconClasses('extensions-gridelements-copyfrompage') . "',
 								pastecopy: '" . \TYPO3\CMS\Backend\Utility\IconUtility::getSpriteIconClasses('extensions-gridelements-pastecopy') . "',
-								pasteref: '" . \TYPO3\CMS\Backend\Utility\IconUtility::getSpriteIconClasses('extensions-gridelements-pasteref') . "',
+								pasteref: '" . \TYPO3\CMS\Backend\Utility\IconUtility::getSpriteIconClasses('extensions-gridelements-pasteref') . "'
 							};",
 							"top.backPath = '" . $GLOBALS['BACK_PATH'] . "';"
 						),
