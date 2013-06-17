@@ -1,3 +1,10 @@
+2.0.2 2013-06-17 Jo Hasenau <info@cybercraft.de>
+    Fixed: Wrong dependency setting in ext_emconf.php
+    Fixed: Remove superfluous JS comma that breaks IE8
+    Fixed: Problems due to restructuring and namespaces
+    Fixed: JavaScript error for read-only content elements
+    Fixed: Issue #48484 JavaScript error thrown in IE8
+
 2.0.1 2013-05-22 Jo Hasenau <info@cybercraft.de>
     Fixed: Issue #48410 New content element doesn't limit allowed types
     Fixed: Issue #48371 Fatal error in page view when running on master / 6.2-to-be
