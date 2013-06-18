@@ -29,11 +29,13 @@ td.t3-gridCell-unassigned {
 td.t3-gridCell-restricted div.t3-row-header,
 td.t3-gridCell-unassigned div.t3-row-header {
 	opacity: 1;
+	filter: alpha(opacity=100);
 }
 
 td.t3-gridCell-restricted div.t3-row-header div,
 td.t3-gridCell-unassigned div.t3-row-header div {
 	opacity: 1;
+	filter: alpha(opacity=100);
 }
 
 .t3-dd-spacer {
@@ -289,6 +291,7 @@ td.t3-gridCell-unassigned div.t3-row-header div {
 	height: 100%;
 	background: #427BAB;
 	opacity: 0.15;
+	filter: alpha(opacity=15);
 }
 
 .exampleContent .container_reference .reference-overlay {
@@ -305,6 +308,7 @@ td.t3-gridCell-unassigned div.t3-row-header div {
 
 .exampleContent .reference .reference {
 	opacity: 1;
+	filter: alpha(opacity=100);
 }
 
 .t3-gridCell-invisibleContent .t3-page-ce {
@@ -313,6 +317,7 @@ td.t3-gridCell-unassigned div.t3-row-header div {
 
 .t3-gridCell-invisibleContent .t3-page-colHeader {
 	opacity: 0.5;
+	filter: alpha(opacity=50);
 }
 
 .t3-page-colHeader a.toggle-up {
