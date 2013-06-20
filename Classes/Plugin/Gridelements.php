@@ -36,7 +36,7 @@ namespace GridElementsTeam\Gridelements\Plugin;
  * @package	TYPO3
  * @subpackage	tx_gridelements
  */
-class Gridelements extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin {
+class Gridelements extends \TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer {
 
 	public $prefixId = 'Gridelements'; // Same as class name
 	public $scriptRelPath = 'Classes/Plugin/Gridelements.php'; // Path to this script relative to the extension dir.
