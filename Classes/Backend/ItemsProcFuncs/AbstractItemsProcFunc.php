@@ -78,7 +78,7 @@ class AbstractItemsProcFunc {
 			if ($backendLayout) {
 				/** @var \TYPO3\CMS\Core\TypoScript\Parser\TypoScriptParser $parser  */
 				$parser = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Core\TypoScript\Parser\TypoScriptParser');
-				$parser->parse($backendLayout['config']);
+				$parser->parse($parser->checkIncludeLines($backendLayout['config']));
 
 				$backendLayout['__config'] = $parser->setup;
 				$backendLayout['__items'] = array();

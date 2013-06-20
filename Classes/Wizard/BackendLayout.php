@@ -116,7 +116,7 @@ class BackendLayout {
 
 			// load TS parser
 			$parser = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Core\TypoScript\Parser\TypoScriptParser');
-			$parser->parse($record[0][$this->P['field']]);
+			$parser->parse($parser->checkIncludeLines($record[0][$this->P['field']]));
 			$data = $parser->setup['backend_layout.'];
 			$t3GridData = '[';
 			$colCount = $data['colCount'];
