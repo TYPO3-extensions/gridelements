@@ -5,13 +5,11 @@ require_once('conf.php');
 
 if($BACK_PATH_ABS !== false){
 	require($BACK_PATH_ABS . 'init.php');
-	require($BACK_PATH_ABS . 'template.php');
 }else{
 	require($BACK_PATH . 'init.php');
-	require($BACK_PATH . 'template.php');
 }
 
-$LANG->includeLLFile('EXT:lang/locallang_wizards.xml');
+$GLOBALS['LANG']->includeLLFile('EXT:lang/locallang_wizards.xml');
 
 /**
  * Script Class for grid wizard
@@ -52,7 +50,7 @@ class BackendLayout {
 		$uid = intval($this->P['uid']);
 
 		// Initialize document object:
-		$this->doc = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Backend\Template\StandardDocumentTemplate');
+		$this->doc = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Backend\Template\DocumentTemplate');
 		$this->doc->backPath = $GLOBALS['BACK_PATH'];
 
 		$pageRenderer = $this->doc->getPageRenderer();
