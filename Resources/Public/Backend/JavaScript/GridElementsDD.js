@@ -669,9 +669,9 @@ GridElementsDD = function() {
 						container = containerMatch !== null && typeof containerMatch != 'undefined' ? containerMatch[1] : '';
 						containerColPos = containerColPosMatch !== null && typeof containerColPosMatch != 'undefined' ? containerColPosMatch[1] : '';
 
-					if(container > 0 && containerColPos > 0) {
+					if(container > 0) {
 						newFromPageIconConf.rel = - container + 'x' + containerColPos;
-					} else if(container == '' && colPos > 0 && uidPid > 0) {
+					} else if(container == '' && uidPid > 0) {
 						newFromPageIconConf.rel = uidPid + 'x' + colPos;
 					} else {
 						newFromPageIconConf.rel = uidPid;
@@ -833,28 +833,8 @@ GridElementsDD = function() {
 			if(clipboardItemUid.substr(0,5) != '_FILE') {
 				colHeader = Ext.select('.t3-page-ce-wrapper-new-ce, .t3-page-ce-new-ce').elements;
 				Ext.each(colHeader, function(currentColHeader) {
-					var dropZoneID = null,
-						parentCell = Ext.get(currentColHeader).hasClass('t3-page-ce-new-ce') ? Ext.get(currentColHeader).parent('.t3-page-ce').select('.t3-icon-mimetypes').elements[0] : Ext.get(currentColHeader).parent('.t3-page-column');
-
-					if(Ext.get(currentColHeader).hasClass('t3-page-ce-wrapper-new-ce') && Ext.get(parentCell).id.substr(0, 6) != 'column') {
-						var parentCellClass = Ext.get(parentCell).dom.className.split(' ');
-						for(i = 0; i < parentCellClass.length; i++) {
-							if(parentCellClass[i].substr(0, 15) == 't3-page-column-') {
-								// add page id - must be negative to identify it as a PID
-								dropZoneID = top.DDpid + 'x' + parentCellClass[i].substr(15);
-							}
-						};
-					} else {
-						if(Ext.get(currentColHeader).hasClass('t3-page-ce-new-ce')) {
-							dropZoneID = '-' + parentCell.getAttribute('title').substr(3);
-						} else {
-							dropZoneID = '-' + Ext.get(parentCell).id.substr(7);
-						}
-					}
-
-					// dropZoneID now has this format: column-1234567x0 or DD_PAGECOLUMNx0
-					// the number after the "x" can be positive and negative, e.g. DD_PAGECOLUMNx-2 for "unused elements"
 					var lastColHeaderLink = Ext.get(currentColHeader).select('a:last').elements[0];
+					var dropZoneID = lastColHeaderLink.rel;
 
 					// add "paste copy" icon
 					var
