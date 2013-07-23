@@ -52,7 +52,7 @@ class PreProcessFieldArray extends AbstractDataHandler {
 	 */
 	public function execute_preProcessFieldArray(&$fieldArray, $table, $id, &$parentObj) {
 		$this->init($table, $id, $parentObj);
-		if(!$parentObj->isImporting) {
+		if(!$this->getTceMain()->isImporting) {
 			$this->saveCleanedUpFieldArray($fieldArray);
 			$this->processFieldArrayForTtContent($fieldArray);
 		}

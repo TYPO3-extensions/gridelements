@@ -58,7 +58,7 @@ class ProcessCmdmap extends AbstractDataHandler {
 		if ($command == 'copy' &&
 			!$commandIsProcessed &&
 			$table == 'tt_content' &&
-			!$parentObj->isImporting
+			!$this->getTceMain()->isImporting
 		) {
 
 			$copyAfterDuplicationFields = $GLOBALS['TCA']['tt_content']['ctrl']['copyAfterDuplFields'];
