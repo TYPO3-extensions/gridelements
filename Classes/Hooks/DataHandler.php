@@ -108,8 +108,10 @@ class DataHandler {
 	 */
 	public function moveRecord($table, $uid, &$destPid, &$propArr, &$moveRec, $resolvedPid, &$recordWasMoved, \TYPO3\CMS\Core\DataHandling\DataHandler &$parentObj) {
 		/** @var $hook \GridElementsTeam\Gridelements\DataHandler\MoveRecord */
-		$hook = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('GridElementsTeam\Gridelements\DataHandler\MoveRecord');
-		$hook->execute_moveRecord($table, $uid, $destPid, $propArr, $moveRec, $resolvedPid, $recordWasMoved, $parentObj);
+		if(!$parentObj->isImporting) {
+			$hook = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('GridElementsTeam\Gridelements\DataHandler\MoveRecord');
+			$hook->execute_moveRecord($table, $uid, $destPid, $propArr, $moveRec, $resolvedPid, $recordWasMoved, $parentObj);
+		}
 	}
 
 	/**
@@ -126,8 +128,10 @@ class DataHandler {
 	 */
 	public function processCmdmap($command, $table, $id, $value, &$commandIsProcessed, \TYPO3\CMS\Core\DataHandling\DataHandler &$parentObj) {
 		/** @var $hook \GridElementsTeam\Gridelements\DataHandler\ProcessCmdmap */
-		$hook = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('GridElementsTeam\Gridelements\DataHandler\ProcessCmdmap');
-		$hook->execute_processCmdmap($command, $table, $id, $value, $commandIsProcessed, $parentObj);
+		if(!$parentObj->isImporting) {
+			$hook = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('GridElementsTeam\Gridelements\DataHandler\ProcessCmdmap');
+			$hook->execute_processCmdmap($command, $table, $id, $value, $commandIsProcessed, $parentObj);
+		}
 	}
 
 }
