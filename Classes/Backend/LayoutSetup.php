@@ -308,7 +308,7 @@ class LayoutSetup {
 
 		$gridLayoutConfig = array();
 
-		if (isset($pageTSconfig['tx_gridelements.'])) {
+		if (isset($pageTSconfig['tx_gridelements.']['setup.'])) {
 
 			foreach ($pageTSconfig['tx_gridelements.']['setup.'] as $layoutId => $item) {
 				// remove tailing dot of layout ID
