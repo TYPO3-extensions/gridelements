@@ -145,6 +145,7 @@ class Gridelements extends \TYPO3\CMS\Frontend\ContentObject\ContentObjectRender
 					}
 
 					if (is_array($child)) {
+						\TYPO3\CMS\Core\Resource\Service\FrontendContentAdapterService::modifyDBRow($child, 'tt_content');
 						$this->cObj->data['tx_gridelements_view_children'][] = $child;
 						unset($child);
 					}
@@ -307,7 +308,7 @@ class Gridelements extends \TYPO3\CMS\Frontend\ContentObject\ContentObjectRender
 			}
 		}
 		if(count($data['tx_gridelements_view_columns'])) {
-			foreach($data['tx_gridelements_view_columns'] as $column => $conteent) {
+			foreach($data['tx_gridelements_view_columns'] as $column => $content) {
 				unset($data['tx_gridelements_view_column_' . $column]);
 			}
 		}
