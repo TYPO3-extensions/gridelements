@@ -512,7 +512,33 @@ class Gridelements extends \TYPO3\CMS\Frontend\ContentObject\ContentObjectRender
 				$tempArr = $tempArr[$v];
 			}
 		}
-		return $tempArr[$value];
+		if (is_array($tempArr['el'])) {
+			$out = $this->getFlexformSectionsRecursively($tempArr['el'],$value);
+		} else {
+			$out = $tempArr[$value];
+		}
+		return $out;
+	}
+
+	/**
+	 * @param $dataArr
+	 * @param string $valueKey
+	 * @return array
+	 */
+	protected function getFlexformSectionsRecursively($dataArr, $valueKey = 'vDEF') {
+		$out = array();
+		foreach($dataArr as $k => $el) {
+			if (is_array($el) && is_array($el['el'])) {
+				$out[$k] = $this->getFlexformSectionsRecursively($el['el']);
+			} elseif (is_array($el) && is_array($el['data']['el'])) {
+				$out[] = $this->getFlexformSectionsRecursively($el['data']['el']);
+			} else {
+				if (isset($el['vDEF'])) {
+					$out[$k] = $el['vDEF'];
+				}
+			}
+		}
+		return $out;
 	}
 }
 
