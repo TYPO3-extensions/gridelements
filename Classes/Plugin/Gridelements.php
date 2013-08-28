@@ -178,7 +178,7 @@ class Gridelements extends \TYPO3\CMS\Frontend\ContentObject\ContentObjectRender
 	public function getPiFlexFormData() {
 		$piFlexForm = $this->cObj->data['pi_flexform'];
 
-		if (is_array($piFlexForm['data'])) {
+		if (is_array($piFlexForm) && is_array($piFlexForm['data'])) {
 			foreach ($piFlexForm['data'] as $sheet => $data) {
 				foreach ($data as $lang => $value) {
 					foreach ($value as $key => $val) {
@@ -484,7 +484,7 @@ class Gridelements extends \TYPO3\CMS\Frontend\ContentObject\ContentObjectRender
 	/**
 	 * Returns part of $sheetArray pointed to by the keys in $fieldNameArray
 	 *
-	 * @param	array		Multidimensiona array, typically FlexForm contents
+	 * @param	array		Multidimensional array, typically FlexForm contents
 	 * @param	array		Array where each value points to a key in the FlexForms content - the input array will have the value returned pointed to by these keys. All integer keys will not take their integer counterparts, but rather traverse the current position in the array an return element number X (whether this is right behavior is not settled yet...)
 	 * @param	string		Value for outermost key, typ. "vDEF" depending on language.
 	 * @return	mixed		The value, typ. string.
