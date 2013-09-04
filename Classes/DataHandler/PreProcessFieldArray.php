@@ -272,14 +272,13 @@ class PreProcessFieldArray extends AbstractDataHandler {
 			$fieldArray['tx_gridelements_container'] = $targetUid;
 			$fieldArray['tx_gridelements_columns'] = intval($target[1]);
 			$containerUpdateArray[$targetUid] = 1;
+			$this->doGridContainerUpdate($containerUpdateArray);
 		} else {
 			$fieldArray['colPos'] = intval($target[1]);
 			$fieldArray['sorting'] = 0;
 			$fieldArray['tx_gridelements_container'] = 0;
 			$fieldArray['tx_gridelements_columns'] = 0;
 		}
-
-		$this->doGridContainerUpdate($containerUpdateArray);
 	}
 
 	/**
