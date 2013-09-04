@@ -245,33 +245,33 @@ if(typeof GridElementsDD === "undefined"){
 				var dyntabMenuDivs = Ext.get(tempDiv).select('#user-setup-wrapper div.typo3-dyntabmenu-divs');
 				draggableContainer.appendChild(dyntabMenuDivs);
 
-				Ext.each(Ext.get(draggableContainer).select('div.typo3-dyntabmenu-divs div').elements, function(layer){
-				    var layerContent = '';
-				    Ext.each(Ext.get(layer).select('tr').elements, function(row) {
-						var headerText = Ext.get(row).select('td:last a strong').elements[0].innerHTML;
-						Ext.get(row).select('td:last a strong').remove();
-						var descText = Ext.get(row).select('td:last a').elements[0].innerHTML;
-						
-						Ext.get(row).select('td:last a strong').remove();
-						Ext.get(row).select('td:first, td:last').remove();
-						
-						// set additional info either to rel or to title
-						if(!top.skipDraggableDetails) {
-							descText = descText.replace('<br>', '').replace('<BR>', '');
-							Ext.get(row).select('td a').set({title: '', rel: headerText + '|' + descText}).addClass('x-dd-draggableitem x-dd-droptargetgroup-els x-dd-usetpl-useradd');
-						}else{
-							descText = descText.replace('<br>', ' - ').replace('<BR>', ' - ');
-							Ext.get(row).select('td a').set({title: headerText + descText}).addClass('x-dd-draggableitem x-dd-droptargetgroup-els x-dd-usetpl-useradd');
-						}
-						
-					});
-					Ext.each(Ext.get(layer).select('td').elements, function(cell) {
-						layerContent += '<div class="x-dd-new-element-link">' + cell.innerHTML + '</div>';
-					});
-					// add content and a container for additional info
-					layer.innerHTML = layerContent;
-				});
-				
+                Ext.each(Ext.get(draggableContainer).select('div.typo3-dyntabmenu-divs div').elements, function(layer){
+                    var layerContent = '';
+                    Ext.each(Ext.get(layer).select('tr, ul li').elements, function(row) {
+                        var headerText = Ext.get(row).select('td:last a strong, div.text a strong').elements[0].innerHTML;
+                        Ext.get(row).select('td:last a strong, div.text a strong').remove();
+                        var descText = Ext.get(row).select('td:last a, div.text a').elements[0].innerHTML;
+
+                        Ext.get(row).select('td:last a strong, div.text a strong').remove();
+                        Ext.get(row).select('td:first, td:last, div.input, div.text').remove();
+
+                        // set additional info either to rel or to title
+                        if(!top.skipDraggableDetails) {
+                            descText = descText.replace('<br>', '').replace('<BR>', '');
+                            Ext.get(row).select('td a, div a').set({title: '', rel: headerText + '|' + descText}).addClass('x-dd-draggableitem x-dd-droptargetgroup-els x-dd-usetpl-useradd');
+                        }else{
+                            descText = descText.replace('<br>', ' - ').replace('<BR>', ' - ');
+                            Ext.get(row).select('td a, div a').set({title: headerText + descText}).addClass('x-dd-draggableitem x-dd-droptargetgroup-els x-dd-usetpl-useradd');
+                        }
+
+                    });
+                    Ext.each(Ext.get(layer).select('td, div').elements, function(cell) {
+                        layerContent += '<div class="x-dd-new-element-link">' + cell.innerHTML + '</div>';
+                    });
+                    // add content and a container for additional info
+                    layer.innerHTML = layerContent;
+                });
+                
 				Ext.get(draggableContainer).select('div.typo3-dyntabmenu-divs div').show();
 
 				var dyntabMenuID = Ext.get(draggableContainer).select('.tab').elements[0].id.replace('-1-MENU', '');
