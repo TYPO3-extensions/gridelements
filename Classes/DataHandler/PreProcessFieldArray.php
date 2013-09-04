@@ -654,7 +654,9 @@ class PreProcessFieldArray extends AbstractDataHandler {
 			$_tcaColumns = $tcaColumns;
 			$tcaColumns = array(-2, -1);
 			foreach($_tcaColumns as $item) {
-				$tcaColumns[] = $item[1];
+				if($item[1]) {
+					$tcaColumns[] = $item[1];
+				}
 			}
 			$tcaColumns = implode(',', $tcaColumns);
 		}
