@@ -150,6 +150,17 @@ class Gridelements extends \TYPO3\CMS\Frontend\ContentObject\ContentObjectRender
 						unset($child);
 					}
 				}
+
+				$compareFunction = function($child_a, $child_b) {
+					if($child_a['sorting'] > $child_b['sorting']) {
+						return 1;
+					} elseif ($child_a['sorting'] == $child_b['sorting']) {
+						return 0;
+					} else return -1;
+				};
+
+				usort($this->cObj->data['tx_gridelements_view_children'], $compareFunction);
+
 				$GLOBALS['TYPO3_DB']->sql_free_result($res);
 			}
 		}
@@ -215,6 +226,7 @@ class Gridelements extends \TYPO3\CMS\Frontend\ContentObject\ContentObjectRender
 		// each of the children will now be rendered separately and the output will be added to it's particular column
 		if(count($this->cObj->data['tx_gridelements_view_children'])) {
 			foreach ($this->cObj->data['tx_gridelements_view_children'] as $child) {
+				$this->cObj->data['tx_gridelements_view_raw_columns'][$child['tx_gridelements_columns']][] = $child;
 				$renderedChild = $child;
 				$this->renderChildIntoParentColumn($columns, $renderedChild, $parentGridData, $parentRecordNumbers, $typoScriptSetup);
 				$currentParentGrid['data']['tx_gridelements_view_child_' . $child['uid']] = $renderedChild;
