@@ -95,9 +95,9 @@ $tempColumns = array(
 				AND tt_content.sys_language_uid = ###REC_FIELD_sys_language_uid###
 				AND tt_content.pid=###CURRENT_PID###
 				AND tt_content.CType=\'gridelements_pi1\'
-				AND NOT tt_content.uid=###THIS_UID###
+				AND NOT (tt_content.uid=###THIS_UID###)
 				AND (
-					NOT tt_content.tx_gridelements_container=###THIS_UID###
+					NOT (tt_content.tx_gridelements_container=###THIS_UID###)
 					OR tt_content.tx_gridelements_container=0
 				)
 				ORDER BY tt_content.header, tt_content.uid
