@@ -16,6 +16,7 @@ $TCA['tx_gridelements_backend_layout'] = array(
 		'origUid' => 't3_origuid',
 		'sortby' => 'sorting',
 		'delete' => 'deleted',
+		'rootLevel' => -1,
 		'thumbnail' => 'resources',
 		'dividers2tabs' => TRUE,
 		'selicon_field' => 'icon',
