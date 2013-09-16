@@ -123,7 +123,13 @@ class Gridelements extends \TYPO3\CMS\Frontend\ContentObject\ContentObjectRender
 				' AND colPos != -2
 				AND pid > 0
 				AND tx_gridelements_columns IN (' . $csvColumns . ')
-				AND sys_language_uid IN (' . $this->getSysLanguageContent() . ')';
+				AND (
+					sys_language_uid IN (-1,0)
+					OR (
+						sys_language_uid = ' .$GLOBALS['TSFE']->sys_language_uid. '
+						AND l18n_parent = 0
+					)
+				)';
 
 			$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery(
 				'*',
@@ -140,7 +146,7 @@ class Gridelements extends \TYPO3\CMS\Frontend\ContentObject\ContentObjectRender
 					$GLOBALS['TSFE']->sys_page->versionOL('tt_content', $child);
 
 					// Language overlay:
-					if (is_array($child) && $GLOBALS['TSFE']->sys_language_contentOL) {
+					if (is_array($child) && $child['sys_language_uid'] != $GLOBALS['TSFE']->sys_language_content && $GLOBALS['TSFE']->sys_language_contentOL) {
 						$child = $GLOBALS['TSFE']->sys_page->getRecordOverlay('tt_content', $child, $GLOBALS['TSFE']->sys_language_content, $GLOBALS['TSFE']->sys_language_contentOL);
 					}
 
@@ -163,21 +169,6 @@ class Gridelements extends \TYPO3\CMS\Frontend\ContentObject\ContentObjectRender
 
 				$GLOBALS['TYPO3_DB']->sql_free_result($res);
 			}
-		}
-	}
-
-	/**
-	 * get sys language content
-	 *
-	 * @return int|string
-	 */
-	public function getSysLanguageContent() {
-		if ($GLOBALS['TSFE']->sys_language_contentOL) {
-			// Sys language content is set to zero/-1 - and it is expected that whatever routine processes the output will
-			// OVERLAY the records with localized versions!
-			return '0,-1';
-		} else {
-			return intval($GLOBALS['TSFE']->sys_language_content);
 		}
 	}
 
