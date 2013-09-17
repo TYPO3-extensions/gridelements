@@ -74,21 +74,18 @@ class Gridelements extends \TYPO3\CMS\Frontend\ContentObject\ContentObjectRender
 		// and we have to determine the frontend setup related to the backend layout record which is assigned to this container
 		$typoScriptSetup = $layoutSetup->getTypoScriptSetup($layout);
 
-		// if there are any children available, we can start with the render process
-		if (count($this->cObj->data['tx_gridelements_view_children'])) {
-			// we need a sorting columns array to make sure that the columns are rendered in the order
-			// that they have been created in the grid wizard but still be able to get all children
-			// within just one SELECT query
-			$sortColumns = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',', $csvColumns);
+		// we need a sorting columns array to make sure that the columns are rendered in the order
+		// that they have been created in the grid wizard but still be able to get all children
+		// within just one SELECT query
+		$sortColumns = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',', $csvColumns);
 
-			$this->renderChildrenIntoParentColumns($typoScriptSetup, $sortColumns, $availableColumns);
-			unset($children);
-			unset($sortColumns);
+		$this->renderChildrenIntoParentColumns($typoScriptSetup, $sortColumns, $availableColumns);
+		unset($children);
+		unset($sortColumns);
 
-			// if there are any columns available, we can go on with the render process
-			if (count($this->cObj->data['tx_gridelements_view_columns'])) {
-				$content = $this->renderColumnsIntoParentGrid($typoScriptSetup);
-			}
+		// if there are any columns available, we can go on with the render process
+		if (count($this->cObj->data['tx_gridelements_view_columns'])) {
+			$content = $this->renderColumnsIntoParentGrid($typoScriptSetup);
 		}
 
 		unset($availableColumns);
