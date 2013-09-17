@@ -43,12 +43,12 @@ lib.tt_content.shortcut.pages {
 	}
 }
 
-tt_content.shortcut.5 = LOAD_REGISTER
-tt_content.shortcut.5 {
+tt_content.shortcut {
+  5 = LOAD_REGISTER
+  5 {
 	tt_content_shortcut_recursive.field = recursive
-}
-
-tt_content.shortcut.20 {
+  }
+  20 {
 	0 {
 		tables := addToList(pages)
 		conf.pages < lib.tt_content.shortcut.pages
@@ -57,6 +57,8 @@ tt_content.shortcut.20 {
 		tables := addToList(pages)
 		conf.pages < lib.tt_content.shortcut.pages
 	}
+  }
+  30 = RESTORE_REGISTER
 }
 
 plugin.tx_gridelements_pi1 >
