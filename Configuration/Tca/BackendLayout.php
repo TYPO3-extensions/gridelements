@@ -40,6 +40,16 @@ $TCA['tx_gridelements_backend_layout'] = array(
 				'eval' => 'required'
 			)
 		),
+		'alias' => array(
+			'exclude' => 1,
+			'label' => 'LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tx_gridelements_backend_layout.alias',
+			'config' => array(
+				'type' => 'input',
+				'size' => '25',
+				'max' => '256',
+				'eval' => 'nospace,alphanum_x,lower,uniqueInPid',
+			)
+		),
 		'description' => array(
 			'exclude' => 1,
 			'label' => 'LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tx_gridelements_backend_layout.description',
@@ -141,7 +151,7 @@ $TCA['tx_gridelements_backend_layout'] = array(
 			'showitem' =>
 				'--palette--;LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tx_gridelements_backend_layout;general,
 				--palette--;LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tx_gridelements_backend_layout.palette.appearance;appearance,
-				--div--;LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tx_gridelements_backend_layout.div.configuration, top_level_layout, config, --palette--;LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tx_gridelements_backend_layout.ce_configuration;flexform,
+				--div--;LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tx_gridelements_backend_layout.div.configuration, top_level_layout, alias, config, --palette--;LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tx_gridelements_backend_layout.ce_configuration;flexform,
 				--div--;LLL:EXT:cms/locallang_ttc.xml:tabs.access,--palette--;LLL:EXT:cms/locallang_ttc.xml:palette.visibility;visibility'
 			),
 		),

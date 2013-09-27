@@ -9,6 +9,7 @@
 			<label index="tx_gridelements_backend_layout">CE Backend Layout</label>
 			<label index="tx_gridelements_backend_layout_wizard_label">Grid Elements</label>
 			<label index="tx_gridelements_backend_layout.title">Title</label>
+			<label index="tx_gridelements_backend_layout.alias">Alias</label>
 			<label index="tx_gridelements_backend_layout.description">Description</label>
 			<label index="tx_gridelements_backend_layout.palette.appearance">Appearance</label>
 			<label index="tx_gridelements_backend_layout.icon">Icon</label>
@@ -54,6 +55,7 @@
 			<label index="tx_gridelements_backend_layout">CE Backend Layout</label>
 			<label index="tx_gridelements_backend_layout_wizard_label">Raster-Elemente</label>
 			<label index="tx_gridelements_backend_layout.title">Titel</label>
+			<label index="tx_gridelements_backend_layout.alias">Alias</label>
 			<label index="tx_gridelements_backend_layout.description">Beschreibung</label>
 			<label index="tx_gridelements_backend_layout.palette.appearance">Darstellung</label>
 			<label index="tx_gridelements_backend_layout.frame">Rahmen</label>
@@ -99,6 +101,7 @@
 			<label index="tx_gridelements_backend_layout">CE Backend Layout</label>
 			<label index="tx_gridelements_backend_layout_wizard_label">Grid elementen</label>
 			<label index="tx_gridelements_backend_layout.title">Titel</label>
+			<label index="tx_gridelements_backend_layout.alias">Alias</label>
 			<label index="tx_gridelements_backend_layout.description">Omschrijving</label>
 			<label index="tx_gridelements_backend_layout.palette.appearance">Weergave</label>
 			<label index="tx_gridelements_backend_layout.icon">Icoon</label>
