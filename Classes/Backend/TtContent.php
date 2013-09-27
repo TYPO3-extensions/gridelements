@@ -105,7 +105,7 @@ class TtContent {
 
 		$itemUidList = '';
 		if(count($params['items']) > 1) {
-			foreach($params['items'] as $key => $container) {
+			foreach($params['items'] as $container) {
 				if($container[1] > 0) {
 					$itemUidList .= $itemUidList ? ',' . $container[1] : $container[1];
 				}

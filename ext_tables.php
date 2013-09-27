@@ -40,17 +40,6 @@ $tempColumns = array(
 		'label' => 'LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tt_content.tx_gridelements_backend_layout',
 		'config' => array(
 			'type' => 'select',
-			/*			'items' => array(
-							array('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tt_content.tx_gridelements_backend_layout.I.none', 0),
-			//				array('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tt_content.tx_gridelements_backend_layout.I.vertical', -1),
-			//				array('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tt_content.tx_gridelements_backend_layout.I.horizontal', -2),
-						),*/
-#			'foreign_table' => 'tx_gridelements_backend_layout',
-#			'foreign_table_where' => 'AND (
-#					( ###PAGE_TSCONFIG_ID### = 0 AND ###STORAGE_PID### = 0 ) OR
-#					(tx_gridelements_backend_layout.pid = ###PAGE_TSCONFIG_ID### OR tx_gridelements_backend_layout.pid = ###STORAGE_PID### ) OR
-#					( ###PAGE_TSCONFIG_ID### = 0 AND tx_gridelements_backend_layout.pid = ###THIS_UID### )
-#				) AND tx_gridelements_backend_layout.hidden = 0 ORDER BY tx_gridelements_backend_layout.title',
 			'itemsProcFunc' => 'GridElementsTeam\Gridelements\Backend\TtContent->layoutItemsProcFunc',
 			'size' => 1,
 			'selicon_cols' => 9,
