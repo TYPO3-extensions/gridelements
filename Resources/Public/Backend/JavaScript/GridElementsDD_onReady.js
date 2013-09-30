@@ -51,7 +51,7 @@ if(typeof GridElementsDD === "undefined"){
 		}
 
 		// add allowed ctypes to addNewButtons of gridColumns and contentElements
-		var newCeWrappers = Ext.select('.t3-page-ce-wrapper-new-ce').elements;
+		var newCeWrappers = Ext.select('.t3-page-ce-wrapper-new-ce, .t3-page-ce-new-ce').elements;
 		Ext.each(newCeWrappers, function(newCeWrapper){
 			var newCeWrapperLinkNew = Ext.get(newCeWrapper).select('a').first();
 			if(newCeWrapperLinkNew !== null) {
