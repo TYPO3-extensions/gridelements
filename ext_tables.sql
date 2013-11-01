@@ -21,6 +21,7 @@ CREATE TABLE tx_gridelements_backend_layout (
 	deleted tinyint(4) DEFAULT '0' NOT NULL,
 	hidden tinyint(4) DEFAULT '0' NOT NULL,
 	title varchar(255) DEFAULT '' NOT NULL,
+	alias varchar(255) DEFAULT '' NOT NULL,
 	frame int(11) DEFAULT '0' NOT NULL,
 	description text,
 	top_level_layout tinyint(4) DEFAULT '0' NOT NULL,
@@ -40,7 +41,7 @@ CREATE TABLE tx_gridelements_backend_layout (
 CREATE TABLE tt_content (
 	colPos smallint(6) DEFAULT '0' NOT NULL,
 	backupColPos smallint(6) DEFAULT '-2' NOT NULL,
-	tx_gridelements_backend_layout varchar(64) DEFAULT '' NOT NULL,
+	tx_gridelements_backend_layout varchar(255) DEFAULT '' NOT NULL,
 	tx_gridelements_children int(11) DEFAULT '0' NOT NULL,
 	tx_gridelements_container int(11) DEFAULT '0' NOT NULL,
 	tx_gridelements_columns int(11) DEFAULT '0' NOT NULL
