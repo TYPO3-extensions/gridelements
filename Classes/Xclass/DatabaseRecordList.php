@@ -142,11 +142,14 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
 		$selectFields = array_unique($selectFields);
 		$fieldListFields = $this->makeFieldList($table, 1);
 		if (empty($fieldListFields) && $GLOBALS['TYPO3_CONF_VARS']['BE']['debug']) {
-			$message = sprintf($GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_mod_web_list.php:missingTcaColumnsMessage', TRUE), $table, $table);
-			$messageTitle = $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_mod_web_list.php:missingTcaColumnsMessageTitle', TRUE);
-			$flashMessage = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Messaging\\FlashMessage', $message, $messageTitle, \TYPO3\CMS\Core\Messaging\FlashMessage::WARNING, TRUE);
-			/** @var \TYPO3\CMS\Core\Messaging\FlashMessage $flashMessage */
-			\TYPO3\CMS\Core\Messaging\FlashMessageQueue::addMessage($flashMessage);
+			$message = sprintf($GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_mod_web_list.xlf:missingTcaColumnsMessage', TRUE), $table, $table);
+			$messageTitle = $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_mod_web_list.xlf:missingTcaColumnsMessageTitle', TRUE);
+			$flashMessage = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Messaging\\FlashMessage', $message, $messageTitle, \TYPO3\CMS\Core\Messaging\FlashMessage::WARNING, TRUE);
+			/** @var $flashMessageService \TYPO3\CMS\Core\Messaging\FlashMessageService */
+			$flashMessageService = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Messaging\\FlashMessageService');
+			/** @var $defaultFlashMessageQueue \TYPO3\CMS\Core\Messaging\FlashMessageQueue */
+			$defaultFlashMessageQueue = $flashMessageService->getMessageQueueByIdentifier();
+			$defaultFlashMessageQueue->enqueue($flashMessage);
 		}
 		// Making sure that the fields in the field-list ARE in the field-list from TCA!
 		$selectFields = array_intersect($selectFields, $fieldListFields);
@@ -176,15 +179,18 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
 			// Get the two previous rows for sorting if displaying page > 1
 			$this->firstElementNumber = $this->firstElementNumber - 2;
 			$this->iLimit = $this->iLimit + 2;
-			// (API function from class.db_list.inc)
+			// (API function from TYPO3\CMS\Recordlist\RecordList\AbstractDatabaseRecordList)
 			$queryParts = $this->makeQueryArray($table, $id, $addWhere, $selFieldList);
 			$this->firstElementNumber = $this->firstElementNumber + 2;
 			$this->iLimit = $this->iLimit - 2;
 		} else {
-			// (API function from class.db_list.inc)
+			// (API function from TYPO3\CMS\Recordlist\RecordList\AbstractDatabaseRecordList)
 			$queryParts = $this->makeQueryArray($table, $id, $addWhere, $selFieldList);
 		}
-		// Finding the total amount of records on the page (API function from class.db_list.inc)
+
+		// Finding the total amount of records on the page
+		// (API function from TYPO3\CMS\Recordlist\RecordList\AbstractDatabaseRecordList)
+
 		$this->setTotalItems($queryParts);
 		// Init:
 		$dbCount = 0;
@@ -241,7 +247,7 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
 				// Render collapse button if in multi table mode
 				$collapseIcon = '';
 				if (!$this->table) {
-					$collapseIcon = '<a href="' . htmlspecialchars(($this->listURL() . '&collapse[' . $table . ']=' . ($tableCollapsed ? '0' : '1'))) . '" title="' . ($tableCollapsed ? $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.php:labels.expandTable', TRUE) : $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.php:labels.collapseTable', TRUE)) . '">' . ($tableCollapsed ? \TYPO3\CMS\Backend\Utility\IconUtility::getSpriteIcon('actions-view-list-expand', array('class' => 'collapseIcon')) : \TYPO3\CMS\Backend\Utility\IconUtility::getSpriteIcon('actions-view-list-collapse', array('class' => 'collapseIcon'))) . '</a>';
+					$collapseIcon = '<a href="' . htmlspecialchars(($this->listURL() . '&collapse[' . $table . ']=' . ($tableCollapsed ? '0' : '1'))) . '" title="' . ($tableCollapsed ? $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.xlf:labels.expandTable', TRUE) : $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.xlf:labels.collapseTable', TRUE)) . '">' . ($tableCollapsed ? \TYPO3\CMS\Backend\Utility\IconUtility::getSpriteIcon('actions-view-list-expand', array('class' => 'collapseIcon')) : \TYPO3\CMS\Backend\Utility\IconUtility::getSpriteIcon('actions-view-list-collapse', array('class' => 'collapseIcon'))) . '</a>';
 				}
 				$out .= $this->addElement(1, $collapseIcon, $theData, ' class="t3-row-header"', '');
 			}
@@ -404,8 +410,6 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
 		if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('version') && isset($row['_ORIG_uid'])) {
 			$rowUid = $row['_ORIG_uid'];
 		}
-		// Initialize:
-		\TYPO3\CMS\Core\Utility\GeneralUtility::loadTCA($table);
 		$cells = array();
 		// If the listed table is 'pages' we have to request the permission settings for each page:
 		if ($table == 'pages') {
@@ -415,8 +419,16 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
 		$permsEdit = $table == 'pages' && $localCalcPerms & 2 || $table != 'pages' && $this->calcPerms & 16;
 		// "Show" link (only pages and tt_content elements)
 		if ($table == 'pages' || $table == 'tt_content') {
-			$params = '&edit[' . $table . '][' . $row['uid'] . ']=edit';
-			$cells['view'] = '<a href="#" onclick="' . htmlspecialchars(\TYPO3\CMS\Backend\Utility\BackendUtility::viewOnClick(($table == 'tt_content' ? $this->id . '#' . $row['uid'] : $row['uid']), $this->backPath)) . '" title="' . $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.php:labels.showPage', TRUE) . '">' . \TYPO3\CMS\Backend\Utility\IconUtility::getSpriteIcon('actions-document-view') . '</a>';
+			$cells['view'] = '<a href="#" onclick="'
+				. htmlspecialchars(
+					\TYPO3\CMS\Backend\Utility\BackendUtility::viewOnClick(
+						($table === 'tt_content' ? $this->id : $row['uid']),
+						$this->backPath,
+						'',
+						($table === 'tt_content' ? '#' . $row['uid'] : '')
+					)
+				) . '" title="' . $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.xlf:labels.showPage', TRUE) . '">'
+				. \TYPO3\CMS\Backend\Utility\IconUtility::getSpriteIcon('actions-document-view') . '</a>';
 		} elseif (!$this->table) {
 			$cells['view'] = $this->spaceIcon;
 		}
@@ -512,11 +524,41 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
 				}
 				// "Delete" link:
 				if ($table == 'pages' && $localCalcPerms & 4 || $table != 'pages' && $this->calcPerms & 16) {
+					// Check if the record version is in "deleted" state, because that will switch the action to "restore"
+					if ($GLOBALS['BE_USER']->workspace > 0 && isset($row['t3ver_state']) && (int)$row['t3ver_state'] === 2) {
+						$actionName = 'restore';
+						$refCountMsg = '';
+					} else {
+						$actionName = 'delete';
+						$refCountMsg = \TYPO3\CMS\Backend\Utility\BackendUtility::referenceCount(
+								$table,
+								$row['uid'],
+								' ' . $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.xlf:labels.referencesToRecord'),
+								$this->getReferenceCount($table, $row['uid'])) . \TYPO3\CMS\Backend\Utility\BackendUtility::translationCount($table, $row['uid'],
+								' ' . $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.xlf:labels.translationsOfRecord')
+							);
+					}
+
 					$titleOrig = \TYPO3\CMS\Backend\Utility\BackendUtility::getRecordTitle($table, $row, FALSE, TRUE);
 					$title = \TYPO3\CMS\Core\Utility\GeneralUtility::slashJS(\TYPO3\CMS\Core\Utility\GeneralUtility::fixed_lgd_cs($titleOrig, $this->fixedL), 1);
+					$warningText = $GLOBALS['LANG']->JScharCode(
+						$GLOBALS['LANG']->getLL($actionName . 'Warning') . ' "' . $title . '" ' . $refCountMsg
+					);
+
 					$params = '&cmd[' . $table . '][' . $row['uid'] . '][delete]=1';
-					$refCountMsg = \TYPO3\CMS\Backend\Utility\BackendUtility::referenceCount($table, $row['uid'], (' ' . $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.xml:labels.referencesToRecord')), $this->getReferenceCount($table, $row['uid'])) . \TYPO3\CMS\Backend\Utility\BackendUtility::translationCount($table, $row['uid'], (' ' . $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.xml:labels.translationsOfRecord')));
-					$cells['delete'] = '<a href="#" onclick="' . htmlspecialchars(('if (confirm(' . $GLOBALS['LANG']->JScharCode(($GLOBALS['LANG']->getLL('deleteWarning') . ' "' . $title . '" ' . $refCountMsg)) . ')) {jumpToUrl(\'' . $GLOBALS['SOBE']->doc->issueCommand($params, -1) . '\');} return false;')) . '" title="' . $GLOBALS['LANG']->getLL('delete', TRUE) . '">' . \TYPO3\CMS\Backend\Utility\IconUtility::getSpriteIcon('actions-edit-delete') . '</a>';
+					$onClick = htmlspecialchars(
+						('if (confirm(' . $warningText . ')) {jumpToUrl(\''
+							. $GLOBALS['SOBE']->doc->issueCommand($params, -1) . '\');} return false;')
+					);
+
+					$onClick = htmlspecialchars(
+						('if (confirm(' . $warningText . ')) {jumpToUrl(\''
+							. $GLOBALS['SOBE']->doc->issueCommand($params, -1) . '\');} return false;')
+					);
+
+					$icon = \TYPO3\CMS\Backend\Utility\IconUtility::getSpriteIcon('actions-edit-' . $actionName);
+					$linkTitle = $GLOBALS['LANG']->getLL($actionName, TRUE);
+					$cells['delete'] = '<a href="#" onclick="' . $onClick . '" title="' . $linkTitle . '">' . $icon . '</a>';
 				} elseif (!$this->table) {
 					$cells['delete'] = $this->spaceIcon;
 				}
@@ -610,8 +652,8 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
 				$cutUrl = $this->selUrlDB($table, $row['uid'], $row['pid'], 0, ($isSel == 'cut'));
 			}
 
-			$cells['copy'] = $isL10nOverlay ? $this->spaceIcon : '<a href="#" onclick="' . htmlspecialchars(('return jumpSelf(\'' . $copyUrl . '\');')) . '" title="' . $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.php:cm.copy', TRUE) . '">' . (!$isSel == 'copy' ? \TYPO3\CMS\Backend\Utility\IconUtility::getSpriteIcon('actions-edit-copy') : \TYPO3\CMS\Backend\Utility\IconUtility::getSpriteIcon('actions-edit-copy-release')) . '</a>';
-			$cells['cut'] = $isL10nOverlay ? $this->spaceIcon : '<a href="#" onclick="' . htmlspecialchars(('return jumpSelf(\'' . $cutUrl . '\');')) . '" title="' . $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.php:cm.cut', TRUE) . '">' . (!$isSel == 'cut' ? \TYPO3\CMS\Backend\Utility\IconUtility::getSpriteIcon('actions-edit-cut') : \TYPO3\CMS\Backend\Utility\IconUtility::getSpriteIcon('actions-edit-cut-release')) . '</a>';
+			$cells['copy'] = $isL10nOverlay ? $this->spaceIcon : '<a href="#" onclick="' . htmlspecialchars(('return jumpSelf(\'' . $this->clipObj->selUrlDB($table, $row['uid'], 1, ($isSel == 'copy'), array('returnUrl' => '')) . '\');')) . '" title="' . $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.xlf:cm.copy', TRUE) . '">' . (!$isSel == 'copy' ? \TYPO3\CMS\Backend\Utility\IconUtility::getSpriteIcon('actions-edit-copy') : \TYPO3\CMS\Backend\Utility\IconUtility::getSpriteIcon('actions-edit-copy-release')) . '</a>';
+			$cells['cut'] = $isL10nOverlay ? $this->spaceIcon : '<a href="#" onclick="' . htmlspecialchars(('return jumpSelf(\'' . $this->clipObj->selUrlDB($table, $row['uid'], 0, ($isSel == 'cut'), array('returnUrl' => '')) . '\');')) . '" title="' . $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.xlf:cm.cut', TRUE) . '">' . (!$isSel == 'cut' ? \TYPO3\CMS\Backend\Utility\IconUtility::getSpriteIcon('actions-edit-cut') : \TYPO3\CMS\Backend\Utility\IconUtility::getSpriteIcon('actions-edit-cut-release')) . '</a>';
 		} else {
 			// For the numeric clipboard pads (showing checkboxes where one can select elements on/off)
 			// Setting name of the element in ->CBnames array:
@@ -682,7 +724,7 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
 	 * @see getTable()
 	 * @todo Define visibility
 	 */
-	public function renderListRow($table,$row,$cc,$titleCol,$thumbsCol,$indent=0, $level=0) {
+	public function renderListRow($table, $row, $cc, $titleCol, $thumbsCol, $indent=0, $level=0) {
 		$iOut = '';
 		// If in search mode, make sure the preview will show the correct page
 		if (strlen($this->searchString)) {
@@ -712,25 +754,6 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
 			$alttext = \TYPO3\CMS\Backend\Utility\BackendUtility::getRecordIconAltText($row, $table);
 			$iconImg = \TYPO3\CMS\Backend\Utility\IconUtility::getSpriteIconForRecord($table, $row, array('title' => htmlspecialchars($alttext), 'style' => $indent ? ' margin-left: ' . $indent . 'px;' : ''));
 			$theIcon = $this->clickMenuEnabled ? $GLOBALS['SOBE']->doc->wrapClickMenuOnIcon($iconImg, $table, $row['uid']) : $iconImg;
-
-			// Have labels respect possible itemsProcFunc results
-			/** @var $formEngine \TYPO3\CMS\Backend\Form\FormEngine */
-			$formEngine = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Backend\\Form\\FormEngine');
-			if (isset($GLOBALS['TCA'][$table]['columns'])) {
-				foreach ($GLOBALS['TCA'][$table]['columns'] as $field => $fieldSetup) {
-					if (isset($fieldSetup['config']['itemsProcFunc']) && $fieldSetup['config']['itemsProcFunc']) {
-						$GLOBALS['TCA'][$table]['columns'][$field]['config']['items'] = $formEngine->procItems(
-							$fieldSetup['config']['items'],
-							$fieldSetup['config']['itemsProcFunc'],
-							$fieldSetup['config'],
-							$table,
-							$row,
-							$field
-						);
-					}
-				}
-			}
-
 			// Preparing and getting the data-array
 			$theData = array();
 			foreach ($this->fieldArray as $fCol) {
@@ -741,8 +764,18 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
 						$warning = '<a href="#" onclick="' . htmlspecialchars(('alert(' . $GLOBALS['LANG']->JScharCode($lockInfo['msg']) . '); return false;')) . '" title="' . htmlspecialchars($lockInfo['msg']) . '">' . \TYPO3\CMS\Backend\Utility\IconUtility::getSpriteIcon('status-warning-in-use') . '</a>';
 					}
 					$theData[$fCol] = $warning . $this->linkWrapItems($table, $row['uid'], $recTitle, $row);
-					// Render thumbsnails if a thumbnail column exists and there is content in it:
-					if ($this->thumbs && trim($row[$thumbsCol])) {
+					// Render thumbnails, if:
+					// - a thumbnail column exists
+					// - there is content in it
+					// - the thumbnail column is visible for the current type
+					$typeColumn = $GLOBALS['TCA'][$table]['ctrl']['type'];
+					$type = $row[$typeColumn];
+					$visibleColumns = $GLOBALS['TCA'][$table]['types'][$type]['showitem'];
+
+					if ($this->thumbs &&
+						trim($row[$thumbsCol]) &&
+						preg_match('/(^|(.*(;|,)?))' . $thumbsCol . '(((;|,).*)|$)/', $visibleColumns) === 1
+					) {
 						$theData[$fCol] .= '<br />' . $this->thumbCode($row, $table, $thumbsCol);
 					}
 					$localizationMarkerClass = '';
