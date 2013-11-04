@@ -143,4 +143,3 @@ class tx_gridelements_itemsprocfunc_colposlistTest extends \TYPO3\CMS\Extbase\Te
 	public function testAddColPosListLayoutItems() {
 	}
 }
-?>

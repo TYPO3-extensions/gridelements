@@ -83,4 +83,3 @@ class tx_gridelements_pagerendererhookTest extends \TYPO3\CMS\Extbase\Tests\Unit
 		// add additional test here with DB
 	}
 }
-?>

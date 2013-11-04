@@ -1,5 +1,5 @@
 <?php
-	/***************************************************************
+/***************************************************************
 	 *  Copyright notice
 	 *
 	 *  (c) 2013 Stefan Froemken <froemken@gmail.com>
@@ -98,4 +98,3 @@ class tx_gridelements_db_list_extra_hookTest extends \TYPO3\CMS\Extbase\Tests\Un
 		$this->assertEquals('uid,pid', $result);
 	}
 }
-?>

@@ -144,4 +144,3 @@ class tx_gridelements_tcemainhookTest extends \TYPO3\CMS\Extbase\Tests\Unit\Base
 		$this->assertEquals($expectedFieldArray, $fieldArray);
 	}
 }
-?>

@@ -52,4 +52,3 @@ It offers a lot of new features like advanced drag & drop or real references, th
 	),
 );
 
-?>

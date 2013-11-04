@@ -1,5 +1,4 @@
 <?php
-
 namespace GridElementsTeam\Gridelements\Helper;
 
 /**

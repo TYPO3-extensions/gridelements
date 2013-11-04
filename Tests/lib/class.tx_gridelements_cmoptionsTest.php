@@ -95,4 +95,3 @@ class tx_gridelements_cmoptionsTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTe
 		$this->assertEquals($expectedMenuItems, $result);
 	}
 }
-?>

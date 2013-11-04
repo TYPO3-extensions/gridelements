@@ -252,4 +252,3 @@ class tx_gridelements_ttContentTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTe
 		$this->assertEquals($expectedParams, $params);
 	}
 }
-?>

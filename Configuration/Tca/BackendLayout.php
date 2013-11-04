@@ -156,4 +156,3 @@ $TCA['tx_gridelements_backend_layout'] = array(
 			),
 		),
 );
-?>

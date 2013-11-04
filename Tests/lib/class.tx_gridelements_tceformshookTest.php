@@ -82,4 +82,3 @@ class tx_gridelements_tceformshookTest extends \TYPO3\CMS\Extbase\Tests\Unit\Bas
 		$this->assertEquals($expectedPA, $PA);
 	}
 }
-?>

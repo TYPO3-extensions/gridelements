@@ -176,7 +176,7 @@ class tx_gridelements_tcemain_moveRecordTest extends \TYPO3\CMS\Extbase\Tests\Un
 				$this->equalTo($expectedUpdateArray)
 			)
 			->will($this->returnValue(''));
-		$tceMain->moveChildren = false;
+		$tceMain->moveChildren = FALSE;
 		$moveRecord = $this->getMock('tx_gridelements_tcemain_moveRecord', array('doGridContainerUpdate'));
 		$moveRecord
 			->expects($this->once())
@@ -208,7 +208,7 @@ class tx_gridelements_tcemain_moveRecordTest extends \TYPO3\CMS\Extbase\Tests\Un
 				$this->equalTo($expectedUpdateArray)
 			)
 			->will($this->returnValue(''));
-		$tceMain->moveChildren = false;
+		$tceMain->moveChildren = FALSE;
 		$moveRecord = $this->getMock('tx_gridelements_tcemain_moveRecord', array('doGridContainerUpdate'));
 		$moveRecord
 			->expects($this->once())
@@ -223,4 +223,3 @@ class tx_gridelements_tcemain_moveRecordTest extends \TYPO3\CMS\Extbase\Tests\Un
 		$this->assertEquals(TRUE, $tceMain->moveChildren);
 	}
 }
-?>

@@ -644,7 +644,7 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
 		if ($this->clipObj->current == 'normal') {
 			// Show copy/cut icons:
 			$isSel = (string) $this->clipObj->isSelected($table, $row['uid']);
-			if (stripos(\TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv('SCRIPT_NAME'), 'ajax') === false) {
+			if (stripos(\TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv('SCRIPT_NAME'), 'ajax') === FALSE) {
 				$copyUrl = $this->clipObj->selUrlDB($table, $row['uid'], 1, ($isSel == 'copy'), array('returnUrl' => ''));
 				$cutUrl = $this->clipObj->selUrlDB($table, $row['uid'], 0, ($isSel == 'cut'), array('returnUrl' => ''));
 			} else {
@@ -799,9 +799,7 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
 					list($lC1, $lC2) = $this->makeLocalizationPanel($table, $row);
 					$theData[$fCol] = $lC1;
 					$theData[$fCol . 'b'] = $lC2;
-				} elseif ($fCol == '_LOCALIZATION_b') {
-
-				} else {
+				} elseif (!$fCol == '_LOCALIZATION_b') {
 					$tmpProc = \TYPO3\CMS\Backend\Utility\BackendUtility::getProcessedValueExtra($table, $fCol, $row[$fCol], 100, $row['uid']);
 					$theData[$fCol] = $this->linkUrlMail(htmlspecialchars($tmpProc), $row[$fCol]);
 					if ($this->csvOutput) {
@@ -837,7 +835,7 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
 				}
 			}
 			// Create element in table cells:
-			$iOut .= $this->addelement(1,$theIcon,$theData,$row_bgColor, '', '', $level);
+			$iOut .= $this->addelement(1, $theIcon, $theData, $row_bgColor, '', '', $level);
 			// Finally, return table row element:
 			return $iOut;
 		}
@@ -897,8 +895,6 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
 						if ($icon) {
 							$out .= $icon;
 						}
-					} else {
-
 					}
 				}
 			}

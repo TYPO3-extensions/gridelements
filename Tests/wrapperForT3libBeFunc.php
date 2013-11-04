@@ -33,4 +33,3 @@ class wrapperForT3libBeFunc {
 		return call_user_func_array(array(t3lib_BEfunc, $methodName), $arguments);
 	}
 }
-?>

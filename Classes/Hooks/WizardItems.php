@@ -119,7 +119,7 @@ class WizardItems implements \TYPO3\CMS\Backend\Wizard\NewContentElementWizardHo
 		foreach ($wizardItems as $key => $wizardItem) {
 			$isElement = strpos($key, '_', 1);
 			if ($isElement){
-				$headersWithElements[] = substr($key, 0 , $isElement);
+				$headersWithElements[] = substr($key, 0, $isElement);
 			}
 		}
 		foreach($wizardItems as $key => $wizardItem) {
@@ -263,4 +263,3 @@ class WizardItems implements \TYPO3\CMS\Backend\Wizard\NewContentElementWizardHo
 if (defined('TYPO3_MODE') && isset($GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/gridelements/Classes/Hooks/WizardItems.php'])) {
 	include_once($GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/gridelements/Classes/Hooks/WizardItems.php']);
 }
-?>

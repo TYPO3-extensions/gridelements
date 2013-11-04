@@ -216,7 +216,7 @@ class PreProcessFieldArray extends AbstractDataHandler {
 			}
 			if(count($sheetArray) > 0) {
 				$flexformTools = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Core\Configuration\FlexForm\FlexFormTools');
-				$returnXML = $flexformTools->flexArray2Xml($sheetArray, true);
+				$returnXML = $flexformTools->flexArray2Xml($sheetArray, TRUE);
 			}
 		}
 		return $returnXML;
@@ -232,7 +232,7 @@ class PreProcessFieldArray extends AbstractDataHandler {
 	public function setFieldEntries(array &$fieldArray, $pid) {
 		if ($pid > 0) {
 			$this->setFieldEntriesForTargets($fieldArray, $pid);
-		} else if (intval($fieldArray['tx_gridelements_container']) > 0 && strpos(key($this->getTceMain()->datamap['tt_content']), 'NEW') !== false) {
+		} else if (intval($fieldArray['tx_gridelements_container']) > 0 && strpos(key($this->getTceMain()->datamap['tt_content']), 'NEW') !== FALSE) {
 			$containerUpdateArray[intval($fieldArray['tx_gridelements_container'])] = 1;
 			$this->doGridContainerUpdate($containerUpdateArray);
 		}
@@ -247,7 +247,7 @@ class PreProcessFieldArray extends AbstractDataHandler {
 	 * @return void
 	 */
 	public function setFieldEntriesForTargets(array &$fieldArray, $pid) {
-		if (count($fieldArray) && strpos($fieldArray['pid'], 'x') !== false) {
+		if (count($fieldArray) && strpos($fieldArray['pid'], 'x') !== FALSE) {
 			$target = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode('x', $fieldArray['pid']);
 			$fieldArray['pid'] = $pid;
 			$targetUid = abs(intval($target[0]));
@@ -342,7 +342,7 @@ class PreProcessFieldArray extends AbstractDataHandler {
 		$changedSubPageElements = array();
 
 		if ($this->getTable() == 'tt_content') {
-			$changedGridElements[$this->getPageUid()] = true;
+			$changedGridElements[$this->getPageUid()] = TRUE;
 			$availableColumns = $this->getAvailableColumns($fieldArray['tx_gridelements_backend_layout'], 'tt_content', $this->getPageUid());
 			$childElementsInUnavailableColumns = array_keys(
 				$GLOBALS['TYPO3_DB']->exec_SELECTgetRows(
@@ -708,4 +708,3 @@ class PreProcessFieldArray extends AbstractDataHandler {
 if (defined('TYPO3_MODE') && isset($GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/gridelements/Classes/DataHandler/PreProcessFieldArray.php'])) {
 	include_once($GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/gridelements/Classes/DataHandler/PreProcessFieldArray.php']);
 }
-?>

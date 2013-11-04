@@ -3,7 +3,7 @@ namespace GridElementsTeam\Gridelements\Wizard;
 
 require_once('conf.php');
 
-if($BACK_PATH_ABS !== false){
+if($BACK_PATH_ABS !== FALSE){
 	require($BACK_PATH_ABS . 'init.php');
 }else{
 	require($BACK_PATH . 'init.php');
@@ -38,7 +38,6 @@ class BackendLayout {
 	 * @return	void
 	 */
 	public function init() {
-
 
 		// Setting GET vars (used in frameset script):
 		$this->P = \TYPO3\CMS\Core\Utility\GeneralUtility::_GP('P', 1);
@@ -146,16 +145,18 @@ class BackendLayout {
 
 								if (isset($column['rowspan'])) {
 
-									for ($spanRow = 0; $spanRow < intval($column['rowspan']); $spanRow++) {
+                                    $rowspan = intval($column['rowspan']);
+									for ($spanRow = 0; $spanRow < $rowspan; $spanRow++) {
 
-										for ($spanColumn = 0; $spanColumn < intval($column['colspan']); $spanColumn++) {
+										$colspan = intval($column['colspan']);
+                                        for ($spanColumn = 0; $spanColumn < $colspan; $spanColumn++) {
 											$spannedMatrix[$i + $spanRow][$j + $spanColumn] = 1;
 										}
 									}
 
 								} else {
-
-									for ($spanColumn = 0; $spanColumn < intval($column['colspan']); $spanColumn++) {
+                                    $colspan = intval($column['colspan']);
+									for ($spanColumn = 0; $spanColumn < $colspan; $spanColumn++) {
 										$spannedMatrix[$i][$j + $spanColumn] = 1;
 									}
 
@@ -166,7 +167,8 @@ class BackendLayout {
 
 								if (isset($column['rowspan'])) {
 
-									for ($spanRow = 0; $spanRow < intval($column['rowspan']); $spanRow++) {
+                                    $colspan = intval($column['colspan']);
+                                    for ($spanRow = 0; $spanRow < $colspan; $spanRow++) {
 										$spannedMatrix[$i + $spanRow][$j] = 1;
 									}
 
@@ -233,7 +235,6 @@ class BackendLayout {
 			t3Grid.drawTable();
 			');
 
-
 		$this->doc->styleSheetFile_post = \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath('gridelements') . 'Resources/Public/Backend/Css//grideditor.css';
 
 	}
@@ -256,7 +257,6 @@ class BackendLayout {
 		$content .= '<a href="#" title="' .
 		            $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.php:rm.closeDoc', TRUE) . '" onclick="window.close();return true;">' .
 		            \TYPO3\CMS\Backend\Utility\IconUtility::getSpriteIcon('actions-document-close') . '</a>';
-
 
 		$content .= $this->doc->spacer(10);
 
@@ -316,4 +316,3 @@ $SOBE = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('GridElementsTeam\G
 $SOBE->init();
 $SOBE->main();
 $SOBE->printContent();
-?>

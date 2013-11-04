@@ -124,4 +124,3 @@ class tx_gridelements_db_listhookTest extends \TYPO3\CMS\Extbase\Tests\Unit\Base
 		$this->assertEquals('colPos,uid,pid,colpos,bodytext,title', $result);
 	}
 }
-?>

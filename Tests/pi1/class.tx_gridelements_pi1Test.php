@@ -83,4 +83,3 @@ class tx_gridelements_pi1Test extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase
 		// add additional test here with DB
 	}
 }
-?>

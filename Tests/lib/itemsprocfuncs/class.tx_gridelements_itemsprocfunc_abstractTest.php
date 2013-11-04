@@ -224,4 +224,3 @@ class tx_gridelements_itemsprocfunc_abstract extends \TYPO3\CMS\Extbase\Tests\Un
 		$this->assertEquals(NULL, $result);
 	}
 }
-?>
