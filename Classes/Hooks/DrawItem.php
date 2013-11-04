@@ -162,7 +162,7 @@ class DrawItem implements \TYPO3\CMS\Backend\View\PageLayoutViewDrawItemHookInte
 			foreach ($parserRows as $parserRow) {
 				if (is_array($parserRow['columns.']) && count($parserRow['columns.']) > 0) {
 					foreach ($parserRow['columns.'] as $parserColumns) {
-						$name = $this->lang->sL($parserColumns['name'], true);
+						$name = $this->lang->sL($parserColumns['name'], TRUE);
 						if ($parserColumns['colPos'] !== '') {
 							$colPosValues[intval($parserColumns['colPos'])] = array(
 								'name' => $name,
@@ -587,4 +587,4 @@ if (defined('TYPO3_MODE') && isset($GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLA
 	include_once($GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/gridelements/Classes/Hooks/DrawItem.php']);
 }
 
-?>
+

@@ -92,4 +92,3 @@ class tx_gridelements_tcemain_abstractTest extends \TYPO3\CMS\Extbase\Tests\Unit
 		$hook->doGridContainerUpdate($containerUpdateArray);
 	}
 }
-?>

@@ -1,5 +1,5 @@
 <?php
-	/***************************************************************
+/***************************************************************
 	 *  Copyright notice
 	 *
 	 *  (c) 2013 Stefan Froemken <froemken@gmail.com>
@@ -264,4 +264,3 @@ class tx_gridelements_drawitemhookTest extends \TYPO3\CMS\Extbase\Tests\Unit\Bas
 		$this->assertEquals($expectedColPosValues, $colPosValues);
 	}
 }
-?>

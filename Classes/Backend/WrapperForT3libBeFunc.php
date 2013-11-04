@@ -36,4 +36,3 @@ class WrapperForT3libBeFunc {
 		return call_user_func_array(array(new \TYPO3\CMS\Backend\Utility\BackendUtility, $methodName), $arguments);
 	}
 }
-?>

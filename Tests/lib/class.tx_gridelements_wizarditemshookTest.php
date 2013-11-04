@@ -199,4 +199,3 @@ class tx_gridelements_wizarditemshookTest extends \TYPO3\CMS\Extbase\Tests\Unit\
 		$this->assertEquals($expectedWizardItems, $wizardItemsForTesting);
 	}
 }
-?>

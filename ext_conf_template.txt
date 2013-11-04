@@ -1,3 +1,5 @@
-# cat=basic; type=string; label=path to folder containing additional stylesheets
+# cat=basic; type=string; label=LLL:EXT:gridelements/Resources/Private/Language/locallang.xlf:additionalStylesheet
 additionalStylesheet =
 
+# cat=basic; type=boolean; label=LLL:EXT:gridelements/Resources/Private/Language/locallang.xlf:nestingInListModule
+nestingInListModule = 1

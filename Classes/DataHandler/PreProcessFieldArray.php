@@ -9,6 +9,7 @@ namespace GridElementsTeam\Gridelements\DataHandler;
  * @subpackage	tx_gridelements
  */
 use GridElementsTeam\Gridelements\DataHandler\AbstractDataHandler;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /***************************************************************
  *  Copyright notice
@@ -216,7 +217,7 @@ class PreProcessFieldArray extends AbstractDataHandler {
 			}
 			if(count($sheetArray) > 0) {
 				$flexformTools = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Core\Configuration\FlexForm\FlexFormTools');
-				$returnXML = $flexformTools->flexArray2Xml($sheetArray, true);
+				$returnXML = $flexformTools->flexArray2Xml($sheetArray, TRUE);
 			}
 		}
 		return $returnXML;
@@ -232,7 +233,7 @@ class PreProcessFieldArray extends AbstractDataHandler {
 	public function setFieldEntries(array &$fieldArray, $pid) {
 		if ($pid > 0) {
 			$this->setFieldEntriesForTargets($fieldArray, $pid);
-		} else if (intval($fieldArray['tx_gridelements_container']) > 0 && strpos(key($this->getTceMain()->datamap['tt_content']), 'NEW') !== false) {
+		} else if (intval($fieldArray['tx_gridelements_container']) > 0 && strpos(key($this->getTceMain()->datamap['tt_content']), 'NEW') !== FALSE) {
 			$containerUpdateArray[intval($fieldArray['tx_gridelements_container'])] = 1;
 			$this->doGridContainerUpdate($containerUpdateArray);
 		}
@@ -247,7 +248,7 @@ class PreProcessFieldArray extends AbstractDataHandler {
 	 * @return void
 	 */
 	public function setFieldEntriesForTargets(array &$fieldArray, $pid) {
-		if (count($fieldArray) && strpos($fieldArray['pid'], 'x') !== false) {
+		if (count($fieldArray) && strpos($fieldArray['pid'], 'x') !== FALSE) {
 			$target = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode('x', $fieldArray['pid']);
 			$fieldArray['pid'] = $pid;
 			$targetUid = abs(intval($target[0]));
@@ -342,7 +343,7 @@ class PreProcessFieldArray extends AbstractDataHandler {
 		$changedSubPageElements = array();
 
 		if ($this->getTable() == 'tt_content') {
-			$changedGridElements[$this->getPageUid()] = true;
+			$changedGridElements[$this->getPageUid()] = TRUE;
 			$availableColumns = $this->getAvailableColumns($fieldArray['tx_gridelements_backend_layout'], 'tt_content', $this->getPageUid());
 			$childElementsInUnavailableColumns = array_keys(
 				$GLOBALS['TYPO3_DB']->exec_SELECTgetRows(
@@ -427,7 +428,7 @@ class PreProcessFieldArray extends AbstractDataHandler {
 			}
 
 			if (isset($fieldArray['backend_layout'])) {
-				$availableColumns = $this->getAvailableColumns($backendLayoutUid, 'pages', $this->getPageUid());
+                $availableColumns = $this->getAvailableColumns($backendLayoutUid, 'pages', $this->getPageUid());
 				$elementsInUnavailableColumns = array_keys(
 					$GLOBALS['TYPO3_DB']->exec_SELECTgetRows(
 						'uid',
@@ -620,7 +621,7 @@ class PreProcessFieldArray extends AbstractDataHandler {
 	 * @param   string  $layout: The selected backend layout of the grid container or the page
 	 * @param   string  $table: The name of the table to get the layout for
 	 * @param   int     $id: the uid of the parent container - being the page id for the table "pages"
-	 * @return  CSV     $availableColumns: The columns available for the selected layout as CSV list
+	 * @return  CSV     $tcaColumns: The columns available for the selected layout as CSV list
 	 *
 	 */
 	public function getAvailableColumns($layout = '', $table = '', $id = 0) {
@@ -630,82 +631,14 @@ class PreProcessFieldArray extends AbstractDataHandler {
 			$tcaColumns = $this->layoutSetup->getLayoutColumns($layout);
 			$tcaColumns = $tcaColumns['CSV'];
 		} else if ($table == 'pages') {
-			$tsConfig = $this->beFunc->getModTSconfig($id, 'TCEFORM.tt_content.colPos');
-			$tcaConfig = $GLOBALS['TCA']['tt_content']['columns']['colPos']['config'];
-
-			$tcaColumns = $tcaConfig['items'];
-			$tcaColumns = $this->formEngine->addItems($tcaColumns, $tsConfig['properties']['addItems.']);
-
-			if (isset($tcaConfig['itemsProcFunc']) && $tcaConfig['itemsProcFunc']) {
-				$backendLayoutColumns = $this->getBackendLayoutColumns($layout, 'backend_layout');
-				if (count($backendLayoutColumns)) {
-					$tcaColumns = $backendLayoutColumns;
-				}
-			}
-
-			foreach (\TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',', $tsConfig['properties']['removeItems'], 1) as $removeId) {
-				foreach ($tcaColumns as $key => $item) {
-					if ($item[1] == $removeId) {
-						unset($tcaColumns[$key]);
-					}
-				}
-			}
-
-			$_tcaColumns = $tcaColumns;
-			$tcaColumns = array(-2, -1);
-			foreach($_tcaColumns as $item) {
-				if($item[1]) {
-					$tcaColumns[] = $item[1];
-				}
-			}
-			$tcaColumns = implode(',', $tcaColumns);
-		}
+            $tcaColumns = GeneralUtility::callUserFunction('TYPO3\\CMS\\Backend\\View\\BackendLayoutView->getColPosListItemsParsed', $id, $this);
+        }
 
 		return $tcaColumns;
 	}
 
-	/**
-	 * fetches all available columns for a certain backend layout
-	 *
-	 * @param   int     $layout: The selected backend layout of the grid container or the page
-	 * @param   string  $table: The name of the table to get the layout from
-	 * @return  array   $availableColumns: The columns available for the selected layout
-	 *
-	 */
-	public function getBackendLayoutColumns($layout = 0, $table = '') {
-		$backendLayout = $GLOBALS['TYPO3_DB']->exec_SELECTgetSingleRow(
-			'*',
-			$table,
-			'uid=' . $layout
-		);
-
-		$availableColumns = array();
-
-		if (isset($backendLayout['config']) && $backendLayout['config']) {
-			$parser = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Core\TypoScript\Parser\TypoScriptParser');
-			$parser->parse($parser->checkIncludeLines($backendLayout['config']));
-
-			$backendLayout['__config'] = $parser->setup;
-
-			// create colPosList
-			if ($backendLayout['__config']['backend_layout.'] && $backendLayout['__config']['backend_layout.']['rows.']) {
-				foreach ($backendLayout['__config']['backend_layout.']['rows.'] as $row) {
-					if (isset($row['columns.']) && is_array($row['columns.'])) {
-						foreach ($row['columns.'] as $column) {
-							$availableColumns[] = array(
-								1 => $column['colPos']
-							);
-						}
-					}
-				}
-			}
-		}
-
-		return $availableColumns;
-	}
 }
 
 if (defined('TYPO3_MODE') && isset($GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/gridelements/Classes/DataHandler/PreProcessFieldArray.php'])) {
 	include_once($GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/gridelements/Classes/DataHandler/PreProcessFieldArray.php']);
 }
-?>

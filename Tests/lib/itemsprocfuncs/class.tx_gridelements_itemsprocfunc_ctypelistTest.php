@@ -201,4 +201,3 @@ class tx_gridelements_itemsprocfunc_ctypelistTest extends \TYPO3\CMS\Extbase\Tes
 		$this->assertEquals($expectedItems, $testItems);
 	}
 }
-?>

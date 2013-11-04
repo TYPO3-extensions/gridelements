@@ -55,18 +55,18 @@ $tempColumns = array(
 			'type' => 'inline',
 			'appearance' => array(
 				'levelLinksPosition' => 'none',
-				'showPossibleLocalizationRecords' => true,
-				'showRemovedLocalizationRecords' => true,
-				'showAllLocalizationLink' => true,
-				'showSynchronizationLink' => true,
+				'showPossibleLocalizationRecords' => TRUE,
+				'showRemovedLocalizationRecords' => TRUE,
+				'showAllLocalizationLink' => TRUE,
+				'showSynchronizationLink' => TRUE,
 				'enabledControls' => array(
-					'info' => true,
-					'new' => false,
-					'dragdrop' => false,
-					'sort' => false,
-					'hide' => true,
-					'delete' => true,
-					'localize' => true,
+					'info' => TRUE,
+					'new' => FALSE,
+					'dragdrop' => FALSE,
+					'sort' => FALSE,
+					'hide' => TRUE,
+					'delete' => TRUE,
+					'localize' => TRUE,
 				)
 			),
 			'inline' => array(
@@ -74,7 +74,7 @@ $tempColumns = array(
 			),
 			'behaviour' => array(
 				'localizationMode' => 'select',
-				'localizeChildrenAtParentLocalization' => true,
+				'localizeChildrenAtParentLocalization' => TRUE,
 			),
 			'foreign_table' => 'tt_content',
 			'foreign_field' => 'tx_gridelements_container',
@@ -146,7 +146,8 @@ $TCA['tt_content']['columns']['records']['config']['allowed'] .= ',pages';
 \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addToAllTCAtypes('tt_content', 'tx_gridelements_container, tx_gridelements_columns');
 
 \TYPO3\CMS\Core\Utility\GeneralUtility::loadTCA('backend_layout');
-$TCA['backend_layout']['columns']['config']['config']['wizards']['0']['script'] = \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath($_EXTKEY) . 'Classes/Wizard/BackendLayout.php';
+$TCA['backend_layout']['columns']['config']['config']['wizards']['0']['script'] =
+    \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath($_EXTKEY) . 'Classes/Wizard/BackendLayout.php';
 
 \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addPlugin(
 	array(
@@ -158,20 +159,26 @@ $TCA['backend_layout']['columns']['config']['config']['wizards']['0']['script'] 
 );
 
 // Hooks
-$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['cms/layout/class.tx_cms_layout.php']['tt_content_drawItem'][] = 'EXT:gridelements/Classes/Hooks/DrawItem.php:GridElementsTeam\\Gridelements\\Hooks\\DrawItem';
+$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['cms/layout/class.tx_cms_layout.php']['tt_content_drawItem'][] =
+    'EXT:gridelements/Classes/Hooks/DrawItem.php:GridElementsTeam\\Gridelements\\Hooks\\DrawItem';
 
-$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['cms']['db_new_content_el']['wizardItemsHook'][] = 'EXT:gridelements/Classes/Hooks/WizardItems.php:GridElementsTeam\\Gridelements\\Hooks\\WizardItems';
+$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['cms']['db_new_content_el']['wizardItemsHook'][] =
+    'EXT:gridelements/Classes/Hooks/WizardItems.php:GridElementsTeam\\Gridelements\\Hooks\\WizardItems';
 
-$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['processCmdmapClass'][] = 'EXT:gridelements/Classes/Hooks/DataHandler.php:GridElementsTeam\\Gridelements\\Hooks\\DataHandler';
-$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['processDatamapClass'][] = 'EXT:gridelements/Classes/Hooks/DataHandler.php:GridElementsTeam\\Gridelements\\Hooks\\DataHandler';
-$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['moveRecordClass'][] = 'EXT:gridelements/Classes/Hooks/DataHandler.php:GridElementsTeam\\Gridelements\\Hooks\\DataHandler';
+$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['processCmdmapClass'][] =
+    'EXT:gridelements/Classes/Hooks/DataHandler.php:GridElementsTeam\\Gridelements\\Hooks\\DataHandler';
+$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['processDatamapClass'][] =
+    'EXT:gridelements/Classes/Hooks/DataHandler.php:GridElementsTeam\\Gridelements\\Hooks\\DataHandler';
+$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['moveRecordClass'][] =
+    'EXT:gridelements/Classes/Hooks/DataHandler.php:GridElementsTeam\\Gridelements\\Hooks\\DataHandler';
 
-$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tceforms.php']['getSingleFieldClass'][] = 'EXT:gridelements/Classes/Hooks/FormEngine.php:GridElementsTeam\\Gridelements\\Hooks\\FormEngine';
+$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tceforms.php']['getSingleFieldClass'][] =
+    'EXT:gridelements/Classes/Hooks/FormEngine.php:GridElementsTeam\\Gridelements\\Hooks\\FormEngine';
 
 $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['tx_templavoila_api']['apiIsRunningTCEmain'] = TRUE;
 
 $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_pagerenderer.php']['render-preProcess'][] =
-	\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath($_EXTKEY) . 'Classes/Hooks/PageRenderer.php:GridElementsTeam\\Gridelements\\Hooks\\PageRenderer->addJSCSS';
+    \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath($_EXTKEY) . 'Classes/Hooks/PageRenderer.php:GridElementsTeam\\Gridelements\\Hooks\\PageRenderer->addJSCSS';
 
 $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['typo3/class.db_list.inc']['makeQueryArray'][] =
 	\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath($_EXTKEY) . 'Classes/Hooks/AbstractDatabaseRecordList.php:GridElementsTeam\\Gridelements\\Hooks\\AbstractDatabaseRecordList';
@@ -194,7 +201,8 @@ $GLOBALS['TYPO3_USER_SETTINGS']['columns']['hideContentPreview'] = array(
 	'label' => 'LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:hideContentPreview'
 );
 
-$GLOBALS['TYPO3_USER_SETTINGS']['showitem'] .= ',--div--;LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:gridElements,dragAndDropHideNewElementWizardInfoOverlay,hideColumnHeaders,hideContentPreview';
+$GLOBALS['TYPO3_USER_SETTINGS']['showitem'] .=
+    ',--div--;LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:gridElements,dragAndDropHideNewElementWizardInfoOverlay,hideColumnHeaders,hideContentPreview';
 
 $TBE_STYLES['skins']['gridelements']['name'] = 'gridelements';
 $TBE_STYLES['skins']['gridelements']['stylesheetDirectories']['structure'] = 'EXT:' . ($_EXTKEY) . '/Resources/Public/Backend/Css/Skin/';
@@ -215,4 +223,4 @@ $geIcons = array(
 	\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::siteRelPath('gridelements') . 'Resources/Public/Backend/Css/Skin/t3skin_override.css'
 );
 
-?>
+

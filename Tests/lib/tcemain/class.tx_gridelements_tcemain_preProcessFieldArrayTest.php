@@ -132,4 +132,3 @@ class tx_gridelements_tcemain_preProcessFieldArrayTest extends \TYPO3\CMS\Extbas
 		$this->assertEquals($expectedTcaColumns, $result);
 	}
 }
-?>

@@ -69,7 +69,7 @@ class MoveRecord extends AbstractDataHandler {
 			);
 			$containerUpdateArray[$originalElement['tx_gridelements_container']] = -1;
 
-			if (strpos($cmd['tt_content'][$uid]['move'], 'x') !== false) {
+			if (strpos($cmd['tt_content'][$uid]['move'], 'x') !== FALSE) {
 				$target = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode('x', $cmd['tt_content'][$uid]['move']);
 				$targetUid = abs(intval($target[0]));
 				$updateArray = $this->createUpdateArrayForSplitElements($uid, $destPid, $targetUid, $target, $containerUpdateArray);
@@ -79,7 +79,7 @@ class MoveRecord extends AbstractDataHandler {
 				$containerUpdateArray[$targetElement['tx_gridelements_container']] += 1;
 				$this->getTceMain()->moveRecord_raw('tt_content', $uid, $destPid);
 				$this->getTceMain()->updateRefIndex('tt_content', $uid);
-				$recordWasMoved = true;
+				$recordWasMoved = TRUE;
 			} else if(!count($cmd) && !$this->getTceMain()->moveChildren) {
 				$updateArray = $this->createUpdateArrayForContainerMove($originalElement);
 			}
@@ -138,7 +138,7 @@ class MoveRecord extends AbstractDataHandler {
 	 */
 	public function createUpdateArrayForContainerMove(array $originalElement) {
 		if($originalElement['CType'] == 'gridelements_pi1') {
-			$this->getTceMain()->moveChildren = true;
+			$this->getTceMain()->moveChildren = TRUE;
 		}
 
 		$updateArray = array(
@@ -155,4 +155,3 @@ class MoveRecord extends AbstractDataHandler {
 if (defined('TYPO3_MODE') && isset($GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/gridelements/Classes/DataHandler/MoveRecord.php'])) {
 	include_once($GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/gridelements/Classes/DataHandler/MoveRecord.php']);
 }
-?>

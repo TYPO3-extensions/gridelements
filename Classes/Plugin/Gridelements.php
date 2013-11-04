@@ -456,7 +456,7 @@ class Gridelements extends \TYPO3\CMS\Frontend\ContentObject\ContentObjectRender
 	 * @param	string		Field name to convert
 	 * @return	void
 	 */
-	function initPIflexForm($field='pi_flexform')	{
+	public function initPIflexForm($field='pi_flexform')	{
 		// Converting flexform data into array:
 		if (!is_array($this->cObj->data[$field]) && $this->cObj->data[$field])	{
 			$this->cObj->data[$field] = \TYPO3\CMS\Core\Utility\GeneralUtility::xml2array($this->cObj->data[$field]);
@@ -474,10 +474,10 @@ class Gridelements extends \TYPO3\CMS\Frontend\ContentObject\ContentObjectRender
 	 * @param	string		Value pointer, eg. "vDEF"
 	 * @return	string		The content.
 	 */
-	function getFFvalue($T3FlexForm_array,$fieldName,$sheet='sDEF',$lang='lDEF',$value='vDEF')	{
+	public function getFFvalue($T3FlexForm_array,$fieldName,$sheet='sDEF',$lang='lDEF',$value='vDEF')	{
 		$sheetArray = is_array($T3FlexForm_array) ? $T3FlexForm_array['data'][$sheet][$lang] : '';
 		if (is_array($sheetArray))	{
-			return $this->getFFvalueFromSheetArray($sheetArray,explode('/',$fieldName),$value);
+			return $this->getFFvalueFromSheetArray($sheetArray, explode('/',$fieldName), $value);
 		}
 	}
 
@@ -491,7 +491,7 @@ class Gridelements extends \TYPO3\CMS\Frontend\ContentObject\ContentObjectRender
 	 * @access private
 	 * @see pi_getFFvalue()
 	 */
-	function getFFvalueFromSheetArray($sheetArray,$fieldNameArr,$value)	{
+	public function getFFvalueFromSheetArray($sheetArray,$fieldNameArr,$value)	{
 
 		$tempArr=$sheetArray;
 		foreach($fieldNameArr as $k => $v)	{
@@ -501,7 +501,6 @@ class Gridelements extends \TYPO3\CMS\Frontend\ContentObject\ContentObjectRender
 					$c=0;
 					foreach($tempArr as $values)	{
 						if ($c==$v)	{
-							#debug($values);
 							$tempArr=$values;
 							break;
 						}
@@ -545,4 +544,3 @@ class Gridelements extends \TYPO3\CMS\Frontend\ContentObject\ContentObjectRender
 if (defined('TYPO3_MODE') && isset($GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/gridelements/Classes/Plugin/Gridelements.php'])) {
 	include_once($GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/gridelements/Classes/Plugin/Gridelements.php']);
 }
-?>

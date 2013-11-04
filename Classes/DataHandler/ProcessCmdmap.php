@@ -80,7 +80,7 @@ class ProcessCmdmap extends AbstractDataHandler {
 					$overrideArray['header'] = 'Reference';
 				}
 
-				if (strpos($value, 'x') !== false) {
+				if (strpos($value, 'x') !== FALSE) {
 					$valueArray = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode('x', $value);
 					$overrideArray['sorting'] = 0;
 
@@ -139,7 +139,7 @@ class ProcessCmdmap extends AbstractDataHandler {
 				}
 			}
 
-			$commandIsProcessed = true;
+			$commandIsProcessed = TRUE;
 
 			$GLOBALS['TCA']['tt_content']['ctrl']['copyAfterDuplFields'] = $copyAfterDuplicationFields;
 		}
@@ -149,4 +149,3 @@ class ProcessCmdmap extends AbstractDataHandler {
 if (defined('TYPO3_MODE') && isset($GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/gridelements/Classes/DataHandler/ProcessCmdmap.php'])) {
 	include_once($GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/gridelements/Classes/DataHandler/ProcessCmdmap.php']);
 }
-?>

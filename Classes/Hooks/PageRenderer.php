@@ -65,9 +65,9 @@ class PageRenderer {
 				$clipObj = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Backend\Clipboard\Clipboard');		// Start clipboard
 				$clipObj->initializeClipboard();
 
-				$clipBoardHasContent = false;
+				$clipBoardHasContent = FALSE;
 
-				if(isset($clipObj->clipData['normal']['el']) && strpos(key($clipObj->clipData['normal']['el']), 'tt_content') !== false) {
+				if(isset($clipObj->clipData['normal']['el']) && strpos(key($clipObj->clipData['normal']['el']), 'tt_content') !== FALSE) {
 					$pasteURL = str_replace('&amp;', '&', $clipObj->pasteUrl('tt_content', 'DD_PASTE_UID', 0));
 					if (isset($clipObj->clipData['normal']['mode'])) {
 						$clipBoardHasContent = 'copy';
@@ -117,16 +117,16 @@ class PageRenderer {
 				    $intFirstCBEl = str_replace('tt_content|', '', $arrCBKeys[0]);
 				}
 
-				# pull locallang_db.xml to JS side - only the tx_gridelements_js-prefixed keys
+				// pull locallang_db.xml to JS side - only the tx_gridelements_js-prefixed keys
 				$pageRenderer->addInlineLanguageLabelFile('EXT:gridelements/Resources/Private/Language/locallang_db.xml', 'tx_gridelements_js');
 
-				$pRaddExtOnReadyCode = "
+				$pRaddExtOnReadyCode = '
 					TYPO3.l10n = {
 						localize: function(langKey){
 							return TYPO3.lang[langKey];
 						}
 					}
-				";
+				';
 
 				$allowedCTypesClassesByColPos = array();
 				$layoutSetup = \TYPO3\CMS\Core\Utility\GeneralUtility::callUserFunction('TYPO3\\CMS\\Backend\\View\\BackendLayoutView->getSelectedBackendLayout', intval(\TYPO3\CMS\Core\Utility\GeneralUtility::_GP('id')), $this);
@@ -201,7 +201,7 @@ class PageRenderer {
 							\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('gridelements') . 'Resources/Public/Backend/JavaScript/GridElementsDD_onReady.js'
 						)
 					),
-					true
+					TRUE
 				);
 			}
 		}
@@ -238,4 +238,3 @@ if (defined('TYPO3_MODE') && isset($GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLA
 	include_once($GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/gridelements/Classes/Hooks/PageRenderer.php']);
 }
 
-?>
