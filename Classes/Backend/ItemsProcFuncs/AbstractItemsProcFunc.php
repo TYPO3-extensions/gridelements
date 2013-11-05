@@ -43,8 +43,23 @@ class AbstractItemsProcFunc {
 	 * @return	array|null	$backendLayout: An array containing the data of the selected backend layout as well as a parsed version of the layout configuration
 	 */
 	public function getSelectedBackendLayout($id) {
-        $backendLayout = GeneralUtility::callUserFunction('TYPO3\\CMS\\Backend\\View\\BackendLayoutView->getSelectedBackendLayout', $id, $this);
-		return $backendLayout;
+        $backendLayoutData = GeneralUtility::callUserFunction('TYPO3\\CMS\\Backend\\View\\BackendLayoutView->getSelectedBackendLayout', $id, $this);
+        // add allowed CTypes to the columns, since this is not done by the native core methods
+        if(count($backendLayoutData['__items']) > 0) {
+            if (!empty($backendLayoutData['__config']['backend_layout.']['rows.'])) {
+                foreach ($backendLayoutData['__config']['backend_layout.']['rows.'] as $row) {
+                    if (!empty($row['columns.'])) {
+                        foreach ($row['columns.'] as $column) {
+                            $backendLayoutData['columns'][$column['colPos']] = $column['allowed'] ? $column['allowed'] : '*';
+                            $backendLayoutData['columns']['allowed'] .= $backendLayoutData['columns']['allowed'] ?
+                                ',' . $backendLayoutData['columns'][$column['colPos']] :
+                                $backendLayoutData['columns'][$column['colPos']];
+                        }
+                    }
+                }
+            }
+        };
+		return $backendLayoutData;
 	}
 
 	/**
