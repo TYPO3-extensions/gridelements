@@ -287,7 +287,7 @@ if(typeof GridElementsDD === "undefined"){
 				if(!top.skipDraggableDetails) {
 					var detailInfoTpl = new Ext.XTemplate(
 							'<div>',
-								'<img class="x-dd-draggableiteminfoimg" src="{bigIconSrc}">',
+								'{bigIconSrc}' ? '<img class="x-dd-draggableiteminfoimg" src="{bigIconSrc}">' : '',
 								'<div class="x-dd-draggableiteminfotext">',
 									'<strong>{addInfoHeader}</strong><br>',
 									'{addInfoText}',
@@ -331,7 +331,7 @@ if(typeof GridElementsDD === "undefined"){
 									aTagOnClickPartOne = aTag.dom.onclick.toString().split('largeIconImage%3D')[1];
 									bigIcon = typeof aTagOnClickPartOne !== 'undefined' ? aTagOnClickPartOne.split('%26')[0].split('%2F') : false;
 									
-								detailInfoData.bigIconSrc = bigIcon ? imgTag.src.replace(imgTag.src.substr(imgTag.src.lastIndexOf('/') + 1), bigIcon[bigIcon.length - 1]) : imgTag.src;
+								detailInfoData.bigIconSrc = bigIcon ? imgTag.src.replace(imgTag.src.substr(imgTag.src.lastIndexOf('/') + 1), bigIcon[bigIcon.length - 1]) : '';
 								
 								Ext.get(divNow).select('.x-dd-draggableiteminfo').update(detailInfoTpl.apply(detailInfoData));
 								Ext.get(divNow).select('.x-dd-draggableiteminfo').show();
