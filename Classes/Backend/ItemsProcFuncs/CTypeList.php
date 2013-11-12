@@ -67,7 +67,7 @@ class CTypeList extends AbstractItemsProcFunc {
 	 * @return    array|null    $backendLayout: An array containing the data of the selected backend layout as well as a parsed version of the layout configuration
 	 */
 	public function checkForAllowedCTypes(&$items, $pid, $pageColumn, $gridContainerId, $gridColumn) {
-		if($pageColumn >= 0 || $pageColumn = -2) {
+		if($pageColumn >= 0 || $pageColumn == -2) {
 			$column = $pageColumn ? $pageColumn : 0;
 			$backendLayout = $this->getSelectedBackendLayout($pid);
 		} else {
