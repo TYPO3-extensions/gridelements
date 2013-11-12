@@ -296,7 +296,7 @@ if(typeof GridElementsDD === "undefined"){
 							'<br>'
 						),
 						detailInfoData = {};
-					
+
 					// for each tab group
 					Ext.each(Ext.get(draggableContainer).select('.typo3-dyntabmenu-divs > div').elements, function(divNow) {
 						// add additional info container
@@ -305,7 +305,7 @@ if(typeof GridElementsDD === "undefined"){
 							// "class" without quotes throws an error in IE8, so it's within quotes here
 							"class": 'x-dd-draggableiteminfo'
 						});
-						
+
 						// for each icon: show container on mouseover on an icon
 						Ext.each(Ext.get(divNow).select('div.x-dd-droptargetgroup').elements, function(iconNow) {
 							Ext.get(iconNow).on('mouseover', function(evtObj, thisNode) {
@@ -330,8 +330,8 @@ if(typeof GridElementsDD === "undefined"){
 									// bigger icon is "hidden" in the aTag onclick JS code, here we extract it
 									aTagOnClickPartOne = aTag.dom.onclick.toString().split('largeIconImage%3D')[1];
 									bigIcon = typeof aTagOnClickPartOne !== 'undefined' ? aTagOnClickPartOne.split('%26')[0].split('%2F') : false;
-									
-								detailInfoData.bigIconSrc = bigIcon ? imgTag.src.replace(imgTag.src.substr(imgTag.src.lastIndexOf('/') + 1), bigIcon[bigIcon.length - 1]) : imgTag.src;
+
+								detailInfoData.bigIconSrc = bigIcon ? imgTag.src.replace(imgTag.src.substr(imgTag.src.lastIndexOf('/') + 1), bigIcon[bigIcon.length - 1]) : '';
 								
 								Ext.get(divNow).select('.x-dd-draggableiteminfo').update(detailInfoTpl.apply(detailInfoData));
 								Ext.get(divNow).select('.x-dd-draggableiteminfo').show();

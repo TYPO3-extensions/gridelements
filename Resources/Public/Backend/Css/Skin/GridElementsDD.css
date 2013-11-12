@@ -61,7 +61,6 @@
 	height: auto;
 	top: 52px;
 	left: 0px;
-	width: 100%;
 	z-index: 20000;
 	/* setting overflow makes items disappear when dragging
 	 * solution:  when dragging starts, put the element right after body in DOM
@@ -69,16 +68,20 @@
 }
 
 #x-dd-draggablecontainer .typo3-dyntabmenu-tabs {
-	margin:  0px 24px 0px 11px;
+	margin:  0px 34px 0px 24px;
 }
 
 #x-dd-draggablecontainer .typo3-dyntabmenu-tabs a {
-	padding: 0px 5px;
-	font-weight: bold;
+    padding: 2px 10px;
+    font-weight: normal;
+}
+
+#x-dd-draggablecontainer .typo3-dyntabmenu-tabs a img {
+    display: none;
 }
 
 #x-dd-draggablecontainer .typo3-dyntabmenu-divs {
-	margin:  0px 24px 0px 11px;
+	margin:  0px 24px 0px 24px;
 }
 
 #x-dd-draggablecontainer .typo3-dyntabmenu-divs .c-tablayer {
@@ -90,7 +93,7 @@
 	display: inline-block;
 	vertical-align: top;
 	margin:  0px;
-	padding: 0px;
+	padding: 7px 0px 2px 5px;
 }
 
 #x-dd-draggablecontainer .typo3-dyntabmenu-divs a {
@@ -113,9 +116,9 @@
 	cursor: pointer;
 }
 .x-dd-draggableiteminfo > div {
-	padding: 10px 5px 5px 0px;
-	width: 95%;
-	float: left;
+    padding: 0px 5px 5px 7px;
+    width: 95%;
+    float: left;
 }
 .x-dd-draggableiteminfo > br {
 	clear: both;
