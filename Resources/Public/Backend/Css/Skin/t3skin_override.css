@@ -1,126 +1,126 @@
 #ext-cms-layout-db-layout-php #typo3-inner-docbody {
-	margin-top: 10px;
-	display: table;
-	min-width: 100%;
-	*min-width: 95%; // IE7 fallback
-	-webkit-box-sizing: border-box;
-	-moz-box-sizing: border-box;
-	box-sizing: border-box;
+    margin-top: 10px;
+    display: table;
+    min-width: 100%;
+    *min-width: 95%; // IE7 fallback
+-webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
 }
 
 #ext-cms-layout-db-layout-php td.t3-page-column,
 #ext-cms-layout-db-layout-php td.t3-page-lang-column {
-	max-width: none!important;
-	min-width: 0px!important;
-	padding: 0 10px 3px;
+    max-width: none!important;
+    min-width: 0px!important;
+    padding: 0 10px 3px;
 }
 
 #ext-cms-layout-db-layout-php table.typo3-page-langMode {
-	width: 100%!important;
+    width: 100%!important;
 }
 
 #ext-cms-layout-db-layout-php td.t3-gridCell-restricted,
 #ext-cms-layout-db-layout-php td.t3-gridCell-unassigned {
-	opacity: 0.4;
-	filter: alpha(opacity=40);
-	background-color: transparent;
+    opacity: 0.4;
+    filter: alpha(opacity=40);
+    background-color: transparent;
 }
 
 #ext-cms-layout-db-layout-php td.t3-gridCell-restricted div.t3-row-header,
 #ext-cms-layout-db-layout-php td.t3-gridCell-unassigned div.t3-row-header {
-	opacity: 1;
-	filter: alpha(opacity=100);
+    opacity: 1;
+    filter: alpha(opacity=100);
 }
 
 #ext-cms-layout-db-layout-php td.t3-gridCell-restricted div.t3-row-header div,
 #ext-cms-layout-db-layout-php td.t3-gridCell-unassigned div.t3-row-header div {
-	opacity: 1;
-	filter: alpha(opacity=100);
+    opacity: 1;
+    filter: alpha(opacity=100);
 }
 
 #ext-cms-layout-db-layout-php .t3-dd-spacer {
-	height: 20px;
+    height: 20px;
 }
 
 #ext-cms-layout-db-layout-php .t3-page-colHeader-icons {
-	position: relative;
-	left: 2px;
+    position: relative;
+    left: 2px;
     float: left;
 }
 
 #ext-cms-layout-db-layout-php .t3-page-colHeader {
-	border-bottom: none!important;
-	color: #aaaaaa !important;
-	font-family: Verdana,sans-serif;
-	font-size: 13px;
-	padding-left: 0;
-	padding-right: 0;
-	min-width: 170px;
-	margin-top: 5px;
-	margin-bottom: 5px;
-	padding-bottom: 2px;
-	background-image: inherit;
+    border-bottom: none!important;
+    color: #aaaaaa !important;
+    font-family: Verdana,sans-serif;
+    font-size: 13px;
+    padding-left: 0;
+    padding-right: 0;
+    min-width: 170px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    padding-bottom: 2px;
+    background-image: inherit;
 }
 
 
 #ext-cms-layout-db-layout-php .t3-page-ce .t3-page-ce-header-active {
-	background-color:#5b5b5b;
-	background-image:linear-gradient(center top,#7f7f7f 10%,#5b5b5b 100%);
-	background-image:-moz-linear-gradient(center top,#7f7f7f 10%,#5b5b5b 100%);
-	background-image:-webkit-gradient(linear,0% 0%,0% 100%,color-stop(0.1,#7f7f7f),color-stop(1,#5b5b5b));
+    background-color:#5b5b5b;
+    background-image:linear-gradient(center top,#7f7f7f 10%,#5b5b5b 100%);
+    background-image:-moz-linear-gradient(center top,#7f7f7f 10%,#5b5b5b 100%);
+    background-image:-webkit-gradient(linear,0% 0%,0% 100%,color-stop(0.1,#7f7f7f),color-stop(1,#5b5b5b));
 }
 
 #ext-cms-layout-db-layout-php .t3-gridContainer .t3-row-header,
 #ext-cms-layout-db-layout-php .t3-lang-gridContainer .t3-row-header {
-	background-color: inherit;
-	cursor: move!important;
+    background-color: inherit;
+    cursor: move!important;
 }
 
 #ext-cms-layout-db-layout-php .t3-page-ce .t3-row-header {
-	visibility: hidden;
-	background: none;
+    visibility: hidden;
+    background: none;
 }
 
 #ext-cms-layout-db-layout-php .t3-page-ce.active .t3-row-header {
-	visibility: hidden;
+    visibility: hidden;
 }
 
 #ext-cms-layout-db-layout-php .t3-page-ce .t3-page-colHeader {
-	visibility: visible !important;
+    visibility: visible !important;
 }
 
 #ext-cms-layout-db-layout-php .t3-page-ce .t3-page-ce-header-active .t3-row-header {
-	visibility: visible;
+    visibility: visible;
 }
 
 #ext-cms-layout-db-layout-php .t3-page-ce .t3-page-ce-header-active .t3-page-ce .t3-row-header {
-	visibility: hidden;
+    visibility: hidden;
 }
 
 #ext-cms-layout-db-layout-php .t3-page-ce .ce-icons-left,
 #ext-cms-layout-db-layout-php .t3-page-ce .ce-icons {
-	float: none!important;
+    float: none!important;
 }
 
 #ext-cms-layout-db-layout-php .t3-page-ce .ce-icons-left a,
 #ext-cms-layout-db-layout-php .t3-page-ce .ce-icons-left span,
 #ext-cms-layout-db-layout-php .t3-page-ce .ce-icons a {
-	float: none!important;
-	display: inline-block;
+    float: none!important;
+    display: inline-block;
 }
 
 #ext-cms-layout-db-layout-php .t3-page-ce .t3-page-ce-icons-move {
-	float: right!important;
+    float: right!important;
 }
 
 #ext-cms-layout-db-layout-php .t3-page-ce .t3-page-colHeader .t3-page-colHeader-icons {
-	visibility: hidden !important;
+    visibility: hidden !important;
 }
 
 #ext-cms-layout-db-layout-php .t3-page-ce .t3-icon-gridelements-pastecopy,
 #ext-cms-layout-db-layout-php .t3-page-ce .t3-icon-gridelements-pasteref,
 #ext-cms-layout-db-layout-php .t3-page-ce .t3-icon-gridelements-copyfrompage {
-	visibility: hidden;
+    visibility: hidden;
 }
 
 #ext-cms-layout-db-layout-php .t3-page-ce-header-active .ce-icons,
@@ -129,8 +129,8 @@
 #ext-cms-layout-db-layout-php .t3-page-ce-new-ce-active .t3-icon,
 #ext-cms-layout-db-layout-php .t3-page-ce-wrapper-new-ce-active .t3-icon,
 #ext-cms-layout-db-layout-php .active .t3-page-colHeader .t3-page-colHeader-icons {
-	visibility: visible !important;
-	-webkit-transform: translateZ(0); /*fixes Chrome visibility bug*/
+    visibility: visible !important;
+    -webkit-transform: translateZ(0); /*fixes Chrome visibility bug*/
 }
 
 #ext-cms-layout-db-layout-php .active .t3-page-ce .t3-page-ce-new-ce .t3-icon,
@@ -147,283 +147,283 @@
 }
 
 #ext-cms-layout-db-layout-php .t3-page-ce-body-active {
-	border-color: #5B5B5B !important;
+    border-color: #5B5B5B !important;
 }
 
 #ext-cms-layout-db-layout-php .active .t3-page-ce .t3-page-ce-body {
-	border-color: #E2E2E2;
+    border-color: #E2E2E2;
 }
 
 #ext-cms-layout-db-layout-php .t3-page-ce {
-	padding: 0 0px !important;
-	margin-bottom: 0px;
+    padding: 0 0px !important;
+    margin-bottom: 0px;
 }
 
 #ext-cms-layout-db-layout-php .active .exampleContent .t3-page-colHeader {
-	xbackground-color:#5b5b5b;
-	xbackground-image:inherit;
+    xbackground-color:#5b5b5b;
+    xbackground-image:inherit;
 }
 
 
 #ext-cms-layout-db-layout-php .t3-page-colHeader-label {
-	white-space: nowrap;
-	text-align: center;
-	margin: 0 40px;
-	padding-left: 5px;
+    white-space: nowrap;
+    text-align: center;
+    margin: 0 40px;
+    padding-left: 5px;
 }
 
 #ext-cms-layout-db-layout-php .t3-gridContainer,
 #ext-cms-layout-db-layout-php .t3-lang-gridContainer {
-	margin-top: 12px;
+    margin-top: 12px;
 }
 
 #ext-cms-layout-db-layout-php .t3-gridContainer .t3-gridContainer,
 #ext-cms-layout-db-layout-php .t3-lang-gridContainer .t3-gridContainer {
-	margin-top:6px;
+    margin-top:6px;
 }
 
 #ext-cms-layout-db-layout-php .t3-gridContainer--1 {
-	border-style: solid;
-	border-width: 1px 1px 1px 1px;
-	border-color: #999999;
-	margin: 2px 0px 0px 0px;
+    border-style: solid;
+    border-width: 1px 1px 1px 1px;
+    border-color: #999999;
+    margin: 2px 0px 0px 0px;
 }
 
 #ext-cms-layout-db-layout-php .t3-gridContainer-title--1 {
-	font-size: 10px;
-	font-weight: normal;
-	color: #494949;
-	background: none;
-	padding: 2px 5px;
-	margin: 0px;
+    font-size: 10px;
+    font-weight: normal;
+    color: #494949;
+    background: none;
+    padding: 2px 5px;
+    margin: 0px;
 }
 
 #ext-cms-layout-db-layout-php .t3-gridContainer-1 {
-	border-style: solid;
-	border-width: 1px 1px 1px 1px;
-	border-color: #B48062;
-	margin: 2px 0px 0px 0px;
+    border-style: solid;
+    border-width: 1px 1px 1px 1px;
+    border-color: #B48062;
+    margin: 2px 0px 0px 0px;
 }
 
 #ext-cms-layout-db-layout-php .t3-gridContainer-title-1 {
-	font-size: 10px;
-	font-weight: normal;
-	color: #5A4031;
-	background: #D9BFB0;
-	padding: 2px 5px;
-	margin: 0px;
+    font-size: 10px;
+    font-weight: normal;
+    color: #5A4031;
+    background: #D9BFB0;
+    padding: 2px 5px;
+    margin: 0px;
 }
 
 #ext-cms-layout-db-layout-php .t3-gridContainer-2 {
-	border-style: solid;
-	border-width: 1px 1px 1px 1px;
-	border-color: #BABD5A;
-	margin: 2px 0px 0px 0px;
+    border-style: solid;
+    border-width: 1px 1px 1px 1px;
+    border-color: #BABD5A;
+    margin: 2px 0px 0px 0px;
 }
 
 #ext-cms-layout-db-layout-php .t3-gridContainer-title-2 {
-	font-size: 10px;
-	font-weight: normal;
-	color: #5D5F2D;
-	background: #DCDEAC;
-	padding: 2px 5px;
-	margin: 0px;
+    font-size: 10px;
+    font-weight: normal;
+    color: #5D5F2D;
+    background: #DCDEAC;
+    padding: 2px 5px;
+    margin: 0px;
 }
 
 #ext-cms-layout-db-layout-php .t3-gridContainer-3 {
-	border-style: solid;
-	border-width: 1px 1px 1px 1px;
-	border-color: #427BAB;
-	margin: 2px 0px 0px 0px;
+    border-style: solid;
+    border-width: 1px 1px 1px 1px;
+    border-color: #427BAB;
+    margin: 2px 0px 0px 0px;
 }
 
 #ext-cms-layout-db-layout-php .t3-gridContainer-title-3 {
-	font-size: 10px;
-	font-weight: normal;
-	color: #213E56;
-	background: #A0BDD5;
-	padding: 2px 5px;
-	margin: 0px;
+    font-size: 10px;
+    font-weight: normal;
+    color: #213E56;
+    background: #A0BDD5;
+    padding: 2px 5px;
+    margin: 0px;
 }
 
 #ext-cms-layout-db-layout-php .t3-page-ce-type {
-	white-space: nowrap!important;
+    white-space: nowrap!important;
 }
 
 #ext-cms-layout-db-layout-php .t3-gridContainer-noColumnHeaders .t3-page-colHeader {
-	background: none!important;
-	border: 0px!important;
-	margin-bottom: -8px;
+    background: none!important;
+    border: 0px!important;
+    margin-bottom: -8px;
 }
 
 #ext-cms-layout-db-layout-php .t3-gridContainer-noColumnHeaders .t3-gridCell {
-	border-right: 1px solid #CCC !important;
+    border-right: 1px solid #CCC !important;
 }
 
 #ext-cms-layout-db-layout-php .t3-gridContainer-noColumnHeaders .t3-gridContainer-1 .t3-gridCell {
-	border-color: #B48062!important;
+    border-color: #B48062!important;
 }
 
 #ext-cms-layout-db-layout-php .t3-gridContainer-noColumnHeaders .t3-gridContainer-2 .t3-gridCell {
-	border-color: #BABD5A!important;
+    border-color: #BABD5A!important;
 }
 
 #ext-cms-layout-db-layout-php .t3-gridContainer-noColumnHeaders .t3-gridContainer-3 .t3-gridCell {
-	border-color: #427BAB!important;
+    border-color: #427BAB!important;
 }
 
 #ext-cms-layout-db-layout-php .t3-gridContainer-noColumnHeaders .t3-page-colHeader .t3-page-colHeader-icons {
-	display: block!important;
-	z-index: 10000;
+    display: block!important;
+    z-index: 10000;
 }
 
 #ext-cms-layout-db-layout-php .t3-gridContainer-noColumnHeaders .t3-row-header .t3-page-colHeader-label {
-	display: none;
+    display: none;
 }
 
 #ext-cms-layout-db-layout-php .t3-gridContainer-noColumnHeaders .t3-gridTable {
-	margin-right: -1px!important;
-	margin-left: 1px!important;
+    margin-right: -1px!important;
+    margin-left: 1px!important;
 }
 
 #ext-cms-layout-db-layout-php .exampleContent .reference {
-	position: relative;
+    position: relative;
 }
 
 #ext-cms-layout-db-layout-php .exampleContent .reference-overlay {
-	position: absolute;
-	top: 0px;
-	left: 0px;
-	width: 100%;
-	height: 100%;
-	background: #427BAB;
-	opacity: 0.15;
-	filter: alpha(opacity=15);
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    background: #427BAB;
+    opacity: 0.15;
+    filter: alpha(opacity=15);
 }
 
 #ext-cms-layout-db-layout-php .exampleContent .container_reference .reference-overlay {
-	background: #BABD5A;
+    background: #BABD5A;
 }
 
 #ext-cms-layout-db-layout-php .exampleContent .reference .t3-page-ce-header .t3-row-header {
-	background: none!important;
+    background: none!important;
 }
 
 #ext-cms-layout-db-layout-php .exampleContent .reference .t3-row-header a {
-	display: none!important;
+    display: none!important;
 }
 
 #ext-cms-layout-db-layout-php .exampleContent .reference .reference {
-	opacity: 1;
-	filter: alpha(opacity=100);
+    opacity: 1;
+    filter: alpha(opacity=100);
 }
 
 #ext-cms-layout-db-layout-php .t3-gridCell-invisibleContent .t3-page-ce {
-	display: none!important;
+    display: none!important;
 }
 
 #ext-cms-layout-db-layout-php .t3-gridCell-invisibleContent .t3-page-colHeader {
-	opacity: 0.5;
-	filter: alpha(opacity=50);
+    opacity: 0.5;
+    filter: alpha(opacity=50);
 }
 
 #ext-cms-layout-db-layout-php .t3-page-colHeader a.toggle-up {
-	display: block;
-	position: absolute;
-	right: 0px;
+    display: block;
+    position: absolute;
+    right: 0px;
 }
 
 #ext-cms-layout-db-layout-php .t3-page-colHeader a.toggle-down {
-	display: none;
-	position: absolute;
-	right: 0px;
+    display: none;
+    position: absolute;
+    right: 0px;
 }
 
 #ext-cms-layout-db-layout-php .t3-gridCell-invisibleContent .t3-page-colHeader a.toggle-up {
-	display: none;
+    display: none;
 }
 
 #ext-cms-layout-db-layout-php .t3-gridCell-invisibleContent .t3-page-colHeader a.toggle-down {
-	display: block;
+    display: block;
 }
 
 #ext-cms-layout-db-layout-php .t3-icon-extensions-gridelements {
-	background-image:url('../../Images/gridelements_sprite.png');
+    background-image:url('../../Images/gridelements_sprite.png');
 }
 
 #ext-cms-layout-db-layout-php .t3-icon-gridelements-copyfrompage {
-	background-position: 0 0;
+    background-position: 0 0;
 }
 #ext-cms-layout-db-layout-php .t3-icon-gridelements-pastecopy {
-	background-position: 0 -16px;
+    background-position: 0 -16px;
 }
 #ext-cms-layout-db-layout-php .t3-icon-gridelements-pasteref {
-	background-position: 0 -32px;
+    background-position: 0 -32px;
 }
 #ext-cms-layout-db-layout-php .t3-icon-gridelements-reference {
-	background-position: 0 -48px;
+    background-position: 0 -48px;
 }
 #ext-cms-layout-db-layout-php .t3-icon-gridelements-someicon {
-	background-position: 0 -64px;
+    background-position: 0 -64px;
 }
 #ext-cms-layout-db-layout-php .t3-page-ce-dropzone {
-	margin: -22px 0px 0px 0px;
+    margin: -22px 0px 0px 0px;
 }
 #ext-cms-layout-db-layout-php .t3-gridContainer .t3-gridContainer .t3-page-ce-dropzone,
 #ext-cms-layout-db-layout-php .t3-lang-gridContainer .t3-gridContainer .t3-page-ce-dropzone {
-	margin: -22px 0px 0px 0px!important;
+    margin: -22px 0px 0px 0px!important;
 }
 
 #ext-cms-layout-db-layout-php .t3-page-columns {
-	margin: 0!important;
+    margin: 0!important;
 }
 
 #ext-cms-layout-db-layout-php .t3-page-column,
 #ext-cms-layout-db-layout-php .t3-page-lang-column {
-	background: #F8F8F8;
-	border-left: 5px solid #F8F8F8!important;
-	border-right: 5px solid #F8F8F8!important;
-	padding: 0px 2px 5px!important;
+    background: #F8F8F8;
+    border-left: 5px solid #F8F8F8!important;
+    border-right: 5px solid #F8F8F8!important;
+    padding: 0px 2px 5px!important;
 }
 
 #ext-cms-layout-db-layout-php .t3-page-ce {
-	margin: 5px 0px;
-	min-width: 180px;
+    margin: 5px 0px;
+    min-width: 180px;
 }
 
 #ext-cms-layout-db-layout-php .t3-page-ce-dragitem {
-	margin: 5px 0px!important;
+    margin: 5px 0px!important;
 }
 
 #ext-cms-layout-db-layout-php .t3-gridContainer .t3-gridContainer .t3-page-ce-dragitem {
-	margin: 5px 0px 0px 0px!important;
+    margin: 5px 0px 0px 0px!important;
 }
 
 #ext-cms-layout-db-layout-php .t3-page-ce-body-inner-gridelements_pi1 {
-	background: #FFF;
+    background: #FFF;
 }
 
 #ext-cms-layout-db-layout-php .t3-page-colHeader,
 #ext-cms-layout-db-layout-php .t3-page-ce-dragitem {
-	padding: 0px!important;
-	cursor: default!important;
+    padding: 0px!important;
+    cursor: default!important;
 }
 
 #ext-cms-layout-db-layout-php .t3-page-ce-wrapper {
-	margin-top: 0px;
-	margin-bottom: 2px;
-	padding: 5px;
-	min-height: 27px;
+    margin-top: 0px;
+    margin-bottom: 2px;
+    padding: 5px;
+    min-height: 27px;
 }
 
 #ext-cms-layout-db-layout-php .t3-page-ce-body {
-	margin-bottom: 5px;
+    margin-bottom: 5px;
 }
 
 #ext-cms-layout-db-layout-php .t3-page-ce-body-inner {
-	padding: 4px;
+    padding: 4px;
 }
 
 #ext-cms-layout-db-layout-php .reference .x-dd-droptargetarea {
-	display: none!important;
+    display: none!important;
 }
