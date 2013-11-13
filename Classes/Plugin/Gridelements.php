@@ -56,6 +56,7 @@ class Gridelements extends \TYPO3\CMS\Frontend\ContentObject\ContentObjectRender
 		// so that you can easily get the values with TypoScript
 		$this->initPiFlexForm();
 		$this->getPiFlexFormData();
+		\TYPO3\CMS\Core\Resource\Service\FrontendContentAdapterService::modifyDBRow($this->cObj->data, 'tt_content');
 
 		// now we have to find the children of this grid container regardless of their column
 		// so we can get them within a single DB query instead of doing a query per column
