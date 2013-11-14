@@ -227,7 +227,7 @@ if(typeof GridElementsDD === "undefined"){
 				Ext.get(draggableContainer).dom.id = 'x-dd-draggablecontainer';
 
 				// add draggables container to DOM, right after firstNewIconLink
-				draggableContainer.insertBefore(Ext.get(Ext.get('typo3-inner-docbody').select('h2').elements[0]));
+				draggableContainer.insertBefore(Ext.get(Ext.get('typo3-inner-docbody').select('h1, h2').elements[0]));
 
 			// define callback function executed when tempDiv (below) finishes loading
 			var fillDraggableContainer = function(tempDiv, success){
