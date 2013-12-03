@@ -97,7 +97,9 @@ class ProcessCmdmap extends AbstractDataHandler {
 						$overrideArray['tx_gridelements_columns'] = intval($valueArray[1]);
 					}
 					$targetRecord = \TYPO3\CMS\Backend\Utility\BackendUtility::getRecordWSOL($targetTable, abs($valueArray[0]), 'sys_language_uid');
-					$overrideArray['sys_language_uid'] = $targetRecord['sys_language_uid'];
+					if($targetRecord[$GLOBALS['TCA'][$table]['ctrl']['transOrigPointerField']]) {
+						$overrideArray['sys_language_uid'] = $targetRecord['sys_language_uid'];
+					}
 					$this->getTceMain()->copyRecord($table, $id, intval($valueArray[0]), 1, $overrideArray);
 					$this->doGridContainerUpdate($containerUpdateArray);
 				} else {
@@ -107,7 +109,9 @@ class ProcessCmdmap extends AbstractDataHandler {
 						$targetTable = 'pages';
 					}
 					$targetRecord = \TYPO3\CMS\Backend\Utility\BackendUtility::getRecordWSOL($targetTable, abs($value), 'sys_language_uid,tx_gridelements_container');
-					$overrideArray['sys_language_uid'] = $targetRecord['sys_language_uid'];
+					if($targetRecord[$GLOBALS['TCA'][$table]['ctrl']['transOrigPointerField']]) {
+						$overrideArray['sys_language_uid'] = $targetRecord['sys_language_uid'];
+					}
 					$this->getTceMain()->copyRecord($table, $id, $value, 1, $overrideArray);
 					if(intval($value) < 0) {
 						if($targetRecord['tx_gridelements_container'] > 0) {
@@ -129,7 +133,9 @@ class ProcessCmdmap extends AbstractDataHandler {
 					$targetTable = 'pages';
 				}
 				$targetRecord = \TYPO3\CMS\Backend\Utility\BackendUtility::getRecordWSOL($targetTable, abs($value), 'sys_language_uid,tx_gridelements_container');
-				$overrideArray['sys_language_uid'] = $targetRecord['sys_language_uid'];
+				if($targetRecord[$GLOBALS['TCA'][$table]['ctrl']['transOrigPointerField']]) {
+					$overrideArray['sys_language_uid'] = $targetRecord['sys_language_uid'];
+				}
 				$this->getTceMain()->copyRecord($table, $id, $value, 1, $overrideArray);
 				if(intval($value) < 0) {
 					if($targetRecord['tx_gridelements_container'] > 0) {
