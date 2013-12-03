@@ -865,7 +865,7 @@ GridElementsDD = function() {
 						// bind click event
 						pasteCopyIcon.on('click', function(){
 							GridElementsDD.ajaxThenReload(
-								top.pasteTpl.replace('DD_REFYN', '0&DDcopy=1').replace('DD_DRAG_UID', clipboardItemUid).replace('DD_DROP_UID', dropZoneID)
+								top.pasteTpl.replace('DD_REFYN', '0').replace('DD_DRAG_UID', clipboardItemUid).replace('DD_DROP_UID', dropZoneID)
 							);
 							return false;
 						});
