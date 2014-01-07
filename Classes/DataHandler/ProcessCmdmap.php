@@ -69,7 +69,6 @@ class ProcessCmdmap extends AbstractDataHandler {
 				$overrideArray = array();
 
 				if($reference == 1) {
-					\TYPO3\CMS\Core\Utility\GeneralUtility::loadTCA('tt_content');
 					foreach($GLOBALS['TCA']['tt_content']['columns'] as $key => $column) {
 						if(strpos(',' . $GLOBALS['TCA']['tt_content']['ctrl']['copyAfterDuplFields'] . ',', ',' . $key . ',') === FALSE) {
 							$overrideArray[$key] = '';

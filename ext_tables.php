@@ -122,7 +122,6 @@ $tempColumns = array(
 );
 
 
-\TYPO3\CMS\Core\Utility\GeneralUtility::loadTCA('tt_content');
 \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addTCAcolumns('tt_content', $tempColumns, 1);
 \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addStaticFile($_EXTKEY, 'Configuration/TypoScript/', 'Gridelements');
 
@@ -145,7 +144,6 @@ $TCA['tt_content']['columns']['records']['config']['allowed'] .= ',pages';
 \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addToAllTCAtypes('tt_content', 'pi_flexform, tx_gridelements_children', $_EXTKEY . '_pi1', 'replace:rte_enabled');
 \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addToAllTCAtypes('tt_content', 'tx_gridelements_container, tx_gridelements_columns');
 
-\TYPO3\CMS\Core\Utility\GeneralUtility::loadTCA('backend_layout');
 $TCA['backend_layout']['columns']['config']['config']['wizards']['0']['script'] =
     \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath($_EXTKEY) . 'Classes/Wizard/BackendLayout.php';
 

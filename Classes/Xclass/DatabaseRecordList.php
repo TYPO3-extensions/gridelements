@@ -51,7 +51,6 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
 	 */
 	public function getTable($table, $id, $rowlist) {
 		// Loading all TCA details for this table:
-		\TYPO3\CMS\Core\Utility\GeneralUtility::loadTCA($table);
 		// Init
 		$addWhere = '';
 		$titleCol = $GLOBALS['TCA'][$table]['ctrl']['label'];
