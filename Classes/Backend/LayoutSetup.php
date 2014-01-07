@@ -375,7 +375,7 @@ class LayoutSetup {
 		$gridLayoutRecords = array();
 
 		foreach ($result as $layoutId => $item) {
-			if($item['alias'] !== '') {
+			if(isset($item['alias']) && (string)$item['alias'] !== '') {
 				$layoutId = $item['alias'];
 			}
 			// Continue if layout is excluded.
