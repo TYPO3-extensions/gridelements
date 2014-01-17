@@ -112,7 +112,7 @@ class Gridelements extends \TYPO3\CMS\Frontend\ContentObject\ContentObjectRender
 	 */
 	public function getChildren($element = 0, $csvColumns = '') {
 
-		if ($element && $csvColumns) {
+		if ($element && $csvColumns != '') {
 			$where = 'tx_gridelements_container = ' . $element .
 				$this->cObj->enableFields('tt_content') .
 				' AND colPos != -2
