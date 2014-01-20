@@ -70,8 +70,8 @@ class MoveRecord extends AbstractDataHandler {
 			$containerUpdateArray[$originalElement['tx_gridelements_container']] = -1;
 
 			if (strpos($cmd['tt_content'][$uid]['move'], 'x') !== FALSE) {
-				$target = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode('x', $cmd['tt_content'][$uid]['move']);
-				$targetUid = abs(intval($target[0]));
+				$target = explode('x', $cmd['tt_content'][$uid]['move']);
+				$targetUid = abs((int)$target[0]);
 				$updateArray = $this->createUpdateArrayForSplitElements($uid, $destPid, $targetUid, $target, $containerUpdateArray);
 			} else if($cmd['tt_content'][$uid]['move']) {
 				// to be done: handle moving with the up and down arrows via list module correctly
@@ -102,10 +102,10 @@ class MoveRecord extends AbstractDataHandler {
 	 * @return array UpdateArray
 	 */
 	public function createUpdateArrayForSplitElements($recordUid, &$destPid, $targetUid, array $target, array &$containerUpdateArray) {
-		if ($targetUid != $recordUid && intval($target[0]) < 0) {
+		if ($targetUid != $recordUid && (int)$target[0] < 0) {
 			$targetElement = \TYPO3\CMS\Backend\Utility\BackendUtility::getRecordWSOL('tt_content', $targetUid, 'pid');
 			$containerUpdateArray[$targetUid] += 1;
-			$column = intval($target[1]);
+			$column = (int)$target[1];
 			$updateArray = array(
 				'colPos' => -1,
 				'sorting' => 0,
@@ -115,13 +115,13 @@ class MoveRecord extends AbstractDataHandler {
 			);
 		} else {
 			$updateArray = array(
-				'colPos' => intval($target[1]),
+				'colPos' => (int)$target[1],
 				'sorting' => 0,
 				'tx_gridelements_container' => 0,
 				'tx_gridelements_columns' => 0
 			);
 			if($targetUid != $recordUid) {
-				$updateArray['pid'] = intval($target[0]);
+				$updateArray['pid'] = (int)$target[0];
 			}
 		}
 

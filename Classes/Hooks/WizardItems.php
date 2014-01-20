@@ -88,13 +88,13 @@ class WizardItems implements \TYPO3\CMS\Backend\Wizard\NewContentElementWizardHo
 			$pageID = $parentObject->pageinfo['uid'];
 			$this->init($pageID);
 
-			$container = intval(\TYPO3\CMS\Core\Utility\GeneralUtility::_GP('tx_gridelements_container'));
-			$column = intval(\TYPO3\CMS\Core\Utility\GeneralUtility::_GP('tx_gridelements_columns'));
-			$allowed = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',', \TYPO3\CMS\Core\Utility\GeneralUtility::_GP('tx_gridelements_allowed'), 1);
+			$container = (int)\TYPO3\CMS\Core\Utility\GeneralUtility::_GP('tx_gridelements_container');
+			$column = (int)\TYPO3\CMS\Core\Utility\GeneralUtility::_GP('tx_gridelements_columns');
+			$allowed = array_flip(explode(',', \TYPO3\CMS\Core\Utility\GeneralUtility::_GP('tx_gridelements_allowed')));
 
 			$this->removeDisallowedWizardItems($allowed, $wizardItems);
 
-			if(empty($allowed) || in_array('gridelements_pi1', $allowed)){
+			if(empty($allowed) || isset($allowed['gridelements_pi1'])){
 
 				$excludeLayouts = $this->getExcludeLayouts($container, $parentObject);
 
@@ -139,10 +139,10 @@ class WizardItems implements \TYPO3\CMS\Backend\Wizard\NewContentElementWizardHo
 	 * @return void
 	 */
 	public function removeDisallowedWizardItems($allowed, &$wizardItems) {
-		if(!in_array('*', $allowed)) {
+		if(!isset($allowed['*'])) {
 			foreach($wizardItems as $key => $wizardItem) {
 				if (!$wizardItems[$key]['header']) {
-					if (count($allowed) && !in_array($wizardItems[$key]['tt_content_defValues']['CType'], $allowed)){
+					if (count($allowed) && !isset($allowed[$wizardItems[$key]['tt_content_defValues']['CType']])){
 						unset($wizardItems[$key]);
 					}
 				}
@@ -166,19 +166,19 @@ class WizardItems implements \TYPO3\CMS\Backend\Wizard\NewContentElementWizardHo
 		$TSconfig = $BEfunc->getPagesTSconfig($pageID);
 
 		if($container && $TSconfig['TCEFORM.']['tt_content.']['tx_gridelements_backend_layout.']['itemsProcFunc.']['topLevelLayouts']) {
-			$excludeArray[] = $TSconfig['TCEFORM.']['tt_content.']['tx_gridelements_backend_layout.']['itemsProcFunc.']['topLevelLayouts'];
+			$excludeArray[] = trim($TSconfig['TCEFORM.']['tt_content.']['tx_gridelements_backend_layout.']['itemsProcFunc.']['topLevelLayouts']);
 		}
 
 		$excludeLayoutsTS = $TSconfig['TCEFORM.']['tt_content.']['tx_gridelements_backend_layout.']['itemsProcFunc.']['excludeLayouts'];
 
 		if($excludeLayoutsTS) {
-			$excludeArray[] = $excludeLayoutsTS;
+			$excludeArray[] = trim($excludeLayoutsTS);
 		}
 
 		$userExcludeLayoutsTS = $TSconfig['TCEFORM.']['tt_content.']['tx_gridelements_backend_layout.']['itemsProcFunc.']['userExcludeLayouts'];
 
 		if($userExcludeLayoutsTS) {
-			$excludeArray[] = $userExcludeLayoutsTS;
+			$excludeArray[] = trim($userExcludeLayoutsTS);
 		}
 
 		if(count($excludeArray) > 0) {

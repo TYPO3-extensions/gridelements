@@ -130,25 +130,28 @@ class PageRenderer {
 
 				$allowedCTypesClassesByColPos = array();
 				$layoutSetup = \TYPO3\CMS\Core\Utility\GeneralUtility::callUserFunction('TYPO3\\CMS\\Backend\\View\\BackendLayoutView->getSelectedBackendLayout', intval(\TYPO3\CMS\Core\Utility\GeneralUtility::_GP('id')), $this);
-				if (is_array($layoutSetup)) {
+				if (is_array($layoutSetup) && !empty($layoutSetup['__config']['backend_layout.']['rows.'])) {
 					foreach($layoutSetup['__config']['backend_layout.']['rows.'] as $rows){
 						foreach($rows as $row){
-							foreach($row as $col){
-								$classes = '';
-								if($col['allowed']){
-									$allowed = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',', $col['allowed'], 1);
-									foreach($allowed as $ctype){
-										if($ctype == '*') {
-											$classes = 't3-allow-all';
-											break;
-										} else {
-											$classes .= 't3-allow-' . $ctype . ' ';
+							if(!empty($layoutSetup['__config']['backend_layout.']['rows.'])) {
+								foreach($row as $col){
+									$classes = '';
+									if($col['allowed']){
+										$allowed = explode(',', $col['allowed'], 1);
+										foreach($allowed as $ctype){
+											$ctype = trim($ctype);
+											if($ctype == '*') {
+												$classes = 't3-allow-all';
+												break;
+											} else {
+												$classes .= 't3-allow-' . $ctype . ' ';
+											}
 										}
+									} else {
+										$classes = 't3-allow-all';
 									}
-								} else {
-									$classes = 't3-allow-all';
+									$allowedCTypesClassesByColPos[] = $col['colPos'] . ':' . trim($classes);
 								}
-								$allowedCTypesClassesByColPos[] = $col['colPos'] . ':' . trim($classes);
 							}
 						}
 					}
@@ -165,7 +168,7 @@ class PageRenderer {
 						top.pasteTpl = '" . str_replace('&redirect=1', '', str_replace('DDcopy=1', 'reference=DD_REFYN', $copyURL)) . "';
 						top.DDtceActionToken = '" . $formprotection->generateToken('tceAction') . "';
 						top.DDtoken = '" . $formprotection->generateToken('editRecord') . "';
-						top.DDpid = '" . intval(\TYPO3\CMS\Core\Utility\GeneralUtility::_GP('id')) . "';
+						top.DDpid = '" . (int)\TYPO3\CMS\Core\Utility\GeneralUtility::_GP('id') . "';
 						top.DDclipboardfilled = '" . ($clipBoardHasContent ? $clipBoardHasContent : 'false') . "';
 						top.DDclipboardElId = '" . $intFirstCBEl . "';
 					" .

@@ -31,7 +31,7 @@ CREATE TABLE tx_gridelements_backend_layout (
 	icon text,	
 	
 	PRIMARY KEY (uid),
-	KEY parent (pid),
+	KEY parent (pid,deleted,hidden,sorting),
 	KEY t3ver_oid (t3ver_oid,t3ver_wsid)
 );
 

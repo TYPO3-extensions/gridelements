@@ -45,7 +45,7 @@ class LayoutSetup {
 	 * @return \GridElementsTeam\Gridelements\Backend\LayoutSetup
 	 */
 	public function init($pageId, $typoScriptSetup = array()) {
-		$pageId = (strpos($pageId, 'NEW') === 0) ? 0 : $pageId;
+		$pageId = (strpos($pageId, 'NEW') === 0) ? 0 : (int)$pageId;
 		$this->loadLayoutSetup($pageId);
 		foreach($this->layoutSetup as $key => $setup) {
 			$columns = $this->getLayoutColumns($key);
@@ -102,7 +102,7 @@ class LayoutSetup {
 	public function getTypoScriptSetup($layoutId) {
 		$typoScriptSetup = array();
 
-		if ($layoutId == '0' && isset($this->typoScriptSetup['setup.']['default.'])) {
+		if ((int)$layoutId === '0' && isset($this->typoScriptSetup['setup.']['default.'])) {
 			$typoScriptSetup = $this->typoScriptSetup['setup.']['default.'];
 		} else if ($layoutId && isset($this->typoScriptSetup['setup.'][$layoutId . '.'])) {
 			$typoScriptSetup = $this->typoScriptSetup['setup.'][$layoutId . '.'];
@@ -197,7 +197,7 @@ class LayoutSetup {
 	public function getLayoutSelectItems($colPos) {
 		$selectItems = array();
 		foreach ($this->layoutSetup as $layoutId => $item) {
-			if ($colPos == -1 && $item['top_level_layout']) {
+			if ((int)$colPos === -1 && $item['top_level_layout']) {
 				continue;
 			}
 
@@ -247,10 +247,10 @@ class LayoutSetup {
 	 */
 	public function getLayoutWizardItems($colPos, $excludeLayouts = array()) {
 		$wizardItems = array();
-		$excludeLayouts = array_flip(\TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',', $excludeLayouts));
+		$excludeLayouts = array_flip(explode(',', $excludeLayouts));
 		foreach ($this->layoutSetup as $layoutId => $item) {
 
-			if (($colPos == -1 && $item['top_level_layout']) || array_key_exists($item['uid'], $excludeLayouts)) {
+			if (((int)$colPos === -1 && $item['top_level_layout']) || isset($excludeLayouts[$item['uid']])) {
 				continue;
 			}
 
@@ -301,7 +301,7 @@ class LayoutSetup {
 		$pageTSconfig = $BEfunc->getPagesTSconfig($pageId);
 
 		$excludeLayoutIds = isset($pageTSconfig['tx_gridelements.']['excludeLayoutIds'])
-			? \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',', $pageTSconfig['tx_gridelements.']['excludeLayoutIds'])
+			? array_flip(\TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',', $pageTSconfig['tx_gridelements.']['excludeLayoutIds']))
 			: array();
 
 		$overruleRecords = (isset($pageTSconfig['tx_gridelements.']['overruleRecords']) && $pageTSconfig['tx_gridelements.']['overruleRecords'] == '1');
@@ -312,17 +312,18 @@ class LayoutSetup {
 
 			foreach ($pageTSconfig['tx_gridelements.']['setup.'] as $layoutId => $item) {
 				// remove tailing dot of layout ID
-				$layoutId = substr($layoutId, 0, -1);
+				$layoutId = rtrim($layoutId, '.');
 
 				// Continue if layout is excluded.
-				if (in_array($layoutId, $excludeLayoutIds)) {
+				if (isset($excludeLayoutIds[$layoutId])) {
 					continue;
 				}
 
 				// Parse icon path for records.
 				if($item['icon']) {
-					$icons = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',', $item['icon']);
+					$icons = explode(',', $item['icon']);
 					foreach($icons as &$icon) {
+						$icon = trim($icon);
 						if (strpos($icon, 'EXT:') === 0) {
 							$icon = str_replace(PATH_site, '../', \TYPO3\CMS\Core\Utility\GeneralUtility::getFileAbsFileName($icon));
 						}
@@ -385,9 +386,9 @@ class LayoutSetup {
 
 			// Prepend icon path for records.
 			if($item['icon']) {
-				$icons = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',', $item['icon']);
+				$icons = explode(',', $item['icon']);
 				foreach($icons as &$icon) {
-					$icon = '../' . $GLOBALS['TCA']['tx_gridelements_backend_layout']['ctrl']['selicon_field_path'] . '/' . htmlspecialchars($icon);
+					$icon = '../' . $GLOBALS['TCA']['tx_gridelements_backend_layout']['ctrl']['selicon_field_path'] . '/' . htmlspecialchars(trim($icon));
 				}
 				$item['icon'] = $icons;
 			}

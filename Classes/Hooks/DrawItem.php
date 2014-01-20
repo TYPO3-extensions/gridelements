@@ -125,9 +125,10 @@ class DrawItem implements \TYPO3\CMS\Backend\View\PageLayoutViewDrawItemHookInte
 	public function renderCTypeShortcut(\TYPO3\CMS\Backend\View\PageLayoutView $parentObject, &$row, &$showHidden, &$deleteClause) {
 		$shortcutContent = '';
 		if ($row['records']) {
-			$shortcutItems = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',', $row['records']);
+			$shortcutItems = explode(',', $row['records']);
 			$collectedItems = array();
 			foreach ($shortcutItems as $shortcutItem) {
+				$shortcutItem = trim($shortcutItem);
 				if (strpos($shortcutItem, 'pages_') !== FALSE) {
 					$this->collectContentDataFromPages($shortcutItem, $collectedItems, $row['recursive'], $showHidden, $deleteClause);
 				} else if (strpos($shortcutItem, '_') === FALSE || strpos($shortcutItem, 'tt_content_') !== FALSE) {
@@ -164,7 +165,7 @@ class DrawItem implements \TYPO3\CMS\Backend\View\PageLayoutViewDrawItemHookInte
 					foreach ($parserRow['columns.'] as $parserColumns) {
 						$name = $this->lang->sL($parserColumns['name'], TRUE);
 						if ($parserColumns['colPos'] !== '') {
-							$colPosValues[intval($parserColumns['colPos'])] = array(
+							$colPosValues[(int)$parserColumns['colPos']] = array(
 								'name' => $name,
 								'allowed' => $parserColumns['allowed']
 							);
@@ -441,8 +442,8 @@ class DrawItem implements \TYPO3\CMS\Backend\View\PageLayoutViewDrawItemHookInte
 		}
 		$grid .= '<table border="0" cellspacing="1" cellpadding="4" width="100%" height="100%" class="t3-page-columns t3-gridTable">';
 		// add colgroups
-		$colCount = intval($layoutSetup['config']['colCount']);
-		$rowCount = intval($layoutSetup['config']['rowCount']);
+		$colCount = (int)$layoutSetup['config']['colCount'];
+		$rowCount = (int)$layoutSetup['config']['rowCount'];
 		$grid .= '<colgroup>';
 		for ($i = 0; $i < $colCount; $i++) {
 			$grid .= '<col style="width:' . (100 / $colCount) . '%"></col>';
@@ -461,10 +462,10 @@ class DrawItem implements \TYPO3\CMS\Backend\View\PageLayoutViewDrawItemHookInte
 					continue;
 				}
 				// which column should be displayed inside this cell
-				$columnKey = $columnConfig['colPos'] != '' ? intval($columnConfig['colPos']) : 32768;
+				$columnKey = $columnConfig['colPos'] != '' ? (int)$columnConfig['colPos'] : 32768;
 				// allowed CTypes
-				$allowedCTypes = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',', $columnConfig['allowed'], 1);
-				if(!in_array('*', $allowedCTypes)) {
+				$allowedCTypes = array_flip(explode(',', $columnConfig['allowed'], 1));
+				if(!isset($allowedCTypes['*'])) {
 					foreach($allowedCTypes as &$ctype){
 						$ctype = 't3-allow-' . $ctype;
 					}
@@ -472,8 +473,8 @@ class DrawItem implements \TYPO3\CMS\Backend\View\PageLayoutViewDrawItemHookInte
 					unset($allowedCTypes);
 				}
 				// render the grid cell
-				$colSpan = intval($columnConfig['colspan']);
-				$rowSpan = intval($columnConfig['rowspan']);
+				$colSpan = (int)$columnConfig['colspan'];
+				$rowSpan = (int)$columnConfig['rowspan'];
 				$grid .= '<td valign="top"' .
 					(isset($columnConfig['colspan'])
 						? ' colspan="' . $colSpan . '"'
@@ -519,7 +520,7 @@ class DrawItem implements \TYPO3\CMS\Backend\View\PageLayoutViewDrawItemHookInte
 			if (!$this->tree instanceof \TYPO3\CMS\Core\Database\QueryGenerator) {
 				$this->tree = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('\TYPO3\CMS\Core\Database\QueryGenerator');
 			}
-			$itemList = $this->tree->getTreeList($itemList, intval($recursive), 0, 1);
+			$itemList = $this->tree->getTreeList($itemList, (int)$recursive, 0, 1);
 		}
 		$itemRows = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows(
 			'*',
