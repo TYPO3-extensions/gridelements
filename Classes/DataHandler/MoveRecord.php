@@ -81,6 +81,8 @@ class MoveRecord extends AbstractDataHandler {
 				$this->getTceMain()->updateRefIndex('tt_content', $uid);
 				$recordWasMoved = TRUE;
 			} else if(!count($cmd) && !$this->getTceMain()->moveChildren) {
+				$this->getTceMain()->moveRecord_raw('tt_content', $uid, $destPid);
+				$this->getTceMain()->updateRefIndex('tt_content', $uid);
 				$updateArray = $this->createUpdateArrayForContainerMove($originalElement);
 			}
 			if(count($updateArray) > 0) {
