@@ -632,7 +632,15 @@ class PreProcessFieldArray extends AbstractDataHandler {
 			$tcaColumns = $tcaColumns['CSV'];
 		} else if ($table == 'pages') {
             $tcaColumns = GeneralUtility::callUserFunction('TYPO3\\CMS\\Backend\\View\\BackendLayoutView->getColPosListItemsParsed', $id, $this);
-        }
+			$temp = array();
+			foreach ($tcaColumns AS $item) {
+				if (trim($item[1]) !== '') {
+					$temp[] = $item[1];
+				}
+			}
+			// Implode into a CSV string as BackendLayoutView->getColPosListItemsParsed returns an array
+			$tcaColumns = '-2,-1,' . implode(',', $temp);
+		}
 
 		return $tcaColumns;
 	}
