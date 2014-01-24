@@ -81,7 +81,7 @@ class PreProcessFieldArray extends AbstractDataHandler {
 	 */
 	public function processFieldArrayForTtContent(array &$fieldArray) {
 		if ($this->getTable() == 'tt_content') {
-			$pid = intval(\TYPO3\CMS\Core\Utility\GeneralUtility::_GET('DDinsertNew'));
+			$pid = (int)\TYPO3\CMS\Core\Utility\GeneralUtility::_GET('DDinsertNew');
 
 			if($fieldArray['tx_gridelements_backend_layout']) {
 				$GLOBALS['TCA']['tt_content']['columns']['pi_flexform']['config']['ds']['*,gridelements_pi1'] = $this->layoutSetup->getFlexformConfiguration($fieldArray['tx_gridelements_backend_layout']);
@@ -121,7 +121,7 @@ class PreProcessFieldArray extends AbstractDataHandler {
 			$id = $record['pid'];
 			unset($record);
 		} else {
-			$id = intval($pid);
+			$id = (int)$pid;
 		}
 
 		$pageTS = \TYPO3\CMS\Backend\Utility\BackendUtility::getPagesTSconfig($id);
@@ -233,8 +233,8 @@ class PreProcessFieldArray extends AbstractDataHandler {
 	public function setFieldEntries(array &$fieldArray, $pid) {
 		if ($pid > 0) {
 			$this->setFieldEntriesForTargets($fieldArray, $pid);
-		} else if (intval($fieldArray['tx_gridelements_container']) > 0 && strpos(key($this->getTceMain()->datamap['tt_content']), 'NEW') !== FALSE) {
-			$containerUpdateArray[intval($fieldArray['tx_gridelements_container'])] = 1;
+		} else if ((int)$fieldArray['tx_gridelements_container'] > 0 && strpos(key($this->getTceMain()->datamap['tt_content']), 'NEW') !== FALSE) {
+			$containerUpdateArray[(int)$fieldArray['tx_gridelements_container']] = 1;
 			$this->doGridContainerUpdate($containerUpdateArray);
 		}
 		$this->setFieldEntriesForGridContainers($fieldArray);
@@ -249,9 +249,9 @@ class PreProcessFieldArray extends AbstractDataHandler {
 	 */
 	public function setFieldEntriesForTargets(array &$fieldArray, $pid) {
 		if (count($fieldArray) && strpos($fieldArray['pid'], 'x') !== FALSE) {
-			$target = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode('x', $fieldArray['pid']);
+			$target = explode('x', $fieldArray['pid']);
 			$fieldArray['pid'] = $pid;
-			$targetUid = abs(intval($target[0]));
+			$targetUid = abs((int)$target[0]);
 			$this->setFieldEntriesForColumnTargets($fieldArray, $targetUid, $target);
 		} else {
 			$this->setFieldEntriesForSimpleTargets($fieldArray);
@@ -271,11 +271,11 @@ class PreProcessFieldArray extends AbstractDataHandler {
 			$fieldArray['colPos'] = -1;
 			$fieldArray['sorting'] = 0;
 			$fieldArray['tx_gridelements_container'] = $targetUid;
-			$fieldArray['tx_gridelements_columns'] = intval($target[1]);
+			$fieldArray['tx_gridelements_columns'] = (int)$target[1];
 			$containerUpdateArray[$targetUid] = 1;
 			$this->doGridContainerUpdate($containerUpdateArray);
 		} else {
-			$fieldArray['colPos'] = intval($target[1]);
+			$fieldArray['colPos'] = (int)$target[1];
 			$fieldArray['sorting'] = 0;
 			$fieldArray['tx_gridelements_container'] = 0;
 			$fieldArray['tx_gridelements_columns'] = 0;
@@ -314,10 +314,10 @@ class PreProcessFieldArray extends AbstractDataHandler {
 	 * @return void
 	 */
 	public function setFieldEntriesForGridContainers(array &$fieldArray) {
-		if (intval($fieldArray['tx_gridelements_container']) > 0 && isset($fieldArray['colPos']) && intval($fieldArray['colPos']) != -1) {
+		if ((int)$fieldArray['tx_gridelements_container'] > 0 && isset($fieldArray['colPos']) && (int)$fieldArray['colPos'] != -1) {
 			$fieldArray['colPos'] = -1;
 			$fieldArray['tx_gridelements_columns'] = 0;
-		} else if (isset($fieldArray['tx_gridelements_container']) && intval($fieldArray['tx_gridelements_container']) === 0 && intval($fieldArray['colPos']) === -1) {
+		} else if (isset($fieldArray['tx_gridelements_container']) && (int)$fieldArray['tx_gridelements_container'] === 0 && (int)$fieldArray['colPos'] === -1) {
 			$originalContainer = $GLOBALS['TYPO3_DB']->exec_SELECTgetSingleRow(
 				'tx_gridelements_container',
 				'tt_content',
@@ -326,7 +326,7 @@ class PreProcessFieldArray extends AbstractDataHandler {
 			$containerUpdateArray[$originalContainer['tx_gridelements_container']] = -1;
 			$this->doGridContainerUpdate($containerUpdateArray);
 
-			$fieldArray['colPos'] = $this->checkForRootColumn(intval($this->getPageUid()));
+			$fieldArray['colPos'] = $this->checkForRootColumn((int)$this->getPageUid());
 			$fieldArray['tx_gridelements_columns'] = 0;
 		}
 	}
@@ -404,13 +404,13 @@ class PreProcessFieldArray extends AbstractDataHandler {
 				$page = $GLOBALS['TYPO3_DB']->exec_SELECTgetSingleRow(
 					'uid, backend_layout, backend_layout_next_level',
 					'pages',
-					'uid=' . intval($rootline[$i]['uid'])
+					'uid=' . (int)$rootline[$i]['uid']
 				);
-				$selectedBackendLayoutNextLevel = intval($page['backend_layout_next_level']);
+				$selectedBackendLayoutNextLevel = (int)$page['backend_layout_next_level'];
 				if ($page['uid'] == $this->getPageUid()) {
 					if ($fieldArray['backend_layout_next_level'] != 0) {
 						// Backend layout for subpages of the current page is set
-						$backendLayoutNextLevelUid = intval($fieldArray['backend_layout_next_level']);
+						$backendLayoutNextLevelUid = (int)$fieldArray['backend_layout_next_level'];
 					}
 					if ($fieldArray['backend_layout'] != 0) {
 						// Backend layout for current page is set
@@ -609,7 +609,7 @@ class PreProcessFieldArray extends AbstractDataHandler {
 		if (count($parent) > 0 && $parent['tx_gridelements_container'] > 0) {
 			$colPos = $this->checkForRootColumn($parent['tx_gridelements_container'], $parent['colPos']);
 		} else {
-			$colPos = intval($parent['colPos']);
+			$colPos = (int)$parent['colPos'];
 		}
 
 		return $colPos;
@@ -632,7 +632,15 @@ class PreProcessFieldArray extends AbstractDataHandler {
 			$tcaColumns = $tcaColumns['CSV'];
 		} else if ($table == 'pages') {
             $tcaColumns = GeneralUtility::callUserFunction('TYPO3\\CMS\\Backend\\View\\BackendLayoutView->getColPosListItemsParsed', $id, $this);
-        }
+			$temp = array();
+			foreach ($tcaColumns AS $item) {
+				if (trim($item[1]) !== '') {
+					$temp[] = $item[1];
+				}
+			}
+			// Implode into a CSV string as BackendLayoutView->getColPosListItemsParsed returns an array
+			$tcaColumns = '-2,-1,' . implode(',', $temp);
+		}
 
 		return $tcaColumns;
 	}
