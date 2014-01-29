@@ -464,13 +464,13 @@ class DrawItem implements \TYPO3\CMS\Backend\View\PageLayoutViewDrawItemHookInte
 				// which column should be displayed inside this cell
 				$columnKey = $columnConfig['colPos'] != '' ? (int)$columnConfig['colPos'] : 32768;
 				// allowed CTypes
-				$allowedCTypes = array_flip(explode(',', $columnConfig['allowed'], 1));
-				if(!isset($allowedCTypes['*'])) {
-					foreach($allowedCTypes as &$ctype){
-						$ctype = 't3-allow-' . $ctype;
+				if(!empty($columnConfig['allowed'])) {
+					$allowedCTypes = array_flip(explode(',', $columnConfig['allowed']));
+					if(!isset($allowedCTypes['*'])) {
+						foreach($allowedCTypes as $key => &$ctype){
+							$ctype = 't3-allow-' . $key;
+						}
 					}
-				} else {
-					unset($allowedCTypes);
 				}
 				// render the grid cell
 				$colSpan = (int)$columnConfig['colspan'];

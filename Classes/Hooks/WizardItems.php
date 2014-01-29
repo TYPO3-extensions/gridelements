@@ -90,9 +90,13 @@ class WizardItems implements \TYPO3\CMS\Backend\Wizard\NewContentElementWizardHo
 
 			$container = (int)\TYPO3\CMS\Core\Utility\GeneralUtility::_GP('tx_gridelements_container');
 			$column = (int)\TYPO3\CMS\Core\Utility\GeneralUtility::_GP('tx_gridelements_columns');
-			$allowed = array_flip(explode(',', \TYPO3\CMS\Core\Utility\GeneralUtility::_GP('tx_gridelements_allowed')));
-
-			$this->removeDisallowedWizardItems($allowed, $wizardItems);
+			$allowed_GP = \TYPO3\CMS\Core\Utility\GeneralUtility::_GP('tx_gridelements_allowed');
+			if(!empty($allowed_GP)) {
+				$allowed = array_flip(explode(',', $allowed_GP));
+				$this->removeDisallowedWizardItems($allowed, $wizardItems);
+			} else {
+				$allowed = NULL;
+			}
 
 			if(empty($allowed) || isset($allowed['gridelements_pi1'])){
 

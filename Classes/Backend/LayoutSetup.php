@@ -300,7 +300,7 @@ class LayoutSetup {
 		$BEfunc = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Backend\Utility\BackendUtility');
 		$pageTSconfig = $BEfunc->getPagesTSconfig($pageId);
 
-		$excludeLayoutIds = isset($pageTSconfig['tx_gridelements.']['excludeLayoutIds'])
+		$excludeLayoutIds = isset($pageTSconfig['tx_gridelements.']['excludeLayoutIds']) && !empty($pageTSconfig['tx_gridelements.']['excludeLayoutIds'])
 			? array_flip(\TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',', $pageTSconfig['tx_gridelements.']['excludeLayoutIds']))
 			: array();
 
