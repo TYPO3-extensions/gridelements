@@ -138,13 +138,16 @@ class PageRenderer {
 									$classes = '';
 									if($col['allowed']){
 										$allowed = explode(',', $col['allowed'], 1);
-										foreach($allowed as $ctype){
-											$ctype = trim($ctype);
-											if($ctype == '*') {
+										foreach($allowed as $ctypes){
+											$ctypes = trim($ctypes);
+											if($ctypes == '*') {
 												$classes = 't3-allow-all';
 												break;
 											} else {
-												$classes .= 't3-allow-' . $ctype . ' ';
+												$ctypes = explode(',', $ctypes);
+												foreach($ctypes as $ctype) {
+													$classes .= 't3-allow-' . $ctype . ' ';
+												}
 											}
 										}
 									} else {
