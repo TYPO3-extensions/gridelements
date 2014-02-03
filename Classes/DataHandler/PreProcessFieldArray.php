@@ -157,8 +157,12 @@ class PreProcessFieldArray extends AbstractDataHandler {
 			$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery('*', 'tt_content', 'uid=' . abs($id) . \TYPO3\CMS\Backend\Utility\BackendUtility::deleteClause('tt_content'));
 			if ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res)) {
 				// Gets the list of fields to copy from the previous record.
-				$fArr = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',', $GLOBALS['TCA']['tt_content']['ctrl']['useColumnsForDefaultValues'], 1);
+				$fArr = explode(',', $GLOBALS['TCA']['tt_content']['ctrl']['useColumnsForDefaultValues']);
 				foreach ($fArr as $theF) {
+					$theF = trim($theF);
+					if($theF === '') {
+						continue;
+					}
 					if (isset($GLOBALS['TCA']['tt_content']['columns'][$theF])) {
 						$newRow[$theF] = $row[$theF];
 					}

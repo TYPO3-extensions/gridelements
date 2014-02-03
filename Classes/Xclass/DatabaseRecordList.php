@@ -93,15 +93,15 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
 			)';
 		}
 		// Cleaning up:
-		$this->fieldArray = array_unique(array_merge($this->fieldArray, \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',', $rowlist, 1)));
+		$this->fieldArray = array_flip((array_merge($this->fieldArray, \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',', $rowlist, 1))));
 		if ($this->noControlPanels) {
-			$tempArray = array_flip($this->fieldArray);
+			$tempArray = $this->fieldArray;
 			unset($tempArray['_CONTROL_']);
 			unset($tempArray['_CLIPBOARD_']);
 			$this->fieldArray = array_keys($tempArray);
 		}
 		// Creating the list of fields to include in the SQL query:
-		$selectFields = $this->fieldArray;
+		$selectFields = array_flip($this->fieldArray);
 		$selectFields[] = 'uid';
 		$selectFields[] = 'pid';
 		// adding column for thumbnails
@@ -138,7 +138,7 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
 			$selectFields = array_merge($selectFields, \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',', $GLOBALS['TCA'][$table]['ctrl']['label_alt'], 1));
 		}
 		// Unique list!
-		$selectFields = array_unique($selectFields);
+		$selectFields = array_flip(array_flip(($selectFields)));
 		$fieldListFields = $this->makeFieldList($table, 1);
 		if (empty($fieldListFields) && $GLOBALS['TYPO3_CONF_VARS']['BE']['debug']) {
 			$message = sprintf($GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_mod_web_list.xlf:missingTcaColumnsMessage', TRUE), $table, $table);
