@@ -93,15 +93,15 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
 			)';
 		}
 		// Cleaning up:
-		$this->fieldArray = array_flip((array_merge($this->fieldArray, \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',', $rowlist, 1))));
+		$this->fieldArray = array_unique(array_merge($this->fieldArray, \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',', $rowlist, 1)));
 		if ($this->noControlPanels) {
-			$tempArray = $this->fieldArray;
+			$tempArray = array_flip($this->fieldArray);
 			unset($tempArray['_CONTROL_']);
 			unset($tempArray['_CLIPBOARD_']);
 			$this->fieldArray = array_keys($tempArray);
 		}
 		// Creating the list of fields to include in the SQL query:
-		$selectFields = array_flip($this->fieldArray);
+		$selectFields = $this->fieldArray;
 		$selectFields[] = 'uid';
 		$selectFields[] = 'pid';
 		// adding column for thumbnails
@@ -138,17 +138,14 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
 			$selectFields = array_merge($selectFields, \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',', $GLOBALS['TCA'][$table]['ctrl']['label_alt'], 1));
 		}
 		// Unique list!
-		$selectFields = array_flip(array_flip(($selectFields)));
+		$selectFields = array_unique($selectFields);
 		$fieldListFields = $this->makeFieldList($table, 1);
 		if (empty($fieldListFields) && $GLOBALS['TYPO3_CONF_VARS']['BE']['debug']) {
-			$message = sprintf($GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_mod_web_list.xlf:missingTcaColumnsMessage', TRUE), $table, $table);
-			$messageTitle = $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_mod_web_list.xlf:missingTcaColumnsMessageTitle', TRUE);
-			$flashMessage = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Messaging\\FlashMessage', $message, $messageTitle, \TYPO3\CMS\Core\Messaging\FlashMessage::WARNING, TRUE);
-			/** @var $flashMessageService \TYPO3\CMS\Core\Messaging\FlashMessageService */
-			$flashMessageService = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Messaging\\FlashMessageService');
-			/** @var $defaultFlashMessageQueue \TYPO3\CMS\Core\Messaging\FlashMessageQueue */
-			$defaultFlashMessageQueue = $flashMessageService->getMessageQueueByIdentifier();
-			$defaultFlashMessageQueue->enqueue($flashMessage);
+			$message = sprintf($GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_mod_web_list.php:missingTcaColumnsMessage', TRUE), $table, $table);
+			$messageTitle = $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_mod_web_list.php:missingTcaColumnsMessageTitle', TRUE);
+			$flashMessage = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Messaging\\FlashMessage', $message, $messageTitle, \TYPO3\CMS\Core\Messaging\FlashMessage::WARNING, TRUE);
+			/** @var \TYPO3\CMS\Core\Messaging\FlashMessage $flashMessage */
+			\TYPO3\CMS\Core\Messaging\FlashMessageQueue::addMessage($flashMessage);
 		}
 		// Making sure that the fields in the field-list ARE in the field-list from TCA!
 		$selectFields = array_intersect($selectFields, $fieldListFields);
