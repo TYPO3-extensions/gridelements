@@ -381,6 +381,9 @@ class Gridelements extends \TYPO3\CMS\Frontend\ContentObject\ContentObjectRender
 
 		if($child['uid'] > 0) {
 
+			// update SYS_LASTCHANGED if necessary
+			$this->cObj->lastChanged($child['tstamp']);
+
 			$this->cObj->start(array_merge($child, $parentGridData), 'tt_content');
 
 			$parentRecordNumbers[$columnKey]++;
