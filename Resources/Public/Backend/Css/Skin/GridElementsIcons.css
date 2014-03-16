@@ -1,7 +1,10 @@
-#ext-cms-layout-db-layout-php .t3-page-ce .t3-icon-gridelements-pastecopy,
-#ext-cms-layout-db-layout-php .t3-page-ce .t3-icon-gridelements-pasteref,
-#ext-cms-layout-db-layout-php .t3-page-ce .t3-icon-gridelements-copyfrompage {
-    visibility: hidden;
+.t3-page-ce .t3-icon-gridelements-copyfrompage {
+	visibility: hidden;
+}
+
+.t3-page-ce.active .t3-icon-gridelements-copyfrompage,
+.t3-page-column.active .t3-icon-gridelements-copyfrompage {
+	visibility: visible;
 }
 
 #ext-cms-layout-db-layout-php .t3-icon-extensions-gridelements {
