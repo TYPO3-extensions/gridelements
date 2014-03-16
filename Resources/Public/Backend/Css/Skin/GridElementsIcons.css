@@ -1,0 +1,25 @@
+#ext-cms-layout-db-layout-php .t3-page-ce .t3-icon-gridelements-pastecopy,
+#ext-cms-layout-db-layout-php .t3-page-ce .t3-icon-gridelements-pasteref,
+#ext-cms-layout-db-layout-php .t3-page-ce .t3-icon-gridelements-copyfrompage {
+    visibility: hidden;
+}
+
+#ext-cms-layout-db-layout-php .t3-icon-extensions-gridelements {
+    background-image:url('../../Images/gridelements_sprite.png');
+}
+
+#ext-cms-layout-db-layout-php .t3-icon-gridelements-copyfrompage {
+    background-position: 0 0;
+}
+#ext-cms-layout-db-layout-php .t3-icon-gridelements-pastecopy {
+    background-position: 0 -16px;
+}
+#ext-cms-layout-db-layout-php .t3-icon-gridelements-pasteref {
+    background-position: 0 -32px;
+}
+#ext-cms-layout-db-layout-php .t3-icon-gridelements-reference {
+    background-position: 0 -48px;
+}
+#ext-cms-layout-db-layout-php .t3-icon-gridelements-someicon {
+    background-position: 0 -64px;
+}

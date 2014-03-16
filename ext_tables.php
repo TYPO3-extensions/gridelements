@@ -221,4 +221,7 @@ $geIcons = array(
 	\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::siteRelPath('gridelements') . 'Resources/Public/Backend/Css/Skin/t3skin_override.css'
 );
 
+$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['typo3/template.php']['preHeaderRenderHook'][] = 'EXT:gridelements/Classes/Hooks/PreHeaderRenderHook.php:Tx_Gridelements_Hooks_PreHeaderRenderHook->main';
+
+
 
