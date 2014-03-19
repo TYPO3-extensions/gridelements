@@ -98,6 +98,7 @@ class ProcessCmdmap extends AbstractDataHandler {
 					}
 					$targetRecord = \TYPO3\CMS\Backend\Utility\BackendUtility::getRecordWSOL($targetTable, abs($valueArray[0]), 'sys_language_uid');
 					if($targetRecord[$GLOBALS['TCA'][$table]['ctrl']['transOrigPointerField']]) {
+						$overrideArray['tx_gridelements_container'] = $targetRecord['tx_gridelements_container'];
 						$overrideArray['sys_language_uid'] = $targetRecord['sys_language_uid'];
 					}
 					$this->getTceMain()->copyRecord($table, $id, intval($valueArray[0]), 1, $overrideArray);
