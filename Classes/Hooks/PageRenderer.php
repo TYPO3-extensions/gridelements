@@ -168,7 +168,7 @@ class PageRenderer {
 						top.pasteURL = '" . $pasteURL . "';
 						top.moveURL = '" . $moveURL . "';
 						top.copyURL = '" . $copyURL . "';
-						top.pasteTpl = '" . str_replace('&redirect=1', '', str_replace('DDcopy=1', 'reference=DD_REFYN', $copyURL)) . "';
+						top.pasteTpl = '" . str_replace('&redirect=1', '', str_replace('DDcopy=1', 'DDcopy=1&reference=DD_REFYN', $copyURL)) . "';
 						top.DDtceActionToken = '" . $formprotection->generateToken('tceAction') . "';
 						top.DDtoken = '" . $formprotection->generateToken('editRecord') . "';
 						top.DDpid = '" . (int)\TYPO3\CMS\Core\Utility\GeneralUtility::_GP('id') . "';
