@@ -51,8 +51,8 @@ class ProcessCmdmap extends AbstractDataHandler {
 	public function execute_processCmdmap($command, $table, $id, $value, &$commandIsProcessed, \TYPO3\CMS\Core\DataHandling\DataHandler &$parentObj=NULL) {
 		$this->init($table, $id, $parentObj);
 		// @todo Either create a new command map type, e.g. "reference" and process it with a hook instead of using $_GET //olly
-		$DDcopy = intval(\TYPO3\CMS\Core\Utility\GeneralUtility::_GET('DDcopy'));
-		$reference = intval(\TYPO3\CMS\Core\Utility\GeneralUtility::_GET('reference'));
+		$DDcopy = (int)\TYPO3\CMS\Core\Utility\GeneralUtility::_GET('DDcopy');
+		$reference = (int)\TYPO3\CMS\Core\Utility\GeneralUtility::_GET('reference');
 		$containerUpdateArray = array();
 
 		if ($command == 'copy' &&
@@ -69,7 +69,6 @@ class ProcessCmdmap extends AbstractDataHandler {
 				$overrideArray = array();
 
 				if($reference == 1) {
-					\TYPO3\CMS\Core\Utility\GeneralUtility::loadTCA('tt_content');
 					foreach($GLOBALS['TCA']['tt_content']['columns'] as $key => $column) {
 						if(strpos(',' . $GLOBALS['TCA']['tt_content']['ctrl']['copyAfterDuplFields'] . ',', ',' . $key . ',') === FALSE) {
 							$overrideArray[$key] = '';
@@ -81,40 +80,47 @@ class ProcessCmdmap extends AbstractDataHandler {
 				}
 
 				if (strpos($value, 'x') !== FALSE) {
-					$valueArray = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode('x', $value);
+
+					$valueArray = explode('x', $value);
 					$overrideArray['sorting'] = 0;
 
-					if ((intval($valueArray[0]) > 0 && $valueArray[1] != '') || (abs($valueArray[0]) == $id)) {
+					if (((int)$valueArray[0] > 0 && $valueArray[1] != '') || (abs($valueArray[0]) == $id)) {
 						$targetTable = 'pages';
 						$overrideArray['tx_gridelements_container'] = 0;
 						$overrideArray['tx_gridelements_columns'] = 0;
-						$overrideArray['colPos'] = intval($valueArray[1]);
+						$overrideArray['colPos'] = (int)$valueArray[1];
 					} else if ($valueArray[1] != '') {
 						$targetTable = 'tt_content';
 						$containerUpdateArray[abs($valueArray[0])] = 1;
 						$overrideArray['colPos'] = -1;
 						$overrideArray['tx_gridelements_container'] = abs($valueArray[0]);
-						$overrideArray['tx_gridelements_columns'] = intval($valueArray[1]);
+						$overrideArray['tx_gridelements_columns'] = (int)$valueArray[1];
 					}
-					$targetRecord = \TYPO3\CMS\Backend\Utility\BackendUtility::getRecordWSOL($targetTable, abs($valueArray[0]), 'sys_language_uid');
+					$targetRecord = \TYPO3\CMS\Backend\Utility\BackendUtility::getRecordWSOL($targetTable, abs($valueArray[0]));
 					if($targetRecord[$GLOBALS['TCA'][$table]['ctrl']['transOrigPointerField']]) {
-						$overrideArray['tx_gridelements_container'] = $targetRecord['tx_gridelements_container'];
 						$overrideArray['sys_language_uid'] = $targetRecord['sys_language_uid'];
 					}
-					$this->getTceMain()->copyRecord($table, $id, intval($valueArray[0]), 1, $overrideArray);
+					$this->getTceMain()->copyRecord($table, $id, (int)$valueArray[0], 1, $overrideArray);
 					$this->doGridContainerUpdate($containerUpdateArray);
+					if($targetTable === 'tt_content') {
+						$this->checkAndUpdateTranslatedChildren($containerUpdateArray);
+					}
 				} else {
-					if(intval($value) < 0) {
+					$value = (int)$value;
+					if($value < 0) {
 						$targetTable = 'tt_content';
 					} else {
 						$targetTable = 'pages';
 					}
-					$targetRecord = \TYPO3\CMS\Backend\Utility\BackendUtility::getRecordWSOL($targetTable, abs($value), 'sys_language_uid,tx_gridelements_container');
+					$targetRecord = \TYPO3\CMS\Backend\Utility\BackendUtility::getRecordWSOL($targetTable, abs($value));
 					if($targetRecord[$GLOBALS['TCA'][$table]['ctrl']['transOrigPointerField']]) {
+						if($targetTable === 'tt_content') {
+							$overrideArray['tx_gridelements_container'] = $targetRecord['tx_gridelements_container'];
+						}
 						$overrideArray['sys_language_uid'] = $targetRecord['sys_language_uid'];
 					}
 					$this->getTceMain()->copyRecord($table, $id, $value, 1, $overrideArray);
-					if(intval($value) < 0) {
+					if($value < 0) {
 						if($targetRecord['tx_gridelements_container'] > 0) {
 							$containerUpdateArray[$targetRecord['tx_gridelements_container']] = 1;
 							$this->doGridContainerUpdate($containerUpdateArray);
@@ -122,23 +128,27 @@ class ProcessCmdmap extends AbstractDataHandler {
 					}
 				}
 			} else {
+				$value = (int)$value;
 				if($value > 0) {
 					$overrideArray['tx_gridelements_container'] = 0;
 					$overrideArray['tx_gridelements_columns'] = 0;
 					$overrideArray['colPos'] = 0;
 					$overrideArray['sorting'] = 0;
 				}
-				if(intval($value) < 0) {
+				if($value < 0) {
 					$targetTable = 'tt_content';
 				} else {
 					$targetTable = 'pages';
 				}
-				$targetRecord = \TYPO3\CMS\Backend\Utility\BackendUtility::getRecordWSOL($targetTable, abs($value), 'sys_language_uid,tx_gridelements_container');
+				$targetRecord = \TYPO3\CMS\Backend\Utility\BackendUtility::getRecordWSOL($targetTable, abs($value));
 				if($targetRecord[$GLOBALS['TCA'][$table]['ctrl']['transOrigPointerField']]) {
+					if($targetTable === 'tt_content') {
+						$overrideArray['tx_gridelements_container'] = $targetRecord['tx_gridelements_container'];
+					}
 					$overrideArray['sys_language_uid'] = $targetRecord['sys_language_uid'];
 				}
 				$this->getTceMain()->copyRecord($table, $id, $value, 1, $overrideArray);
-				if(intval($value) < 0) {
+				if($value < 0) {
 					if($targetRecord['tx_gridelements_container'] > 0) {
 						$containerUpdateArray[$targetRecord['tx_gridelements_container']] = 1;
 						$this->doGridContainerUpdate($containerUpdateArray);
