@@ -118,18 +118,24 @@ class Gridelements extends \TYPO3\CMS\Frontend\ContentObject\ContentObjectRender
 
 		if ($element && $csvColumns !== '') {
 
-			if($GLOBALS['TSFE']->sys_language_contentOL) {
-				$languageWhere = 'sys_language_uid IN (-1,0)';
-			} else {
-				$languageWhere = 'sys_language_uid IN (-1,' . $GLOBALS['TSFE']->sys_language_uid. ')';
-			}
-
-			$where = 'tx_gridelements_container = ' . $element .
+			$where = '(tx_gridelements_container = ' . $element .
 				$this->cObj->enableFields('tt_content') .
 				' AND colPos != -2
 				AND pid > 0
 				AND tx_gridelements_columns IN (' . $csvColumns . ')
-				AND (' . $languageWhere . ')';
+				AND sys_language_uid IN (-1,0)
+			)';
+
+			if($GLOBALS['TSFE']->sys_language_uid > 0) {
+				$translatedElement = $GLOBALS['TYPO3_DB']->exec_SELECTgetSingleRow('uid', 'tt_content', 'l18n_parent=' . (int)$element);
+				if($translatedElement['uid']) {
+					$where .= '  OR (
+						tx_gridelements_container = ' . $translatedElement['uid'] .
+						' AND sys_language_uid IN (-1,' .$GLOBALS['TSFE']->sys_language_uid. ')
+						AND l18n_parent = 0
+					)';
+				}
+			}
 
 			$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery(
 				'*',

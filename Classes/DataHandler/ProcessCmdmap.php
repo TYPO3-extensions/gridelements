@@ -97,6 +97,9 @@ class ProcessCmdmap extends AbstractDataHandler {
 					}
 					$targetRecord = \TYPO3\CMS\Backend\Utility\BackendUtility::getRecordWSOL($targetTable, abs($valueArray[0]), 'sys_language_uid');
 					if($targetRecord[$GLOBALS['TCA'][$table]['ctrl']['transOrigPointerField']]) {
+						if($targetTable === 'tt_content') {
+							$overrideArray['tx_gridelements_container'] = $targetRecord['uid'];
+						}
 						$overrideArray['sys_language_uid'] = $targetRecord['sys_language_uid'];
 					}
 					$this->getTceMain()->copyRecord($table, $id, (int)$valueArray[0], 1, $overrideArray);
@@ -110,6 +113,9 @@ class ProcessCmdmap extends AbstractDataHandler {
 					}
 					$targetRecord = \TYPO3\CMS\Backend\Utility\BackendUtility::getRecordWSOL($targetTable, abs($value), 'sys_language_uid,tx_gridelements_container');
 					if($targetRecord[$GLOBALS['TCA'][$table]['ctrl']['transOrigPointerField']]) {
+						if($targetTable === 'tt_content') {
+							$overrideArray['tx_gridelements_container'] = $targetRecord['tx_gridelements_container'];
+						}
 						$overrideArray['sys_language_uid'] = $targetRecord['sys_language_uid'];
 					}
 					$this->getTceMain()->copyRecord($table, $id, $value, 1, $overrideArray);
@@ -135,6 +141,9 @@ class ProcessCmdmap extends AbstractDataHandler {
 				}
 				$targetRecord = \TYPO3\CMS\Backend\Utility\BackendUtility::getRecordWSOL($targetTable, abs($value), 'sys_language_uid,tx_gridelements_container');
 				if($targetRecord[$GLOBALS['TCA'][$table]['ctrl']['transOrigPointerField']]) {
+					if($targetTable === 'tt_content') {
+						$overrideArray['tx_gridelements_container'] = $targetRecord['tx_gridelements_container'];
+					}
 					$overrideArray['sys_language_uid'] = $targetRecord['sys_language_uid'];
 				}
 				$this->getTceMain()->copyRecord($table, $id, $value, 1, $overrideArray);
