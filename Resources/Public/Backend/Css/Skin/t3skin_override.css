@@ -59,6 +59,7 @@
 	margin-bottom: 5px;
 	padding-bottom: 2px;
 	background-image: inherit;
+	cursor: default!important;
 }
 
 
@@ -73,6 +74,11 @@
 #ext-cms-layout-db-layout-php .t3-lang-gridContainer .t3-row-header {
 	background-color: inherit;
 	cursor: move!important;
+}
+
+#ext-cms-layout-db-layout-php .t3-gridContainer .t3-page-colHeader,
+#ext-cms-layout-db-layout-php .t3-lang-gridContainer .t3-page-colHeader {
+	cursor: default!important;
 }
 
 #ext-cms-layout-db-layout-php .t3-page-ce .t3-row-header {
