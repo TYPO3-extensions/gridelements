@@ -201,7 +201,7 @@ abstract class AbstractDataHandler {
 	 * @return void
 	 */
 	public function doGridContainerUpdate($containerUpdateArray = array()) {
-		if(count($containerUpdateArray > 0)) {
+		if(is_array($containerUpdateArray) && count($containerUpdateArray > 0)) {
 			foreach ($containerUpdateArray as $containerUid => $newElement) {
 				$fieldArray = array(
 					'tx_gridelements_children' => 'tx_gridelements_children + ' . $newElement
@@ -219,7 +219,7 @@ abstract class AbstractDataHandler {
 	 * @return void
 	 */
 	public function checkAndUpdateTranslatedChildren($containerUpdateArray = array()) {
-		if(count($containerUpdateArray > 0)) {
+		if(is_array($containerUpdateArray) && count($containerUpdateArray > 0)) {
 			foreach ($containerUpdateArray as $containerUid => $newElement) {
 				$translatedContainers = $this->databaseConnection->exec_SELECTgetRows('uid,sys_language_uid', 'tt_content', 'l18n_parent = ' . $containerUid . \TYPO3\CMS\Backend\Utility\BackendUtility::BEenableFields('tt_content'));
 				if(count($translatedContainers) > 0) {
