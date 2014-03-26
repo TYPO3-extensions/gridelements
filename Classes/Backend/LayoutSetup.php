@@ -407,12 +407,14 @@ class LayoutSetup {
 		}
 
 		if ($overruleRecords === TRUE) {
+			\TYPO3\CMS\Core\Utility\ArrayUtility::mergeRecursiveWithOverrule($gridLayoutConfig, $gridLayoutRecords, TRUE);
 			$this->setLayoutSetup(
-				\TYPO3\CMS\Core\Utility\GeneralUtility::array_merge_recursive_overrule($gridLayoutConfig, $gridLayoutRecords)
+				$gridLayoutConfig
 			);
 		} else {
+			\TYPO3\CMS\Core\Utility\ArrayUtility::mergeRecursiveWithOverrule($gridLayoutRecords, $gridLayoutConfig, TRUE);
 			$this->setLayoutSetup(
-				\TYPO3\CMS\Core\Utility\GeneralUtility::array_merge_recursive_overrule($gridLayoutRecords, $gridLayoutConfig)
+				$gridLayoutRecords
 			);
 		}
 	}
