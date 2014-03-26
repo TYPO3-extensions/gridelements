@@ -224,10 +224,11 @@ abstract class AbstractDataHandler {
 				$translatedContainers = $this->databaseConnection->exec_SELECTgetRows('uid,sys_language_uid', 'tt_content', 'l18n_parent = ' . $containerUid . \TYPO3\CMS\Backend\Utility\BackendUtility::BEenableFields('tt_content'));
 				if(count($translatedContainers) > 0) {
 					foreach($translatedContainers as $languageArray) {
-						$fieldArray['tx_gridelements_container'] = $languageArray['uid'];
-						$where = 'tx_gridelements_container = ' . $containerUid . ' AND sys_language_uid = ' . $languageArray['sys_language_uid'];
+						$targetContainer = \TYPO3\CMS\Backend\Utility\BackendUtility::getRecordWSOL('tt_content', $languageArray['uid']);
+						$fieldArray['tx_gridelements_container'] = $targetContainer['uid'];
+						$where = 'tx_gridelements_container = ' . $containerUid . ' AND sys_language_uid = ' . $targetContainer['sys_language_uid'];
 						$this->databaseConnection->exec_UPDATEquery('tt_content', $where, $fieldArray, 'tx_gridelements_container');
-						$this->getTceMain()->updateRefIndex('tt_content', $languageArray['uid']);
+						$this->getTceMain()->updateRefIndex('tt_content', $targetContainer['uid']);
 					}
 				}
 			}
