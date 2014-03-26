@@ -137,7 +137,7 @@ class PageRenderer {
 								foreach($row as $col){
 									$classes = '';
 									if($col['allowed']){
-										$allowed = explode(',', $col['allowed'], 1);
+										$allowed = explode(',', $col['allowed']);
 										foreach($allowed as $ctype){
 											$ctype = trim($ctype);
 											if($ctype == '*') {

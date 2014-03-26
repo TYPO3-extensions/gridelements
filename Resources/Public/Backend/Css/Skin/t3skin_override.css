@@ -21,11 +21,15 @@ div.t3-page-lang-copyce {
 }
 
 .exampleContent .t3-gridContainer {
-	margin: 0px -20px 0px 0px!important;
+	margin: 0px 0px 0px 0px!important;
 }
 
 .exampleContent .t3-gridContainer > table {
 	margin: 0px -10px -5px -10px!important;
+}
+
+.exampleContent .t3-gridContainer-framed > table {
+	margin: 0px 0px -5px 0px!important;
 }
 
 table.t3-gridTable, table.t3-page-langMode {
@@ -81,6 +85,7 @@ td.t3-page-column.t3-gridCell .t3-page-colHeader {
 	margin: 0px!important;
 }
 
+.t3-lang-gridContainer .t3-gridContainer .t3-page-ce-wrapper-new-ce,
 .t3-page-ce-wrapper .t3-gridContainer .t3-page-ce-wrapper-new-ce {
 	margin: 0px 10px!important;
 }
@@ -310,4 +315,12 @@ td.t3-page-column.t3-gridCell .t3-page-colHeader {
 .t3-page-ce-empty .t3-page-ce  .t3-icon-document-new,
 .t3-page-ce-empty .t3-page-ce .t3-icon-gridelements-copyfrompage {
 	visibility: visible!important;
+}
+
+td.t3-page-column, td.t3-page-lang-column {
+	max-width: none;
+}
+
+.t3-page-ce-header {
+	min-width: 200px;
 }

@@ -80,6 +80,7 @@ class ProcessCmdmap extends AbstractDataHandler {
 				}
 
 				if (strpos($value, 'x') !== FALSE) {
+
 					$valueArray = explode('x', $value);
 					$overrideArray['sorting'] = 0;
 
@@ -95,15 +96,15 @@ class ProcessCmdmap extends AbstractDataHandler {
 						$overrideArray['tx_gridelements_container'] = abs($valueArray[0]);
 						$overrideArray['tx_gridelements_columns'] = (int)$valueArray[1];
 					}
-					$targetRecord = \TYPO3\CMS\Backend\Utility\BackendUtility::getRecordWSOL($targetTable, abs($valueArray[0]), 'sys_language_uid');
+					$targetRecord = \TYPO3\CMS\Backend\Utility\BackendUtility::getRecordWSOL($targetTable, abs($valueArray[0]));
 					if($targetRecord[$GLOBALS['TCA'][$table]['ctrl']['transOrigPointerField']]) {
-						if($targetTable === 'tt_content') {
-							$overrideArray['tx_gridelements_container'] = $targetRecord['uid'];
-						}
 						$overrideArray['sys_language_uid'] = $targetRecord['sys_language_uid'];
 					}
 					$this->getTceMain()->copyRecord($table, $id, (int)$valueArray[0], 1, $overrideArray);
 					$this->doGridContainerUpdate($containerUpdateArray);
+					if($targetTable === 'tt_content') {
+						$this->checkAndUpdateTranslatedChildren($containerUpdateArray);
+					}
 				} else {
 					$value = (int)$value;
 					if($value < 0) {
@@ -111,7 +112,7 @@ class ProcessCmdmap extends AbstractDataHandler {
 					} else {
 						$targetTable = 'pages';
 					}
-					$targetRecord = \TYPO3\CMS\Backend\Utility\BackendUtility::getRecordWSOL($targetTable, abs($value), 'sys_language_uid,tx_gridelements_container');
+					$targetRecord = \TYPO3\CMS\Backend\Utility\BackendUtility::getRecordWSOL($targetTable, abs($value));
 					if($targetRecord[$GLOBALS['TCA'][$table]['ctrl']['transOrigPointerField']]) {
 						if($targetTable === 'tt_content') {
 							$overrideArray['tx_gridelements_container'] = $targetRecord['tx_gridelements_container'];
@@ -139,7 +140,7 @@ class ProcessCmdmap extends AbstractDataHandler {
 				} else {
 					$targetTable = 'pages';
 				}
-				$targetRecord = \TYPO3\CMS\Backend\Utility\BackendUtility::getRecordWSOL($targetTable, abs($value), 'sys_language_uid,tx_gridelements_container');
+				$targetRecord = \TYPO3\CMS\Backend\Utility\BackendUtility::getRecordWSOL($targetTable, abs($value));
 				if($targetRecord[$GLOBALS['TCA'][$table]['ctrl']['transOrigPointerField']]) {
 					if($targetTable === 'tt_content') {
 						$overrideArray['tx_gridelements_container'] = $targetRecord['tx_gridelements_container'];

@@ -427,7 +427,7 @@ class DrawItem implements \TYPO3\CMS\Backend\View\PageLayoutViewDrawItemHookInte
 
 		$grid = '<div class="t3-gridContainer' .
 			($layoutSetup['frame']
-				? ' t3-gridContainer-' . $layoutSetup['frame']
+				? ' t3-gridContainer-framed t3-gridContainer-' . $layoutSetup['frame']
 				: ''
 			) .
 			($layoutSetup['top_level_layout']
