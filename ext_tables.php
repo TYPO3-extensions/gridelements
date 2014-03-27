@@ -172,8 +172,8 @@ $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['proc
 $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['moveRecordClass'][] =
     'EXT:gridelements/Classes/Hooks/DataHandler.php:GridElementsTeam\\Gridelements\\Hooks\\DataHandler';
 
-$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tceforms.php']['getSingleFieldClass'][] =
-    'EXT:gridelements/Classes/Hooks/FormEngine.php:GridElementsTeam\\Gridelements\\Hooks\\FormEngine';
+$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_befunc.php']['getFlexFormDSClass'][] =
+    'EXT:gridelements/Classes/Hooks/BackendUtility.php:GridElementsTeam\\Gridelements\\Hooks\\BackendUtility';
 
 $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['tx_templavoila_api']['apiIsRunningTCEmain'] = TRUE;
 
