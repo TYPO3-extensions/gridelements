@@ -152,7 +152,7 @@ class PreProcessFieldArray extends AbstractDataHandler {
 		if ($pid < 0 && $GLOBALS['TCA']['tt_content']['ctrl']['useColumnsForDefaultValues']) {
 			// Fetches the previous record:
 			$res = exec_SELECTquery('*', 'tt_content', 'uid=' . abs($id) . \TYPO3\CMS\Backend\Utility\BackendUtility::deleteClause('tt_content'));
-			if ($row = DatabaseConnection::sql_fetch_assoc($res)) {
+			if ($row = $this->databaseConnection->sql_fetch_assoc($res)) {
 				// Gets the list of fields to copy from the previous record.
 				$fArr = explode(',', $GLOBALS['TCA']['tt_content']['ctrl']['useColumnsForDefaultValues']);
 				foreach ($fArr as $theF) {
@@ -290,7 +290,7 @@ class PreProcessFieldArray extends AbstractDataHandler {
 	 * @return void
 	 */
 	public function setFieldEntriesForSimpleTargets(array &$fieldArray) {
-		$targetElement = DatabaseConnection::exec_SELECTgetSingleRow(
+		$targetElement = $this->databaseConnection->exec_SELECTgetSingleRow(
 			'*',
 			'tt_content',
 			'uid=' . abs($fieldArray['pid'])
@@ -319,7 +319,7 @@ class PreProcessFieldArray extends AbstractDataHandler {
 			$fieldArray['colPos'] = -1;
 			$fieldArray['tx_gridelements_columns'] = 0;
 		} else if (isset($fieldArray['tx_gridelements_container']) && (int)$fieldArray['tx_gridelements_container'] === 0 && (int)$fieldArray['colPos'] === -1) {
-			$originalContainer = DatabaseConnection::exec_SELECTgetSingleRow(
+			$originalContainer = $this->databaseConnection->exec_SELECTgetSingleRow(
 				'tx_gridelements_container',
 				'tt_content',
 				'uid=' . $this->getPageUid()
@@ -347,7 +347,7 @@ class PreProcessFieldArray extends AbstractDataHandler {
 			$changedGridElements[$this->getPageUid()] = TRUE;
 			$availableColumns = $this->getAvailableColumns($fieldArray['tx_gridelements_backend_layout'], 'tt_content', $this->getPageUid());
 			$childElementsInUnavailableColumns = array_keys(
-				DatabaseConnection::exec_SELECTgetRows(
+				$this->databaseConnection->exec_SELECTgetRows(
 					'uid',
 					'tt_content',
 					'tx_gridelements_container = ' . $this->getPageUid() . '
@@ -359,7 +359,7 @@ class PreProcessFieldArray extends AbstractDataHandler {
 				)
 			);
 			if(count($childElementsInUnavailableColumns) > 0) {
-				DatabaseConnection::sql_query('
+				$this->databaseConnection->sql_query('
 					UPDATE tt_content
 					SET colPos = -2, backupColPos = -1
 					WHERE uid IN (' . join(',', $childElementsInUnavailableColumns) . ')
@@ -370,7 +370,7 @@ class PreProcessFieldArray extends AbstractDataHandler {
 			}
 
 			$childElementsInAvailableColumns = array_keys(
-				DatabaseConnection::exec_SELECTgetRows(
+				$this->databaseConnection->exec_SELECTgetRows(
 					'uid',
 					'tt_content',
 					'tx_gridelements_container = ' . $this->getPageUid() . '
@@ -382,7 +382,7 @@ class PreProcessFieldArray extends AbstractDataHandler {
 				)
 			);
 			if(count($childElementsInAvailableColumns) > 0) {
-				DatabaseConnection::sql_query('
+				$this->databaseConnection->sql_query('
 					UPDATE tt_content
 					SET colPos = -1, backupColPos = -2
 					WHERE uid IN (' . join(',', $childElementsInAvailableColumns) . ')
@@ -402,7 +402,7 @@ class PreProcessFieldArray extends AbstractDataHandler {
 		if ($this->getTable() == 'pages') {
 			$rootline = $this->beFunc->BEgetRootLine($this->getPageUid());
 			for ($i = count($rootline); $i > 0; $i--) {
-				$page = DatabaseConnection::exec_SELECTgetSingleRow(
+				$page = $this->databaseConnection->exec_SELECTgetSingleRow(
 					'uid, backend_layout, backend_layout_next_level',
 					'pages',
 					'uid=' . (int)$rootline[$i]['uid']
@@ -431,7 +431,7 @@ class PreProcessFieldArray extends AbstractDataHandler {
 			if (isset($fieldArray['backend_layout'])) {
                 $availableColumns = $this->getAvailableColumns($backendLayoutUid, 'pages', $this->getPageUid());
 				$elementsInUnavailableColumns = array_keys(
-					DatabaseConnection::exec_SELECTgetRows(
+					$this->databaseConnection->exec_SELECTgetRows(
 						'uid',
 						'tt_content',
 						'pid = ' . $this->getPageUid() . '
@@ -443,7 +443,7 @@ class PreProcessFieldArray extends AbstractDataHandler {
 					)
 				);
 				if(count($elementsInUnavailableColumns) > 0) {
-					DatabaseConnection::sql_query('
+					$this->databaseConnection->sql_query('
 						UPDATE tt_content
 						SET backupColPos = colPos, colPos = -2
 						WHERE uid IN (' . join(',', $elementsInUnavailableColumns) . ')
@@ -454,7 +454,7 @@ class PreProcessFieldArray extends AbstractDataHandler {
 				}
 
 				$elementsInAvailableColumns = array_keys(
-					DatabaseConnection::exec_SELECTgetRows(
+					$this->databaseConnection->exec_SELECTgetRows(
 						'uid',
 						'tt_content',
 						'pid = ' . $this->getPageUid() . '
@@ -468,7 +468,7 @@ class PreProcessFieldArray extends AbstractDataHandler {
 					)
 				);
 				if(count($childElementsInAvailableColumns) > 0) {
-					DatabaseConnection::sql_query('
+					$this->databaseConnection->sql_query('
 						UPDATE tt_content
 						SET colPos = backupColPos, backupColPos = -2
 						WHERE uid IN (' . join(',', $elementsInAvailableColumns) . ')
@@ -493,7 +493,7 @@ class PreProcessFieldArray extends AbstractDataHandler {
 					foreach ($subpages as $page) {
 						$availableColumns = $this->getAvailableColumns($backendLayoutUid, 'pages', $page['uid']);
 						$subPageElementsInUnavailableColumns = array_keys(
-							DatabaseConnection::exec_SELECTgetRows(
+							$this->databaseConnection->exec_SELECTgetRows(
 								'uid',
 								'tt_content',
 								'pid = ' . $page['uid'] . '
@@ -505,7 +505,7 @@ class PreProcessFieldArray extends AbstractDataHandler {
 							)
 						);
 						if(count($subPageElementsInUnavailableColumns) > 0) {
-							DatabaseConnection::sql_query('
+							$this->databaseConnection->sql_query('
 								UPDATE tt_content
 								SET backupColPos = colPos, colPos = -2
 								WHERE uid IN (' . join(',', $subPageElementsInUnavailableColumns) . ')
@@ -516,7 +516,7 @@ class PreProcessFieldArray extends AbstractDataHandler {
 						}
 
 						$subPageElementsInAvailableColumns = array_keys(
-							DatabaseConnection::exec_SELECTgetRows(
+							$this->databaseConnection->exec_SELECTgetRows(
 								'uid',
 								'tt_content',
 								'pid = ' . $page['uid'] . '
@@ -529,7 +529,7 @@ class PreProcessFieldArray extends AbstractDataHandler {
 							)
 						);
 						if(count($subPageElementsInAvailableColumns) > 0) {
-							DatabaseConnection::sql_query('
+							$this->databaseConnection->sql_query('
 								UPDATE tt_content
 								SET colPos = backupColPos, backupColPos = -2
 								WHERE uid IN (' . join(',', $subPageElementsInAvailableColumns) . ')
@@ -573,7 +573,7 @@ class PreProcessFieldArray extends AbstractDataHandler {
 	 * @return  array   $subpages: Reference to a list of all subpages
 	 */
 	public function getSubpagesRecursively($pageUid, &$subpages) {
-		$childPages = DatabaseConnection::exec_SELECTgetRows(
+		$childPages = $this->databaseConnection->exec_SELECTgetRows(
 			'uid, backend_layout, backend_layout_next_level',
 			'pages',
 			'pid = ' . $pageUid
@@ -601,7 +601,7 @@ class PreProcessFieldArray extends AbstractDataHandler {
 	 * @return integer $colPos: The new column of this content element
 	 */
 	public function checkForRootColumn($contentId, $colPos = 0) {
-		$parent = DatabaseConnection::exec_SELECTgetSingleRow(
+		$parent = $this->databaseConnection->exec_SELECTgetSingleRow(
 			't1.colPos, t1.tx_gridelements_container',
 			'tt_content AS t1, tt_content AS t2',
 			't1.uid=t2.tx_gridelements_container AND t2.uid=' . $contentId
