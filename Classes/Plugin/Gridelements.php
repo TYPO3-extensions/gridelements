@@ -123,13 +123,23 @@ class Gridelements extends \TYPO3\CMS\Frontend\ContentObject\ContentObjectRender
 				)';
 
 			if($GLOBALS['TSFE']->sys_language_uid > 0) {
-				$translatedElement = $GLOBALS['TYPO3_DB']->exec_SELECTgetSingleRow('uid', 'tt_content', 'l18n_parent=' . (int)$element);
-				if($translatedElement['uid']) {
-					$where .= '  OR (
-						tx_gridelements_container = ' . $translatedElement['uid'] .
+				if($GLOBALS['TSFE']->sys_language_contentOL) {
+					$translatedElement = $GLOBALS['TYPO3_DB']->exec_SELECTgetSingleRow('uid', 'tt_content', 'l18n_parent=' . (int)$element);
+					$element = (int)$translatedElement['uid'];
+					if($element) {
+						$where .= '  OR (
+						tx_gridelements_container = ' . $element .
 							' AND sys_language_uid IN (-1,' .$GLOBALS['TSFE']->sys_language_uid. ')
-						AND l18n_parent = 0
+							AND l18n_parent = 0
 					)';
+					}
+				} else {
+					if($element) {
+						$where .= '  OR (
+						tx_gridelements_container = ' . $element .
+							' AND sys_language_uid IN (-1,' .$GLOBALS['TSFE']->sys_language_uid. ')
+					)';
+					}
 				}
 			}
 
