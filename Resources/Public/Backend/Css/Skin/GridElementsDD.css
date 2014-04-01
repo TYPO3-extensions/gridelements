@@ -18,9 +18,11 @@
 	text-align: center;
 	position: relative;
 	margin: 0px 0px 0px 0px;
-	line-height: 19px;
-	height: 19px;
+	line-height: 25px;
+	height: 25px;
 	border: 1px dotted #73ab61;
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
 }
 .x-dd-droptargetarea.x-dd-showdroptarget {
 	visibility: visible;

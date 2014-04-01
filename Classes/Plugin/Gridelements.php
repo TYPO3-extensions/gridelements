@@ -167,7 +167,9 @@ class Gridelements extends \TYPO3\CMS\Frontend\ContentObject\ContentObjectRender
 							$child = $GLOBALS['TSFE']->sys_page->getRecordOverlay('tt_content', $child, $GLOBALS['TSFE']->sys_language_content, $GLOBALS['TSFE']->sys_language_contentOL);
 						}
 						if ($child !== FALSE) {
-							\TYPO3\CMS\Core\Resource\Service\FrontendContentAdapterService::modifyDBRow($child, 'tt_content');
+							if ($GLOBALS['TYPO3_CONF_VARS']['FE']['activateContentAdapter']) {
+								\TYPO3\CMS\Core\Resource\Service\FrontendContentAdapterService::modifyDBRow($child, 'tt_content');
+							}
 							$this->cObj->data['tx_gridelements_view_children'][] = $child;
 							unset($child);
 						}
