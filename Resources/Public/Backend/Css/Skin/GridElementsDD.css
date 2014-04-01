@@ -15,8 +15,8 @@
 	text-align: center;
 	position: relative;
 	margin: 0px 0px 0px 0px;
-	line-height: 19px;
-	height: 19px;
+	line-height: 24px;
+	height: 24px;
 	border: 1px dotted #73ab61;
 }
 .x-dd-droptargetarea.x-dd-showdroptarget {
@@ -136,4 +136,3 @@
 .draggableiteminfotext {
 	float: right;
 }
-

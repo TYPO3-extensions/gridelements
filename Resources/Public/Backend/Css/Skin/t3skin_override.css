@@ -368,9 +368,12 @@
 #ext-cms-layout-db-layout-php .t3-page-ce-dropzone {
 	margin: -22px 0px 0px 0px;
 }
-#ext-cms-layout-db-layout-php .t3-gridContainer .t3-gridContainer .t3-page-ce-dropzone,
 #ext-cms-layout-db-layout-php .t3-lang-gridContainer .t3-gridContainer .t3-page-ce-dropzone {
 	margin: -17px 0px 0px 0px!important;
+}
+
+#ext-cms-layout-db-layout-php .t3-lang-gridContainer .t3-gridContainer .x-dd-makemedrag .t3-page-ce-dropzone {
+	margin: -22px 0px 0px 0px!important;
 }
 
 #ext-cms-layout-db-layout-php .t3-page-columns {
