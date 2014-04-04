@@ -248,12 +248,12 @@ if(typeof GridElementsDD === "undefined"){
                 Ext.each(Ext.get(draggableContainer).select('div.typo3-dyntabmenu-divs div').elements, function(layer){
                     var layerContent = '';
                     Ext.each(Ext.get(layer).select('tr, ul li').elements, function(row) {
-                        var headerText = Ext.get(row).select('td:last a strong, div.text a strong').elements[0].innerHTML;
-                        Ext.get(row).select('td:last a strong, div.text a strong').remove();
-                        var descText = Ext.get(row).select('td:last a, div.text a').elements[0].innerHTML;
+                        var headerText = Ext.get(row).select('td:last a strong, div.contentelement-wizard-item-text a strong').elements[0].innerHTML;
+                        Ext.get(row).select('td:last a strong, div.contentelement-wizard-item-text a strong').remove();
+                        var descText = Ext.get(row).select('td:last a, div.contentelement-wizard-item-text a').elements[0].innerHTML;
 
-                        Ext.get(row).select('td:last a strong, div.text a strong').remove();
-                        Ext.get(row).select('td:first, td:last, div.input, div.text').remove();
+                        Ext.get(row).select('td:last a strong, div.contentelement-wizard-item-text a strong').remove();
+                        Ext.get(row).select('td:first, td:last, div.contentelement-wizard-item-input, div.contentelement-wizard-item-text').remove();
 
                         // set additional info either to rel or to title
                         if(!top.skipDraggableDetails) {
@@ -265,7 +265,7 @@ if(typeof GridElementsDD === "undefined"){
                         }
 
                     });
-                    Ext.each(Ext.get(layer).select('td, div').elements, function(cell) {
+                    Ext.each(Ext.get(layer).select('td, div.contentelement-wizard-item-icon').elements, function(cell) {
                         layerContent += '<div class="x-dd-new-element-link">' + cell.innerHTML + '</div>';
                     });
                     // add content and a container for additional info
@@ -330,10 +330,12 @@ if(typeof GridElementsDD === "undefined"){
 									// bigger icon is "hidden" in the aTag onclick JS code, here we extract it
 									aTagOnClickPartOne = aTag.dom.onclick.toString().split('largeIconImage%3D')[1];
 									bigIcon = typeof aTagOnClickPartOne !== 'undefined' ? aTagOnClickPartOne.split('%26')[0].split('%2F') : false;
+									detailInfoData.bigIconSrc = imgTag.src.replace(imgTag.src.substr(imgTag.src.lastIndexOf('/') + 1), bigIcon[bigIcon.length - 1]);
 
-								detailInfoData.bigIconSrc = bigIcon ? imgTag.src.replace(imgTag.src.substr(imgTag.src.lastIndexOf('/') + 1), bigIcon[bigIcon.length - 1]) : '';
-								
 								Ext.get(divNow).select('.x-dd-draggableiteminfo').update(detailInfoTpl.apply(detailInfoData));
+								if(!bigIcon) {
+									Ext.get(divNow).select('.x-dd-draggableiteminfo img').remove();
+								}
 								Ext.get(divNow).select('.x-dd-draggableiteminfo').show();
 							// hide container on mouseout of an icon
 							}).on('mouseout', function(evtObj, thisNode) {

@@ -64,16 +64,18 @@
 	visibility: hidden;
 	position: fixed;
 	height: auto;
-	top: 52px;
-	left: 0px;
-	z-index: 20000;
+	top: 65px;
+	right: 38px;
+	max-width: 90%;
+ 	z-index: 20000;
 	/* setting overflow makes items disappear when dragging
 	 * solution:  when dragging starts, put the element right after body in DOM
 	 */
 }
 
 #x-dd-draggablecontainer .typo3-dyntabmenu-tabs {
-	margin:  0px 34px 0px 24px;
+	margin: 0px;
+	float: right;
 }
 
 #x-dd-draggablecontainer .typo3-dyntabmenu-tabs a {
@@ -86,12 +88,22 @@
 }
 
 #x-dd-draggablecontainer .typo3-dyntabmenu-divs {
-	margin:  0px 24px 0px 24px;
+	margin: 0px 1px 0px 0px;
+	clear: both;
+}
+
+#x-dd-draggablecontainer .typo3-dyntabmenu-divs:hover {
+	min-height: 122px;
+}
+
+#x-dd-draggablecontainer.dragging-active .typo3-dyntabmenu-divs:hover {
+	min-height: 0px;
 }
 
 #x-dd-draggablecontainer .typo3-dyntabmenu-divs .c-tablayer {
 	display: block;
 	width: 100%;
+	margin: 0px 12px 0px 2px;
 }
 
 #x-dd-draggablecontainer .typo3-dyntabmenu-divs .x-dd-new-element-link {
@@ -120,10 +132,20 @@
 #x-dd-draggablecontainer .typo3-dyntabmenu-divs .c-tablayer div {
 	cursor: pointer;
 }
+.x-dd-draggableiteminfo {
+	width: 90%;
+	margin: 0px;
+}
 .x-dd-draggableiteminfo > div {
-    padding: 0px 5px 5px 7px;
-    width: 95%;
-    float: left;
+	width: 90%;
+	margin: 0px;
+	display: inline-block;
+}
+.x-dd-draggableiteminfo > div > div {
+    padding: 0px 5px 10px 0px;
+	display: inline-block;
+	width: 70%;
+	max-width: 500px;
 }
 .x-dd-draggableiteminfo > br {
 	clear: both;
@@ -132,12 +154,12 @@
 	height: 1px;
 }
 .x-dd-draggableiteminfoimg {
-	padding: 0 10px 0 0;
-	width: 68px;
-	height: auto;
+	margin: 0px 0px 10px 10px;
+	width: auto;
+	height: 68px;
+	display: block;
 	float: left;
 }
-.draggableiteminfotext {
-	float: right;
+.x-dd-draggableiteminfotext {
+	margin: 0px 0px 10px 10px;
 }
-
