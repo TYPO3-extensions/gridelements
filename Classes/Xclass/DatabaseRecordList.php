@@ -801,6 +801,8 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
 					if ($this->csvOutput) {
 						$row[$fCol] = \TYPO3\CMS\Backend\Utility\BackendUtility::getProcessedValueExtra($table, $fCol, $row[$fCol], 0, $row['uid']);
 					}
+				} else {
+					$theData[$fCol] = \TYPO3\CMS\Backend\Utility\BackendUtility::getProcessedValueExtra($table, $fCol, $row[$fCol], 0, $row['uid']);
 				}
 			}
 			// Reset the ID if it was overwritten
