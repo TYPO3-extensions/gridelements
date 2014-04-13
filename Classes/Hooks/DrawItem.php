@@ -261,7 +261,7 @@ class DrawItem implements \TYPO3\CMS\Backend\View\PageLayoutViewDrawItemHookInte
 		$parentObject->pidSelect = 'pid = ' . $row['pid'];
 
 		if(!$parentObject->tt_contentConfig['languageMode']) {
-			$showLanguage = ' AND sys_language_uid=' . $parentObject->tt_contentConfig['sys_language_uid'];
+			$showLanguage = ' AND (sys_language_uid = -1 OR sys_language_uid=' . $parentObject->tt_contentConfig['sys_language_uid'] . ')';
 		} else if($row['sys_language_uid'] > 0) {
 			$showLanguage = ' AND sys_language_uid=' . $row['sys_language_uid'];
 		} else {
