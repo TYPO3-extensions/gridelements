@@ -648,8 +648,8 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
 				$cutUrl = $this->selUrlDB($table, $row['uid'], $row['pid'], 0, ($isSel == 'cut'));
 			}
 
-			$cells['copy'] = $isL10nOverlay ? $this->spaceIcon : '<a href="#" onclick="' . htmlspecialchars(('return jumpSelf(\'' . $this->clipObj->selUrlDB($table, $row['uid'], 1, ($isSel == 'copy'), array('returnUrl' => '')) . '\');')) . '" title="' . $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.xlf:cm.copy', TRUE) . '">' . (!$isSel == 'copy' ? \TYPO3\CMS\Backend\Utility\IconUtility::getSpriteIcon('actions-edit-copy') : \TYPO3\CMS\Backend\Utility\IconUtility::getSpriteIcon('actions-edit-copy-release')) . '</a>';
-			$cells['cut'] = $isL10nOverlay ? $this->spaceIcon : '<a href="#" onclick="' . htmlspecialchars(('return jumpSelf(\'' . $this->clipObj->selUrlDB($table, $row['uid'], 0, ($isSel == 'cut'), array('returnUrl' => '')) . '\');')) . '" title="' . $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.xlf:cm.cut', TRUE) . '">' . (!$isSel == 'cut' ? \TYPO3\CMS\Backend\Utility\IconUtility::getSpriteIcon('actions-edit-cut') : \TYPO3\CMS\Backend\Utility\IconUtility::getSpriteIcon('actions-edit-cut-release')) . '</a>';
+			$cells['copy'] = $isL10nOverlay ? $this->spaceIcon : '<a href="#" onclick="' . htmlspecialchars(('return jumpSelf(\'' . $copyUrl . '\');')) . '" title="' . $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.xlf:cm.copy', TRUE) . '">' . (!$isSel == 'copy' ? \TYPO3\CMS\Backend\Utility\IconUtility::getSpriteIcon('actions-edit-copy') : \TYPO3\CMS\Backend\Utility\IconUtility::getSpriteIcon('actions-edit-copy-release')) . '</a>';
+			$cells['cut'] = $isL10nOverlay ? $this->spaceIcon : '<a href="#" onclick="' . htmlspecialchars(('return jumpSelf(\'' . $cutUrl . '\');')) . '" title="' . $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.xlf:cm.cut', TRUE) . '">' . (!$isSel == 'cut' ? \TYPO3\CMS\Backend\Utility\IconUtility::getSpriteIcon('actions-edit-cut') : \TYPO3\CMS\Backend\Utility\IconUtility::getSpriteIcon('actions-edit-cut-release')) . '</a>';
 		} else {
 			// For the numeric clipboard pads (showing checkboxes where one can select elements on/off)
 			// Setting name of the element in ->CBnames array:
@@ -964,8 +964,9 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
 	 * @return string
 	 */
 	function pasteUrl($table, $uid, $pid, $setRedirect = 1) {
+		$moduleUrl = \TYPO3\CMS\Backend\Utility\BackendUtility::getModuleUrl('web_list');
 		$rU = $this->backPath . ($table == '_FILE' ? 'tce_file.php' : 'tce_db.php') . '?' .
-			($setRedirect ? 'redirect=' . rawurlencode('mod.php?M=web_list&id=' . $pid) : '') .
+			($setRedirect ? 'redirect=' . rawurlencode($moduleUrl . '&id=' . $pid) : '') .
 			'&vC=' . $GLOBALS['BE_USER']->veriCode() .
 			'&prErr=1&uPT=1' .
 			'&CB[paste]=' . rawurlencode($table . '|' . $uid) .
@@ -995,7 +996,8 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
 		$baseArray['id'] = $pid;
 		$baseArray['CB'] = $CB;
 		unset($baseArray['returnUrl']);
-		return \TYPO3\CMS\Core\Utility\GeneralUtility::linkThisUrl('mod.php', $baseArray);
+		$moduleUrl = \TYPO3\CMS\Backend\Utility\BackendUtility::getModuleUrl('web_list');
+		return \TYPO3\CMS\Core\Utility\GeneralUtility::linkThisUrl($moduleUrl, $baseArray);
 	}
 
 }
