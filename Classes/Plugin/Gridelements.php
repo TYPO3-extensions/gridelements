@@ -133,6 +133,7 @@ class Gridelements extends \TYPO3\CMS\Frontend\ContentObject\ContentObjectRender
 					if($element) {
 						$where .= '  OR (
 						tx_gridelements_container = ' . $element .
+							$this->cObj->enableFields('tt_content') .
 							' AND sys_language_uid IN (-1,' .$GLOBALS['TSFE']->sys_language_uid. ')
 							AND l18n_parent = 0
 					)';
@@ -141,6 +142,7 @@ class Gridelements extends \TYPO3\CMS\Frontend\ContentObject\ContentObjectRender
 					if($element) {
 						$where .= '  OR (
 						tx_gridelements_container = ' . $element .
+							$this->cObj->enableFields('tt_content') .
 							' AND sys_language_uid IN (-1,' .$GLOBALS['TSFE']->sys_language_uid. ')
 					)';
 					}
