@@ -859,7 +859,10 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
 		<tr ' . $trParams . '>';
 
 		if (count($data) > 1) {
-			$contentCollapseIcon = '&nbsp;';
+			for ($i = 0; $i < $level; $i++) {
+//				t3lib_utility_Debug::debug($level);
+				$out .=	'<td></td>';
+			}
 
 			if ($data['_EXPANDABLE_']) {
 				$sortField = \TYPO3\CMS\Core\Utility\GeneralUtility::_GP('sortField') ? \TYPO3\CMS\Core\Utility\GeneralUtility::_GP('sortField') . ':'  . (int)\TYPO3\CMS\Core\Utility\GeneralUtility::_GP('sortRev') : '';
@@ -870,13 +873,11 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
 						<span class="t3-icon t3-icon-actions t3-icon-actions-view t3-icon-pagetree-collapse collapseIcon">&nbsp;</span>
 					</a>
 				';
-			}
-			for ($i = 0; $i < $level; $i++) {
-//				t3lib_utility_Debug::debug($level);
-				$out.=	'<td nowrap="nowrap"></td>';
+				$out .= '<td nowrap="nowrap" class="col-icon">' . $contentCollapseIcon . '</td>';
+			} else {
+				$out .=	'<td></td>';
 			}
 
-			$out.=	'<td nowrap="nowrap" class="col-icon"><a href="#">' . $contentCollapseIcon . '</a></td>';
 		}
 
 		// Show icon and lines
