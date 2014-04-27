@@ -588,6 +588,20 @@ class DrawItem implements \TYPO3\CMS\Backend\View\PageLayoutViewDrawItemHookInte
 			'><div class="t3-page-ce-body-inner t3-page-ce-body-inner-' . $itemRow['CType'] . '">' .
 			$parentObject->tt_content_drawItem($itemRow, $isRTE) .
 			'</div></div>';
+		$footerContent = '';
+		// Get processed values:
+		$info = array();
+		$parentObject->getProcessedValue('tt_content', 'starttime,endtime,fe_group,spaceBefore,spaceAfter', $itemRow, $info);
+		// Display info from records fields:
+		if (count($info)) {
+			$footerContent = '<div class="t3-page-ce-info">
+				' . implode('<br />', $info) . '
+				</div>';
+		}
+		// Wrap it
+		if (!empty($footerContent)) {
+			$singleElementHTML .= '<div class="t3-page-ce-footer">' . $footerContent . '</div>';
+		}
 		return $singleElementHTML;
 	}
 }
