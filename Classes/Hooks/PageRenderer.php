@@ -129,7 +129,7 @@ class PageRenderer {
 				';
 
 				$allowedCTypesClassesByColPos = array();
-				$layoutSetup = \TYPO3\CMS\Core\Utility\GeneralUtility::callUserFunction('TYPO3\\CMS\\Backend\\View\\BackendLayoutView->getSelectedBackendLayout', intval(\TYPO3\CMS\Core\Utility\GeneralUtility::_GP('id')), $this);
+				$layoutSetup = \TYPO3\CMS\Core\Utility\GeneralUtility::callUserFunction('TYPO3\\CMS\\Backend\\View\\BackendLayoutView->getSelectedBackendLayout', (int)\TYPO3\CMS\Core\Utility\GeneralUtility::_GP('id'), $this);
 				if (is_array($layoutSetup) && !empty($layoutSetup['__config']['backend_layout.']['rows.'])) {
 					foreach($layoutSetup['__config']['backend_layout.']['rows.'] as $rows){
 						foreach($rows as $row){
@@ -138,16 +138,13 @@ class PageRenderer {
 									$classes = '';
 									if($col['allowed']){
 										$allowed = explode(',', $col['allowed']);
-										foreach($allowed as $ctypes){
-											$ctypes = trim($ctypes);
-											if($ctypes == '*') {
+										foreach($allowed as $ctype){
+											$ctype = trim($ctype);
+											if($ctype == '*') {
 												$classes = 't3-allow-all';
 												break;
 											} else {
-												$ctypes = explode(',', $ctypes);
-												foreach($ctypes as $ctype) {
-													$classes .= 't3-allow-' . $ctype . ' ';
-												}
+												$classes .= 't3-allow-' . $ctype . ' ';
 											}
 										}
 									} else {

@@ -1,0 +1,28 @@
+.t3-page-ce .t3-icon-gridelements-copyfrompage {
+	visibility: hidden;
+}
+
+.t3-page-ce.active .t3-icon-gridelements-copyfrompage,
+.t3-page-column.active .t3-icon-gridelements-copyfrompage {
+	visibility: visible;
+}
+
+#ext-cms-layout-db-layout-php .t3-icon-extensions-gridelements {
+    background-image:url('../../Images/gridelements_sprite.png');
+}
+
+#ext-cms-layout-db-layout-php .t3-icon-gridelements-copyfrompage {
+    background-position: 0 0;
+}
+#ext-cms-layout-db-layout-php .t3-icon-gridelements-pastecopy {
+    background-position: 0 -16px;
+}
+#ext-cms-layout-db-layout-php .t3-icon-gridelements-pasteref {
+    background-position: 0 -32px;
+}
+#ext-cms-layout-db-layout-php .t3-icon-gridelements-reference {
+    background-position: 0 -48px;
+}
+#ext-cms-layout-db-layout-php .t3-icon-gridelements-someicon {
+    background-position: 0 -64px;
+}

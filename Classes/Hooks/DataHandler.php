@@ -80,14 +80,14 @@ class DataHandler {
 			strpos($cmd['tt_content'][key($cmd['tt_content'])]['copy'], 'x') !== FALSE &&
 			!$parentObj->isImporting
 		) {
-			$positionArray = \TYPO3\CMS\Core\Utility\GeneralUtility::trimexplode('x', $cmd['tt_content'][key($cmd['tt_content'])]['copy']);
+			$positionArray = explode('x', $cmd['tt_content'][key($cmd['tt_content'])]['copy']);
 			if($positionArray[0] < 0) {
 				$parentPage = $GLOBALS['TYPO3_DB']->exec_SELECTgetSingleRow('pid', 'tt_content', 'uid = ' . abs($positionArray[0]));
 				if($parentPage['pid']) {
 					$pid = $parentPage['pid'];
 				}
 			} else {
-				$pid = intval($positionArray[0]);
+				$pid = (int)$positionArray[0];
 			}
 			$fieldArray['sorting'] = $parentObj->getSortNumber('tt_content', 0, $pid);
 		}

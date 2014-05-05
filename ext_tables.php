@@ -93,7 +93,7 @@ $tempColumns = array(
 			),
 			'foreign_table' => 'tt_content',
 			'foreign_table_where' => '
-				AND tt_content.sys_language_uid = ###REC_FIELD_sys_language_uid###
+				AND (tt_content.sys_language_uid = ###REC_FIELD_sys_language_uid### OR tt_content.sys_language_uid = -1)
 				AND tt_content.pid=###CURRENT_PID###
 				AND tt_content.CType=\'gridelements_pi1\'
 				AND NOT (tt_content.uid=###THIS_UID###)
@@ -137,6 +137,7 @@ $TCA['tt_content']['types'][$_EXTKEY . '_pi1']['showitem'] = $TCA['tt_content'][
 
 $TCA['tt_content']['columns']['colPos']['config']['itemsProcFunc'] = 'GridElementsTeam\Gridelements\Backend\ItemsProcFuncs\ColPosList->itemsProcFunc';
 $TCA['tt_content']['columns']['CType']['config']['itemsProcFunc'] = 'GridElementsTeam\Gridelements\Backend\ItemsProcFuncs\CTypeList->itemsProcFunc';
+$TCA['tt_content']['columns']['sys_language_uid']['config']['itemsProcFunc'] = 'GridElementsTeam\Gridelements\Backend\ItemsProcFuncs\SysLanguageUidList->itemsProcFunc';
 $TCA['tt_content']['columns']['pi_flexform']['config']['ds']['*,gridelements_pi1'] = '';
 $TCA['tt_content']['columns']['records']['config']['allowed'] .= ',pages';
 
@@ -223,4 +224,4 @@ $geIcons = array(
 	\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::siteRelPath('gridelements') . 'Resources/Public/Backend/Css/Skin/t3skin_override.css'
 );
 
-
+$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['typo3/template.php']['preHeaderRenderHook'][] = 'EXT:gridelements/Classes/Hooks/PreHeaderRenderHook.php:Tx_Gridelements_Hooks_PreHeaderRenderHook->main';

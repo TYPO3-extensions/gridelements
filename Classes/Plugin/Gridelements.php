@@ -60,7 +60,11 @@ class Gridelements extends \TYPO3\CMS\Frontend\ContentObject\ContentObjectRender
 		// now we have to find the children of this grid container regardless of their column
 		// so we can get them within a single DB query instead of doing a query per column
 		// but we will only fetch those columns that are used by the current grid layout
-		$element = $this->cObj->data['uid'];
+		if($GLOBALS['TSFE']->sys_language_contentOL && $this->cObj->data['l18n_parent']) {
+			$element = $this->cObj->data['l18n_parent'];
+		} else {
+			$element = $this->cObj->data['uid'];
+		}
 		$layout = $this->cObj->data['tx_gridelements_backend_layout'];
 
 		/** @var \GridElementsTeam\Gridelements\Backend\LayoutSetup $layoutSetup  */
@@ -77,7 +81,7 @@ class Gridelements extends \TYPO3\CMS\Frontend\ContentObject\ContentObjectRender
 		// we need a sorting columns array to make sure that the columns are rendered in the order
 		// that they have been created in the grid wizard but still be able to get all children
 		// within just one SELECT query
-		$sortColumns = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',', $csvColumns);
+		$sortColumns = explode(',', $csvColumns);
 
 		$this->renderChildrenIntoParentColumns($typoScriptSetup, $sortColumns, $availableColumns);
 		unset($children);
@@ -113,14 +117,14 @@ class Gridelements extends \TYPO3\CMS\Frontend\ContentObject\ContentObjectRender
 	public function getChildren($element = 0, $csvColumns = '') {
 
 		if ($element && $csvColumns !== '') {
-			$where = '(
-					tx_gridelements_container = ' . $element .
-					$this->cObj->enableFields('tt_content') .
-					' AND colPos != -2
-					AND pid > 0
-					AND tx_gridelements_columns IN (' . $csvColumns . ')
-					AND sys_language_uid IN (-1,0)
-				)';
+
+			$where = '(tx_gridelements_container = ' . $element .
+				$this->cObj->enableFields('tt_content') .
+				' AND colPos != -2
+				AND pid > 0
+				AND tx_gridelements_columns IN (' . $csvColumns . ')
+				AND sys_language_uid IN (-1,0)
+			)';
 
 			if($GLOBALS['TSFE']->sys_language_uid > 0) {
 				if($GLOBALS['TSFE']->sys_language_contentOL) {
@@ -160,14 +164,17 @@ class Gridelements extends \TYPO3\CMS\Frontend\ContentObject\ContentObjectRender
 					$GLOBALS['TSFE']->sys_page->versionOL('tt_content', $child);
 
 					// Language overlay:
-					if (is_array($child) && $child['sys_language_uid'] != $GLOBALS['TSFE']->sys_language_content && $GLOBALS['TSFE']->sys_language_contentOL) {
-						$child = $GLOBALS['TSFE']->sys_page->getRecordOverlay('tt_content', $child, $GLOBALS['TSFE']->sys_language_content, $GLOBALS['TSFE']->sys_language_contentOL);
-					}
-
 					if (is_array($child)) {
-						\TYPO3\CMS\Core\Resource\Service\FrontendContentAdapterService::modifyDBRow($child, 'tt_content');
-						$this->cObj->data['tx_gridelements_view_children'][] = $child;
-						unset($child);
+						if ($GLOBALS['TSFE']->sys_language_contentOL) {
+							$child = $GLOBALS['TSFE']->sys_page->getRecordOverlay('tt_content', $child, $GLOBALS['TSFE']->sys_language_content, $GLOBALS['TSFE']->sys_language_contentOL);
+						}
+						if ($child !== FALSE) {
+							if ($GLOBALS['TYPO3_CONF_VARS']['FE']['activateContentAdapter']) {
+								\TYPO3\CMS\Core\Resource\Service\FrontendContentAdapterService::modifyDBRow($child, 'tt_content');
+							}
+							$this->cObj->data['tx_gridelements_view_children'][] = $child;
+							unset($child);
+						}
 					}
 				}
 
@@ -249,6 +256,7 @@ class Gridelements extends \TYPO3\CMS\Frontend\ContentObject\ContentObjectRender
 		if(count($sortColumns)) {
 			$this->cObj->data['tx_gridelements_view_columns'] = array();
 			foreach ($sortColumns as $sortKey) {
+				$sortKey = trim($sortKey);
 				if (isset($parentGridData['tx_gridelements_view_columns'][$sortKey])) {
 					$this->cObj->data['tx_gridelements_view_columns'][$sortKey] = $parentGridData['tx_gridelements_view_columns'][$sortKey];
 				}
@@ -382,7 +390,7 @@ class Gridelements extends \TYPO3\CMS\Frontend\ContentObject\ContentObjectRender
 	 */
 	public function renderChildIntoParentColumn($columns, &$child, &$parentGridData, &$parentRecordNumbers, $typoScriptSetup = array()) {
 
-		$column_number = intval($child['tx_gridelements_columns']);
+		$column_number = (int)$child['tx_gridelements_columns'];
 		$columnKey = $column_number . '.';
 
 		if (!isset($typoScriptSetup['columns.'][$columnKey])) {

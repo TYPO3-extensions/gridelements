@@ -46,7 +46,7 @@ class BackendLayout {
 		$this->formName = $this->P['formName'];
 		$this->fieldName = $this->P['itemName'];
 		$this->md5ID = $this->P['md5ID'];
-		$uid = intval($this->P['uid']);
+		$uid = (int)$this->P['uid'];
 
 		// Initialize document object:
 		$this->doc = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Backend\Template\DocumentTemplate');
@@ -103,7 +103,7 @@ class BackendLayout {
 		');
 
 			// select record
-		$record = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows($this->P['field'], $this->P['table'], 'uid=' . intval($this->P['uid']));
+		$record = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows($this->P['field'], $this->P['table'], 'uid=' . (int)$this->P['uid']);
 
 		if (trim($record[0][$this->P['field']]) == '') {
 			$t3GridData = "[[{colspan:1,rowspan:1,spanned:false,name:''}]]";
@@ -141,21 +141,21 @@ class BackendLayout {
 							$cellData = array();
 
 							if (isset($column['colspan'])) {
-								$cellData[] = 'colspan:' . intval($column['colspan']);
+								$cellData[] = 'colspan:' . (int)$column['colspan'];
 
 								if (isset($column['rowspan'])) {
 
-                                    $rowspan = intval($column['rowspan']);
+                                    $rowspan = (int)$column['rowspan'];
 									for ($spanRow = 0; $spanRow < $rowspan; $spanRow++) {
 
-										$colspan = intval($column['colspan']);
+										$colspan = (int)$column['colspan'];
                                         for ($spanColumn = 0; $spanColumn < $colspan; $spanColumn++) {
 											$spannedMatrix[$i + $spanRow][$j + $spanColumn] = 1;
 										}
 									}
 
 								} else {
-                                    $colspan = intval($column['colspan']);
+                                    $colspan = (int)$column['colspan'];
 									for ($spanColumn = 0; $spanColumn < $colspan; $spanColumn++) {
 										$spannedMatrix[$i][$j + $spanColumn] = 1;
 									}
@@ -167,7 +167,7 @@ class BackendLayout {
 
 								if (isset($column['rowspan'])) {
 
-                                    $colspan = intval($column['colspan']);
+                                    $colspan = (int)$column['colspan'];
                                     for ($spanRow = 0; $spanRow < $colspan; $spanRow++) {
 										$spannedMatrix[$i + $spanRow][$j] = 1;
 									}
@@ -177,7 +177,7 @@ class BackendLayout {
 							}
 
 							if (isset($column['rowspan'])) {
-								$cellData[] = 'rowspan:' . intval($column['rowspan']);
+								$cellData[] = 'rowspan:' . (int)$column['rowspan'];
 							} else {
 								$cellData[] = 'rowspan:1';
 							}

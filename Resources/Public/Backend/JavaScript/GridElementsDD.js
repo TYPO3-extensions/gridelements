@@ -78,6 +78,7 @@ GridElementsDD = function() {
 				}else{
 					// new ce
 					top.elementCType = dragEl.select('div[class^=t3-ctype-]').elements[0].className.substr(9).replace(/ t3-gridTLContainer/g, '');
+					Ext.select('#x-dd-draggablecontainer').addClass('dragging-active');
 				}
 
 				// always cache the original XY Coordinates of the element
@@ -351,6 +352,7 @@ GridElementsDD = function() {
 
 				// set isDragging for other scripts
 				top.isDragging = false;
+				Ext.select('.dragging-active').removeClass('dragging-active');
 			}
 		},
 

@@ -19,7 +19,7 @@ class CTypeList extends AbstractItemsProcFunc {
 	/**
 	 * injects layout setup
 	 *
-	 * @param tx_gridelements_layoutsetup $layoutSetup
+	 * @param \GridElementsTeam\Gridelements\Backend\ItemsProcFuncs\tx_gridelements_layoutsetup|\GridElementsTeam\Gridelements\Backend\LayoutSetup $layoutSetup
 	 */
 	public function injectLayoutSetup(\GridElementsTeam\Gridelements\Backend\LayoutSetup $layoutSetup) {
 		$this->layoutSetup = $layoutSetup;
@@ -44,13 +44,13 @@ class CTypeList extends AbstractItemsProcFunc {
 	 * @return	void
 	 */
 	public function itemsProcFunc(&$params) {
-		if ($params['row']['pid'] > 0) {
+		if ((int)$params['row']['pid'] > 0) {
 			$this->checkForAllowedCTypes($params['items'], $params['row']['pid'], $params['row']['colPos'], $params['row']['tx_gridelements_container'], $params['row']['tx_gridelements_columns']);
 		} else {
 			// negative uid_pid values indicate that the element has been inserted after an existing element
 			// so there is no pid to get the backendLayout for and we have to get that first
-			$existingElement = $GLOBALS['TYPO3_DB']->exec_SELECTgetSingleRow('pid, CType, colPos, tx_gridelements_container, tx_gridelements_columns', 'tt_content', 'uid=' . -(intval($params['row']['pid'])));
-			if ($existingElement['pid'] > 0) {
+			$existingElement = $GLOBALS['TYPO3_DB']->exec_SELECTgetSingleRow('pid, CType, colPos, tx_gridelements_container, tx_gridelements_columns', 'tt_content', 'uid=' . -((int)$params['row']['pid']));
+			if ((int)$existingElement['pid'] > 0) {
 				$this->checkForAllowedCTypes($params['items'], $existingElement['pid'], $existingElement['colPos'], $existingElement['tx_gridelements_container'], $existingElement['tx_gridelements_columns']);
 			}
 		}
@@ -67,7 +67,7 @@ class CTypeList extends AbstractItemsProcFunc {
 	 * @return    array|null    $backendLayout: An array containing the data of the selected backend layout as well as a parsed version of the layout configuration
 	 */
 	public function checkForAllowedCTypes(&$items, $pid, $pageColumn, $gridContainerId, $gridColumn) {
-		if($pageColumn >= 0 || $pageColumn == -2) {
+		if((int)$pageColumn >= 0 || (int)$pageColumn === -2) {
 			$column = $pageColumn ? $pageColumn : 0;
 			$backendLayout = $this->getSelectedBackendLayout($pid);
 		} else {

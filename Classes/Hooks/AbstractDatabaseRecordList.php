@@ -74,8 +74,7 @@ class AbstractDatabaseRecordList {
 	 * @return string
 	 */
 	public function addValueToList($list, $value) {
-		$parts = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',', $list, TRUE);
-		array_unshift($parts, $value);
-		return implode(',', array_unique($parts));
+		$parts = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',', $value . ',' . $list, TRUE);
+		return implode(',', array_flip(array_flip($parts)));
 	}
 }

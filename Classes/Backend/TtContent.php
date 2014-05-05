@@ -70,7 +70,7 @@ class TtContent {
 	 */
 	public function columnsItemsProcFunc(&$params) {
 		$this->init($params['row']['pid']);
-		$gridContainerId = intval($params['row']['tx_gridelements_container']);
+		$gridContainerId = (int)$params['row']['tx_gridelements_container'];
 
 		if ($gridContainerId > 0) {
 			$gridElement = $this->layoutSetup->cacheCurrentParent($gridContainerId, TRUE);
@@ -136,7 +136,7 @@ class TtContent {
 			}
 
 			if ($params['row']['uid'] > 0) {
-				$this->lookForChildContainersRecursively(intval($params['row']['uid']), $possibleContainers);
+				$this->lookForChildContainersRecursively((int)$params['row']['uid'], $possibleContainers);
 			}
 		}
 	}
@@ -214,8 +214,8 @@ class TtContent {
 				}
 
 				$containerIds .= $containerIds
-					? ',' . intval($childOnNextLevel['uid'])
-					: intval($childOnNextLevel['uid']);
+					? ',' . (int)$childOnNextLevel['uid']
+					: (int)$childOnNextLevel['uid'];
 
 				if ($containerIds != '') {
 					$this->lookForChildContainersRecursively($containerIds, $possibleContainers);
