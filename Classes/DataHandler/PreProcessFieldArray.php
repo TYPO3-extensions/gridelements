@@ -54,22 +54,7 @@ class PreProcessFieldArray extends AbstractDataHandler {
 	public function execute_preProcessFieldArray(&$fieldArray, $table, $id, &$parentObj) {
 		$this->init($table, $id, $parentObj);
 		if(!$this->getTceMain()->isImporting) {
-			$this->saveCleanedUpFieldArray($fieldArray);
 			$this->processFieldArrayForTtContent($fieldArray);
-		}
-	}
-
-	/**
-	 * save cleaned up field array
-	 *
-	 * @param array $fieldArray
-	 * @return array cleaned up field array
-	 */
-	public function saveCleanedUpFieldArray(array $fieldArray) {
-		unset($fieldArray['pi_flexform']);
-		$changedFieldArray = $this->dataHandler->compareFieldArrayWithCurrentAndUnset($this->getTable(), $this->getPageUid(), $fieldArray);
-		if ((isset($changedFieldArray['tx_gridelements_backend_layout']) && $this->getTable() == 'tt_content') || (isset($changedFieldArray['backend_layout']) && $this->getTable() == 'pages') || (isset($changedFieldArray['backend_layout_next_level']) && $this->getTable() == 'pages')) {
-			$this->setUnusedElements($changedFieldArray);
 		}
 	}
 
@@ -80,7 +65,7 @@ class PreProcessFieldArray extends AbstractDataHandler {
 	 * @return void
 	 */
 	public function processFieldArrayForTtContent(array &$fieldArray) {
-		if ($this->getTable() == 'tt_content') {
+		if ($this->getTable() === 'tt_content') {
 			$pid = (int)\TYPO3\CMS\Core\Utility\GeneralUtility::_GET('DDinsertNew');
 
 			if(abs($pid) > 0) {
@@ -179,7 +164,7 @@ class PreProcessFieldArray extends AbstractDataHandler {
 	public function getDefaultFlexformValues(&$fieldArray) {
 		foreach($GLOBALS['TCA']['tt_content']['columns']['pi_flexform']['config']['ds'] as $key => $dataStructure) {
 			$types = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',', $key);
-			if(($types[0] == $fieldArray['list_type'] || $types[0] == '*') && ($types[1] == $fieldArray['CType'] || $types[1] == '*')) {
+			if(($types[0] === $fieldArray['list_type'] || $types[0] === '*') && ($types[1] === $fieldArray['CType'] || $types[1] === '*')) {
 				$fieldArray['pi_flexform'] = $this->extractDefaultDataFromDatastructure($dataStructure);
 			}
 		}
@@ -208,7 +193,7 @@ class PreProcessFieldArray extends AbstractDataHandler {
 						foreach($sheet['ROOT']['el'] as $elName => $elConf) {
 							$config = $elConf['TCEforms']['config'];
 							$elArray[$elName]['vDEF'] = $config['default'];
-							if(!$elArray[$elName]['vDEF'] && $config['type'] == 'select' && count($config['items']) > 0) {
+							if(!$elArray[$elName]['vDEF'] && $config['type'] === 'select' && count($config['items']) > 0) {
 								$elArray[$elName]['vDEF'] = $config['items'][0][1];
 							}
 						}
@@ -268,7 +253,7 @@ class PreProcessFieldArray extends AbstractDataHandler {
 	 * @return void
 	 */
 	public function setFieldEntriesForColumnTargets(array &$fieldArray, $targetUid, array $target) {
-		if ($targetUid != $this->getPageUid()) {
+		if ($targetUid !== $this->getPageUid()) {
 			$fieldArray['colPos'] = -1;
 			$fieldArray['sorting'] = 0;
 			$fieldArray['tx_gridelements_container'] = $targetUid;
@@ -315,7 +300,7 @@ class PreProcessFieldArray extends AbstractDataHandler {
 	 * @return void
 	 */
 	public function setFieldEntriesForGridContainers(array &$fieldArray) {
-		if ((int)$fieldArray['tx_gridelements_container'] > 0 && isset($fieldArray['colPos']) && (int)$fieldArray['colPos'] != -1) {
+		if ((int)$fieldArray['tx_gridelements_container'] > 0 && isset($fieldArray['colPos']) && (int)$fieldArray['colPos'] !== -1) {
 			$fieldArray['colPos'] = -1;
 			$fieldArray['tx_gridelements_columns'] = 0;
 		} else if (isset($fieldArray['tx_gridelements_container']) && (int)$fieldArray['tx_gridelements_container'] === 0 && (int)$fieldArray['colPos'] === -1) {
@@ -329,265 +314,6 @@ class PreProcessFieldArray extends AbstractDataHandler {
 
 			$fieldArray['colPos'] = $this->checkForRootColumn((int)$this->getPageUid());
 			$fieldArray['tx_gridelements_columns'] = 0;
-		}
-	}
-
-	/**
-	 * Function to move elements to/from the unused elements column while changing the layout of a page or a grid element
-	 *
-	 * @param	array $fieldArray: The array of fields and values that have been saved to the datamap
-	 * return void
-	 */
-	public function setUnusedElements(&$fieldArray) {
-		$changedGridElements = array();
-		$changedElements = array();
-		$changedSubPageElements = array();
-
-		if ($this->getTable() == 'tt_content') {
-			$changedGridElements[$this->getPageUid()] = TRUE;
-			$availableColumns = $this->getAvailableColumns($fieldArray['tx_gridelements_backend_layout'], 'tt_content', $this->getPageUid());
-			$childElementsInUnavailableColumns = array_keys(
-				$this->databaseConnection->exec_SELECTgetRows(
-					'uid',
-					'tt_content',
-					'tx_gridelements_container = ' . $this->getPageUid() . '
-					AND tx_gridelements_columns NOT IN (' . $availableColumns . ')',
-					'',
-					'',
-					'',
-					'uid'
-				)
-			);
-			if(count($childElementsInUnavailableColumns) > 0) {
-				$this->databaseConnection->sql_query('
-					UPDATE tt_content
-					SET colPos = -2, backupColPos = -1
-					WHERE uid IN (' . join(',', $childElementsInUnavailableColumns) . ')
-				');
-				array_flip($childElementsInUnavailableColumns);
-			} else {
-				$childElementsInUnavailableColumns = array();
-			}
-
-			$childElementsInAvailableColumns = array_keys(
-				$this->databaseConnection->exec_SELECTgetRows(
-					'uid',
-					'tt_content',
-					'tx_gridelements_container = ' . $this->getPageUid() . '
-					AND tx_gridelements_columns IN (' . $availableColumns . ')',
-					'',
-					'',
-					'',
-					'uid'
-				)
-			);
-			if(count($childElementsInAvailableColumns) > 0) {
-				$this->databaseConnection->sql_query('
-					UPDATE tt_content
-					SET colPos = -1, backupColPos = -2
-					WHERE uid IN (' . join(',', $childElementsInAvailableColumns) . ')
-				');
-				array_flip($childElementsInAvailableColumns);
-			} else {
-				$childElementsInAvailableColumns = array();
-			}
-
-			$changedGridElements = array_merge(
-				$changedGridElements,
-				$childElementsInUnavailableColumns,
-				$childElementsInAvailableColumns
-			);
-		}
-
-		if ($this->getTable() == 'pages') {
-			$rootline = $this->beFunc->BEgetRootLine($this->getPageUid());
-			for ($i = count($rootline); $i > 0; $i--) {
-				$page = $this->databaseConnection->exec_SELECTgetSingleRow(
-					'uid, backend_layout, backend_layout_next_level',
-					'pages',
-					'uid=' . (int)$rootline[$i]['uid']
-				);
-				$selectedBackendLayoutNextLevel = (int)$page['backend_layout_next_level'];
-				if ($page['uid'] == $this->getPageUid()) {
-					if ($fieldArray['backend_layout_next_level'] != 0) {
-						// Backend layout for subpages of the current page is set
-						$backendLayoutNextLevelUid = (int)$fieldArray['backend_layout_next_level'];
-					}
-					if ($fieldArray['backend_layout'] != 0) {
-						// Backend layout for current page is set
-						$backendLayoutUid = $fieldArray['backend_layout'];
-						break;
-					}
-				} else if ($selectedBackendLayoutNextLevel == -1 && $page['uid'] != $this->getPageUid()) {
-					// Some previous page in our rootline sets layout_next to "None"
-					break;
-				} else if ($selectedBackendLayoutNextLevel > 0 && $page['uid'] != $this->getPageUid()) {
-					// Some previous page in our rootline sets some backend_layout, use it
-					$backendLayoutUid = $selectedBackendLayoutNextLevel;
-					break;
-				}
-			}
-
-			if (isset($fieldArray['backend_layout'])) {
-                $availableColumns = $this->getAvailableColumns($backendLayoutUid, 'pages', $this->getPageUid());
-				$elementsInUnavailableColumns = array_keys(
-					$this->databaseConnection->exec_SELECTgetRows(
-						'uid',
-						'tt_content',
-						'pid = ' . $this->getPageUid() . '
-						AND colPos NOT IN (' . $availableColumns . ')',
-						'',
-						'',
-						'',
-						'uid'
-					)
-				);
-				if(count($elementsInUnavailableColumns) > 0) {
-					$this->databaseConnection->sql_query('
-						UPDATE tt_content
-						SET backupColPos = colPos, colPos = -2
-						WHERE uid IN (' . join(',', $elementsInUnavailableColumns) . ')
-					');
-					array_flip($elementsInUnavailableColumns);
-				} else {
-					$elementsInUnavailableColumns = array();
-				}
-
-				$elementsInAvailableColumns = array_keys(
-					$this->databaseConnection->exec_SELECTgetRows(
-						'uid',
-						'tt_content',
-						'pid = ' . $this->getPageUid() . '
-						AND pid = ' . $this->getPageUid() . '
-						AND backupColPos != -2
-						AND backupColPos IN (' . $availableColumns . ')',
-						'',
-						'',
-						'',
-						'uid'
-					)
-				);
-				if(count($childElementsInAvailableColumns) > 0) {
-					$this->databaseConnection->sql_query('
-						UPDATE tt_content
-						SET colPos = backupColPos, backupColPos = -2
-						WHERE uid IN (' . join(',', $elementsInAvailableColumns) . ')
-					');
-					array_flip($elementsInAvailableColumns);
-				} else {
-					$elementsInAvailableColumns = array();
-				}
-
-				$changedElements = array_merge(
-					$elementsInUnavailableColumns,
-					$elementsInAvailableColumns
-				);
-			}
-
-			if (isset($fieldArray['backend_layout_next_level'])) {
-				$backendLayoutUid = $backendLayoutNextLevelUid ? $backendLayoutNextLevelUid : $backendLayoutUid;
-				$subpages = array();
-				$this->getSubpagesRecursively($this->getPageUid(), $subpages);
-				if (count($subpages)) {
-					$changedSubPageElements = array();
-					foreach ($subpages as $page) {
-						$availableColumns = $this->getAvailableColumns($backendLayoutUid, 'pages', $page['uid']);
-						$subPageElementsInUnavailableColumns = array_keys(
-							$this->databaseConnection->exec_SELECTgetRows(
-								'uid',
-								'tt_content',
-								'pid = ' . $page['uid'] . '
-								AND colPos NOT IN (' . $availableColumns . ')',
-								'',
-								'',
-								'',
-								'uid'
-							)
-						);
-						if(count($subPageElementsInUnavailableColumns) > 0) {
-							$this->databaseConnection->sql_query('
-								UPDATE tt_content
-								SET backupColPos = colPos, colPos = -2
-								WHERE uid IN (' . join(',', $subPageElementsInUnavailableColumns) . ')
-							');
-							array_flip($subPageElementsInUnavailableColumns);
-						} else {
-							$subPageElementsInUnavailableColumns = array();
-						}
-
-						$subPageElementsInAvailableColumns = array_keys(
-							$this->databaseConnection->exec_SELECTgetRows(
-								'uid',
-								'tt_content',
-								'pid = ' . $page['uid'] . '
-								AND backupColPos != -2
-								AND backupColPos IN (' . $availableColumns . ')',
-								'',
-								'',
-								'',
-								'uid'
-							)
-						);
-						if(count($subPageElementsInAvailableColumns) > 0) {
-							$this->databaseConnection->sql_query('
-								UPDATE tt_content
-								SET colPos = backupColPos, backupColPos = -2
-								WHERE uid IN (' . join(',', $subPageElementsInAvailableColumns) . ')
-							');
-							array_flip($subPageElementsInAvailableColumns);
-						} else {
-							$subPageElementsInAvailableColumns = array();
-						}
-
-						$changedPageElements = array_merge(
-							$subPageElementsInUnavailableColumns,
-							$subPageElementsInAvailableColumns
-						);
-						$changedSubPageElements = array_merge(
-							$changedSubPageElements,
-							$changedPageElements
-						);
-					}
-				}
-			}
-		}
-
-		$changedElementUids = array_merge(
-			$changedGridElements,
-			$changedElements,
-			$changedSubPageElements
-		);
-		if(count($changedElementUids) > 0) {
-			foreach($changedElementUids as $uid => $value) {
-				$this->dataHandler->updateRefIndex('tt_content', $uid);
-			}
-		}
-	}
-
-	/**
-	 * gets all subpages of the current page and traverses recursivley unless backend_layout_next_level is set or unset (!= 0)
-	 *
-	 * @param $pageUid
-	 * @param $subpages
-	 * @internal param int $id : the uid of the parent page
-	 * @return  array   $subpages: Reference to a list of all subpages
-	 */
-	public function getSubpagesRecursively($pageUid, &$subpages) {
-		$childPages = $this->databaseConnection->exec_SELECTgetRows(
-			'uid, backend_layout, backend_layout_next_level',
-			'pages',
-			'pid = ' . $pageUid
-		);
-
-		if (count($childPages)) {
-			foreach ($childPages as $page) {
-				if ($page['backend_layout'] == 0) {
-					$subpages[] = $page;
-				}
-				if ($page['backend_layout_next_level'] == 0) {
-					$this->getSubpagesRecursively($page['uid'], $subpages);
-				}
-			}
 		}
 	}
 
@@ -614,36 +340,6 @@ class PreProcessFieldArray extends AbstractDataHandler {
 		}
 
 		return $colPos;
-	}
-
-	/**
-	 * fetches all available columns for a certain grid container based on TCA settings and layout records
-	 *
-	 * @param   string  $layout: The selected backend layout of the grid container or the page
-	 * @param   string  $table: The name of the table to get the layout for
-	 * @param   int     $id: the uid of the parent container - being the page id for the table "pages"
-	 * @return  CSV     $tcaColumns: The columns available for the selected layout as CSV list
-	 *
-	 */
-	public function getAvailableColumns($layout = '', $table = '', $id = 0) {
-		$tcaColumns = array();
-
-		if ($layout && $table == 'tt_content') {
-			$tcaColumns = $this->layoutSetup->getLayoutColumns($layout);
-			$tcaColumns = $tcaColumns['CSV'];
-		} else if ($table == 'pages') {
-            $tcaColumns = GeneralUtility::callUserFunction('TYPO3\\CMS\\Backend\\View\\BackendLayoutView->getColPosListItemsParsed', $id, $this);
-			$temp = array();
-			foreach ($tcaColumns AS $item) {
-				if (trim($item[1]) !== '') {
-					$temp[] = $item[1];
-				}
-			}
-			// Implode into a CSV string as BackendLayoutView->getColPosListItemsParsed returns an array
-			$tcaColumns = '-2,-1,' . implode(',', $temp);
-		}
-
-		return $tcaColumns;
 	}
 
 }

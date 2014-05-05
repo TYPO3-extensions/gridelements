@@ -250,11 +250,11 @@ class WizardItems implements \TYPO3\CMS\Backend\Wizard\NewContentElementWizardHo
 	public function addGridValuesToWizardItems(&$wizardItems, $container, $column) {
 		foreach($wizardItems as $key => $wizardItem) {
 			if(!$wizardItems[$key]['header']){
-				if($container != 0) {
+				if($container !== 0) {
 					$wizardItems[$key]['tt_content_defValues']['tx_gridelements_container'] = $container;
 					$wizardItems[$key]['params'] .= '&defVals[tt_content][tx_gridelements_container]=' . $container;
 				}
-				if($column != 0) {
+				if($column !== 0) {
 					$wizardItems[$key]['tt_content_defValues']['tx_gridelements_columns'] = $column;
 					$wizardItems[$key]['params'] .= '&defVals[tt_content][tx_gridelements_columns]=' . $column;
 				}

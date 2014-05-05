@@ -33,11 +33,11 @@ if(typeof GridElementsDD === "undefined"){
 		Ext.each(dropZonePar, function(currentColWrapper){
 			var parentCell = Ext.get(currentColWrapper).parent(),
 				dropZoneID = null;
-			if(Ext.get(parentCell).dom.className.search(/t3-gridCell-unassigned/g) == -1) {
-				if(Ext.get(parentCell).id.substr(0, 6) != 'column') {
+			if(Ext.get(parentCell).dom.className.search(/t3-gridCell-unassigned/g) === -1) {
+				if(Ext.get(parentCell).id.substr(0, 6) !== 'column') {
 					var parentCellClass = Ext.get(parentCell).dom.className.split(' ');
 					for(i = 0; i < parentCellClass.length; i++) {
-						if(parentCellClass[i].substr(0, 15) == 't3-page-column-') {
+						if(parentCellClass[i].substr(0, 15) === 't3-page-column-') {
 							dropZoneID = 'DD_DROP_PIDx' + parentCellClass[i].substr(15);
 						}
 					};
@@ -102,7 +102,7 @@ if(typeof GridElementsDD === "undefined"){
 						var allowedCTypes = new Array;
 						for (var i = 0; i < currentClasses.length; i++) {
 							var currentClass = currentClasses[i];
-							if(currentClass.substr(0, 9) == 't3-allow-'){
+							if(currentClass.substr(0, 9) === 't3-allow-'){
 								allowedCTypes.push(currentClass.substr(9));
 							}
 						}
@@ -356,7 +356,7 @@ if(typeof GridElementsDD === "undefined"){
 
 				// load HTML output from /typo3/sysext/cms/layout/db_new_content_el.php to temp element
 				// e.g. http://core-540-rgeorgi.typo3-entw.telekom.de/typo3/sysext/cms/layout/db_new_content_el.php?id=4722&colPos=1&sys_language_uid=0&uid_pid=4722
-				if(draggableContainerFilled == false) {
+				if(draggableContainerFilled === false) {
 					Ext.get(document.createElement('div')).load({
 						url: top.TYPO3.configuration.PATH_typo3 + 'sysext/cms/layout/db_new_content_el.php' + top.TYPO3.Backend.ContentContainer.iframe.window.location.search,
 						method: 'GET',
@@ -368,7 +368,7 @@ if(typeof GridElementsDD === "undefined"){
 				
 				// show content draggables dialog instead
 				draggableContainer.toggle();
-				Ext.get(draggableContainer).dom.style.display = Ext.get(draggableContainer).dom.style.display == 'block' ? 'none' : 'block';
+				Ext.get(draggableContainer).dom.style.display = Ext.get(draggableContainer).dom.style.display === 'block' ? 'none' : 'block';
 
 			}
 
@@ -378,11 +378,11 @@ if(typeof GridElementsDD === "undefined"){
 				// disable click (jumping to href)
 				e.preventDefault();
 
-				top.draggableContainerActive = top.draggableContainerActive == true ? false : true;
+				top.draggableContainerActive = top.draggableContainerActive === true ? false : true;
 				
 				// load HTML output from /typo3/sysext/cms/layout/db_new_content_el.php to temp element
 				// e.g. http://core-540-rgeorgi.typo3-entw.telekom.de/typo3/sysext/cms/layout/db_new_content_el.php?id=4722&colPos=1&sys_language_uid=0&uid_pid=4722
-				if(draggableContainerFilled == false) {
+				if(draggableContainerFilled === false) {
 				    Ext.get(document.createElement('div')).load({
 					url: top.TYPO3.configuration.PATH_typo3 + 'sysext/cms/layout/db_new_content_el.php' + top.TYPO3.Backend.ContentContainer.iframe.window.location.search,
 					method: 'GET',
@@ -395,7 +395,7 @@ if(typeof GridElementsDD === "undefined"){
 
 				// show content draggables dialog instead
 				draggableContainer.toggle();
-				Ext.get(draggableContainer).dom.style.display = Ext.get(draggableContainer).dom.style.display == 'block' ? 'none' : 'block';
+				Ext.get(draggableContainer).dom.style.display = Ext.get(draggableContainer).dom.style.display === 'block' ? 'none' : 'block';
 
 				return false;
 
@@ -432,7 +432,7 @@ if(typeof GridElementsDD === "undefined"){
 							
 							// patching starts here
 							var clipboardItemUID = params.match(/&uid=(\d+)&/)[1];
-							if(params.search(/&CB.+/) != -1) {
+							if(params.search(/&CB.+/) !== -1) {
 								GridElementsDD.handleClipboardItem(clipboardItemUID, params);
 							}
 							// patch ends

@@ -41,7 +41,7 @@ class PageRenderer {
 	 * @return	void
 	 */
 	public function addJSCSS($parameters, &$pageRenderer) {
-		if($GLOBALS['MCONF']['name'] == 'web_layout' || $GLOBALS['MCONF']['name'] == 'web_list') {
+		if($GLOBALS['MCONF']['name'] === 'web_layout' || $GLOBALS['MCONF']['name'] === 'web_list') {
 			$this->addJS($parameters, $pageRenderer);
 			$this->addCSS($parameters, $pageRenderer);
 		}
@@ -140,7 +140,7 @@ class PageRenderer {
 										$allowed = explode(',', $col['allowed']);
 										foreach($allowed as $ctype){
 											$ctype = trim($ctype);
-											if($ctype == '*') {
+											if($ctype === '*') {
 												$classes = 't3-allow-all';
 												break;
 											} else {
@@ -224,7 +224,7 @@ class PageRenderer {
 			$filename = $this->confArr['additionalStylesheet'];
 			if($filename){
 				// evaluate filename
-				if (substr($filename, 0, 4) == 'EXT:') { // extension
+				if (substr($filename, 0, 4) === 'EXT:') { // extension
 					list($extKey, $local) = explode('/', substr($filename, 4), 2);
 					$filename = '';
 					if (strcmp($extKey, '') && \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded($extKey) && strcmp($local, '')) {

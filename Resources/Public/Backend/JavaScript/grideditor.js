@@ -50,7 +50,7 @@ TYPO3.Backend.t3Grid = Ext.extend(Ext.Component, {
 
 		// fix rowspan in former last row
 		for (var colIndex = 0; colIndex < this.colCount; colIndex++) {
-			if (this.data[this.rowCount - 1][colIndex].spanned == true) {
+			if (this.data[this.rowCount - 1][colIndex].spanned === true) {
 				this.findUpperCellWidthRowspanAndDecreaseByOne(colIndex, this.rowCount - 1);
 			}
 		}
@@ -72,7 +72,7 @@ TYPO3.Backend.t3Grid = Ext.extend(Ext.Component, {
 		var upperCell = this.getCell(col, row - 1);
 		if (!upperCell) return false;
 
-		if (upperCell.spanned == true) {
+		if (upperCell.spanned === true) {
 			this.findUpperCellWidthRowspanAndDecreaseByOne(col, row - 1);
 		} else {
 			if (upperCell.rowspan > 1) {
@@ -95,7 +95,7 @@ TYPO3.Backend.t3Grid = Ext.extend(Ext.Component, {
 			for (colIndex = 0; colIndex < this.colCount - 1; colIndex++) {
 				newRow.push(this.data[rowIndex][colIndex]);
 			}
-			if (this.data[rowIndex][this.colCount - 1].spanned == true) {
+			if (this.data[rowIndex][this.colCount - 1].spanned === true) {
 				this.findLeftCellWidthColspanAndDecreaseByOne(this.colCount - 1, rowIndex);
 			}
 			newData.push(newRow);
@@ -117,7 +117,7 @@ TYPO3.Backend.t3Grid = Ext.extend(Ext.Component, {
 		var leftCell = this.getCell(col - 1, row);
 		if (!leftCell) return false;
 
-		if (leftCell.spanned == true) {
+		if (leftCell.spanned === true) {
 			this.findLeftCellWidthColspanAndDecreaseByOne(col - 1, row);
 		} else {
 			if (leftCell.colspan > 1) {
@@ -177,13 +177,13 @@ TYPO3.Backend.t3Grid = Ext.extend(Ext.Component, {
 
 		for (var row = 0; row < this.rowCount; row++) {
 			var rowData = this.data[row];
-			if (rowData.length == 0) continue;
+			if (rowData.length === 0) continue;
 
 			var rowSpec = {tag: 'tr', children:[]};
 
 			for (var col = 0; col < this.colCount; col++) {
 				var cell = this.data[row][col];
-				if (cell.spanned == true) {
+				if (cell.spanned === true) {
 					continue;
 				}
 
@@ -507,7 +507,7 @@ TYPO3.Backend.t3Grid = Ext.extend(Ext.Component, {
 	inArray: function(needle, haystack) {
 		var length = haystack.length;
 		for(var i = 0; i < length; i++) {
-			if(haystack[i] == needle) return true;
+			if(haystack[i] === needle) return true;
 		}
 		return false;
 	},
@@ -536,7 +536,7 @@ TYPO3.Backend.t3Grid = Ext.extend(Ext.Component, {
 	 * @return boolean
 	 */
 	cellCanSpanRight: function(col, row) {
-		if (col == this.colCount - 1) {
+		if (col === this.colCount - 1) {
 			return false;
 		}
 
@@ -544,13 +544,13 @@ TYPO3.Backend.t3Grid = Ext.extend(Ext.Component, {
 		if (cell.rowspan > 1) {
 			for (var rowIndex = row; rowIndex < row + cell.rowspan; rowIndex++) {
 				var checkCell = this.getCell(col + cell.colspan, rowIndex);
-				if (!checkCell || checkCell.spanned == true || checkCell.colspan > 1 || checkCell.rowspan > 1) {
+				if (!checkCell || checkCell.spanned === true || checkCell.colspan > 1 || checkCell.rowspan > 1) {
 					return false;
 				}
 			}
 		} else {
 			var checkCell = this.getCell(col + cell.colspan, row);
-			if (!checkCell || cell.spanned == true || checkCell.spanned == true || checkCell.colspan > 1 || checkCell.rowspan > 1) {
+			if (!checkCell || cell.spanned === true || checkCell.spanned === true || checkCell.colspan > 1 || checkCell.rowspan > 1) {
 				return false;
 			}
 		}
@@ -567,7 +567,7 @@ TYPO3.Backend.t3Grid = Ext.extend(Ext.Component, {
 	 * @return boolean
 	 */
 	cellCanSpanDown: function(col, row) {
-		if (row == this.rowCount - 1) {
+		if (row === this.rowCount - 1) {
 			return false;
 		}
 
@@ -576,13 +576,13 @@ TYPO3.Backend.t3Grid = Ext.extend(Ext.Component, {
 			// we have to check all cells on the right side for the complete colspan
 			for (var colIndex = col; colIndex < col + cell.colspan; colIndex++) {
 				var checkCell = this.getCell(colIndex, row + cell.rowspan);
-				if (!checkCell || checkCell.spanned == true || checkCell.colspan > 1 || checkCell.rowspan > 1) {
+				if (!checkCell || checkCell.spanned === true || checkCell.colspan > 1 || checkCell.rowspan > 1) {
 					return false;
 				}
 			}
 		} else {
 			var checkCell = this.getCell(col, row + cell.rowspan);
-			if (!checkCell || cell.spanned == true || checkCell.spanned == true || checkCell.colspan > 1 || checkCell.rowspan > 1) {
+			if (!checkCell || cell.spanned === true || checkCell.spanned === true || checkCell.colspan > 1 || checkCell.rowspan > 1) {
 				return false;
 			}
 		}

@@ -105,7 +105,7 @@ class BackendLayout {
 			// select record
 		$record = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows($this->P['field'], $this->P['table'], 'uid=' . (int)$this->P['uid']);
 
-		if (trim($record[0][$this->P['field']]) == '') {
+		if (trim($record[0][$this->P['field']]) === '') {
 			$t3GridData = "[[{colspan:1,rowspan:1,spanned:false,name:''}]]";
 			$colCount = 1;
 			$rowCount = 1;
@@ -126,7 +126,7 @@ class BackendLayout {
 
 				for ($j = 1; $j <= $colCount; $j++) {
 
-					if ($j == 1) {
+					if ($j === 1) {
 						$row = array_shift($dataRows);
 						$columns = $row['columns.'];
 						$rowString = '[';

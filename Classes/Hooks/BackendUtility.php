@@ -78,7 +78,7 @@ class BackendUtility {
 	 *
 	 */
 	public function getFlexFormDS_postProcessDS(&$dataStructArray, $conf, $row, $table, $fieldName) {
-		if ($table == 'tt_content' && $fieldName == 'pi_flexform' && $row['CType'] == 'gridelements_pi1' && $row['tx_gridelements_backend_layout']) {
+		if ($table === 'tt_content' && $fieldName === 'pi_flexform' && $row['CType'] === 'gridelements_pi1' && $row['tx_gridelements_backend_layout']) {
 			$this->init($row['pid']);
 			$dataStructArray = \TYPO3\CMS\Core\Utility\GeneralUtility::xml2array($this->layoutSetup->getFlexformConfiguration($row['tx_gridelements_backend_layout']));
 		}

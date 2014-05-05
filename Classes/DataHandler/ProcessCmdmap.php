@@ -55,20 +55,20 @@ class ProcessCmdmap extends AbstractDataHandler {
 		$reference = (int)\TYPO3\CMS\Core\Utility\GeneralUtility::_GET('reference');
 		$containerUpdateArray = array();
 
-		if ($command == 'copy' &&
+		if ($command === 'copy' &&
 			!$commandIsProcessed &&
-			$table == 'tt_content' &&
+			$table === 'tt_content' &&
 			!$this->getTceMain()->isImporting
 		) {
 
 			$copyAfterDuplicationFields = $GLOBALS['TCA']['tt_content']['ctrl']['copyAfterDuplFields'];
 			$GLOBALS['TCA']['tt_content']['ctrl']['copyAfterDuplFields'] .= ',tx_gridelements_container,tx_gridelements_columns';
 
-			if($DDcopy == 1 || $reference == 1) {
+			if((int)$DDcopy === 1 || (int)$reference === 1) {
 
 				$overrideArray = array();
 
-				if($reference == 1) {
+				if((int)$reference === 1) {
 					foreach($GLOBALS['TCA']['tt_content']['columns'] as $key => $column) {
 						if(strpos(',' . $GLOBALS['TCA']['tt_content']['ctrl']['copyAfterDuplFields'] . ',', ',' . $key . ',') === FALSE) {
 							$overrideArray[$key] = '';
@@ -84,12 +84,12 @@ class ProcessCmdmap extends AbstractDataHandler {
 					$valueArray = explode('x', $value);
 					$overrideArray['sorting'] = 0;
 
-					if (((int)$valueArray[0] > 0 && $valueArray[1] != '') || (abs($valueArray[0]) == $id)) {
+					if (((int)$valueArray[0] > 0 && $valueArray[1] !== '') || (abs($valueArray[0]) === $id)) {
 						$targetTable = 'pages';
 						$overrideArray['tx_gridelements_container'] = 0;
 						$overrideArray['tx_gridelements_columns'] = 0;
 						$overrideArray['colPos'] = (int)$valueArray[1];
-					} else if ($valueArray[1] != '') {
+					} else if ($valueArray[1] !== '') {
 						$targetTable = 'tt_content';
 						$containerUpdateArray[abs($valueArray[0])] = 1;
 						$overrideArray['colPos'] = -1;

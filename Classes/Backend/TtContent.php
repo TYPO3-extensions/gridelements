@@ -77,9 +77,9 @@ class TtContent {
 			$params['items'] = $this->layoutSetup
 				->getLayoutColumnsSelectItems($gridElement['tx_gridelements_backend_layout']);
 
-			if($params['row']['CType'] != '' && count($params['items']) > 0) {
+			if($params['row']['CType'] !== '' && count($params['items']) > 0) {
 				foreach($params['items'] as $itemKey => $itemArray) {
-					if($itemArray[3] != '' && !\TYPO3\CMS\Core\Utility\GeneralUtility::inList($itemArray[3], $params['row']['CType'])) {
+					if($itemArray[3] !== '' && !\TYPO3\CMS\Core\Utility\GeneralUtility::inList($itemArray[3], $params['row']['CType'])) {
 						unset($params['items'][$itemKey]);
 					}
 				}
@@ -125,7 +125,7 @@ class TtContent {
 	 * @return void
 	 */
 	public function removesItemsFromListOfSelectableContainers(array &$params, &$possibleContainers) {
-		if ($params['row']['CType'] == 'gridelements_pi1' && count($params['items']) > 1) {
+		if ($params['row']['CType'] === 'gridelements_pi1' && count($params['items']) > 1) {
 			$items = $params['items'];
 			$params['items'] = array(
 				0 => array_shift($items)
@@ -217,7 +217,7 @@ class TtContent {
 					? ',' . (int)$childOnNextLevel['uid']
 					: (int)$childOnNextLevel['uid'];
 
-				if ($containerIds != '') {
+				if ($containerIds !== '') {
 					$this->lookForChildContainersRecursively($containerIds, $possibleContainers);
 				}
 			}
