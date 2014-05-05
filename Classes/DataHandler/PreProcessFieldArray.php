@@ -80,7 +80,7 @@ class PreProcessFieldArray extends AbstractDataHandler {
 	 * @return void
 	 */
 	public function processFieldArrayForTtContent(array &$fieldArray) {
-		if ($this->getTable() == 'tt_content') {
+		if ($this->getTable() === 'tt_content') {
 			$pid = (int)\TYPO3\CMS\Core\Utility\GeneralUtility::_GET('DDinsertNew');
 
 			if(abs($pid) > 0) {
@@ -179,7 +179,7 @@ class PreProcessFieldArray extends AbstractDataHandler {
 	public function getDefaultFlexformValues(&$fieldArray) {
 		foreach($GLOBALS['TCA']['tt_content']['columns']['pi_flexform']['config']['ds'] as $key => $dataStructure) {
 			$types = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',', $key);
-			if(($types[0] == $fieldArray['list_type'] || $types[0] == '*') && ($types[1] == $fieldArray['CType'] || $types[1] == '*')) {
+			if(($types[0] === $fieldArray['list_type'] || $types[0] === '*') && ($types[1] === $fieldArray['CType'] || $types[1] === '*')) {
 				$fieldArray['pi_flexform'] = $this->extractDefaultDataFromDatastructure($dataStructure);
 			}
 		}
@@ -208,7 +208,7 @@ class PreProcessFieldArray extends AbstractDataHandler {
 						foreach($sheet['ROOT']['el'] as $elName => $elConf) {
 							$config = $elConf['TCEforms']['config'];
 							$elArray[$elName]['vDEF'] = $config['default'];
-							if(!$elArray[$elName]['vDEF'] && $config['type'] == 'select' && count($config['items']) > 0) {
+							if(!$elArray[$elName]['vDEF'] && $config['type'] === 'select' && count($config['items']) > 0) {
 								$elArray[$elName]['vDEF'] = $config['items'][0][1];
 							}
 						}
@@ -268,7 +268,7 @@ class PreProcessFieldArray extends AbstractDataHandler {
 	 * @return void
 	 */
 	public function setFieldEntriesForColumnTargets(array &$fieldArray, $targetUid, array $target) {
-		if ($targetUid != $this->getPageUid()) {
+		if ($targetUid !== $this->getPageUid()) {
 			$fieldArray['colPos'] = -1;
 			$fieldArray['sorting'] = 0;
 			$fieldArray['tx_gridelements_container'] = $targetUid;
@@ -315,7 +315,7 @@ class PreProcessFieldArray extends AbstractDataHandler {
 	 * @return void
 	 */
 	public function setFieldEntriesForGridContainers(array &$fieldArray) {
-		if ((int)$fieldArray['tx_gridelements_container'] > 0 && isset($fieldArray['colPos']) && (int)$fieldArray['colPos'] != -1) {
+		if ((int)$fieldArray['tx_gridelements_container'] > 0 && isset($fieldArray['colPos']) && (int)$fieldArray['colPos'] !== -1) {
 			$fieldArray['colPos'] = -1;
 			$fieldArray['tx_gridelements_columns'] = 0;
 		} else if (isset($fieldArray['tx_gridelements_container']) && (int)$fieldArray['tx_gridelements_container'] === 0 && (int)$fieldArray['colPos'] === -1) {
@@ -343,7 +343,7 @@ class PreProcessFieldArray extends AbstractDataHandler {
 		$changedElements = array();
 		$changedSubPageElements = array();
 
-		if ($this->getTable() == 'tt_content') {
+		if ($this->getTable() === 'tt_content') {
 			$changedGridElements[$this->getPageUid()] = TRUE;
 			$availableColumns = $this->getAvailableColumns($fieldArray['tx_gridelements_backend_layout'], 'tt_content', $this->getPageUid());
 			$childElementsInUnavailableColumns = array_keys(
@@ -399,7 +399,7 @@ class PreProcessFieldArray extends AbstractDataHandler {
 			);
 		}
 
-		if ($this->getTable() == 'pages') {
+		if ($this->getTable() === 'pages') {
 			$rootline = $this->beFunc->BEgetRootLine($this->getPageUid());
 			for ($i = count($rootline); $i > 0; $i--) {
 				$page = $this->databaseConnection->exec_SELECTgetSingleRow(
@@ -408,20 +408,20 @@ class PreProcessFieldArray extends AbstractDataHandler {
 					'uid=' . (int)$rootline[$i]['uid']
 				);
 				$selectedBackendLayoutNextLevel = (int)$page['backend_layout_next_level'];
-				if ($page['uid'] == $this->getPageUid()) {
-					if ($fieldArray['backend_layout_next_level'] != 0) {
+				if ($page['uid'] === $this->getPageUid()) {
+					if ($fieldArray['backend_layout_next_level'] !== 0) {
 						// Backend layout for subpages of the current page is set
 						$backendLayoutNextLevelUid = (int)$fieldArray['backend_layout_next_level'];
 					}
-					if ($fieldArray['backend_layout'] != 0) {
+					if ($fieldArray['backend_layout'] !== 0) {
 						// Backend layout for current page is set
 						$backendLayoutUid = $fieldArray['backend_layout'];
 						break;
 					}
-				} else if ($selectedBackendLayoutNextLevel == -1 && $page['uid'] != $this->getPageUid()) {
+				} else if ($selectedBackendLayoutNextLevel === -1 && $page['uid'] !== $this->getPageUid()) {
 					// Some previous page in our rootline sets layout_next to "None"
 					break;
-				} else if ($selectedBackendLayoutNextLevel > 0 && $page['uid'] != $this->getPageUid()) {
+				} else if ($selectedBackendLayoutNextLevel > 0 && $page['uid'] !== $this->getPageUid()) {
 					// Some previous page in our rootline sets some backend_layout, use it
 					$backendLayoutUid = $selectedBackendLayoutNextLevel;
 					break;
@@ -581,10 +581,10 @@ class PreProcessFieldArray extends AbstractDataHandler {
 
 		if (count($childPages)) {
 			foreach ($childPages as $page) {
-				if ($page['backend_layout'] == 0) {
+				if ((int)$page['backend_layout'] === 0) {
 					$subpages[] = $page;
 				}
-				if ($page['backend_layout_next_level'] == 0) {
+				if ((int)$page['backend_layout_next_level'] === 0) {
 					$this->getSubpagesRecursively($page['uid'], $subpages);
 				}
 			}
@@ -628,10 +628,10 @@ class PreProcessFieldArray extends AbstractDataHandler {
 	public function getAvailableColumns($layout = '', $table = '', $id = 0) {
 		$tcaColumns = array();
 
-		if ($layout && $table == 'tt_content') {
+		if ($layout && $table === 'tt_content') {
 			$tcaColumns = $this->layoutSetup->getLayoutColumns($layout);
 			$tcaColumns = $tcaColumns['CSV'];
-		} else if ($table == 'pages') {
+		} else if ($table === 'pages') {
             $tcaColumns = GeneralUtility::callUserFunction('TYPO3\\CMS\\Backend\\View\\BackendLayoutView->getColPosListItemsParsed', $id, $this);
 			$temp = array();
 			foreach ($tcaColumns AS $item) {

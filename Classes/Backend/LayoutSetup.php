@@ -304,7 +304,7 @@ class LayoutSetup {
 			? array_flip(\TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',', $pageTSconfig['tx_gridelements.']['excludeLayoutIds']))
 			: array();
 
-		$overruleRecords = (isset($pageTSconfig['tx_gridelements.']['overruleRecords']) && $pageTSconfig['tx_gridelements.']['overruleRecords'] == '1');
+		$overruleRecords = (isset($pageTSconfig['tx_gridelements.']['overruleRecords']) && (int)$pageTSconfig['tx_gridelements.']['overruleRecords'] === 1);
 
 		$gridLayoutConfig = array();
 

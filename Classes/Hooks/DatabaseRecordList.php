@@ -53,7 +53,7 @@ class DatabaseRecordList implements RecordListHookInterface {
 				$cells['pasteAfter'] = $parentObject->spaceIcon;
 			}
 		}*/
-		if ($table == 'tt_content') {
+		if ($table === 'tt_content') {
 			$cells['moveUp'] = '';
 		}
 
@@ -123,7 +123,7 @@ class DatabaseRecordList implements RecordListHookInterface {
 	 * @return void
 	 */
 	public function checkChildren($table, $row, $level, &$theData, &$parentObject) {
-		if ($table == 'tt_content' && $row['CType'] == 'gridelements_pi1') {
+		if ($table === 'tt_content' && $row['CType'] === 'gridelements_pi1') {
 			$elementChildren = \GridElementsTeam\Gridelements\Helper\Helper::getInstance()->getChildren($table, $row['uid']);
 			if (count($elementChildren) > 0) {
 				$theData['_EXPANDABLE_'] = TRUE;
@@ -145,7 +145,7 @@ class DatabaseRecordList implements RecordListHookInterface {
 	 * @return void
 	 */
 	public function contentCollapseIcon($data, $sortField, $level, &$contentCollapseIcon, &$parentObject) {
-		if ($data['_EXPAND_TABLE_'] == 'tt_content') {
+		if ($data['_EXPAND_TABLE_'] === 'tt_content') {
 			$contentCollapseIcon = '
 				<a href="javascript:GridElementsListView.elExpandCollapse(\'' . $data['_EXPAND_ID_'] . '\',\'' . $sortField . '\', ' . $level . ')" title="' . $GLOBALS['LANG']->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang.xml:list.collapseElement', TRUE) . '" rel="' . $data['_EXPAND_ID_'] . '">
 					<span class="t3-icon t3-icon-actions t3-icon-actions-view t3-icon-pagetree-collapse collapseIcon">&nbsp;</span>

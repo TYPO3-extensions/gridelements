@@ -181,7 +181,7 @@ class Gridelements extends \TYPO3\CMS\Frontend\ContentObject\ContentObjectRender
 				$compareFunction = function($child_a, $child_b) {
 					if($child_a['sorting'] > $child_b['sorting']) {
 						return 1;
-					} elseif ($child_a['sorting'] == $child_b['sorting']) {
+					} elseif ($child_a['sorting'] === $child_b['sorting']) {
 						return 0;
 					} else return -1;
 				};

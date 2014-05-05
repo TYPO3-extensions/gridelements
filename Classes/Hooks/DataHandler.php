@@ -49,7 +49,7 @@ class DataHandler {
 	 * @return void
 	 */
 	public function processDatamap_preProcessFieldArray(&$fieldArray, $table, $id, \TYPO3\CMS\Core\DataHandling\DataHandler $parentObj) {
-		if (($table == 'tt_content' || $table == 'pages') && !$parentObj->isImporting) {
+		if (($table === 'tt_content' || $table === 'pages') && !$parentObj->isImporting) {
 			/** @var $hook \GridElementsTeam\Gridelements\DataHandler\PreProcessFieldArray */
 			$hook = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('GridElementsTeam\Gridelements\DataHandler\PreProcessFieldArray');
 			$hook->execute_preProcessFieldArray($fieldArray, $table, $id, $parentObj);
@@ -75,8 +75,8 @@ class DataHandler {
 	public function processDatamap_postProcessFieldArray($status, $table, $id, array &$fieldArray, \TYPO3\CMS\Core\DataHandling\DataHandler $parentObj) {
 		$cmd = \TYPO3\CMS\Core\Utility\GeneralUtility::_GET('cmd');
 		if(count($cmd) &&
-			key($cmd) == 'tt_content' &&
-			$status == 'new' &&
+			key($cmd) === 'tt_content' &&
+			$status === 'new' &&
 			strpos($cmd['tt_content'][key($cmd['tt_content'])]['copy'], 'x') !== FALSE &&
 			!$parentObj->isImporting
 		) {

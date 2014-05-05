@@ -29,7 +29,7 @@ $TCA['tx_gridelements_backend_layout'] = array(
 	),
 );
 
-if (TYPO3_MODE == 'BE') {
+if (TYPO3_MODE === 'BE') {
 
 	include_once(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('gridelements') . 'Classes/Backend/TtContent.php');
 

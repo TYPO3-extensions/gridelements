@@ -41,10 +41,10 @@ class Helper {
 			$children = $dependencyElement->getChildren();
 
 			foreach($children as $key => $child) {
-				if ($child->getElement()->getTable() == $table && $child->getField() == 'tx_gridelements_children') {
+				if ($child->getElement()->getTable() === $table && $child->getField() === 'tx_gridelements_children') {
 					$record = $child->getElement()->getRecord();
 
-					if (trim($sortingField) && isset($record[$sortingField]) && $sortingField != 'sorting') {
+					if (trim($sortingField) && isset($record[$sortingField]) && $sortingField !== 'sorting') {
 						$sortField = $record[$sortingField];
 					} else {
 						$sortField = sprintf('%1$011d', $record['sorting']);

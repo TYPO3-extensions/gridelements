@@ -58,7 +58,7 @@ class MoveRecord extends AbstractDataHandler {
 	 */
 	public function execute_moveRecord($table, $uid, &$destPid, &$propArr, &$moveRec, $resolvedPid, &$recordWasMoved, &$parentObj) {
 		$this->init($table, $uid, $parentObj);
-		if ($table == 'tt_content' && !$this->getTceMain()->isImporting) {
+		if ($table === 'tt_content' && !$this->getTceMain()->isImporting) {
 			$copyAfterDuplFields = $GLOBALS['TCA']['tt_content']['ctrl']['copyAfterDuplFields'];
 			$GLOBALS['TCA']['tt_content']['ctrl']['copyAfterDuplFields'] .= ',tx_gridelements_container,tx_gridelements_columns';
 			$cmd = \TYPO3\CMS\Core\Utility\GeneralUtility::_GET('cmd');
@@ -104,7 +104,7 @@ class MoveRecord extends AbstractDataHandler {
 	 * @return array UpdateArray
 	 */
 	public function createUpdateArrayForSplitElements($recordUid, &$destPid, $targetUid, array $target, array &$containerUpdateArray) {
-		if ($targetUid != $recordUid && (int)$target[0] < 0) {
+		if ($targetUid !== $recordUid && (int)$target[0] < 0) {
 			$targetElement = \TYPO3\CMS\Backend\Utility\BackendUtility::getRecordWSOL('tt_content', $targetUid, 'pid');
 			$containerUpdateArray[$targetUid] += 1;
 			$column = (int)$target[1];
@@ -122,7 +122,7 @@ class MoveRecord extends AbstractDataHandler {
 				'tx_gridelements_container' => 0,
 				'tx_gridelements_columns' => 0
 			);
-			if($targetUid != $recordUid) {
+			if($targetUid !== $recordUid) {
 				$updateArray['pid'] = (int)$target[0];
 			}
 		}
@@ -139,7 +139,7 @@ class MoveRecord extends AbstractDataHandler {
 	 * @return array UpdateArray
 	 */
 	public function createUpdateArrayForContainerMove(array $originalElement) {
-		if($originalElement['CType'] == 'gridelements_pi1') {
+		if($originalElement['CType'] === 'gridelements_pi1') {
 			$this->getTceMain()->moveChildren = TRUE;
 		}
 

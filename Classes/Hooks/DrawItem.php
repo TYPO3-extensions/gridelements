@@ -462,7 +462,7 @@ class DrawItem implements \TYPO3\CMS\Backend\View\PageLayoutViewDrawItemHookInte
 					continue;
 				}
 				// which column should be displayed inside this cell
-				$columnKey = $columnConfig['colPos'] != '' ? (int)$columnConfig['colPos'] : 32768;
+				$columnKey = $columnConfig['colPos'] !== '' ? (int)$columnConfig['colPos'] : 32768;
 				// allowed CTypes
 				if(!empty($columnConfig['allowed'])) {
 					$allowedCTypes = array_flip(explode(',', $columnConfig['allowed']));
@@ -483,13 +483,13 @@ class DrawItem implements \TYPO3\CMS\Backend\View\PageLayoutViewDrawItemHookInte
 						? ' rowspan="' . $rowSpan . '"'
 						: '') .
 					'id="column-' . $specificUid . 'x' . $columnKey . '" class="t3-gridCell t3-page-column t3-page-column-' . $columnKey .
-					(!isset($columnConfig['colPos']) || $columnConfig['colPos'] == ''
+					(!isset($columnConfig['colPos']) || $columnConfig['colPos'] === ''
 						? ' t3-gridCell-unassigned'
 						: '') .
-					(isset($columnConfig['colspan']) && $columnConfig['colPos'] != ''
+					(isset($columnConfig['colspan']) && $columnConfig['colPos'] !== ''
 						? ' t3-gridCell-width' . $colSpan
 						: '') .
-					(isset($columnConfig['rowspan']) && $columnConfig['colPos'] != ''
+					(isset($columnConfig['rowspan']) && $columnConfig['colPos'] !== ''
 						? ' t3-gridCell-height' . $rowSpan
 						: '') .
 					' ' . (count($allowedCTypes) ? join(' ', $allowedCTypes) : 't3-allow-all') .
