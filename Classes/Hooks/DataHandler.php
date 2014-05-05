@@ -94,6 +94,22 @@ class DataHandler {
 	}
 
 	/**
+	 * @param    str $status
+	 * @param    str $table : The name of the table the data should be saved to
+	 * @param    int $id : The uid of the page we are currently working on
+	 * @param    array $fieldArray : The array of fields and values that have been saved to the datamap
+	 * @param    \TYPO3\CMS\Core\DataHandling\DataHandler $parentObj : The parent object that triggered this hook
+	 * @return void
+	 */
+	public function processDatamap_afterDatabaseOperations(&$status, &$table, &$id, &$fieldArray, \TYPO3\CMS\Core\DataHandling\DataHandler $parentObj) {
+		if (($table === 'tt_content' || $table === 'pages') && $status === 'update' && !$parentObj->isImporting) {
+			/** @var $hook \GridElementsTeam\Gridelements\DataHandler\AfterDatabaseOperations */
+			$hook = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('GridElementsTeam\Gridelements\DataHandler\AfterDatabaseOperations');
+			$hook->execute_afterDatabaseOperations($fieldArray, $table, $id, $parentObj);
+		}
+	}
+
+	/**
 	 * Function to handle record movement to the first position of a column
 	 *
 	 * @param string            $table: The name of the table we are working on
