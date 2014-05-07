@@ -9,7 +9,7 @@ if(typeof GridElementsDD === "undefined"){
 
 	if(typeof TYPO3.Components !== 'undefined' && typeof TYPO3.Components.PageModule !== 'undefined' && typeof TYPO3.Components.PageModule.init !== 'undefined') {
 		TYPO3.Components.PageModule.init = function() {
-			this.enableHighlighting();
+			// this.enableHighlighting();
 		}
 	};
 

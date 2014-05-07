@@ -295,32 +295,84 @@ td.t3-page-column.t3-gridCell .t3-page-colHeader {
 	display: none!important;
 }
 
-.t3-page-column.active .t3-page-ce .t3-icon-document-new,
-.t3-page-column.active .t3-page-ce .t3-icon-gridelements-copyfrompage,
-.t3-page-ce.active .t3-page-ce .t3-icon-document-new,
-.t3-page-ce.active .t3-page-ce .t3-icon-gridelements-copyfrompage {
-	visibility: hidden;
-}
-
-.t3-page-column.active .t3-page-ce.active .t3-icon-document-new,
-.t3-page-column.active .t3-page-ce.active .t3-icon-gridelements-copyfrompage {
-	visibility: visible;
-}
-
-.t3-page-column.active .t3-page-ce.active .t3-page-ce .t3-icon-document-new,
-.t3-page-column.active .t3-page-ce.active .t3-page-ce .t3-icon-gridelements-copyfrompage {
-	visibility: hidden;
-}
-
-.t3-page-ce-empty .t3-page-ce  .t3-icon-document-new,
-.t3-page-ce-empty .t3-page-ce .t3-icon-gridelements-copyfrompage {
-	visibility: visible!important;
-}
-
 td.t3-page-column, td.t3-page-lang-column {
 	max-width: none;
 }
 
 .t3-page-ce-header {
 	min-width: 200px;
+}
+
+.t3-page-ce .t3-row-header .ce-icons,
+.t3-page-ce .t3-row-header .ce-icons-left{
+	visibility: hidden;
+}
+
+.t3-page-ce:hover .t3-row-header .ce-icons,
+.t3-page-ce:hover .t3-row-header .ce-icons-left{
+	visibility: hidden;
+}
+
+.t3-page-ce:hover > div > h4 > .t3-row-header .ce-icons,
+.t3-page-ce:hover > div > h4 >.t3-row-header .ce-icons-left{
+	visibility: visible;
+}
+
+.t3-page-ce:hover .t3-row-header {
+	background-color: #cacaca;
+}
+
+.t3-page-ce:hover > div > h4 > .t3-row-header {
+	background-color: #666;
+}
+
+.t3-page-ce:hover .t3-page-ce-body {
+	border-color: #fff;
+}
+
+.t3-page-ce:hover > div > .t3-page-ce-body {
+	border-color: #5b5b5b;
+}
+
+.t3-icon-document-new,
+.t3-icon-gridelements-copyfrompage,
+.t3-icon-gridelements-pastecopy,
+.t3-icon-gridelements-pasteref {
+	visibility: visible!important;
+	display: none!important;
+}
+
+.t3-page-column:hover .t3-icon-document-new,
+.t3-page-column:hover .t3-icon-gridelements-copyfrompage,
+.t3-page-column:hover .t3-icon-gridelements-pastecopy,
+.t3-page-column:hover .t3-icon-gridelements-pasteref,
+.t3-page-ce:hover .t3-icon-document-new,
+.t3-page-ce:hover .t3-icon-gridelements-copyfrompage,
+.t3-page-ce:hover .t3-icon-gridelements-pastecopy,
+.t3-page-ce:hover .t3-icon-gridelements-pasteref {
+	display: none!important;
+}
+
+.t3-page-column:hover > .t3-page-ce-wrapper > .t3-page-ce-dropzone > .t3-page-ce-wrapper-new-ce > a > .t3-icon-document-new,
+.t3-page-column:hover > .t3-page-ce-wrapper > .t3-page-ce-dropzone > .t3-page-ce-wrapper-new-ce > a > .t3-icon-gridelements-copyfrompage,
+.t3-page-column:hover > .t3-page-ce-wrapper > .t3-page-ce-dropzone > .t3-page-ce-wrapper-new-ce > a > .t3-icon-gridelements-pastecopy,
+.t3-page-column:hover > .t3-page-ce-wrapper > .t3-page-ce-dropzone > .t3-page-ce-wrapper-new-ce > a > .t3-icon-gridelements-pasteref,
+.t3-page-ce-empty .t3-icon-document-new,
+.t3-page-ce-empty .t3-icon-gridelements-copyfrompage,
+.t3-page-ce-empty .t3-icon-gridelements-pastecopy,
+.t3-page-ce-empty .t3-icon-gridelements-pasteref,
+.t3-page-ce:hover > div > div > a > .t3-icon-document-new,
+.t3-page-ce:hover > div > div > a > .t3-icon-gridelements-copyfrompage,
+.t3-page-ce:hover > div > div > a > .t3-icon-gridelements-pastecopy,
+.t3-page-ce:hover > div > div > a > .t3-icon-gridelements-pasteref {
+	display: inline-block!important;
+}
+
+.t3-page-ce-new-ce,
+.t3-page-ce-wrapper-new-ce {
+	min-height: 19px;
+}
+
+.t3-icon-document-paste-into {
+	display: none!important;
 }
