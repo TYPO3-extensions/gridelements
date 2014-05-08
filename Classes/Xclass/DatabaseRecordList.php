@@ -903,7 +903,9 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
 				if (is_array($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['typo3/class.db_list_extra.inc']['actions'])) {
 					foreach ($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['typo3/class.db_list_extra.inc']['actions'] as $classData) {
 						$hookObject = GeneralUtility::getUserObj($classData);
-						$hookObject->contentCollapseIcon($data, $sortField, $level, $contentCollapseIcon, $this);
+						if(is_object($hookObject) && method_exists($hookObject, 'contentCollapseIcon')) {
+							$hookObject->contentCollapseIcon($data, $sortField, $level, $contentCollapseIcon, $this);
+						}
 					}
 				}
 				$out .= '<td nowrap="nowrap" class="col-icon">' . $contentCollapseIcon . '</td>';
