@@ -364,7 +364,12 @@ td.t3-page-column, td.t3-page-lang-column {
 .t3-page-ce:hover > div > div > a > .t3-icon-document-new,
 .t3-page-ce:hover > div > div > a > .t3-icon-gridelements-copyfrompage,
 .t3-page-ce:hover > div > div > a > .t3-icon-gridelements-pastecopy,
-.t3-page-ce:hover > div > div > a > .t3-icon-gridelements-pasteref {
+.t3-page-ce:hover > div > div > a > .t3-icon-gridelements-pasteref,
+.typo3-dblist .t3-icon-document-new,
+.typo3-dblist .t3-icon-gridelements-copyfrompage,
+.typo3-dblist .t3-icon-gridelements-pastecopy,
+.typo3-dblist .t3-icon-gridelements-pasteref,
+#ext-recordlist-mod1-index-php .typo3-docheader-buttons .t3-icon-document-new {
 	display: inline-block!important;
 }
 
