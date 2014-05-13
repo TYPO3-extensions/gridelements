@@ -380,7 +380,7 @@ class LayoutSetup {
 				$layoutId = $item['alias'];
 			}
 			// Continue if layout is excluded.
-			if (in_array($layoutId, $excludeLayoutIds)) {
+			if (isset($excludeLayoutIds[$layoutId])) {
 				continue;
 			}
 
