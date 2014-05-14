@@ -313,8 +313,10 @@ td.t3-page-column, td.t3-page-lang-column {
 	visibility: hidden;
 }
 
+.t3-page-ce:hover > h4 > .t3-row-header .ce-icons,
+.t3-page-ce:hover > h4 > .t3-row-header .ce-icons-left,
 .t3-page-ce:hover > div > h4 > .t3-row-header .ce-icons,
-.t3-page-ce:hover > div > h4 >.t3-row-header .ce-icons-left{
+.t3-page-ce:hover > div > h4 > .t3-row-header .ce-icons-left{
 	visibility: visible;
 }
 
@@ -322,6 +324,7 @@ td.t3-page-column, td.t3-page-lang-column {
 	background-color: #cacaca;
 }
 
+.t3-page-ce:hover > h4 > .t3-row-header,
 .t3-page-ce:hover > div > h4 > .t3-row-header {
 	background-color: #666;
 }
@@ -330,6 +333,7 @@ td.t3-page-column, td.t3-page-lang-column {
 	border-color: #fff;
 }
 
+.t3-page-ce:hover > .t3-page-ce-body,
 .t3-page-ce:hover > div > .t3-page-ce-body {
 	border-color: #5b5b5b;
 }
