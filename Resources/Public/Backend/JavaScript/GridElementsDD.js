@@ -819,13 +819,13 @@ GridElementsDD = function() {
 			// remove all existing paste-copy icons
 			var pasteIcons = Ext.select('.t3-icon-gridelements-pastecopy').elements;
 			Ext.each(pasteIcons, function(iconEl) {
-				Ext.get(iconEl).remove();
+				Ext.get(iconEl).parent().remove();
 			});
 
 			// remove all existing paste-reference icons
 			var pasteRefIcons = Ext.select('.t3-icon-gridelements-pasteref').elements;
 			Ext.each(pasteRefIcons, function(iconEl) {
-				Ext.get(iconEl).remove();
+				Ext.get(iconEl).parent().remove();
 			});
 		},
 
