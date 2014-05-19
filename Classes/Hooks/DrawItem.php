@@ -471,6 +471,8 @@ class DrawItem implements \TYPO3\CMS\Backend\View\PageLayoutViewDrawItemHookInte
 							$ctype = 't3-allow-' . $key;
 						}
 					}
+				} else {
+					$allowedCTypes[] = 't3-allow-all';
 				}
 				// render the grid cell
 				$colSpan = (int)$columnConfig['colspan'];
