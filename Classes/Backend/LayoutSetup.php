@@ -229,7 +229,7 @@ class LayoutSetup {
 							$GLOBALS['LANG']->sL($column['name']),
 							$column['colPos'],
 							NULL,
-							$column['allowed']
+							$column['allowed'] ? $column['allowed'] : '*'
 						);
 					}
 				}

@@ -58,6 +58,9 @@ class AbstractItemsProcFunc {
                     }
                 }
             }
+	        foreach($backendLayoutData['__items'] as $key => $item) {
+		        $backendLayoutData['__items'][$key][3] = $backendLayoutData['columns'][$item[1]];
+	        }
         };
 		return $backendLayoutData;
 	}
