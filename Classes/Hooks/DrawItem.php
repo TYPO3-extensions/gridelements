@@ -85,7 +85,9 @@ class DrawItem implements \TYPO3\CMS\Backend\View\PageLayoutViewDrawItemHookInte
 		$gridElement = $layoutSetup->init($row['pid'])->cacheCurrentParent($gridContainerId, TRUE);
 		$layoutUid = $gridElement['tx_gridelements_backend_layout'];
 		$layout = $layoutSetup->getLayoutSetup($layoutUid);
-		$parserRows = $layout['config']['rows.'];
+		if(isset($layout['config']) && isset($layout['config']['rows.'])) {
+			$parserRows = $layout['config']['rows.'];
+		}
 
 		// if there is anything to parse, lets check for existing columns in the layout
 
@@ -442,8 +444,16 @@ class DrawItem implements \TYPO3\CMS\Backend\View\PageLayoutViewDrawItemHookInte
 		}
 		$grid .= '<table border="0" cellspacing="1" cellpadding="4" width="100%" height="100%" class="t3-page-columns t3-gridTable">';
 		// add colgroups
-		$colCount = (int)$layoutSetup['config']['colCount'];
-		$rowCount = (int)$layoutSetup['config']['rowCount'];
+		$colCount = 0;
+		$rowCount = 0;
+		if (isset($layoutSetup['config'])) {
+			if (isset($layoutSetup['config']['colCount'])) {
+				$colCount = (int)$layoutSetup['config']['colCount'];
+			}
+			if (isset($layoutSetup['config']['rowCount'])) {
+				$rowCount = (int)$layoutSetup['config']['rowCount'];
+			}
+		}
 		$grid .= '<colgroup>';
 		for ($i = 0; $i < $colCount; $i++) {
 			$grid .= '<col style="width:' . (100 / $colCount) . '%"></col>';
