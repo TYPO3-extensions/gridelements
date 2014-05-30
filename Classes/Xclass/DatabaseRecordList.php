@@ -1,10 +1,13 @@
 <?php
-namespace TYPO3\CMS\Recordlist\RecordList;
+namespace GridElementsTeam\Gridelements\Xclass;
 
 /*************************************************************
  *  Copyright notice
  *
  *  (c) 1999-2013 Kasper Skårhøj (kasperYYYY@typo3.com)
+ *  (c) 2012 Sebastian Böttger <sebastian.boettger@typovision.de>
+ *  (c) 2013 Dirk Hoffmann
+ *  (c) 2014 Jo Hasenau
  *  All rights reserved
  *
  *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -33,11 +36,14 @@ use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Backend\Utility\IconUtility;
 
 /**
- * Class for rendering of Web>List module
+ * XCLASS of 'localRecordList' (class.db_list_extra.inc)
  *
- * @author Kasper Skårhøj <kasperYYYY@typo3.com>
+ * @author	Kasper Skårhøj <kasperYYYY@typo3.com>
+ * @author	Dirk Hoffmann <hoffmann@vmd-jena.de>
+ * @package TYPO3
+ * @subpackage gridelements
  */
-class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\AbstractDatabaseRecordList {
+class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecordList {
 
 	// External:
 	// If TRUE, table rows in the list will alternate in background colors (and have background colors at all!)
@@ -57,6 +63,8 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\AbstractDataba
 	 * @todo Define visibility
 	 */
 	public $deniedNewTables = array();
+
+	protected $maxDepth = 10;
 
 	// If TRUE, the control panel will contain links to the create-new wizards for pages and tt_content elements (normally, the link goes to just creating a new element without the wizards!).
 	/**
@@ -500,11 +508,33 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\AbstractDataba
 				$this->eCounter = $this->firstElementNumber;
 				$iOut = '';
 				$cc = 0;
-				foreach ($accRows as $row) {
+
+				$lastColPos='';
+				foreach($accRows as $key => $row)	{
+					// initialize labels and other stuff by dummy rendering the first row
+					if($cc == 0) {
+						$this->renderListRow($table, $row, $cc, $titleCol, $thumbsCol);
+					}
 					// Render item row if counter < limit
 					if ($cc < $this->iLimit) {
 						$cc++;
 						$this->translations = FALSE;
+
+						if (isset($row['colPos']) && ($row['colPos'] != $lastColPos)) {
+							$lastColPos = $row['colPos'];
+							$this->showMoveUp = FALSE;
+							$column = BackendUtility::getProcessedValueExtra($table, 'colPos', $row['colPos'], 100, $row['uid']);
+							$iOut .= '<tr><td></td><td colspan="' . (count($this->fieldArray)-1+$this->maxDepth) . '" style="padding:5px;"><br /><strong>' .
+								$GLOBALS['LANG']->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:list.columnName') . ' ' .
+								(($column) ? $column : $row['colPos']) . '</strong></td></tr>';
+						} else {
+							$this->showMoveUp = TRUE;
+						}
+						if (isset($row['colPos']) && isset($accRows[$key + 1]) && $row['colPos'] != $accRows[$key + 1]['colPos']) {
+							$this->showMoveDown = FALSE;
+						} else {
+							$this->showMoveDown = TRUE;
+						}
 						$iOut .= $this->renderListRow($table, $row, $cc, $titleCol, $thumbsCol);
 						// If localization view is enabled it means that the selected records are
 						// either default or All language and here we will not select translations
@@ -540,7 +570,7 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\AbstractDataba
 					if ($this->totalItems > $this->itemsLimitPerTable) {
 						$countOnFirstPage = $this->totalItems > $this->itemsLimitSingleTable ? $this->itemsLimitSingleTable : $this->totalItems;
 						$hasMore = $this->totalItems > $this->itemsLimitSingleTable;
-						$colspan = $this->showIcon ? count($this->fieldArray) + 1 : count($this->fieldArray);
+						$colspan = $this->showIcon ? count($this->fieldArray) + $this->maxDepth : count($this->fieldArray);
 						$iOut .= '<tr><td colspan="' . $colspan . '" style="padding:5px;">
 								<a href="' . htmlspecialchars(($this->listURL() . '&table=' . rawurlencode($table))) . '">' . '<img' . IconUtility::skinImg($this->backPath, 'gfx/pildown.gif', 'width="14" height="14"') . ' alt="" />' . ' <i>[1 - ' . $countOnFirstPage . ($hasMore ? '+' : '') . ']</i></a>
 								</td></tr>';
@@ -584,137 +614,6 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\AbstractDataba
 	 */
 	protected function isRowListingConditionFulfilled($table, $row) {
 		return TRUE;
-	}
-
-	/**
-	 * Rendering a single row for the list
-	 *
-	 * @param string $table Table name
-	 * @param array $row Current record
-	 * @param integer $cc Counter, counting for each time an element is rendered (used for alternating colors)
-	 * @param string $titleCol Table field (column) where header value is found
-	 * @param string $thumbsCol Table field (column) where (possible) thumbnails can be found
-	 * @param integer $indent Indent from left.
-	 * @return string Table row for the element
-	 * @access private
-	 * @see getTable()
-	 * @todo Define visibility
-	 */
-	public function renderListRow($table, $row, $cc, $titleCol, $thumbsCol, $indent = 0) {
-		$iOut = '';
-		// If in search mode, make sure the preview will show the correct page
-		if (strlen($this->searchString)) {
-			$id_orig = $this->id;
-			$this->id = $row['pid'];
-		}
-		if (is_array($row)) {
-			// Add special classes for first and last row
-			$rowSpecial = '';
-			if ($cc == 1 && $indent == 0) {
-				$rowSpecial .= ' firstcol';
-			}
-			if ($cc == $this->totalRowCount || $cc == $this->iLimit) {
-				$rowSpecial .= ' lastcol';
-			}
-			// Background color, if any:
-			if ($this->alternateBgColors) {
-				$row_bgColor = $cc % 2 ? ' class="db_list_normal' . $rowSpecial . '"' : ' class="db_list_alt' . $rowSpecial . '"';
-			} else {
-				$row_bgColor = ' class="db_list_normal' . $rowSpecial . '"';
-			}
-			// Overriding with versions background color if any:
-			$row_bgColor = $row['_CSSCLASS'] ? ' class="' . $row['_CSSCLASS'] . '"' : $row_bgColor;
-			// Incr. counter.
-			$this->counter++;
-			// The icon with link
-			$alttext = BackendUtility::getRecordIconAltText($row, $table);
-			$iconImg = IconUtility::getSpriteIconForRecord($table, $row, array('title' => htmlspecialchars($alttext), 'style' => $indent ? ' margin-left: ' . $indent . 'px;' : ''));
-			$theIcon = $this->clickMenuEnabled ? $GLOBALS['SOBE']->doc->wrapClickMenuOnIcon($iconImg, $table, $row['uid']) : $iconImg;
-			// Preparing and getting the data-array
-			$theData = array();
-			foreach ($this->fieldArray as $fCol) {
-				if ($fCol == $titleCol) {
-					$recTitle = BackendUtility::getRecordTitle($table, $row, FALSE, TRUE);
-					// If the record is edit-locked	by another user, we will show a little warning sign:
-					if ($lockInfo = BackendUtility::isRecordLocked($table, $row['uid'])) {
-						$warning = '<a href="#" onclick="alert(' . GeneralUtility::quoteJSvalue($lockInfo['msg']) . '); return false;" title="' . htmlspecialchars($lockInfo['msg']) . '">' . IconUtility::getSpriteIcon('status-warning-in-use') . '</a>';
-					}
-					$theData[$fCol] = $warning . $this->linkWrapItems($table, $row['uid'], $recTitle, $row);
-					// Render thumbnails, if:
-					// - a thumbnail column exists
-					// - there is content in it
-					// - the thumbnail column is visible for the current type
-					$type = 0;
-					if (isset($GLOBALS['TCA'][$table]['ctrl']['type'])) {
-						$typeColumn = $GLOBALS['TCA'][$table]['ctrl']['type'];
-						$type = $row[$typeColumn];
-					}
-					// If current type doesn't exist, set it to 0 (or to 1 for historical reasons, if 0 doesn't exist)
-					if (!isset($GLOBALS['TCA'][$table]['types'][$type])) {
-						$type = isset($GLOBALS['TCA'][$table]['types'][0]) ? 0 : 1;
-					}
-					$visibleColumns = $GLOBALS['TCA'][$table]['types'][$type]['showitem'];
-
-					if ($this->thumbs &&
-						trim($row[$thumbsCol]) &&
-						preg_match('/(^|(.*(;|,)?))' . $thumbsCol . '(((;|,).*)|$)/', $visibleColumns) === 1
-					) {
-						$theData[$fCol] .= '<br />' . $this->thumbCode($row, $table, $thumbsCol);
-					}
-					$localizationMarkerClass = '';
-					if (isset($GLOBALS['TCA'][$table]['ctrl']['languageField']) && $row[$GLOBALS['TCA'][$table]['ctrl']['languageField']] != 0 && $row[$GLOBALS['TCA'][$table]['ctrl']['transOrigPointerField']] != 0) {
-						// It's a translated record with a language parent
-						$localizationMarkerClass = ' localization';
-					}
-				} elseif ($fCol == 'pid') {
-					$theData[$fCol] = $row[$fCol];
-				} elseif ($fCol == '_PATH_') {
-					$theData[$fCol] = $this->recPath($row['pid']);
-				} elseif ($fCol == '_REF_') {
-					$theData[$fCol] = $this->createReferenceHtml($table, $row['uid']);
-				} elseif ($fCol == '_CONTROL_') {
-					$theData[$fCol] = $this->makeControl($table, $row);
-				} elseif ($fCol == '_AFTERCONTROL_' || $fCol == '_AFTERREF_') {
-					$theData[$fCol] = '&nbsp;';
-				} elseif ($fCol == '_CLIPBOARD_') {
-					$theData[$fCol] = $this->makeClip($table, $row);
-				} elseif ($fCol == '_LOCALIZATION_') {
-					list($lC1, $lC2) = $this->makeLocalizationPanel($table, $row);
-					$theData[$fCol] = $lC1;
-					$theData[$fCol . 'b'] = $lC2;
-				} elseif ($fCol == '_LOCALIZATION_b') {
-
-				} else {
-					$tmpProc = BackendUtility::getProcessedValueExtra($table, $fCol, $row[$fCol], 100, $row['uid']);
-					$theData[$fCol] = $this->linkUrlMail(htmlspecialchars($tmpProc), $row[$fCol]);
-					if ($this->csvOutput) {
-						$row[$fCol] = BackendUtility::getProcessedValueExtra($table, $fCol, $row[$fCol], 0, $row['uid']);
-					}
-				}
-			}
-			// Reset the ID if it was overwritten
-			if (strlen($this->searchString)) {
-				$this->id = $id_orig;
-			}
-			// Add row to CSV list:
-			if ($this->csvOutput) {
-				$this->addToCSV($row, $table);
-			}
-			// Add classes to table cells
-			$this->addElement_tdCssClass[$titleCol] = 'col-title' . $localizationMarkerClass;
-			if (!$this->dontShowClipControlPanels) {
-				$this->addElement_tdCssClass['_CONTROL_'] = 'col-control';
-				$this->addElement_tdCssClass['_AFTERCONTROL_'] = 'col-control-space';
-				$this->addElement_tdCssClass['_CLIPBOARD_'] = 'col-clipboard';
-			}
-			$this->addElement_tdCssClass['_PATH_'] = 'col-path';
-			$this->addElement_tdCssClass['_LOCALIZATION_'] = 'col-localizationa';
-			$this->addElement_tdCssClass['_LOCALIZATION_b'] = 'col-localizationb';
-			// Create element in table cells:
-			$iOut .= $this->addelement(1, $theIcon, $theData, $row_bgColor);
-			// Finally, return table row element:
-			return $iOut;
-		}
 	}
 
 	/**
@@ -997,13 +896,15 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\AbstractDataba
 	 *
 	 * @param string $table The table
 	 * @param array $row The record for which to make the control panel.
+	 * @param string $level
 	 * @return string HTML table with the control panel (unless disabled)
 	 * @todo Define visibility
 	 */
-	public function makeControl($table, $row) {
+	public function makeControl($table,$row,$level)	{
 		if ($this->dontShowClipControlPanels) {
 			return '';
 		}
+		$rowUid = \GridElementsTeam\Gridelements\Helper\Helper::getInstance()->getSpecificUid($row);
 		$rowUid = $row['uid'];
 		if (ExtensionManagementUtility::isLoaded('version') && isset($row['_ORIG_uid'])) {
 			$rowUid = $row['_ORIG_uid'];
@@ -1038,9 +939,9 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\AbstractDataba
 			$cells['edit'] = $this->spaceIcon;
 		}
 		// "Move" wizard link for pages/tt_content elements:
-		if ($table == 'tt_content' && $permsEdit || $table == 'pages') {
+		if (($table == 'tt_content' && $permsEdit || $table=='pages') && $level == 0) {
 			$cells['move'] = '<a href="#" onclick="' . htmlspecialchars(('return jumpExt(\'' . $this->backPath . 'move_el.php?table=' . $table . '&uid=' . $row['uid'] . '\');')) . '" title="' . $GLOBALS['LANG']->getLL(('move_' . ($table == 'tt_content' ? 'record' : 'page')), TRUE) . '">' . ($table == 'tt_content' ? IconUtility::getSpriteIcon('actions-document-move') : IconUtility::getSpriteIcon('actions-page-move')) . '</a>';
-		} elseif (!$this->table) {
+		} elseif(!$this->table || $level > 0) {
 			$cells['move'] = $this->spaceIcon;
 		}
 		// If the extended control panel is enabled OR if we are seeing a single table:
@@ -1068,7 +969,7 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\AbstractDataba
 				// "Edit Perms" link:
 				if ($table == 'pages' && $GLOBALS['BE_USER']->check('modules', 'web_perm') && ExtensionManagementUtility::isLoaded('perm')) {
 					$cells['perms'] = '<a href="' . htmlspecialchars((BackendUtility::getModuleUrl('web_perm') . '&id=' . $row['uid'] . '&return_id=' . $row['uid'] . '&edit=1')) . '" title="' . $GLOBALS['LANG']->getLL('permissions', TRUE) . '">' . IconUtility::getSpriteIcon('status-status-locked') . '</a>';
-				} elseif (!$this->table && $GLOBALS['BE_USER']->check('modules', 'web_perm')) {
+				} elseif ((!$this->table || $level > 0) && $GLOBALS['BE_USER']->check('modules', 'web_perm')) {
 					$cells['perms'] = $this->spaceIcon;
 				}
 				// "New record after" link (ONLY if the records in the table are sorted by a "sortby"-row or if default values can depend on previous record):
@@ -1084,16 +985,21 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\AbstractDataba
 				}
 				// "Up/Down" links
 				if ($permsEdit && $GLOBALS['TCA'][$table]['ctrl']['sortby'] && !$this->sortField && !$this->searchLevels) {
-					if (isset($this->currentTable['prev'][$row['uid']])) {
+					if (isset($this->currentTable['prev'][$row['uid']]) && $this->showMoveUp === TRUE)	{
 						// Up
-						$params = '&cmd[' . $table . '][' . $row['uid'] . '][move]=' . $this->currentTable['prev'][$row['uid']];
+						if($this->lastMoveDownParams) {
+							$params= $this->lastMoveDownParams;
+						} else {
+							$params = '&cmd[' . $table . '][' . $row['uid'] . '][move]=' . $this->currentTable['prev'][$row['uid']];
+						}
 						$cells['moveUp'] = '<a href="#" onclick="' . htmlspecialchars(('return jumpToUrl(\'' . $GLOBALS['SOBE']->doc->issueCommand($params, -1) . '\');')) . '" title="' . $GLOBALS['LANG']->getLL('moveUp', TRUE) . '">' . IconUtility::getSpriteIcon('actions-move-up') . '</a>';
 					} else {
 						$cells['moveUp'] = $this->spaceIcon;
 					}
-					if ($this->currentTable['next'][$row['uid']]) {
+					if ($this->currentTable['next'][$row['uid']] && $this->showMoveDown === TRUE)	{
 						// Down
 						$params = '&cmd[' . $table . '][' . $row['uid'] . '][move]=' . $this->currentTable['next'][$row['uid']];
+						$this->lastMoveDownParams = $params;
 						$cells['moveDown'] = '<a href="#" onclick="' . htmlspecialchars(('return jumpToUrl(\'' . $GLOBALS['SOBE']->doc->issueCommand($params, -1) . '\');')) . '" title="' . $GLOBALS['LANG']->getLL('moveDown', TRUE) . '">' . IconUtility::getSpriteIcon('actions-move-down') . '</a>';
 					} else {
 						$cells['moveDown'] = $this->spaceIcon;
@@ -1231,9 +1137,18 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\AbstractDataba
 		if ($this->clipObj->current == 'normal') {
 			// Show copy/cut icons:
 			$isSel = (string) $this->clipObj->isSelected($table, $row['uid']);
-			$cells['copy'] = $isL10nOverlay ? $this->spaceIcon : '<a href="#" onclick="' . htmlspecialchars(('return jumpSelf(\'' . $this->clipObj->selUrlDB($table, $row['uid'], 1, ($isSel == 'copy'), array('returnUrl' => '')) . '\');')) . '" title="' . $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.xlf:cm.copy', TRUE) . '">' . (!$isSel == 'copy' ? IconUtility::getSpriteIcon('actions-edit-copy') : IconUtility::getSpriteIcon('actions-edit-copy-release')) . '</a>';
-			$cells['cut'] = $isL10nOverlay ? $this->spaceIcon : '<a href="#" onclick="' . htmlspecialchars(('return jumpSelf(\'' . $this->clipObj->selUrlDB($table, $row['uid'], 0, ($isSel == 'cut'), array('returnUrl' => '')) . '\');')) . '" title="' . $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.xlf:cm.cut', TRUE) . '">' . (!$isSel == 'cut' ? IconUtility::getSpriteIcon('actions-edit-cut') : IconUtility::getSpriteIcon('actions-edit-cut-release')) . '</a>';
+			if (stripos(GeneralUtility::getIndpEnv('SCRIPT_NAME'), 'ajax') === FALSE) {
+				$copyUrl = $this->clipObj->selUrlDB($table, $row['uid'], 1, ($isSel == 'copy'), array('returnUrl' => ''));
+				$cutUrl = $this->clipObj->selUrlDB($table, $row['uid'], 0, ($isSel == 'cut'), array('returnUrl' => ''));
+			} else {
+				$copyUrl = $this->selUrlDB($table, $row['uid'], $row['pid'], 1, ($isSel=='copy'));
+				$cutUrl = $this->selUrlDB($table, $row['uid'], $row['pid'], 0, ($isSel == 'cut'));
+			}
+
+			$cells['copy'] = $isL10nOverlay ? $this->spaceIcon : '<a href="#" onclick="' . htmlspecialchars(('return jumpSelf(\'' . $copyUrl . '\');')) . '" title="' . $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.xlf:cm.copy', TRUE) . '">' . (!$isSel == 'copy' ? IconUtility::getSpriteIcon('actions-edit-copy') : IconUtility::getSpriteIcon('actions-edit-copy-release')) . '</a>';
+			$cells['cut'] = $isL10nOverlay ? $this->spaceIcon : '<a href="#" onclick="' . htmlspecialchars(('return jumpSelf(\'' . $cutUrl . '\');')) . '" title="' . $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.xlf:cm.cut', TRUE) . '">' . (!$isSel == 'cut' ? IconUtility::getSpriteIcon('actions-edit-cut') : IconUtility::getSpriteIcon('actions-edit-cut-release')) . '</a>';
 		} else {
+			$buttons['csh'] = BackendUtility::cshItem('xMOD_csh_corebe', 'list_module', $GLOBALS['BACK_PATH'], '', TRUE);
 			// For the numeric clipboard pads (showing checkboxes where one can select elements on/off)
 			// Setting name of the element in ->CBnames array:
 			$n = $table . '|' . $row['uid'];
@@ -1254,6 +1169,12 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\AbstractDataba
 		// Now, looking for selected elements from the current table:
 		$elFromTable = $this->clipObj->elFromTable($table);
 		if (count($elFromTable) && $GLOBALS['TCA'][$table]['ctrl']['sortby']) {
+			if (stripos(GeneralUtility::getIndpEnv('SCRIPT_NAME'), 'ajax') === FALSE) {
+				$pasteUrl = $this->clipObj->pasteUrl($table, -$row['uid']);
+			} else {
+				$pasteUrl = $this->pasteUrl($table, -$row['uid'], $row['pid']);
+			}
+
 			// IF elements are found and they can be individually ordered, then add a "paste after" icon:
 			$cells['pasteAfter'] = $isL10nOverlay ? $this->spaceIcon : '<a href="' . htmlspecialchars($this->clipObj->pasteUrl($table, -$row['uid'])) . '" onclick="' . htmlspecialchars(('return ' . $this->clipObj->confirmMsg($table, $row, 'after', $elFromTable))) . '" title="' . $GLOBALS['LANG']->getLL('clip_pasteAfter', TRUE) . '">' . IconUtility::getSpriteIcon('actions-document-paste-after') . '</a>';
 		}
@@ -1280,6 +1201,347 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\AbstractDataba
 		// Compile items into a DIV-element:
 		return '							<!-- CLIPBOARD PANEL: ' . $table . ':' . $row['uid'] . ' -->
 											<div class="typo3-clipCtrl">' . implode('', $cells) . '</div>';
+	}
+
+	/**
+	 * Rendering a single row for the list
+	 *
+	 * @param string $table Table name
+	 * @param array $row Current record
+	 * @param integer $cc Counter, counting for each time an element is rendered (used for alternating colors)
+	 * @param string $titleCol Table field (column) where header value is found
+	 * @param string $thumbsCol Table field (column) where (possible) thumbnails can be found
+	 * @param integer $indent Indent from left.
+	 * @param integer $level
+	 * @return string Table row for the element
+	 * @access private
+	 * @see getTable()
+	 * @todo Define visibility
+	 */
+	public function renderListRow($table, $row, $cc, $titleCol, $thumbsCol, $indent=0, $level=0) {
+		$iOut = '';
+		// If in search mode, make sure the preview will show the correct page
+		if (strlen($this->searchString)) {
+			$id_orig = $this->id;
+			$this->id = $row['pid'];
+		}
+		if (is_array($row)) {
+			// Add special classes for first and last row
+			$rowSpecial = '';
+			if ($cc == 1 && $indent == 0) {
+				$rowSpecial .= ' firstcol';
+			}
+			if ($cc == $this->totalRowCount || $cc == $this->iLimit) {
+				$rowSpecial .= ' lastcol';
+			}
+			// Background color, if any:
+			if ($this->alternateBgColors) {
+				$row_bgColor = $cc % 2 ? ' class="db_list_normal' . $rowSpecial . '"' : ' class="db_list_alt' . $rowSpecial . '"';
+			} else {
+				$row_bgColor = ' class="db_list_normal' . $rowSpecial . '"';
+			}
+			// Overriding with versions background color if any:
+			$row_bgColor = $row['_CSSCLASS'] ? ' class="' . $row['_CSSCLASS'] . '"' : $row_bgColor;
+			// Incr. counter.
+			$this->counter++;
+			// The icon with link
+			$alttext = BackendUtility::getRecordIconAltText($row, $table);
+			$iconImg = IconUtility::getSpriteIconForRecord($table, $row, array('title' => htmlspecialchars($alttext), 'style' => $indent ? ' margin-left: ' . $indent . 'px;' : ''));
+			$theIcon = $this->clickMenuEnabled ? $GLOBALS['SOBE']->doc->wrapClickMenuOnIcon($iconImg, $table, $row['uid']) : $iconImg;
+			// Preparing and getting the data-array
+			$theData = array();
+			foreach ($this->fieldArray as $fCol) {
+				if ($fCol == $titleCol) {
+					$recTitle = BackendUtility::getRecordTitle($table, $row, FALSE, TRUE);
+					// If the record is edit-locked	by another user, we will show a little warning sign:
+					if ($lockInfo = BackendUtility::isRecordLocked($table, $row['uid'])) {
+						$warning = '<a href="#" onclick="alert(' . GeneralUtility::quoteJSvalue($lockInfo['msg']) . '); return false;" title="' . htmlspecialchars($lockInfo['msg']) . '">' . IconUtility::getSpriteIcon('status-warning-in-use') . '</a>';
+					}
+					$theData[$fCol] = $warning . $this->linkWrapItems($table, $row['uid'], $recTitle, $row);
+					// Render thumbnails, if:
+					// - a thumbnail column exists
+					// - there is content in it
+					// - the thumbnail column is visible for the current type
+					$type = 0;
+					if (isset($GLOBALS['TCA'][$table]['ctrl']['type'])) {
+						$typeColumn = $GLOBALS['TCA'][$table]['ctrl']['type'];
+						$type = $row[$typeColumn];
+					}
+					// If current type doesn't exist, set it to 0 (or to 1 for historical reasons, if 0 doesn't exist)
+					if (!isset($GLOBALS['TCA'][$table]['types'][$type])) {
+						$type = isset($GLOBALS['TCA'][$table]['types'][0]) ? 0 : 1;
+					}
+					$visibleColumns = $GLOBALS['TCA'][$table]['types'][$type]['showitem'];
+
+					if ($this->thumbs &&
+						trim($row[$thumbsCol]) &&
+						preg_match('/(^|(.*(;|,)?))' . $thumbsCol . '(((;|,).*)|$)/', $visibleColumns) === 1
+					) {
+						$theData[$fCol] .= '<br />' . $this->thumbCode($row, $table, $thumbsCol);
+					}
+					$localizationMarkerClass = '';
+					if (isset($GLOBALS['TCA'][$table]['ctrl']['languageField']) && $row[$GLOBALS['TCA'][$table]['ctrl']['languageField']] != 0 && $row[$GLOBALS['TCA'][$table]['ctrl']['transOrigPointerField']] != 0) {
+						// It's a translated record with a language parent
+						$localizationMarkerClass = ' localization';
+					}
+				} elseif ($fCol == 'pid') {
+					$theData[$fCol] = $row[$fCol];
+				} elseif ($fCol == '_PATH_') {
+					$theData[$fCol] = $this->recPath($row['pid']);
+				} elseif ($fCol == '_REF_') {
+					$theData[$fCol] = $this->createReferenceHtml($table, $row['uid']);
+				} elseif ($fCol == '_CONTROL_') {
+					$theData[$fCol] = $this->makeControl($table, $row, $level);
+				} elseif ($fCol == '_AFTERCONTROL_' || $fCol == '_AFTERREF_') {
+					$theData[$fCol] = '&nbsp;';
+				} elseif ($fCol == '_CLIPBOARD_') {
+					$theData[$fCol] = $this->makeClip($table, $row);
+				} elseif ($fCol == '_LOCALIZATION_') {
+					list($lC1, $lC2) = $this->makeLocalizationPanel($table, $row);
+					$theData[$fCol] = $lC1;
+				} elseif (!$fCol == '_LOCALIZATION_b') {
+					$tmpProc = BackendUtility::getProcessedValueExtra($table, $fCol, $row[$fCol], 100, $row['uid']);
+					$theData[$fCol] = $this->linkUrlMail(htmlspecialchars($tmpProc), $row[$fCol]);
+					if ($this->csvOutput) {
+						$row[$fCol] = BackendUtility::getProcessedValueExtra($table, $fCol, $row[$fCol], 0, $row['uid']);
+					}
+				} elseif ($fCol == '_LOCALIZATION_b') {
+					$theData[$fCol] = $lC2;
+				} else {
+					$theData[$fCol] = BackendUtility::getProcessedValueExtra($table, $fCol, $row[$fCol], 0, $row['uid']);
+				}
+			}
+			// Reset the ID if it was overwritten
+			if (strlen($this->searchString)) {
+				$this->id = $id_orig;
+			}
+			// Add row to CSV list:
+			if ($this->csvOutput) {
+				$this->addToCSV($row, $table);
+			}
+			// Add classes to table cells
+			$this->addElement_tdCssClass[$titleCol] = 'col-title' . $localizationMarkerClass;
+			if (!$this->dontShowClipControlPanels) {
+				$this->addElement_tdCssClass['_CONTROL_'] = 'col-control';
+				$this->addElement_tdCssClass['_AFTERCONTROL_'] = 'col-control-space';
+				$this->addElement_tdCssClass['_CLIPBOARD_'] = 'col-clipboard';
+			}
+			$this->addElement_tdCssClass['_PATH_'] = 'col-path';
+			$this->addElement_tdCssClass['_LOCALIZATION_'] = 'col-localizationa';
+			$this->addElement_tdCssClass['_LOCALIZATION_b'] = 'col-localizationb';
+
+			/**
+			 * @hook checkChildren
+			 * @date 2014-02-11
+			 * @request Alexander Grein <alexander.grein@in2code.de>
+			 */
+			if (is_array($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['typo3/class.db_list_extra.inc']['actions'])) {
+				foreach ($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['typo3/class.db_list_extra.inc']['actions'] as $classData) {
+					$hookObject = \TYPO3\CMS\Core\Utility\GeneralUtility::getUserObj($classData);
+					if(is_object($hookObject) && method_exists($hookObject, 'checkChildren')) {
+						$hookObject->checkChildren($table, $row, $level, $theData, $this);
+					}
+				}
+			}
+			// Create element in table cells:
+			$iOut .= $this->addelement(1, $theIcon, $theData, $row_bgColor, '', '', $level);
+			// Finally, return table row element:
+			return $iOut;
+		}
+	}
+
+	/**
+	 * Returns a table-row with the content from the fields in the input data array.
+	 * OBS: $this->fieldArray MUST be set! (represents the list of fields to display)
+	 *
+	 * @param integer $h Is an integer >=0 and denotes how tall a element is. Set to '0' makes a halv line, -1 = full line, set to 1 makes a 'join' and above makes 'line'
+	 * @param string $icon Is the <img>+<a> of the record. If not supplied the first 'join'-icon will be a 'line' instead
+	 * @param array $data Is the dataarray, record with the fields. Notice: These fields are (currently) NOT htmlspecialchar'ed before being wrapped in <td>-tags
+	 * @param string $tdParams Is insert in the <td>-tags. Must carry a ' ' as first character
+	 * @param integer OBSOLETE - NOT USED ANYMORE. $lMargin is the leftMargin (integer)
+	 * @param string $altLine Is the HTML <img>-tag for an alternative 'gfx/ol/line.gif'-icon (used in the top)
+	 * @param int $level
+	 * @return string HTML content for the table row
+	 * @todo Define visibility
+	 */
+	public function addElement($h, $icon, $data, $trParams = '', $lMargin = '', $altLine = '', $level = 0) {
+		$noWrap = $this->no_noWrap ? '' : ' nowrap="nowrap"';
+		// Start up:
+		$out = '
+		<!-- Element, begin: -->
+		<tr ' . $trParams . '>';
+
+		if (count($data) > 1) {
+			for ($i = 0; $i < $level; $i++) {
+//				t3lib_utility_Debug::debug($level);
+				$out .=	'<td></td>';
+			}
+
+			if ($data['_EXPANDABLE_']) {
+				$sortField = GeneralUtility::_GP('sortField') ? GeneralUtility::_GP('sortField') . ':'  . (int)GeneralUtility::_GP('sortRev') : '';
+				$contentCollapseIcon = '';
+				/**
+				 * @hook contentCollapseIcon
+				 * @date 2014-02-11
+				 * @request Alexander Grein <alexander.grein@in2code.de>
+				 */
+				if (is_array($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['typo3/class.db_list_extra.inc']['actions'])) {
+					foreach ($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['typo3/class.db_list_extra.inc']['actions'] as $classData) {
+						$hookObject = GeneralUtility::getUserObj($classData);
+						if(is_object($hookObject) && method_exists($hookObject, 'contentCollapseIcon')) {
+							$hookObject->contentCollapseIcon($data, $sortField, $level, $contentCollapseIcon, $this);
+						}
+					}
+				}
+				$out .= '<td nowrap="nowrap" class="col-icon">' . $contentCollapseIcon . '</td>';
+			} else {
+				$last = IconUtility::getSpriteIcon('actions-view-paging-last-disabled');
+				$out .=	'<td></td>';
+			}
+
+		}
+
+		// Show icon and lines
+		if ($this->showIcon) {
+			$out .= '
+			<td nowrap="nowrap" class="col-icon">';
+			if (!$h) {
+				$out .= '<img src="clear.gif" width="1" height="8" alt="" />';
+			} else {
+				$next = IconUtility::getSpriteIcon('actions-view-paging-next-disabled');
+				for ($a = 0; $a < $h; $a++) {
+					if (!$a) {
+						if ($icon) {
+							$out .= $icon;
+						}
+					if ($this->table && is_array($currentIdList)) {
+						// If the numeric clipboard pads are selected, show duplicate sorting link:
+						if ($this->clipNumPane()) {
+							$theData[$fCol] .= '<a href="' . htmlspecialchars(($this->listURL('', -1) . '&duplicateField=' . $fCol)) . '" title="' . $GLOBALS['LANG']->getLL('clip_duplicates', TRUE) . '">' . IconUtility::getSpriteIcon('actions-document-duplicates-select') . '</a>';
+						}
+						// If the table can be edited, add link for editing THIS field for all listed records:
+						if (!$GLOBALS['TCA'][$table]['ctrl']['readOnly'] && $permsEdit && $GLOBALS['TCA'][$table]['columns'][$fCol]) {
+							$editIdList = implode(',', $currentIdList);
+							if ($this->clipNumPane()) {
+								$editIdList = '\'+editList(\'' . $table . '\',\'' . $editIdList . '\')+\'';
+							}
+							$params = '&edit[' . $table . '][' . $editIdList . ']=edit&columnsOnly=' . $fCol . '&disHelp=1';
+							$iTitle = sprintf($GLOBALS['LANG']->getLL('editThisColumn'), $sortLabel);
+							$theData[$fCol] .= '<a href="#" onclick="' . htmlspecialchars(BackendUtility::editOnClick($params, $this->backPath, -1)) . '" title="' . htmlspecialchars($iTitle) . '">' . IconUtility::getSpriteIcon('actions-document-open') . '</a>';
+						}
+					}
+					$theData[$fCol] .= $this->addSortLink($sortLabel, $fCol, $table);
+			}
+				}
+			}
+			$out .= '</td>
+			';
+		}
+		// Init rendering.
+		$colsp = '';
+		$lastKey = '';
+		$c = 1;
+		$ccount = 0;
+		// Traverse field array which contains the data to present:
+		foreach ($this->fieldArray as $vKey) {
+			if (isset($data[$vKey])) {
+				if ($ccount == 1) {
+					$colsp = ' colspan="' . ($this->maxDepth - $level) . '"';
+				}
+
+				if ($lastKey) {
+					$cssClass = $this->addElement_tdCssClass[$lastKey];
+					if ($this->oddColumnsCssClass && $ccount % 2 == 0) {
+						$cssClass = implode(' ', array($this->addElement_tdCssClass[$lastKey], $this->oddColumnsCssClass));
+					}
+					$out .= '
+						<td' . $noWrap . ' class="' . $cssClass . '"' . $colsp . $this->addElement_tdParams[$lastKey] . '>' . $data[$lastKey] . '</td>';
+				}
+				$lastKey = $vKey;
+				$c = 1;
+				$ccount++;
+			} else {
+				$first = IconUtility::getSpriteIcon('actions-view-paging-first-disabled');
+				if (!$lastKey) {
+					$lastKey = $vKey;
+				}
+				$c++;
+			}
+			$reload = '<a href="#" onclick="document.dblistForm.action=\'' . $listURL . '&pointer=\'+calculatePointer(document.getElementById(\'jumpPage-' . $renderPart . '\').value); document.dblistForm.submit(); return true;" title="' . $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_common.xlf:reload', TRUE) . '">' . IconUtility::getSpriteIcon('actions-system-refresh') . '</a>';
+
+			if (count($data) == 1) {
+				$c++;
+			}
+
+			if ($c > 1) {
+				$colsp = ' colspan="' . ($c + $this->maxDepth) . '"';
+			} else {
+				$previous = IconUtility::getSpriteIcon('actions-view-paging-previous-disabled');
+				$colsp = '';
+			}
+		}
+		if ($lastKey) {
+			$cssClass = $this->addElement_tdCssClass[$lastKey];
+			if ($this->oddColumnsCssClass) {
+				$cssClass = implode(' ', array($this->addElement_tdCssClass[$lastKey], $this->oddColumnsCssClass));
+			}
+			$rangeIndicator = '<span class="pageIndicator">' . sprintf($GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_mod_web_list.xlf:rangeIndicator'), ($this->firstElementNumber + 1), $lastElementNumber) . '</span>';
+			$out .= '
+				<td' . $noWrap . ' class="' . $cssClass . '"' . $colsp . $this->addElement_tdParams[$lastKey] . '>' . $data[$lastKey] . '</td>';
+		}
+		// End row
+		$out .= '
+		</tr>';
+		// Return row.
+		return $out;
+	}
+
+	/**
+	 * pasteUrl of the element (database and file)
+	 * For the meaning of $table and $uid, please read from ->makePasteCmdArray!!!
+	 * The URL will point to tce_file or tce_db depending in $table
+	 *
+	 * @param string Tablename (_FILE for files)
+	 * @param int $uid
+	 * @param int $pid
+	 * @param int $setRedirect If set, then the redirect URL will point back to the current script, but with CB reset.
+	 * @return string
+	 */
+	function pasteUrl($table, $uid, $pid, $setRedirect = 1) {
+		$moduleUrl = BackendUtility::getModuleUrl('web_list');
+		$rU = $this->backPath . ($table == '_FILE' ? 'tce_file.php' : 'tce_db.php') . '?' .
+			($setRedirect ? 'redirect=' . rawurlencode($moduleUrl . '&id=' . $pid) : '') .
+			'&vC=' . $GLOBALS['BE_USER']->veriCode() .
+			'&prErr=1&uPT=1' .
+			'&CB[paste]=' . rawurlencode($table . '|' . $uid) .
+			'&CB[pad]=normal' .
+			BackendUtility::getUrlToken('tceAction');
+		return $rU;
+	}
+
+	/**
+	 * Returns the select-url for database elements
+	 *
+	 * @param string $table Table name
+	 * @param integer $uid Uid of record
+	 * @param integer $pid Pid of record
+	 * @param boolean $copy If set, copymode will be enabled
+	 * @param boolean $deselect If set, the link will deselect, otherwise select.
+	 * @param array $baseArray The base array of GET vars to be sent in addition. Notice that current GET vars WILL automatically be included.
+	 * @return string URL linking to the current script but with the CB array set to select the element with table/uid
+	 * @todo Define visibility
+	 */
+	function selUrlDB($table, $uid, $pid, $copy = 0, $deselect = 0, $baseArray = array()) {
+		$CB = array('el' => array(rawurlencode($table . '|' . $uid) => $deselect ? 0 : 1));
+		if ($copy) {
+			$CB['setCopyMode'] = 1;
+		}
+		$baseArray['M'] = web_list;
+		$baseArray['id'] = $pid;
+		$baseArray['CB'] = $CB;
+		unset($baseArray['returnUrl']);
+		$moduleUrl = BackendUtility::getModuleUrl('web_list');
+		return GeneralUtility::linkThisUrl($moduleUrl, $baseArray);
 	}
 
 	/**
