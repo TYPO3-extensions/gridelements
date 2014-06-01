@@ -384,3 +384,8 @@ td.t3-page-column, td.t3-page-lang-column {
 .t3-icon-document-paste-into {
 	display: none!important;
 }
+
+#ext-gridelements-Classes-Wizard-index-php table#outer_container td,
+#ext-gridelements-Classes-Wizard-index-php table#editor td {
+	text-align: center;
+}

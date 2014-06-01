@@ -47,7 +47,7 @@ $TCA['tx_gridelements_backend_layout'] = array(
 				'type' => 'input',
 				'size' => '25',
 				'max' => '256',
-				'eval' => 'nospace,alphanum_x,lower,uniqueInPid',
+				'eval' => 'nospace,alphanum_x,lower',
 			)
 		),
 		'description' => array(
@@ -113,7 +113,9 @@ $TCA['tx_gridelements_backend_layout'] = array(
 						'title' => 'LLL:EXT:cms/locallang_tca.xml:backend_layout.wizard',
 						'type' => 'popup',
 						'icon' => 'sysext/cms/layout/wizard_backend_layout.png',
-						'script' => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath('gridelements') . 'Classes/Wizard/BackendLayout.php',
+						'module' => array(
+							'name' => 'wizard_gridelements_backend_layout'
+						),
 						'JSopenParams' => 'height=800,width=800,status=0,menubar=0,scrollbars=0',
 					),
 				),

@@ -145,8 +145,12 @@ $TCA['tt_content']['columns']['records']['config']['allowed'] .= ',pages';
 \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addToAllTCAtypes('tt_content', 'pi_flexform, tx_gridelements_children', $_EXTKEY . '_pi1', 'replace:rte_enabled');
 \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addToAllTCAtypes('tt_content', 'tx_gridelements_container, tx_gridelements_columns');
 
-$TCA['backend_layout']['columns']['config']['config']['wizards']['0']['script'] =
-    \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath($_EXTKEY) . 'Classes/Wizard/BackendLayout.php';
+// Register backend_layout wizard
+\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addModulePath(
+	'wizard_gridelements_backend_layout',
+	\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath($_EXTKEY) . 'Classes/Wizard/'
+);
+$TCA['backend_layout']['columns']['config']['config']['wizards']['0']['module']['name'] = 'wizard_gridelements_backend_layout';
 
 \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addPlugin(
 	array(
