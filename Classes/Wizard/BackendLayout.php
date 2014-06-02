@@ -3,22 +3,25 @@ namespace GridElementsTeam\Gridelements\Wizard;
 
 require_once('conf.php');
 
-if($BACK_PATH_ABS !== FALSE){
+if ($BACK_PATH_ABS !== false) {
 	require($BACK_PATH_ABS . 'init.php');
-}else{
+	require($BACK_PATH_ABS . 'template.php');
+} else {
 	require($BACK_PATH . 'init.php');
+	require($BACK_PATH . 'template.php');
 }
 
-$GLOBALS['LANG']->includeLLFile('EXT:lang/locallang_wizards.xml');
+$LANG->includeLLFile('EXT:lang/locallang_wizards.xml');
 
 /**
  * Script Class for grid wizard
  *
- * @author	T3UXW09 Team1 <modernbe@cybercraft.de>
+ * @author    T3UXW09 Team1 <modernbe@cybercraft.de>
  * @package TYPO3
  * @subpackage core
  */
-class BackendLayout {
+class BackendLayout
+{
 
 	// GET vars:
 	protected $P; // Wizard parameters, coming from TCEforms linking to the wizard.
@@ -35,7 +38,7 @@ class BackendLayout {
 	/**
 	 * Initialises the Class
 	 *
-	 * @return	void
+	 * @return    void
 	 */
 	public function init() {
 
@@ -46,10 +49,10 @@ class BackendLayout {
 		$this->formName = $this->P['formName'];
 		$this->fieldName = $this->P['itemName'];
 		$this->md5ID = $this->P['md5ID'];
-		$uid = (int)$this->P['uid'];
+		$uid = intval($this->P['uid']);
 
 		// Initialize document object:
-		$this->doc = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Backend\Template\DocumentTemplate');
+		$this->doc = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Backend\Template\StandardDocumentTemplate');
 		$this->doc->backPath = $GLOBALS['BACK_PATH'];
 
 		$pageRenderer = $this->doc->getPageRenderer();
@@ -85,13 +88,13 @@ class BackendLayout {
 		// add gridelement wizard options information
 		$ctypeLabels = array();
 		$ctypeIcons = array();
-		foreach($GLOBALS['TCA']['tt_content']['columns']['CType']['config']['items'] as $item){
+		foreach ($GLOBALS['TCA']['tt_content']['columns']['CType']['config']['items'] as $item) {
 			$itemKey = $item[1];
-			if(substr($itemKey, 0, 2) !== '--'){
+			if (substr($itemKey, 0, 2) !== '--') {
 				$ctypeLabels[$itemKey] = $GLOBALS['LANG']->sL($item[0], 1);
-				if(strstr($item[2], '/typo3')){
+				if (strstr($item[2], '/typo3')) {
 					$ctypeIcons[$itemKey] = '../../../' . $item[2];
-				}else{
+				} else {
 					$ctypeIcons[$itemKey] = '../../../' . '../typo3/sysext/t3skin/icons/gfx/' . $item[2];
 				}
 			}
@@ -102,161 +105,117 @@ class BackendLayout {
 			TYPO3.Backend.availableCTypeIcons = ["' . join('","', $ctypeIcons) . '"];
 		');
 
-			// select record
-		$record = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows($this->P['field'], $this->P['table'], 'uid=' . (int)$this->P['uid']);
+		// select record
+		$record = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows($this->P['field'], $this->P['table'], 'uid=' . intval($this->P['uid']));
 
 		if (trim($record[0][$this->P['field']]) === '') {
-			$t3GridData = "[[{colspan:1,rowspan:1,spanned:false,name:''}]]";
+			$rows = array(array(array('colspan' => 1, 'rowspan' => 1, 'spanned' => FALSE, 'name' => '', 'allowed' => '*')));
 			$colCount = 1;
 			$rowCount = 1;
 		} else {
 
 			// load TS parser
 			$parser = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Core\TypoScript\Parser\TypoScriptParser');
-			$parser->parse($parser->checkIncludeLines($record[0][$this->P['field']]));
+			$parser->parse($record[0][$this->P['field']]);
 			$data = $parser->setup['backend_layout.'];
-			$t3GridData = '[';
+			$rows = array();
 			$colCount = $data['colCount'];
 			$rowCount = $data['rowCount'];
 			$dataRows = $data['rows.'];
 			$spannedMatrix = array();
-
 			for ($i = 1; $i <= $rowCount; $i++) {
-				$rowString = '';
-
+				$cells = array();
+				$row = array_shift($dataRows);
+				$columns = $row['columns.'];
 				for ($j = 1; $j <= $colCount; $j++) {
-
-					if ($j === 1) {
-						$row = array_shift($dataRows);
-						$columns = $row['columns.'];
-						$rowString = '[';
-						$cells = array();
-					}
-
+					$cellData = array();
 					if (!$spannedMatrix[$i][$j]) {
-
 						if (is_array($columns) && count($columns)) {
 							$column = array_shift($columns);
-							$cellString = '{';
-							$cellData = array();
-
 							if (isset($column['colspan'])) {
-								$cellData[] = 'colspan:' . (int)$column['colspan'];
-
+								$cellData['colspan'] = (int)$column['colspan'];
+								$columnColSpan = (int)$column['colspan'];
 								if (isset($column['rowspan'])) {
-
-                                    $rowspan = (int)$column['rowspan'];
-									for ($spanRow = 0; $spanRow < $rowspan; $spanRow++) {
-
-										$colspan = (int)$column['colspan'];
-                                        for ($spanColumn = 0; $spanColumn < $colspan; $spanColumn++) {
+									$columnRowSpan = (int)$column['rowspan'];
+									for ($spanRow = 0; $spanRow < $columnRowSpan; $spanRow++) {
+										for ($spanColumn = 0; $spanColumn < $columnColSpan; $spanColumn++) {
 											$spannedMatrix[$i + $spanRow][$j + $spanColumn] = 1;
 										}
 									}
-
 								} else {
-                                    $colspan = (int)$column['colspan'];
-									for ($spanColumn = 0; $spanColumn < $colspan; $spanColumn++) {
+									for ($spanColumn = 0; $spanColumn < $columnColSpan; $spanColumn++) {
 										$spannedMatrix[$i][$j + $spanColumn] = 1;
 									}
-
 								}
-
 							} else {
-								$cellData[] = 'colspan:1';
-
+								$cellData['colspan'] = 1;
 								if (isset($column['rowspan'])) {
-
-                                    $colspan = (int)$column['colspan'];
-                                    for ($spanRow = 0; $spanRow < $colspan; $spanRow++) {
+									$columnRowSpan = (int)$column['rowspan'];
+									for ($spanRow = 0; $spanRow < $columnRowSpan; $spanRow++) {
 										$spannedMatrix[$i + $spanRow][$j] = 1;
 									}
-
 								}
-
 							}
-
 							if (isset($column['rowspan'])) {
-								$cellData[] = 'rowspan:' . (int)$column['rowspan'];
+								$cellData['rowspan'] = (int)$column['rowspan'];
 							} else {
-								$cellData[] = 'rowspan:1';
+								$cellData['rowspan'] = 1;
 							}
-
 							if (isset($column['name'])) {
-								$cellData[] = 'name:\'' . $column['name'] . '\'';
+								$cellData['name'] = $column['name'];
 							}
-
 							if (isset($column['colPos'])) {
-								$cellData[] = 'column:' . $column['colPos'];
+								$cellData['column'] = (int)$column['colPos'];
 							}
-
 							if (isset($column['allowed'])) {
-								$cellData[] = 'allowed:\'' . $column['allowed'] . '\'';
+								$cellData['allowed'] = $column['allowed'];
 							}
-
-							$cellString .= implode(',', $cellData) . '}';
-							$cells[] = $cellString;
-
 						}
-
 					} else {
-						$cells[] = '{colspan:1,rowspan:1,spanned:1}';
+						$cellData = array('colspan' => 1, 'rowspan' => 1, 'spanned' => 1, 'allowed' => '*');
 					}
-
+					$cells[] = $cellData;
 				}
-
-				$rowString .= implode(',', $cells);
-
-				if ($rowString) {
-					$rowString .= ']';
-				}
-
-				$rows[] = $rowString;
-
-				if (count($spannedMatrix[$i])) {
+				$rows[] = $cells;
+				if (!empty($spannedMatrix[$i]) && is_array($spannedMatrix[$i])) {
 					ksort($spannedMatrix[$i]);
 				}
-
 			}
-
-			$t3GridData .= implode(',', $rows) . ']';
-
 		}
-
 		$pageRenderer->enableExtJSQuickTips();
-
 		$pageRenderer->addExtOnReadyCode('
 			t3Grid = new TYPO3.Backend.t3Grid({
-				data: ' . $t3GridData . ',
-				colCount: ' . $colCount . ',
-				rowCount: ' . $rowCount . ',
+				data: ' . json_encode($rows, JSON_HEX_QUOT | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS) . ',
+				colCount: ' . (int)$colCount . ',
+				rowCount: ' . (int)$rowCount . ',
 				targetElement: \'editor\'
 			});
 			t3Grid.drawTable();
-			');
+		');
 
-		$this->doc->styleSheetFile_post = \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath('gridelements') . 'Resources/Public/Backend/Css/grideditor.css';
+		$this->doc->styleSheetFile_post = \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath('gridelements') . 'Resources/Public/Backend/Css//grideditor.css';
 
 	}
 
 	/**
 	 * Main Method, rendering either colorpicker or frameset depending on ->showPicker
 	 *
-	 * @return	void
+	 * @return    void
 	 */
 	public function main() {
 
 		$content = '<a href="#" title="' .
-		            $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.php:rm.saveDoc', TRUE) . '" onclick="storeData(t3Grid.export2LayoutRecord());return true;">' .
-		            \TYPO3\CMS\Backend\Utility\IconUtility::getSpriteIcon('actions-document-save') . '</a>';
+			$GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.php:rm.saveDoc', TRUE) . '" onclick="storeData(t3Grid.export2LayoutRecord());return true;">' .
+			\TYPO3\CMS\Backend\Utility\IconUtility::getSpriteIcon('actions-document-save') . '</a>';
 
 		$content .= '<a href="#" title="' .
-		            $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.php:rm.saveCloseDoc', TRUE) . '" onclick="storeData(t3Grid.export2LayoutRecord());window.close();return true;">' .
-		            \TYPO3\CMS\Backend\Utility\IconUtility::getSpriteIcon('actions-document-save-close') . '</a>';
+			$GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.php:rm.saveCloseDoc', TRUE) . '" onclick="storeData(t3Grid.export2LayoutRecord());window.close();return true;">' .
+			\TYPO3\CMS\Backend\Utility\IconUtility::getSpriteIcon('actions-document-save-close') . '</a>';
 
 		$content .= '<a href="#" title="' .
-		            $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.php:rm.closeDoc', TRUE) . '" onclick="window.close();return true;">' .
-		            \TYPO3\CMS\Backend\Utility\IconUtility::getSpriteIcon('actions-document-close') . '</a>';
+			$GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.php:rm.closeDoc', TRUE) . '" onclick="window.close();return true;">' .
+			\TYPO3\CMS\Backend\Utility\IconUtility::getSpriteIcon('actions-document-close') . '</a>';
+
 
 		$content .= $this->doc->spacer(10);
 
@@ -295,7 +254,7 @@ class BackendLayout {
 	/**
 	 * Returns the sourcecode to the browser
 	 *
-	 * @return	void
+	 * @return    void
 	 */
 	public function printContent() {
 		echo $this->doc->render(
@@ -316,3 +275,4 @@ $SOBE = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('GridElementsTeam\G
 $SOBE->init();
 $SOBE->main();
 $SOBE->printContent();
+?>
