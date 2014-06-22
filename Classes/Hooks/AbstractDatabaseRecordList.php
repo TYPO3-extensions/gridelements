@@ -35,15 +35,6 @@ namespace GridElementsTeam\Gridelements\Hooks;
 class AbstractDatabaseRecordList {
 
 	/**
-	 * @var \TYPO3\CMS\Backend\Utility\BackendUtility
-	 */
-	var $beFunc;
-
-	public function __construct() {
-		$this->beFunc = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Backend\\Utility\\BackendUtility');
-	}
-
-	/**
 	 * ItemProcFunc for columns items
 	 *
 	 * @param array	        $queryParts: The array containing the parts to build the query from

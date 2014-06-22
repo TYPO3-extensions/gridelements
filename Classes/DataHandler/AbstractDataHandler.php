@@ -58,7 +58,7 @@ abstract class AbstractDataHandler {
 	protected $layoutSetup;
 
 	/**
-	 * @var \TYPO3\CMS\Backend\Utility\BackendUtility
+	 * @var \GridElementsTeam\Gridelements\Backend\WrapperForT3libBeFunc
 	 */
 	protected $beFunc;
 

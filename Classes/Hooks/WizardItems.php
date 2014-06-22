@@ -23,6 +23,7 @@ namespace GridElementsTeam\Gridelements\Hooks;
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
+use TYPO3\CMS\Backend\Utility\BackendUtility;
 
 /**
  * Class/Function which manipulates the rendering of items within the new content element wizard
@@ -39,26 +40,12 @@ class WizardItems implements \TYPO3\CMS\Backend\Wizard\NewContentElementWizardHo
 	protected $layoutSetup;
 
 	/**
-	 * @var \TYPO3\CMS\Backend\Utility\BackendUtility
-	 */
-	protected $beFunc;
-
-	/**
 	 * inject layout setup
 	 *
 	 * @param \GridElementsTeam\Gridelements\Backend\LayoutSetup $layoutSetup
 	 */
 	public function injectLayoutSetup(\GridElementsTeam\Gridelements\Backend\LayoutSetup $layoutSetup) {
 		$this->layoutSetup = $layoutSetup;
-	}
-
-	/**
-	 * inject BE func
-	 *
-	 * @param \TYPO3\CMS\Backend\Utility\BackendUtility $beFunc
-	 */
-	public function injectBeFunc(\TYPO3\CMS\Backend\Utility\BackendUtility $beFunc) {
-		$this->beFunc = $beFunc;
 	}
 
 	/**
@@ -69,9 +56,6 @@ class WizardItems implements \TYPO3\CMS\Backend\Wizard\NewContentElementWizardHo
 	public function init($pageUid) {
 		if (!$this->layoutSetup instanceof \GridElementsTeam\Gridelements\Backend\LayoutSetup) {
 			$this->layoutSetup = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('GridElementsTeam\\Gridelements\\Backend\\LayoutSetup')->init($pageUid);
-		}
-		if (!$this->beFunc instanceof \TYPO3\CMS\Backend\Utility\BackendUtility) {
-			$this->beFunc = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Backend\\Utility\\BackendUtility');
 		}
 	}
 
@@ -167,8 +151,7 @@ class WizardItems implements \TYPO3\CMS\Backend\Wizard\NewContentElementWizardHo
 
 		$pageID = $parentObject->pageinfo['uid'];
 
-		$BEfunc = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Backend\\Utility\\BackendUtility');
-		$TSconfig = $BEfunc->getPagesTSconfig($pageID);
+		$TSconfig = BackendUtility::getPagesTSconfig($pageID);
 
 		if($container && $TSconfig['TCEFORM.']['tt_content.']['tx_gridelements_backend_layout.']['itemsProcFunc.']['topLevelLayouts']) {
 			$excludeArray[] = trim($TSconfig['TCEFORM.']['tt_content.']['tx_gridelements_backend_layout.']['itemsProcFunc.']['topLevelLayouts']);

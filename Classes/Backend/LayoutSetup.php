@@ -297,8 +297,7 @@ class LayoutSetup {
 	 */
 	protected function loadLayoutSetup($pageId) {
 		// Load page TSconfig.
-		$BEfunc = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Backend\\Utility\\BackendUtility');
-		$pageTSconfig = $BEfunc->getPagesTSconfig($pageId);
+		$pageTSconfig = \TYPO3\CMS\Backend\Utility\BackendUtility::getPagesTSconfig($pageId);
 
 		$excludeLayoutIds = isset($pageTSconfig['tx_gridelements.']['excludeLayoutIds']) && !empty($pageTSconfig['tx_gridelements.']['excludeLayoutIds'])
 			? array_flip(\TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',', $pageTSconfig['tx_gridelements.']['excludeLayoutIds']))

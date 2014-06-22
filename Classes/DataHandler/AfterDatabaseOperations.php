@@ -139,7 +139,7 @@ class AfterDatabaseOperations extends AbstractDataHandler {
 		}
 
 		if ($this->getTable() === 'pages') {
-			$rootline = $this->beFunc->BEgetRootLine($this->getPageUid());
+			$rootline = \TYPO3\CMS\Backend\Utility\BackendUtility::BEgetRootLine($this->getPageUid());
 			for ($i = count($rootline); $i > 0; $i--) {
 				$page = $this->databaseConnection->exec_SELECTgetSingleRow(
 					'uid, backend_layout, backend_layout_next_level',
