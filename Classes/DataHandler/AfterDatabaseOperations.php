@@ -361,7 +361,3 @@ class AfterDatabaseOperations extends AbstractDataHandler {
 	}
 
 }
-
-if (defined('TYPO3_MODE') && isset($GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/gridelements/Classes/DataHandler/AfterDatabaseOperations.php'])) {
-	include_once($GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/gridelements/Classes/DataHandler/AfterDatabaseOperations.php']);
-}

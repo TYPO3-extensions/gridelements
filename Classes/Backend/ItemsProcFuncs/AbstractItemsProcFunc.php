@@ -75,8 +75,3 @@ class AbstractItemsProcFunc {
 		return \TYPO3\CMS\Backend\Utility\BackendUtility::BEgetRootLine($pageUid);
 	}
 }
-
-if (defined('TYPO3_MODE') && isset($GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/gridelements/Classes/Backend/ItemsProcFuncs/AbstractItemsProcFunc.php'])) {
-	include_once($GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/gridelements/Classes/Backend/ItemsProcFuncs/AbstractItemsProcFunc.php']);
-}
-
