@@ -22,9 +22,6 @@
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-// Include classes
-require_once (PATH_typo3 . '/class.db_list.inc');
-require_once (PATH_typo3 . '/class.db_list_extra.inc');
 
 class tx_gridelements_db_listhookTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 
@@ -34,7 +31,7 @@ class tx_gridelements_db_listhookTest extends \TYPO3\CMS\Extbase\Tests\Unit\Base
 	 * @test
 	 */
 	public function testMakeQueryArrayPost() {
-		$dbList = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_gridelements_db_ListHook');
+		$dbList = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('GridElementsTeam\\Gridelements\\Hooks\\AbstractDatabaseRecordList');
 
 		$queryParts = array(
 			'SELECT' => '*',
@@ -44,7 +41,7 @@ class tx_gridelements_db_listhookTest extends \TYPO3\CMS\Extbase\Tests\Unit\Base
 			'ORDERBY' => '',
 			'LIMIT' => ''
 		);
-		$parent = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('ux_localRecordList');
+		$parent = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('GridElementsTeam\\Gridelements\\Xclass\\DatabaseRecordList');
 		$table = 'pages';
 		$pageId = 12;
 		$addWhere = 'AND hidden = 0';
@@ -53,7 +50,7 @@ class tx_gridelements_db_listhookTest extends \TYPO3\CMS\Extbase\Tests\Unit\Base
 		$expectedQueryParts = $testQueryParts = $queryParts;
 		$dbList->makeQueryArray_post($testQueryParts, $parent, $table, $pageId, $addWhere, $fieldList, $params);
 		$this->assertEquals($expectedQueryParts, $testQueryParts);
-		$this->assertEquals('ux_localRecordList', get_class($parent));
+		$this->assertEquals('GridElementsTeam\\Gridelements\\Xclass\\DatabaseRecordList', get_class($parent));
 		$this->assertEquals('pages', $table);
 		$this->assertEquals(12, $pageId);
 		$this->assertEquals('AND hidden = 0', $addWhere);
@@ -66,7 +63,7 @@ class tx_gridelements_db_listhookTest extends \TYPO3\CMS\Extbase\Tests\Unit\Base
 		$testQueryParts = $queryParts;
 		$dbList->makeQueryArray_post($testQueryParts, $parent, $table, $pageId, $addWhere, $fieldList, $params);
 		$this->assertEquals($expectedQueryParts, $testQueryParts);
-		$this->assertEquals('ux_localRecordList', get_class($parent));
+		$this->assertEquals('GridElementsTeam\\Gridelements\\Xclass\\DatabaseRecordList', get_class($parent));
 		$this->assertEquals('tt_content', $table);
 		$this->assertEquals(12, $pageId);
 		$this->assertEquals('AND hidden = 0', $addWhere);
@@ -78,7 +75,7 @@ class tx_gridelements_db_listhookTest extends \TYPO3\CMS\Extbase\Tests\Unit\Base
 		$testQueryParts = $queryParts;
 		$dbList->makeQueryArray_post($testQueryParts, $parent, $table, $pageId, $addWhere, $fieldList, $params);
 		$this->assertEquals($expectedQueryParts, $testQueryParts);
-		$this->assertEquals('ux_localRecordList', get_class($parent));
+		$this->assertEquals('GridElementsTeam\\Gridelements\\Xclass\\DatabaseRecordList', get_class($parent));
 		$this->assertEquals('tt_content', $table);
 		$this->assertEquals(12, $pageId);
 		$this->assertEquals('AND hidden = 0', $addWhere);
@@ -92,7 +89,7 @@ class tx_gridelements_db_listhookTest extends \TYPO3\CMS\Extbase\Tests\Unit\Base
 		$expectedQueryParts['SELECT'] = 'colPos,title';
 		$dbList->makeQueryArray_post($testQueryParts, $parent, $table, $pageId, $addWhere, $fieldList, $params);
 		$this->assertEquals($expectedQueryParts, $testQueryParts);
-		$this->assertEquals('ux_localRecordList', get_class($parent));
+		$this->assertEquals('GridElementsTeam\\Gridelements\\Xclass\\DatabaseRecordList', get_class($parent));
 		$this->assertEquals('tt_content', $table);
 		$this->assertEquals(12, $pageId);
 		$this->assertEquals('AND hidden = 0', $addWhere);
@@ -106,7 +103,7 @@ class tx_gridelements_db_listhookTest extends \TYPO3\CMS\Extbase\Tests\Unit\Base
 	 * @test
 	 */
 	public function testAddValueToList() {
-		$dbList = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_gridelements_db_ListHook');
+		$dbList = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('GridElementsTeam\\Gridelements\\Hooks\\AbstractDatabaseRecordList');
 
 		$list = 'uid,pid, bodytext, title';
 		$value = 'colPos';

@@ -51,13 +51,13 @@ class tx_gridelements_tcemainhookTest extends \TYPO3\CMS\Extbase\Tests\Unit\Base
 	 * @test
 	 */
 	public function testProcessDatamapAfterDatabaseOperations() {
-		$hook = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_gridelements_TCEmainHook');
+		$hook = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('GridElementsTeam\\Gridelements\\Hooks\\DataHandler');
 
 		$status = '';
 		$table = '';
 		$id = 12;
 		$fieldArray = array();
-		$parentObj = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('t3lib_TCEmain');
+		$parentObj = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\DataHandling\\DataHandler');
 		$parentObj->substNEWwithIDs[$id] = 'Hello world';
 		unset($GLOBALS['actionOnGridElement']);
 		$hook->processDatamap_afterDatabaseOperations($status, $table, $id, $fieldArray, $parentObj);
@@ -79,7 +79,7 @@ class tx_gridelements_tcemainhookTest extends \TYPO3\CMS\Extbase\Tests\Unit\Base
 	 * @test
 	 */
 	public function processDatamapPostProcessFieldArray() {
-		$hook = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_gridelements_TCEmainHook');
+		$hook = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('GridElementsTeam\\Gridelements\\Hooks\\DataHandler');
 
 		$status = '';
 		$table = 'tt_content';
