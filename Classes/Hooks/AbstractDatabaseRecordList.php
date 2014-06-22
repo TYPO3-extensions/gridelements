@@ -35,12 +35,12 @@ namespace GridElementsTeam\Gridelements\Hooks;
 class AbstractDatabaseRecordList {
 
 	/**
-	 * @var t3lib_BEfunc
+	 * @var \TYPO3\CMS\Backend\Utility\BackendUtility
 	 */
 	var $beFunc;
 
 	public function __construct() {
-		$this->beFunc = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Backend\Utility\BackendUtility');
+		$this->beFunc = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Backend\\Utility\\BackendUtility');
 	}
 
 	/**

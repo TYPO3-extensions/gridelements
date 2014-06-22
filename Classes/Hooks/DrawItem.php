@@ -11,7 +11,7 @@ namespace GridElementsTeam\Gridelements\Hooks;
 class DrawItem implements \TYPO3\CMS\Backend\View\PageLayoutViewDrawItemHookInterface {
 
 	/**
-	 * @var language
+	 * @var \TYPO3\CMS\Lang\LanguageService
 	 */
 	var $lang;
 
@@ -21,7 +21,7 @@ class DrawItem implements \TYPO3\CMS\Backend\View\PageLayoutViewDrawItemHookInte
 	protected $tree;
 
 	public function __construct() {
-		$this->lang = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Lang\LanguageService');
+		$this->lang = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Lang\\LanguageService');
 		$this->lang->init($GLOBALS['BE_USER']->uc['lang']);
 	}
 
@@ -49,8 +49,8 @@ class DrawItem implements \TYPO3\CMS\Backend\View\PageLayoutViewDrawItemHookInte
 				case 'gridelements_pi1':
 					$drawItem = FALSE;
 					$itemContent .= $this->renderCTypeGridelements($parentObject, $row, $showHidden, $deleteClause);
-					$refIndexObj = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Core\Database\ReferenceIndex');
-					/* @var $refIndexObj t3lib_refindex */
+					$refIndexObj = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Database\\ReferenceIndex');
+					/* @var $refIndexObj \TYPO3\CMS\Core\Database\ReferenceIndex */
 					$refIndexObj->updateRefIndexTable('tt_content', $row['uid']);
 					break;
 				case 'shortcut':
@@ -81,7 +81,7 @@ class DrawItem implements \TYPO3\CMS\Backend\View\PageLayoutViewDrawItemHookInte
 		// get the layout record for the selected backend layout if any
 		$gridContainerId = $row['uid'];
 		/** @var $layoutSetup \GridElementsTeam\Gridelements\Backend\LayoutSetup */
-		$layoutSetup = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('GridElementsTeam\Gridelements\Backend\LayoutSetup');
+		$layoutSetup = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('GridElementsTeam\\Gridelements\\Backend\\LayoutSetup');
 		$gridElement = $layoutSetup->init($row['pid'])->cacheCurrentParent($gridContainerId, TRUE);
 		$layoutUid = $gridElement['tx_gridelements_backend_layout'];
 		$layout = $layoutSetup->getLayoutSetup($layoutUid);
@@ -528,7 +528,7 @@ class DrawItem implements \TYPO3\CMS\Backend\View\PageLayoutViewDrawItemHookInte
 		$itemList = str_replace('pages_', '', $shortcutItem);
 		if ($recursive) {
 			if (!$this->tree instanceof \TYPO3\CMS\Core\Database\QueryGenerator) {
-				$this->tree = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('\TYPO3\CMS\Core\Database\QueryGenerator');
+				$this->tree = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Database\\QueryGenerator');
 			}
 			$itemList = $this->tree->getTreeList($itemList, (int)$recursive, 0, 1);
 		}

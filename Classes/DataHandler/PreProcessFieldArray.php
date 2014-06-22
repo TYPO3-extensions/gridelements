@@ -202,7 +202,7 @@ class PreProcessFieldArray extends AbstractDataHandler {
 				};
 			}
 			if(count($sheetArray) > 0) {
-				$flexformTools = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Core\Configuration\FlexForm\FlexFormTools');
+				$flexformTools = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Configuration\\FlexForm\\FlexFormTools');
 				$returnXML = $flexformTools->flexArray2Xml($sheetArray, TRUE);
 			}
 		}

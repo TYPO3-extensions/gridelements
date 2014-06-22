@@ -39,10 +39,10 @@ class DatabaseRecordList implements RecordListHookInterface {
 	/**
 	 * modifies Web>List clip icons (copy, cut, paste, etc.) of a displayed row
 	 *
-	 * @param	string		the current database table
-	 * @param	array		the current record row
-	 * @param	array		the default clip-icons to get modified
-	 * @param	object		Instance of calling object
+	 * @param	string	$table	the current database table
+	 * @param	array	$row	the current record row
+	 * @param	array	$cells	the default clip-icons to get modified
+	 * @param	object	$parentObject	Instance of calling object
 	 * @return	array		the modified clip-icons
 	 */
 	public function makeClip($table, $row, $cells, &$parentObject) {
@@ -64,10 +64,10 @@ class DatabaseRecordList implements RecordListHookInterface {
 	/**
 	 * modifies Web>List control icons of a displayed row
 	 *
-	 * @param	string		the current database table
-	 * @param	array		the current record row
-	 * @param	array		the default control-icons to get modified
-	 * @param	object		Instance of calling object
+	 * @param	string	$table	the current database table
+	 * @param	array	$row	the current record row
+	 * @param	array	$cells	the default control-icons to get modified
+	 * @param	object	$parentObject	Instance of calling object
 	 * @return	array		the modified control-icons
 	 */
 	public function makeControl($table, $row, $cells, &$parentObject) {
@@ -87,10 +87,10 @@ class DatabaseRecordList implements RecordListHookInterface {
 	/**
 	 * modifies Web>List header row columns/cells
 	 *
-	 * @param	string		the current database table
-	 * @param	array		Array of the currently displayed uids of the table
-	 * @param	array		An array of rendered cells/columns
-	 * @param	object		Instance of calling (parent) object
+	 * @param	string	$table	the current database table
+	 * @param	array	$currentIdList	Array of the currently displayed uids of the table
+	 * @param	array	$headerColumns	An array of rendered cells/columns
+	 * @param	object	$parentObject	Instance of calling (parent) object
 	 * @return	array		Array of modified cells/columns
 	 */
 	public function renderListHeader($table, $currentIdList, $headerColumns, &$parentObject) {
@@ -101,10 +101,10 @@ class DatabaseRecordList implements RecordListHookInterface {
 	/**
 	 * modifies Web>List header row clipboard/action icons
 	 *
-	 * @param	string		the current database table
-	 * @param	array		Array of the currently displayed uids of the table
-	 * @param	array		An array of the current clipboard/action icons
-	 * @param	object		Instance of calling (parent) object
+	 * @param	string	$table	the current database table
+	 * @param	array	$currentIdList	Array of the currently displayed uids of the table
+	 * @param	array	$cells	An array of the current clipboard/action icons
+	 * @param	object	$parentObject	Instance of calling (parent) object
 	 * @return	array		Array of modified clipboard/action icons
 	 */
 	public function renderListHeaderActions($table, $currentIdList, $cells, &$parentObject) {

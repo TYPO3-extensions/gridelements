@@ -40,7 +40,7 @@ class tx_gridelements_drawitemhookTest extends \TYPO3\CMS\Extbase\Tests\Unit\Bas
 			->method('renderCTypeShortcut')
 			->will($this->returnValue('shortcut'));
 
-		$parentObject = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Backend\View\PageLayoutView');
+		$parentObject = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Backend\\View\\PageLayoutView');
 		$drawItem = TRUE;
 		$headerContent = 'header';
 		$itemContent = '<li>Entry</li>';

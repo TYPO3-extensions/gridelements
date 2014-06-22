@@ -127,7 +127,7 @@ class AjaxRecordList {
 	 * @param string $table
 	 * @param int $uid
 	 * @param array $row
-	 * @return	localRecordList
+	 * @return	\TYPO3\CMS\Recordlist\RecordList\DatabaseRecordList
 	 */
 	private function getRecordList($table, $uid, $row) {
 		$dblist = null;
@@ -160,7 +160,7 @@ class AjaxRecordList {
 
 			// Initialize the dblist object:
 			/** @var $dblist \TYPO3\CMS\Recordlist\RecordList\DatabaseRecordList */
-			$dblist = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Recordlist\RecordList\DatabaseRecordList');
+			$dblist = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Recordlist\\RecordList\\DatabaseRecordList');
 			$dblist->calcPerms = $GLOBALS['BE_USER']->calcPerms($pageinfo);
 			$dblist->thumbs = $GLOBALS['BE_USER']->uc['thumbnailsByDefault'];
 
@@ -193,7 +193,7 @@ class AjaxRecordList {
 			$dblist->modTSconfig = $modTSconfig;
 
 			// Clipboard is initialized:
-			$dblist->clipObj = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Backend\Clipboard\Clipboard');		// Start clipboard
+			$dblist->clipObj = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Backend\\Clipboard\\Clipboard');		// Start clipboard
 			$dblist->clipObj->initializeClipboard();	// Initialize - reads the clipboard content from the user session
 
 			// todo

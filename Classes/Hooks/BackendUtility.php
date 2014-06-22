@@ -59,7 +59,7 @@ class BackendUtility {
 	public function init($pageUid) {
 		if (!$this->layoutSetup instanceof \GridElementsTeam\Gridelements\Backend\LayoutSetup) {
 			$this->injectLayoutSetup(
-				\TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('GridElementsTeam\Gridelements\Backend\LayoutSetup')
+				\TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('GridElementsTeam\\Gridelements\\Backend\\LayoutSetup')
 					->init($pageUid)
 			);
 		}

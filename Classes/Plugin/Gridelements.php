@@ -47,7 +47,7 @@ class Gridelements extends \TYPO3\CMS\Frontend\ContentObject\ContentObjectRender
 	 *
 	 * @param	string		$content: The PlugIn content
 	 * @param	array		$conf: The PlugIn configuration
-	 * @return	The content that is displayed on the website
+	 * @return	string The content that is displayed on the website
 	 */
 	public function main($content = '', $conf = array()) {
 
@@ -68,7 +68,7 @@ class Gridelements extends \TYPO3\CMS\Frontend\ContentObject\ContentObjectRender
 		$layout = $this->cObj->data['tx_gridelements_backend_layout'];
 
 		/** @var \GridElementsTeam\Gridelements\Backend\LayoutSetup $layoutSetup  */
-		$layoutSetup = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('GridElementsTeam\Gridelements\Backend\LayoutSetup');
+		$layoutSetup = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('GridElementsTeam\\Gridelements\\Backend\\LayoutSetup');
 		$layoutSetup->init($this->cObj->data['pid'], $conf);
 
 		$availableColumns = $layoutSetup->getLayoutColumns($layout);
@@ -481,7 +481,7 @@ class Gridelements extends \TYPO3\CMS\Frontend\ContentObject\ContentObjectRender
 	/**
 	 * Converts $this->cObj->data['pi_flexform'] from XML string to flexForm array.
 	 *
-	 * @param	string		Field name to convert
+	 * @param	string	$field	Field name to convert
 	 * @return	void
 	 */
 	public function initPIflexForm($field='pi_flexform')	{
@@ -495,11 +495,11 @@ class Gridelements extends \TYPO3\CMS\Frontend\ContentObject\ContentObjectRender
 	/**
 	 * Return value from somewhere inside a FlexForm structure
 	 *
-	 * @param	array		FlexForm data
-	 * @param	string		Field name to extract. Can be given like "test/el/2/test/el/field_templateObject" where each part will dig a level deeper in the FlexForm data.
-	 * @param	string		Sheet pointer, eg. "sDEF"
-	 * @param	string		Language pointer, eg. "lDEF"
-	 * @param	string		Value pointer, eg. "vDEF"
+	 * @param	array	$T3FlexForm_array	FlexForm data
+	 * @param	string	$fieldName	Field name to extract. Can be given like "test/el/2/test/el/field_templateObject" where each part will dig a level deeper in the FlexForm data.
+	 * @param	string	$sheet	Sheet pointer, eg. "sDEF"
+	 * @param	string	$lang	Language pointer, eg. "lDEF"
+	 * @param	string	$value	Value pointer, eg. "vDEF"
 	 * @return	string		The content.
 	 */
 	public function getFFvalue($T3FlexForm_array,$fieldName,$sheet='sDEF',$lang='lDEF',$value='vDEF')	{
@@ -512,9 +512,9 @@ class Gridelements extends \TYPO3\CMS\Frontend\ContentObject\ContentObjectRender
 	/**
 	 * Returns part of $sheetArray pointed to by the keys in $fieldNameArray
 	 *
-	 * @param	array		Multidimensional array, typically FlexForm contents
-	 * @param	array		Array where each value points to a key in the FlexForms content - the input array will have the value returned pointed to by these keys. All integer keys will not take their integer counterparts, but rather traverse the current position in the array an return element number X (whether this is right behavior is not settled yet...)
-	 * @param	string		Value for outermost key, typ. "vDEF" depending on language.
+	 * @param	array	$sheetArray	Multidimensional array, typically FlexForm contents
+	 * @param	array	$fieldNameArr	Array where each value points to a key in the FlexForms content - the input array will have the value returned pointed to by these keys. All integer keys will not take their integer counterparts, but rather traverse the current position in the array an return element number X (whether this is right behavior is not settled yet...)
+	 * @param	string	$value	Value for outermost key, typ. "vDEF" depending on language.
 	 * @return	mixed		The value, typ. string.
 	 * @access private
 	 * @see pi_getFFvalue()

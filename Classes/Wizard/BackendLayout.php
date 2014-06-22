@@ -4,6 +4,7 @@ namespace GridElementsTeam\Gridelements\Wizard;
 $GLOBALS['LANG']->includeLLFile('EXT:lang/locallang_wizards.xml');
 
 use TYPO3\CMS\Backend\Utility\IconUtility;
+use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -58,6 +59,7 @@ class BackendLayout {
 		// Initialize document object:
 		$this->doc = GeneralUtility::makeInstance('TYPO3\\CMS\\Backend\\Template\\DocumentTemplate');
 		$this->doc->backPath = $GLOBALS['BACK_PATH'];
+		/** @var PageRenderer $pageRenderer */
 		$pageRenderer = $this->doc->getPageRenderer();
 		$pageRenderer->addJsFile($GLOBALS['BACK_PATH'] . \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath('gridelements') . 'Resources/Public/Backend/JavaScript/grideditor.js');
 		$pageRenderer->addJsInlineCode('storeData', '

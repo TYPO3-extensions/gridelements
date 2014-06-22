@@ -107,14 +107,14 @@ abstract class AbstractDataHandler {
 		$this->setDatabaseConnection($GLOBALS['TYPO3_DB']);
 		if (!$this->layoutSetup instanceof \GridElementsTeam\Gridelements\Backend\LayoutSetup) {
 			$this->injectLayoutSetup(
-				\TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('GridElementsTeam\Gridelements\Backend\LayoutSetup')->init($pageUid)
+				\TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('GridElementsTeam\\Gridelements\\Backend\\LayoutSetup')->init($pageUid)
 			);
 		}
 		if (!$this->beFunc instanceof \GridElementsTeam\Gridelements\Backend\WrapperForT3libBeFunc) {
-			$this->injectBeFunc(\TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('GridElementsTeam\Gridelements\Backend\WrapperForT3libBeFunc'));
+			$this->injectBeFunc(\TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('GridElementsTeam\\Gridelements\\Backend\\WrapperForT3libBeFunc'));
 		}
 		if (!$this->formEngine instanceof \TYPO3\CMS\Backend\Form\FormEngine) {
-			$this->injectTceForms(\TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Backend\Form\FormEngine'));
+			$this->injectTceForms(\TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Backend\\Form\\FormEngine'));
 		}
 	}
 

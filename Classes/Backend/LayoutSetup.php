@@ -297,7 +297,7 @@ class LayoutSetup {
 	 */
 	protected function loadLayoutSetup($pageId) {
 		// Load page TSconfig.
-		$BEfunc = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Backend\Utility\BackendUtility');
+		$BEfunc = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Backend\\Utility\\BackendUtility');
 		$pageTSconfig = $BEfunc->getPagesTSconfig($pageId);
 
 		$excludeLayoutIds = isset($pageTSconfig['tx_gridelements.']['excludeLayoutIds']) && !empty($pageTSconfig['tx_gridelements.']['excludeLayoutIds'])
@@ -395,7 +395,7 @@ class LayoutSetup {
 
 			// parse config
 			if ($item['config']) {
-				$parser = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Core\TypoScript\Parser\TypoScriptParser');
+				$parser = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\TypoScript\\Parser\\TypoScriptParser');
 				$parser->parse($parser->checkIncludeLines($item['config']));
 				if (isset($parser->setup['backend_layout.'])) {
 					$item['config'] = $parser->setup['backend_layout.'];

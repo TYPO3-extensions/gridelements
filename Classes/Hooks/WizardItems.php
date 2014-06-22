@@ -68,10 +68,10 @@ class WizardItems implements \TYPO3\CMS\Backend\Wizard\NewContentElementWizardHo
 	 */
 	public function init($pageUid) {
 		if (!$this->layoutSetup instanceof \GridElementsTeam\Gridelements\Backend\LayoutSetup) {
-			$this->layoutSetup = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('GridElementsTeam\Gridelements\Backend\LayoutSetup')->init($pageUid);
+			$this->layoutSetup = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('GridElementsTeam\\Gridelements\\Backend\\LayoutSetup')->init($pageUid);
 		}
 		if (!$this->beFunc instanceof \TYPO3\CMS\Backend\Utility\BackendUtility) {
-			$this->beFunc = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Backend\Utility\BackendUtility');
+			$this->beFunc = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Backend\\Utility\\BackendUtility');
 		}
 	}
 
@@ -163,10 +163,11 @@ class WizardItems implements \TYPO3\CMS\Backend\Wizard\NewContentElementWizardHo
 	 */
 	public function getExcludeLayouts($container, &$parentObject) {
 		$excludeLayouts = 0;
+		$excludeArray = array();
 
 		$pageID = $parentObject->pageinfo['uid'];
 
-		$BEfunc = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Backend\Utility\BackendUtility');
+		$BEfunc = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Backend\\Utility\\BackendUtility');
 		$TSconfig = $BEfunc->getPagesTSconfig($pageID);
 
 		if($container && $TSconfig['TCEFORM.']['tt_content.']['tx_gridelements_backend_layout.']['itemsProcFunc.']['topLevelLayouts']) {
@@ -185,7 +186,7 @@ class WizardItems implements \TYPO3\CMS\Backend\Wizard\NewContentElementWizardHo
 			$excludeArray[] = trim($userExcludeLayoutsTS);
 		}
 
-		if(count($excludeArray) > 0) {
+		if(count($excludeArray)) {
 			$excludeLayouts = implode(',', $excludeArray);
 		}
 

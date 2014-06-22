@@ -39,7 +39,7 @@ class LayoutSetupTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 		$setup['2']['title'] = 'Grid-Sample';
 
 		$expectedSetup = $setup;
-		$layoutSetup = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('GridElementsTeam\Gridelements\Backend\LayoutSetup');
+		$layoutSetup = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('GridElementsTeam\\Gridelements\\Backend\\LayoutSetup');
 		$layoutSetup->setLayoutSetup($setup);
 		$result = $layoutSetup->getLayoutSetup();
 		$this->assertEquals($expectedSetup, $result);

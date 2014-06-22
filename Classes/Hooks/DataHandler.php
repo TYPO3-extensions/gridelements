@@ -43,7 +43,7 @@ class DataHandler {
 	 * changes are applied to the field array of the parent object by reference
 	 *
 	 * @param	array           $fieldArray: The array of fields and values that have been saved to the datamap
-	 * @param	str             $table: The name of the table the data should be saved to
+	 * @param	string          $table: The name of the table the data should be saved to
 	 * @param	int             $id: The uid of the page we are currently working on
 	 * @param	\TYPO3\CMS\Core\DataHandling\DataHandler   $parentObj: The parent object that triggered this hook
 	 * @return void
@@ -51,7 +51,7 @@ class DataHandler {
 	public function processDatamap_preProcessFieldArray(&$fieldArray, $table, $id, \TYPO3\CMS\Core\DataHandling\DataHandler $parentObj) {
 		if (($table === 'tt_content' || $table === 'pages') && !$parentObj->isImporting) {
 			/** @var $hook \GridElementsTeam\Gridelements\DataHandler\PreProcessFieldArray */
-			$hook = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('GridElementsTeam\Gridelements\DataHandler\PreProcessFieldArray');
+			$hook = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('GridElementsTeam\\Gridelements\\DataHandler\\PreProcessFieldArray');
 			$hook->execute_preProcessFieldArray($fieldArray, $table, $id, $parentObj);
 		}
 	}
@@ -66,7 +66,7 @@ class DataHandler {
 	 * changes are applied to the field array of the parent object by reference
 	 *
 	 * @param $status
-	 * @param    str             $table: The name of the table the data should be saved to
+	 * @param    string          $table: The name of the table the data should be saved to
 	 * @param    int             $id: The uid of the page we are currently working on
 	 * @param    array           $fieldArray: The array of fields and values that have been saved to the datamap
 	 * @param    \TYPO3\CMS\Core\DataHandling\DataHandler   $parentObj: The parent object that triggered this hook
@@ -94,8 +94,8 @@ class DataHandler {
 	}
 
 	/**
-	 * @param    str $status
-	 * @param    str $table : The name of the table the data should be saved to
+	 * @param    string $status
+	 * @param    string $table : The name of the table the data should be saved to
 	 * @param    int $id : The uid of the page we are currently working on
 	 * @param    array $fieldArray : The array of fields and values that have been saved to the datamap
 	 * @param    \TYPO3\CMS\Core\DataHandling\DataHandler $parentObj : The parent object that triggered this hook
@@ -104,7 +104,7 @@ class DataHandler {
 	public function processDatamap_afterDatabaseOperations(&$status, &$table, &$id, &$fieldArray, \TYPO3\CMS\Core\DataHandling\DataHandler $parentObj) {
 		if (($table === 'tt_content' || $table === 'pages') && $status === 'update' && !$parentObj->isImporting) {
 			/** @var $hook \GridElementsTeam\Gridelements\DataHandler\AfterDatabaseOperations */
-			$hook = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('GridElementsTeam\Gridelements\DataHandler\AfterDatabaseOperations');
+			$hook = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('GridElementsTeam\\Gridelements\\DataHandler\\AfterDatabaseOperations');
 			$hook->execute_afterDatabaseOperations($fieldArray, $table, $id, $parentObj);
 		}
 	}
@@ -125,7 +125,7 @@ class DataHandler {
 	public function moveRecord($table, $uid, &$destPid, &$propArr, &$moveRec, $resolvedPid, &$recordWasMoved, \TYPO3\CMS\Core\DataHandling\DataHandler &$parentObj) {
 		/** @var $hook \GridElementsTeam\Gridelements\DataHandler\MoveRecord */
 		if(!$parentObj->isImporting) {
-			$hook = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('GridElementsTeam\Gridelements\DataHandler\MoveRecord');
+			$hook = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('GridElementsTeam\\Gridelements\\DataHandler\\MoveRecord');
 			$hook->execute_moveRecord($table, $uid, $destPid, $propArr, $moveRec, $resolvedPid, $recordWasMoved, $parentObj);
 		}
 	}
@@ -145,7 +145,7 @@ class DataHandler {
 	public function processCmdmap($command, $table, $id, $value, &$commandIsProcessed, \TYPO3\CMS\Core\DataHandling\DataHandler &$parentObj) {
 		/** @var $hook \GridElementsTeam\Gridelements\DataHandler\ProcessCmdmap */
 		if(!$parentObj->isImporting) {
-			$hook = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('GridElementsTeam\Gridelements\DataHandler\ProcessCmdmap');
+			$hook = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('GridElementsTeam\\Gridelements\\DataHandler\\ProcessCmdmap');
 			$hook->execute_processCmdmap($command, $table, $id, $value, $commandIsProcessed, $parentObj);
 		}
 	}

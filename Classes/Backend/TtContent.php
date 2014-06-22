@@ -56,7 +56,7 @@ class TtContent {
 	public function init($pageUid) {
 		if (!$this->layoutSetup instanceof \GridElementsTeam\Gridelements\Backend\LayoutSetup) {
 			$this->injectLayoutSetup(
-				\TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('GridElementsTeam\Gridelements\Backend\LayoutSetup')
+				\TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('GridElementsTeam\\Gridelements\\Backend\\LayoutSetup')
 					->init($pageUid)
 			);
 		}
@@ -192,18 +192,18 @@ class TtContent {
 	 * Recursive function to remove any container from the list of possible containers
 	 * that is already a subcontainer on any level of the current container
 	 *
-	 * @param CSV	$containerIds: A list determining containers that should be checked
+	 * @param string	$containerIds: A list determining containers that should be checked
 	 * @param array	$possibleContainers: The result list containing the remaining containers after the check
 	 * @return	void
 	 */
 	public function lookForChildContainersRecursively($containerIds, &$possibleContainers) {
-		if($containerIds) {
-			$childrenOnNextLevel = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows(
-				'uid, tx_gridelements_container',
-				'tt_content',
-				'CType=\'gridelements_pi1\' AND tx_gridelements_container IN (' . $containerIds . ')'
-			);
+		if (!$containerIds) {
+			return;
 		}
+		$childrenOnNextLevel = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows(
+			'uid, tx_gridelements_container',
+			'tt_content', 'CType=\'gridelements_pi1\' AND tx_gridelements_container IN (' . $containerIds . ')'
+		);
 
 		if (count($childrenOnNextLevel) && count($possibleContainers)) {
 			$containerIds = '';

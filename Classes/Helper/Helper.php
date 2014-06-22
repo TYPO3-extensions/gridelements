@@ -35,12 +35,12 @@ class Helper {
 		if (trim($table) && $uid > 0) {
 
 			/** @var $dependency \TYPO3\CMS\Version\Dependency\DependencyResolver */
-			$dependency = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Version\Dependency\DependencyResolver');
+			$dependency = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Version\\Dependency\\DependencyResolver');
 
 			$dependencyElement = $dependency->addElement($table, $uid);
 			$children = $dependencyElement->getChildren();
 
-			foreach($children as $key => $child) {
+			foreach($children as $child) {
 				if ($child->getElement()->getTable() === $table && $child->getField() === 'tx_gridelements_children') {
 					$record = $child->getElement()->getRecord();
 
@@ -85,7 +85,7 @@ class Helper {
 	/**
 	 * Gets the current backend user.
 	 *
-	 * @return t3lib_beUserAuth
+	 * @return \TYPO3\CMS\Core\Authentication\BackendUserAuthentication
 	 */
 	public function getBackendUser() {
 		return $GLOBALS['BE_USER'];

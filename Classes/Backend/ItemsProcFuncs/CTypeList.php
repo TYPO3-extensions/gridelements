@@ -12,14 +12,14 @@ namespace GridElementsTeam\Gridelements\Backend\ItemsProcFuncs;
 class CTypeList extends AbstractItemsProcFunc {
 
 	/**
-	 * @var tx_gridelements_layoutsetup
+	 * @var \GridElementsTeam\Gridelements\Backend\LayoutSetup
 	 */
 	protected $layoutSetup;
 
 	/**
 	 * injects layout setup
 	 *
-	 * @param \GridElementsTeam\Gridelements\Backend\ItemsProcFuncs\tx_gridelements_layoutsetup|\GridElementsTeam\Gridelements\Backend\LayoutSetup $layoutSetup
+	 * @param \GridElementsTeam\Gridelements\Backend\LayoutSetup $layoutSetup
 	 */
 	public function injectLayoutSetup(\GridElementsTeam\Gridelements\Backend\LayoutSetup $layoutSetup) {
 		$this->layoutSetup = $layoutSetup;
@@ -28,11 +28,11 @@ class CTypeList extends AbstractItemsProcFunc {
 	/**
 	 * initializes this class
 	 *
-	 * @param type $pageUid
+	 * @param int $pageUid
 	 */
 	public function init($pageUid) {
 		if (!$this->layoutSetup instanceof \GridElementsTeam\Gridelements\Backend\LayoutSetup) {
-			$this->layoutSetup = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('GridElementsTeam\Gridelements\Backend\LayoutSetup')
+			$this->layoutSetup = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('GridElementsTeam\\Gridelements\\Backend\\LayoutSetup')
 				->init($pageUid);
 		}
 	}

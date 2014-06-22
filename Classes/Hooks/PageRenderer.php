@@ -62,7 +62,7 @@ class PageRenderer {
 
 			if (method_exists($GLOBALS['SOBE']->doc, 'issueCommand')) {
 				/** @var \TYPO3\CMS\Backend\Clipboard\Clipboard $clipObj  */
-				$clipObj = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Backend\Clipboard\Clipboard');		// Start clipboard
+				$clipObj = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Backend\\Clipboard\\Clipboard');		// Start clipboard
 				$clipObj->initializeClipboard();
 
 				$clipBoardHasContent = FALSE;
