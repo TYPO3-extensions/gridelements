@@ -120,6 +120,7 @@ $TCA['tx_gridelements_backend_layout'] = array(
 					),
 				),
 			),
+			'defaultExtras' => 'fixed-font : enable-tab',
 		),
 		'pi_flexform_ds' => array(
 			'exclude' => 1,
