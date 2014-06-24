@@ -1139,7 +1139,6 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
 
 		if (count($data) > 1) {
 			for ($i = 0; $i < $level; $i++) {
-//				t3lib_utility_Debug::debug($level);
 				$out .=	'<td></td>';
 			}
 

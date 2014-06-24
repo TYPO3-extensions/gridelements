@@ -221,7 +221,7 @@ class AjaxRecordList {
 
 			// If there is access to the page, then render the list contents and set up the document template object:
 			// todo: there is no browsing in child records
-			//$this->pointer = t3lib_utility_Math::forceIntegerInRange($this->pointer,0,100000);
+			//$this->pointer = \TYPO3\CMS\Core\Utility\MathUtility::forceIntegerInRange($this->pointer,0,100000);
 			$pointer = 0;
 			$search_field = '';
 			$search_levels = '';

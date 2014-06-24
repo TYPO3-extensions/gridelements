@@ -57,7 +57,7 @@ class tx_gridelements_tcemain_abstractTest extends \TYPO3\CMS\Extbase\Tests\Unit
 	 */
 	public function testGetTceMain() {
 		$hook = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_gridelements_tcemain_abstract');
-		$tceMain = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('t3lib_TCEmain');
+		$tceMain = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\DataHandling\\DataHandler');
 		$hook->setTceMain($tceMain);
 		$result = $hook->getTceMain();
 		$this->assertEquals($tceMain, $result);
@@ -70,7 +70,7 @@ class tx_gridelements_tcemain_abstractTest extends \TYPO3\CMS\Extbase\Tests\Unit
 	 */
 	public function testDoGridContainerUpdate() {
 		$hook = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_gridelements_tcemain_abstract');
-		$t3lib_db = $this->getMock('t3lib_db', array('exec_UPDATEquery'));
+		$t3lib_db = $this->getMock('TYPO3\\CMS\\Core\\Database\\DatabaseConnection', array('exec_UPDATEquery'));
 		$t3lib_db
 			->expects($this->never())
 			->method('exec_UPDATEquery')
@@ -81,7 +81,7 @@ class tx_gridelements_tcemain_abstractTest extends \TYPO3\CMS\Extbase\Tests\Unit
 		$hook->doGridContainerUpdate($containerUpdateArray);
 
 		$hook = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_gridelements_tcemain_abstract');
-		$t3lib_db = $this->getMock('t3lib_db', array('exec_UPDATEquery'));
+		$t3lib_db = $this->getMock('TYPO3\\CMS\\Core\\Database\\DatabaseConnection', array('exec_UPDATEquery'));
 		$t3lib_db
 			->expects($this->exactly(4))
 			->method('exec_UPDATEquery')

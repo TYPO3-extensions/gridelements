@@ -41,7 +41,7 @@ class tx_gridelements_tcemain_moveRecordTest extends \TYPO3\CMS\Extbase\Tests\Un
 		$expectedUpdateArray['sorting'] = 0;
 		$expectedUpdateArray['tx_gridelements_container'] = 456;
 		$expectedUpdateArray['tx_gridelements_columns'] = 34;
-		$tceMain = $this->getMock('t3lib_TCEmain', array('updateDB'));
+		$tceMain = $this->getMock('TYPO3\\CMS\\Core\\DataHandling\\DataHandler', array('updateDB'));
 		$tceMain
 			->expects($this->once())
 			->method('updateDB')
@@ -65,7 +65,7 @@ class tx_gridelements_tcemain_moveRecordTest extends \TYPO3\CMS\Extbase\Tests\Un
 		$this->assertEquals(-123, $destPid);
 
 		$containerUpdateArray[0] = 123;
-		$tceMain = $this->getMock('t3lib_TCEmain', array('updateDB'));
+		$tceMain = $this->getMock('TYPO3\\CMS\\Core\\DataHandling\\DataHandler', array('updateDB'));
 		$tceMain
 			->expects($this->once())
 			->method('updateDB')
@@ -97,7 +97,7 @@ class tx_gridelements_tcemain_moveRecordTest extends \TYPO3\CMS\Extbase\Tests\Un
 		$expectedUpdateArray['sorting'] = 0;
 		$expectedUpdateArray['tx_gridelements_container'] = 0;
 		$expectedUpdateArray['tx_gridelements_columns'] = 0;
-		$tceMain = $this->getMock('t3lib_TCEmain', array('updateDB'));
+		$tceMain = $this->getMock('TYPO3\\CMS\\Core\\DataHandling\\DataHandler', array('updateDB'));
 		$tceMain
 			->expects($this->once())
 			->method('updateDB')
@@ -128,7 +128,7 @@ class tx_gridelements_tcemain_moveRecordTest extends \TYPO3\CMS\Extbase\Tests\Un
 		$expectedUpdateArray['sorting'] = 0;
 		$expectedUpdateArray['tx_gridelements_container'] = 0;
 		$expectedUpdateArray['tx_gridelements_columns'] = 0;
-		$tceMain = $this->getMock('t3lib_TCEmain', array('updateDB'));
+		$tceMain = $this->getMock('TYPO3\\CMS\\Core\\DataHandling\\DataHandler', array('updateDB'));
 		$tceMain
 			->expects($this->once())
 			->method('updateDB')
@@ -166,7 +166,7 @@ class tx_gridelements_tcemain_moveRecordTest extends \TYPO3\CMS\Extbase\Tests\Un
 		$expectedUpdateArray['sorting'] = 0;
 		$expectedUpdateArray['tx_gridelements_container'] = 0;
 		$expectedUpdateArray['tx_gridelements_columns'] = 0;
-		$tceMain = $this->getMock('t3lib_TCEmain', array('updateDB'));
+		$tceMain = $this->getMock('TYPO3\\CMS\\Core\\DataHandling\\DataHandler', array('updateDB'));
 		$tceMain
 			->expects($this->once())
 			->method('updateDB')
@@ -198,7 +198,7 @@ class tx_gridelements_tcemain_moveRecordTest extends \TYPO3\CMS\Extbase\Tests\Un
 		$expectedUpdateArray['sorting'] = 0;
 		$expectedUpdateArray['tx_gridelements_container'] = 0;
 		$expectedUpdateArray['tx_gridelements_columns'] = 0;
-		$tceMain = $this->getMock('t3lib_TCEmain', array('updateDB'));
+		$tceMain = $this->getMock('TYPO3\\CMS\\Core\\DataHandling\\DataHandler', array('updateDB'));
 		$tceMain
 			->expects($this->once())
 			->method('updateDB')

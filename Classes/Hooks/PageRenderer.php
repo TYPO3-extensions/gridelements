@@ -34,7 +34,7 @@ namespace GridElementsTeam\Gridelements\Hooks;
 class PageRenderer {
 
 	/**
-	 * wrapper function called by hook (t3lib_pageRenderer->render-preProcess)
+	 * wrapper function called by hook (\TYPO3\CMS\Core\Page\PageRenderer->render-preProcess)
 	 *
 	 * @param	array	            $parameters: An array of available parameters
 	 * @param	\TYPO3\CMS\Core\Page\PageRenderer $pageRenderer: The parent object that triggered this hook

@@ -25,7 +25,7 @@
 class tx_gridelements_tcemainhookTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 
 	/**
-	 * @var t3lib_db
+	 * @var \TYPO3\CMS\Core\Database\DatabaseConnection
 	 */
 	var $tempT3libDb;
 
@@ -89,7 +89,7 @@ class tx_gridelements_tcemainhookTest extends \TYPO3\CMS\Extbase\Tests\Unit\Base
 			array('tt_content', 0, NULL, 'noPid'),
 			array('tt_content', 0, 23, 123)
 		);
-		$parentObj = $this->getMock('t3lib_TCEmain', array('getSortNumber'));
+		$parentObj = $this->getMock('TYPO3\\CMS\\Core\\DataHandling\\DataHandler', array('getSortNumber'));
 		$parentObj->isImporting = FALSE;
 		$parentObj
 			->expects($this->any())
