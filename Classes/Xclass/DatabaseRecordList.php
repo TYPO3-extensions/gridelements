@@ -54,7 +54,6 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
 	 * @param integer $id Page id
 	 * @param string $rowlist List of fields to show in the listing. Pseudo fields will be added including the record header.
 	 * @return string HTML table with the listing for the record.
-	 * @todo Define visibility
 	 */
 	public function getTable($table, $id, $rowlist) {
 		// Init
@@ -406,7 +405,6 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
 	 * @return string Header table row
 	 * @access private
 	 * @see getTable()
-	 * @todo Define visibility
 	 */
 	public function renderListHeader($table, $currentIdList) {
 		// Init:
@@ -664,7 +662,6 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
 	 * @param array $row The record for which to make the control panel.
 	 * @param string $level
 	 * @return string HTML table with the control panel (unless disabled)
-	 * @todo Define visibility
 	 */
 	public function makeControl($table,$row,$level)	{
 		if ($this->dontShowClipControlPanels) {
@@ -886,7 +883,6 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
 	 * @param string $table The table
 	 * @param array $row The record for which to make the clipboard panel.
 	 * @return string HTML table with the clipboard panel (unless disabled)
-	 * @todo Define visibility
 	 */
 	public function makeClip($table, $row) {
 		// Return blank, if disabled:
@@ -982,7 +978,6 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
 	 * @return string Table row for the element
 	 * @access private
 	 * @see getTable()
-	 * @todo Define visibility
 	 */
 	public function renderListRow($table, $row, $cc, $titleCol, $thumbsCol, $indent=0, $level=0) {
 		$iOut = '';
@@ -1128,7 +1123,6 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
 	 * @param string $altLine Is the HTML <img>-tag for an alternative 'gfx/ol/line.gif'-icon (used in the top)
 	 * @param int $level
 	 * @return string HTML content for the table row
-	 * @todo Define visibility
 	 */
 	public function addElement($h, $icon, $data, $trParams = '', $lMargin = '', $altLine = '', $level = 0) {
 		$noWrap = $this->no_noWrap ? '' : ' nowrap="nowrap"';
@@ -1294,7 +1288,6 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
 	 * @param boolean $deselect If set, the link will deselect, otherwise select.
 	 * @param array $baseArray The base array of GET vars to be sent in addition. Notice that current GET vars WILL automatically be included.
 	 * @return string URL linking to the current script but with the CB array set to select the element with table/uid
-	 * @todo Define visibility
 	 */
 	function selUrlDB($table, $uid, $pid, $copy = 0, $deselect = 0, $baseArray = array()) {
 		$CB = array('el' => array(rawurlencode($table . '|' . $uid) => $deselect ? 0 : 1));
@@ -1333,7 +1326,6 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
 	 * @param string $table The table
 	 * @param array $row The record for which to make the localization panel.
 	 * @return array Array with key 0/1 with content for column 1 and 2
-	 * @todo Define visibility
 	 */
 	public function makeLocalizationPanel($table, $row) {
 		$out = array(
@@ -1378,7 +1370,6 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
 	 * @param string $table Table name
 	 * @param boolean $formFields If TRUE, form-fields will be wrapped around the table.
 	 * @return string HTML table with the selector box (name: displayFields['.$table.'][])
-	 * @todo Define visibility
 	 */
 	public function fieldSelectBox($table, $formFields = 1) {
 		// Init:

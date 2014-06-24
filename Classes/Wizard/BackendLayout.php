@@ -14,10 +14,8 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class BackendLayout {
 
-	// GET vars:
-	// Wizard parameters, coming from TCEforms linking to the wizard.
 	/**
-	 * @todo Define visibility
+	 * Wizard parameters, coming from TCEforms linking to the wizard.
 	 */
 	public $P;
 
@@ -25,13 +23,11 @@ class BackendLayout {
 	 * Document template object
 	 *
 	 * @var \TYPO3\CMS\Backend\Template\DocumentTemplate
-	 * @todo Define visibility
 	 */
 	public $doc;
 
-	// Accumulated content.
 	/**
-	 * @todo Define visibility
+	 * Accumulated content.
 	 */
 	public $content;
 
