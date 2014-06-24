@@ -60,11 +60,6 @@ abstract class AbstractDataHandler {
 	protected $layoutSetup;
 
 	/**
-	 * @var \GridElementsTeam\Gridelements\Backend\WrapperForT3libBeFunc
-	 */
-	protected $beFunc;
-
-	/**
 	 * inject tce forms
 	 *
 	 * @param \TYPO3\CMS\Backend\Form\FormEngine $formEngine
@@ -87,17 +82,6 @@ abstract class AbstractDataHandler {
 	}
 
 	/**
-	 * inject beFunc
-	 *
-	 * @param \GridElementsTeam\Gridelements\Backend\WrapperForT3libBeFunc $beFunc
-	 *
-	 * @return void
-	 */
-	public function injectBeFunc(\GridElementsTeam\Gridelements\Backend\WrapperForT3libBeFunc $beFunc) {
-		$this->beFunc = $beFunc;
-	}
-
-	/**
 	 * initializes this class
 	 *
 	 * @param   string                                   $table   : The name of the table the data should be saved to
@@ -114,9 +98,6 @@ abstract class AbstractDataHandler {
 		if (!$this->layoutSetup instanceof \GridElementsTeam\Gridelements\Backend\LayoutSetup) {
 			$this->injectLayoutSetup(GeneralUtility::makeInstance('GridElementsTeam\\Gridelements\\Backend\\LayoutSetup')
 			                                                               ->init($pageUid));
-		}
-		if (!$this->beFunc instanceof \GridElementsTeam\Gridelements\Backend\WrapperForT3libBeFunc) {
-			$this->injectBeFunc(GeneralUtility::makeInstance('GridElementsTeam\\Gridelements\\Backend\\WrapperForT3libBeFunc'));
 		}
 		if (!$this->formEngine instanceof \TYPO3\CMS\Backend\Form\FormEngine) {
 			$this->injectTceForms(GeneralUtility::makeInstance('TYPO3\\CMS\\Backend\\Form\\FormEngine'));
