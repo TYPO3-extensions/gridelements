@@ -34,7 +34,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  * @package		TYPO3
  * @subpackage	tx_gridelements
  */
-class AbstractItemsProcFunc {
+abstract class AbstractItemsProcFunc {
 
 	/**
 	 * Gets the selected backend layout

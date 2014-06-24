@@ -9,7 +9,7 @@ namespace GridElementsTeam\Gridelements\Backend\ItemsProcFuncs;
  * @subpackage	tx_gridelements
  */
 
-class SysLanguageUidList {
+class SysLanguageUidList extends AbstractItemsProcFunc {
 
 	/**
 	 * ItemProcFunc for CType items
