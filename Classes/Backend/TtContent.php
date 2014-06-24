@@ -1,5 +1,6 @@
 <?php
 namespace GridElementsTeam\Gridelements\Backend;
+
 /***************************************************************
  *  Copyright notice
  *
@@ -22,13 +23,14 @@ namespace GridElementsTeam\Gridelements\Backend;
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Class/Function which manipulates the item-array for table/field tt_content_tx_gridelements_columns.
  *
- * @author		Jo Hasenau <info@cybercraft.de>
- * @package		TYPO3
- * @subpackage	tx_gridelements
+ * @author         Jo Hasenau <info@cybercraft.de>
+ * @package        TYPO3
+ * @subpackage     tx_gridelements
  */
 class TtContent {
 
@@ -41,6 +43,7 @@ class TtContent {
 	 * inject layout setup
 	 *
 	 * @param \GridElementsTeam\Gridelements\Backend\LayoutSetup $layoutSetup
+	 *
 	 * @return void
 	 */
 	public function injectLayoutSetup(\GridElementsTeam\Gridelements\Backend\LayoutSetup $layoutSetup) {
@@ -51,22 +54,22 @@ class TtContent {
 	 * initializes this class
 	 *
 	 * @param integer $pageUid
+	 *
 	 * @return void
 	 */
 	public function init($pageUid) {
 		if (!$this->layoutSetup instanceof \GridElementsTeam\Gridelements\Backend\LayoutSetup) {
-			$this->injectLayoutSetup(
-				\TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('GridElementsTeam\\Gridelements\\Backend\\LayoutSetup')
-					->init($pageUid)
-			);
+			$this->injectLayoutSetup(GeneralUtility::makeInstance('GridElementsTeam\\Gridelements\\Backend\\LayoutSetup')
+			                                       ->init($pageUid));
 		}
 	}
 
 	/**
 	 * ItemProcFunc for columns items
 	 *
-	 * @param	array	$params: An array containing the items and parameters for the list of items
-	 * @return	void
+	 * @param    array $params : An array containing the items and parameters for the list of items
+	 *
+	 * @return    void
 	 */
 	public function columnsItemsProcFunc(&$params) {
 		$this->init($params['row']['pid']);
@@ -74,12 +77,11 @@ class TtContent {
 
 		if ($gridContainerId > 0) {
 			$gridElement = $this->layoutSetup->cacheCurrentParent($gridContainerId, TRUE);
-			$params['items'] = $this->layoutSetup
-				->getLayoutColumnsSelectItems($gridElement['tx_gridelements_backend_layout']);
+			$params['items'] = $this->layoutSetup->getLayoutColumnsSelectItems($gridElement['tx_gridelements_backend_layout']);
 
-			if($params['row']['CType'] !== '' && count($params['items']) > 0) {
-				foreach($params['items'] as $itemKey => $itemArray) {
-					if($itemArray[3] !== '' && $itemArray[3] !== '*' && !\TYPO3\CMS\Core\Utility\GeneralUtility::inList($itemArray[3], $params['row']['CType'])) {
+			if ($params['row']['CType'] !== '' && count($params['items']) > 0) {
+				foreach ($params['items'] as $itemKey => $itemArray) {
+					if ($itemArray[3] !== '' && $itemArray[3] !== '*' && !GeneralUtility::inList($itemArray[3], $params['row']['CType'])) {
 						unset($params['items'][$itemKey]);
 					}
 				}
@@ -92,8 +94,9 @@ class TtContent {
 	 * removes items of the children chain from the list of selectable containers
 	 * if the element itself already is a container
 	 *
-	 * @param	array	$params: An array containing the items and parameters for the list of items
-	 * @return	void
+	 * @param    array $params : An array containing the items and parameters for the list of items
+	 *
+	 * @return    void
 	 */
 	public function containerItemsProcFunc(&$params) {
 		$this->init($params['row']['pid']);
@@ -104,9 +107,9 @@ class TtContent {
 		}
 
 		$itemUidList = '';
-		if(count($params['items']) > 1) {
-			foreach($params['items'] as $container) {
-				if($container[1] > 0) {
+		if (count($params['items']) > 1) {
+			foreach ($params['items'] as $container) {
+				if ($container[1] > 0) {
 					$itemUidList .= $itemUidList ? ',' . $container[1] : $container[1];
 				}
 			}
@@ -121,7 +124,8 @@ class TtContent {
 	 * removes items of the children chain from the list of selectable containers
 	 *
 	 * @param array $params
-	 * @param $possibleContainers
+	 * @param       $possibleContainers
+	 *
 	 * @return void
 	 */
 	public function removesItemsFromListOfSelectableContainers(array &$params, &$possibleContainers) {
@@ -144,27 +148,20 @@ class TtContent {
 	/**
 	 * delete containers from params which are not allowed
 	 *
-	 * @param array $params
+	 * @param array  $params
 	 * @param string $itemUidList comma seperated list of uids
+	 *
 	 * @return void
 	 */
 	public function deleteUnallowedContainer(array &$params, $itemUidList = '') {
 		$layoutSetups = $this->layoutSetup->getLayoutSetup();
-		if($itemUidList) {
-			$containerRecords = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows(
-				'uid,tx_gridelements_backend_layout',
-				'tt_content',
-				'uid IN (' . $itemUidList . ')',
-				'',
-				'',
-				'',
-				'uid'
-			);
+		if ($itemUidList) {
+			$containerRecords = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows('uid,tx_gridelements_backend_layout', 'tt_content', 'uid IN (' . $itemUidList . ')', '', '', '', 'uid');
 
-			foreach($params['items'] as $key => $container) {
+			foreach ($params['items'] as $key => $container) {
 				$allowed = $layoutSetups[$containerRecords[$container[1]]['tx_gridelements_backend_layout']]['allowed'];
-				if($container[1] > 0 && $allowed) {
-					if(!\TYPO3\CMS\Core\Utility\GeneralUtility::inList($allowed, $params['row']['CType']) && !\TYPO3\CMS\Core\Utility\GeneralUtility::inList($allowed, '*')) {
+				if ($container[1] > 0 && $allowed) {
+					if (!GeneralUtility::inList($allowed, $params['row']['CType']) && !GeneralUtility::inList($allowed, '*')) {
 						unset($params['items'][$key]);
 					}
 				}
@@ -177,33 +174,31 @@ class TtContent {
 	 * removes items that are available for grid boxes on the first level only
 	 * and items that are excluded for a certain branch or user
 	 *
-	 * @param	array	$params: An array containing the items and parameters for the list of items
-	 * @return	void
+	 * @param    array $params : An array containing the items and parameters for the list of items
+	 *
+	 * @return    void
 	 */
 	public function layoutItemsProcFunc(&$params) {
 		$this->init($params['row']['pid']);
-		$layoutSelectItems = $this->layoutSetup
-			->getLayoutSelectItems($params['row']['colPos']);
+		$layoutSelectItems = $this->layoutSetup->getLayoutSelectItems($params['row']['colPos']);
 
-		$params['items'] = \TYPO3\CMS\Core\Utility\GeneralUtility::keepItemsInArray($layoutSelectItems, $params['items'], TRUE);
+		$params['items'] = GeneralUtility::keepItemsInArray($layoutSelectItems, $params['items'], TRUE);
 	}
 
 	/**
 	 * Recursive function to remove any container from the list of possible containers
 	 * that is already a subcontainer on any level of the current container
 	 *
-	 * @param string	$containerIds: A list determining containers that should be checked
-	 * @param array	$possibleContainers: The result list containing the remaining containers after the check
-	 * @return	void
+	 * @param string $containerIds       : A list determining containers that should be checked
+	 * @param array  $possibleContainers : The result list containing the remaining containers after the check
+	 *
+	 * @return    void
 	 */
 	public function lookForChildContainersRecursively($containerIds, &$possibleContainers) {
 		if (!$containerIds) {
 			return;
 		}
-		$childrenOnNextLevel = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows(
-			'uid, tx_gridelements_container',
-			'tt_content', 'CType=\'gridelements_pi1\' AND tx_gridelements_container IN (' . $containerIds . ')'
-		);
+		$childrenOnNextLevel = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows('uid, tx_gridelements_container', 'tt_content', 'CType=\'gridelements_pi1\' AND tx_gridelements_container IN (' . $containerIds . ')');
 
 		if (count($childrenOnNextLevel) && count($possibleContainers)) {
 			$containerIds = '';
@@ -213,9 +208,7 @@ class TtContent {
 					unset($possibleContainers[$childOnNextLevel['uid']]);
 				}
 
-				$containerIds .= $containerIds
-					? ',' . (int)$childOnNextLevel['uid']
-					: (int)$childOnNextLevel['uid'];
+				$containerIds .= $containerIds ? ',' . (int)$childOnNextLevel['uid'] : (int)$childOnNextLevel['uid'];
 
 				if ($containerIds !== '') {
 					$this->lookForChildContainersRecursively($containerIds, $possibleContainers);

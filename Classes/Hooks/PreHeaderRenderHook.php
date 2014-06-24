@@ -3,8 +3,16 @@ namespace GridElementsTeam\Gridelements\Hooks;
 
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 
+/**
+ * Class PreHeaderRenderHook
+ *
+ * @package GridElementsTeam\Gridelements\Hooks
+ */
 class PreHeaderRenderHook {
 
+	/**
+	 * @param array $arg
+	 */
 	function main($arg) {
 		/** @var $pagerenderer \TYPO3\CMS\Core\Page\PageRenderer */
 		$pagerenderer = $arg['pageRenderer'];

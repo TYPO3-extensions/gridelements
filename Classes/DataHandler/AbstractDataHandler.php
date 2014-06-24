@@ -24,17 +24,19 @@ namespace GridElementsTeam\Gridelements\DataHandler;
 	 *
 	 *  This copyright notice MUST APPEAR in all copies of the script!
 	 ***************************************************************/
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Class/Function which offers TCE main hook functions.
  *
- * @author		Jo Hasenau <info@cybercraft.de>
- * @package		TYPO3
- * @subpackage	tx_gridelements
+ * @author         Jo Hasenau <info@cybercraft.de>
+ * @package        TYPO3
+ * @subpackage     tx_gridelements
  */
 abstract class AbstractDataHandler {
 
 	protected $table;
+
 	protected $pageUid;
 
 	/**
@@ -66,6 +68,7 @@ abstract class AbstractDataHandler {
 	 * inject tce forms
 	 *
 	 * @param \TYPO3\CMS\Backend\Form\FormEngine $formEngine
+	 *
 	 * @return void
 	 */
 	public function injectTceForms(\TYPO3\CMS\Backend\Form\FormEngine $formEngine) {
@@ -76,6 +79,7 @@ abstract class AbstractDataHandler {
 	 * inject layout setup
 	 *
 	 * @param \GridElementsTeam\Gridelements\Backend\LayoutSetup $layoutSetup
+	 *
 	 * @return void
 	 */
 	public function injectLayoutSetup(\GridElementsTeam\Gridelements\Backend\LayoutSetup $layoutSetup) {
@@ -86,6 +90,7 @@ abstract class AbstractDataHandler {
 	 * inject beFunc
 	 *
 	 * @param \GridElementsTeam\Gridelements\Backend\WrapperForT3libBeFunc $beFunc
+	 *
 	 * @return void
 	 */
 	public function injectBeFunc(\GridElementsTeam\Gridelements\Backend\WrapperForT3libBeFunc $beFunc) {
@@ -95,9 +100,10 @@ abstract class AbstractDataHandler {
 	/**
 	 * initializes this class
 	 *
-	 * @param   string $table : The name of the table the data should be saved to
-	 * @param   integer $pageUid : The uid of the page we are currently working on
+	 * @param   string                                   $table   : The name of the table the data should be saved to
+	 * @param   integer                                  $pageUid : The uid of the page we are currently working on
 	 * @param   \TYPO3\CMS\Core\DataHandling\DataHandler $dataHandler
+	 *
 	 * @return  void
 	 */
 	public function init($table, $pageUid, \TYPO3\CMS\Core\DataHandling\DataHandler $dataHandler) {
@@ -106,15 +112,14 @@ abstract class AbstractDataHandler {
 		$this->setTceMain($dataHandler);
 		$this->setDatabaseConnection($GLOBALS['TYPO3_DB']);
 		if (!$this->layoutSetup instanceof \GridElementsTeam\Gridelements\Backend\LayoutSetup) {
-			$this->injectLayoutSetup(
-				\TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('GridElementsTeam\\Gridelements\\Backend\\LayoutSetup')->init($pageUid)
-			);
+			$this->injectLayoutSetup(GeneralUtility::makeInstance('GridElementsTeam\\Gridelements\\Backend\\LayoutSetup')
+			                                                               ->init($pageUid));
 		}
 		if (!$this->beFunc instanceof \GridElementsTeam\Gridelements\Backend\WrapperForT3libBeFunc) {
-			$this->injectBeFunc(\TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('GridElementsTeam\\Gridelements\\Backend\\WrapperForT3libBeFunc'));
+			$this->injectBeFunc(GeneralUtility::makeInstance('GridElementsTeam\\Gridelements\\Backend\\WrapperForT3libBeFunc'));
 		}
 		if (!$this->formEngine instanceof \TYPO3\CMS\Backend\Form\FormEngine) {
-			$this->injectTceForms(\TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Backend\\Form\\FormEngine'));
+			$this->injectTceForms(GeneralUtility::makeInstance('TYPO3\\CMS\\Backend\\Form\\FormEngine'));
 		}
 	}
 
@@ -122,6 +127,7 @@ abstract class AbstractDataHandler {
 	 * setter for table
 	 *
 	 * @param string $table
+	 *
 	 * @return void
 	 */
 	public function setTable($table) {
@@ -141,6 +147,7 @@ abstract class AbstractDataHandler {
 	 * setter for pageUid
 	 *
 	 * @param integer $pageUid
+	 *
 	 * @return void
 	 */
 	public function setPageUid($pageUid) {
@@ -160,6 +167,7 @@ abstract class AbstractDataHandler {
 	 * setter for dataHandler object
 	 *
 	 * @param \TYPO3\CMS\Core\DataHandling\DataHandler $dataHandler
+	 *
 	 * @return void
 	 */
 	public function setTceMain(\TYPO3\CMS\Core\DataHandling\DataHandler $dataHandler) {
@@ -179,6 +187,7 @@ abstract class AbstractDataHandler {
 	 * setter for databaseConnection object
 	 *
 	 * @param \TYPO3\CMS\Core\Database\DatabaseConnection $databaseConnection
+	 *
 	 * @return void
 	 */
 	public function setDatabaseConnection(\TYPO3\CMS\Core\Database\DatabaseConnection $databaseConnection) {
@@ -198,16 +207,18 @@ abstract class AbstractDataHandler {
 	 * Function to handle record actions between different grid containers
 	 *
 	 * @param array $containerUpdateArray
+	 *
 	 * @return void
 	 */
 	public function doGridContainerUpdate($containerUpdateArray = array()) {
-		if(is_array($containerUpdateArray) && count($containerUpdateArray > 0)) {
+		if (is_array($containerUpdateArray) && count($containerUpdateArray > 0)) {
 			foreach ($containerUpdateArray as $containerUid => $newElement) {
 				$fieldArray = array(
 					'tx_gridelements_children' => 'tx_gridelements_children + ' . $newElement
 				);
 				$this->databaseConnection->exec_UPDATEquery('tt_content', 'uid=' . $containerUid, $fieldArray, 'tx_gridelements_children');
-				$this->getTceMain()->updateRefIndex('tt_content', $containerUid);
+				$this->getTceMain()
+				     ->updateRefIndex('tt_content', $containerUid);
 			}
 		}
 	}
@@ -216,19 +227,21 @@ abstract class AbstractDataHandler {
 	 * Function to handle record actions for children of translated grid containers
 	 *
 	 * @param array $containerUpdateArray
+	 *
 	 * @return void
 	 */
 	public function checkAndUpdateTranslatedChildren($containerUpdateArray = array()) {
-		if(is_array($containerUpdateArray) && count($containerUpdateArray > 0)) {
+		if (is_array($containerUpdateArray) && count($containerUpdateArray > 0)) {
 			foreach ($containerUpdateArray as $containerUid => $newElement) {
 				$translatedContainers = $this->databaseConnection->exec_SELECTgetRows('uid,sys_language_uid', 'tt_content', 'l18n_parent = ' . $containerUid . \TYPO3\CMS\Backend\Utility\BackendUtility::BEenableFields('tt_content'));
-				if(count($translatedContainers) > 0) {
-					foreach($translatedContainers as $languageArray) {
+				if (count($translatedContainers) > 0) {
+					foreach ($translatedContainers as $languageArray) {
 						$targetContainer = \TYPO3\CMS\Backend\Utility\BackendUtility::getRecordWSOL('tt_content', $languageArray['uid']);
 						$fieldArray['tx_gridelements_container'] = $targetContainer['uid'];
 						$where = 'tx_gridelements_container = ' . $containerUid . ' AND sys_language_uid = ' . $targetContainer['sys_language_uid'];
 						$this->databaseConnection->exec_UPDATEquery('tt_content', $where, $fieldArray, 'tx_gridelements_container');
-						$this->getTceMain()->updateRefIndex('tt_content', $targetContainer['uid']);
+						$this->getTceMain()
+						     ->updateRefIndex('tt_content', $targetContainer['uid']);
 					}
 				}
 			}

@@ -5,6 +5,7 @@ $GLOBALS['LANG']->includeLLFile('EXT:lang/locallang_wizards.xml');
 
 use TYPO3\CMS\Backend\Utility\IconUtility;
 use TYPO3\CMS\Core\Page\PageRenderer;
+use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -41,7 +42,7 @@ class BackendLayout {
 		$GLOBALS['LANG']->includeLLFile('EXT:lang/locallang_wizards.xlf');
 
 		// Setting GET vars (used in frameset script):
-		$this->P = \TYPO3\CMS\Core\Utility\GeneralUtility::_GP('P', 1);
+		$this->P = GeneralUtility::_GP('P', 1);
 
 		//data[layouts][2][config]
 		$this->formName = $this->P['formName'];
@@ -57,7 +58,7 @@ class BackendLayout {
 		$this->doc->backPath = $GLOBALS['BACK_PATH'];
 		/** @var PageRenderer $pageRenderer */
 		$pageRenderer = $this->doc->getPageRenderer();
-		$pageRenderer->addJsFile($GLOBALS['BACK_PATH'] . \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath('gridelements') . 'Resources/Public/Backend/JavaScript/grideditor.js');
+		$pageRenderer->addJsFile($GLOBALS['BACK_PATH'] . ExtensionManagementUtility::extRelPath('gridelements') . 'Resources/Public/Backend/JavaScript/grideditor.js');
 		$pageRenderer->addJsInlineCode('storeData', '
 			function storeData(data) {
 				if (parent.opener && parent.opener.document && parent.opener.document.' . $this->formName . ' && parent.opener.document.' . $this->formName . '[' . GeneralUtility::quoteJSvalue($this->fieldName) . ']) {
@@ -67,17 +68,17 @@ class BackendLayout {
 			}
 			', FALSE);
 		$languageLabels = array(
-			'save' => $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_labelSave', TRUE),
-			'title' => $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_windowTitle', TRUE),
-			'editCell' => $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_editCell', TRUE),
-			'mergeCell' => $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_mergeCell', TRUE),
-			'splitCell' => $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_splitCell', TRUE),
-			'name' => $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_name', TRUE),
-			'column' => $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_column', TRUE),
-			'notSet' => $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_notSet', TRUE),
-			'nameHelp' => $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_nameHelp', TRUE),
-			'columnHelp' => $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_wizards.xml:grid_columnHelp', 1),
-			'allowedElementTypes' => $GLOBALS['LANG']->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:allowedElementTypes', 1),
+			'save'                    => $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_labelSave', TRUE),
+			'title'                   => $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_windowTitle', TRUE),
+			'editCell'                => $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_editCell', TRUE),
+			'mergeCell'               => $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_mergeCell', TRUE),
+			'splitCell'               => $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_splitCell', TRUE),
+			'name'                    => $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_name', TRUE),
+			'column'                  => $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_column', TRUE),
+			'notSet'                  => $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_notSet', TRUE),
+			'nameHelp'                => $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_nameHelp', TRUE),
+			'columnHelp'              => $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_wizards.xml:grid_columnHelp', 1),
+			'allowedElementTypes'     => $GLOBALS['LANG']->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:allowedElementTypes', 1),
 			'allowedElementTypesHelp' => $GLOBALS['LANG']->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:allowedElementTypesHelp', 1),
 		);
 		$pageRenderer->addInlineLanguageLabelArray($languageLabels);
@@ -104,7 +105,17 @@ class BackendLayout {
 		// select record
 		$record = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows($this->P['field'], $this->P['table'], 'uid=' . (int)$this->P['uid']);
 		if (trim($record[0][$this->P['field']]) === '') {
-			$rows = array(array(array('colspan' => 1, 'rowspan' => 1, 'spanned' => FALSE, 'name' => '', 'allowed' => '')));
+			$rows = array(
+				array(
+					array(
+						'colspan' => 1,
+						'rowspan' => 1,
+						'spanned' => FALSE,
+						'name'    => '',
+						'allowed' => ''
+					)
+				)
+			);
 			$colCount = 1;
 			$rowCount = 1;
 		} else {
@@ -166,7 +177,12 @@ class BackendLayout {
 							}
 						}
 					} else {
-						$cellData = array('colspan' => 1, 'rowspan' => 1, 'spanned' => 1, 'allowed' => '*');
+						$cellData = array(
+							'colspan' => 1,
+							'rowspan' => 1,
+							'spanned' => 1,
+							'allowed' => '*'
+						);
 					}
 					$cells[] = $cellData;
 				}
@@ -186,7 +202,7 @@ class BackendLayout {
 			});
 			t3Grid.drawTable();
 			');
-		$this->doc->styleSheetFile_post = \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath('gridelements') . 'Resources/Public/Backend/Css/grideditor.css';
+		$this->doc->styleSheetFile_post = ExtensionManagementUtility::extRelPath('gridelements') . 'Resources/Public/Backend/Css/grideditor.css';
 	}
 
 	/**
@@ -195,7 +211,7 @@ class BackendLayout {
 	 * @return void
 	 */
 	public function main() {
-		$resourcePath = \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath('cms') . 'layout/';
+		$resourcePath = ExtensionManagementUtility::extRelPath('cms') . 'layout/';
 		$content = '<a href="#" title="' . $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.xlf:rm.saveDoc', TRUE) . '" onclick="storeData(t3Grid.export2LayoutRecord());return true;">' . IconUtility::getSpriteIcon('actions-document-save') . '</a>';
 		$content .= '<a href="#" title="' . $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.xlf:rm.saveCloseDoc', TRUE) . '" onclick="storeData(t3Grid.export2LayoutRecord());window.close();return true;">' . IconUtility::getSpriteIcon('actions-document-save-close') . '</a>';
 		$content .= '<a href="#" title="' . $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.xlf:rm.closeDoc', TRUE) . '" onclick="window.close();return true;">' . IconUtility::getSpriteIcon('actions-document-close') . '</a>';

@@ -29,10 +29,14 @@ class WrapperForT3libBeFunc {
 
 	/**
 	 * @param string $methodName
-	 * @param array $arguments
+	 * @param array  $arguments
+	 *
 	 * @return mixed
 	 */
 	public function __call($methodName, $arguments) {
-		return call_user_func_array(array(new \TYPO3\CMS\Backend\Utility\BackendUtility, $methodName), $arguments);
+		return call_user_func_array(array(
+			new \TYPO3\CMS\Backend\Utility\BackendUtility,
+			$methodName
+		), $arguments);
 	}
 }

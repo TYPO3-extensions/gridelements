@@ -4,11 +4,12 @@ namespace GridElementsTeam\Gridelements\DataHandler;
 /**
  * Class/Function which offers TCE main hook functions.
  *
- * @author		Jo Hasenau <info@cybercraft.de>
- * @package		TYPO3
- * @subpackage	tx_gridelements
+ * @author         Jo Hasenau <info@cybercraft.de>
+ * @package        TYPO3
+ * @subpackage     tx_gridelements
  */
-use GridElementsTeam\Gridelements\DataHandler\AbstractDataHandler;
+use TYPO3\CMS\Backend\Utility\BackendUtility;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /***************************************************************
  *  Copyright notice
@@ -33,44 +34,41 @@ use GridElementsTeam\Gridelements\DataHandler\AbstractDataHandler;
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
-
 class ProcessCmdmap extends AbstractDataHandler {
 
 	/**
 	 * Function to process the drag & drop copy action
 	 *
-	 * @param string            $command: The command to be handled by the command map
-	 * @param string            $table: The name of the table we are working on
-	 * @param int               $id: The id of the record that is going to be copied
-	 * @param string            $value: The value that has been sent with the copy command
-	 * @param boolean           $commandIsProcessed: A switch to tell the parent object, if the record has been copied
-	 * @param \TYPO3\CMS\Core\DataHandling\DataHandler     $parentObj: The parent object that triggered this hook
-	 * @return	void
+	 * @param string                                   $command            : The command to be handled by the command map
+	 * @param string                                   $table              : The name of the table we are working on
+	 * @param int                                      $id                 : The id of the record that is going to be copied
+	 * @param string                                   $value              : The value that has been sent with the copy command
+	 * @param boolean                                  $commandIsProcessed : A switch to tell the parent object, if the record has been copied
+	 * @param \TYPO3\CMS\Core\DataHandling\DataHandler $parentObj          : The parent object that triggered this hook
+	 *
+	 * @return    void
 	 *
 	 */
-	public function execute_processCmdmap($command, $table, $id, $value, &$commandIsProcessed, \TYPO3\CMS\Core\DataHandling\DataHandler &$parentObj=NULL) {
+	public function execute_processCmdmap($command, $table, $id, $value, &$commandIsProcessed, \TYPO3\CMS\Core\DataHandling\DataHandler &$parentObj = NULL) {
 		$this->init($table, $id, $parentObj);
 		// @todo Either create a new command map type, e.g. "reference" and process it with a hook instead of using $_GET //olly
-		$DDcopy = (int)\TYPO3\CMS\Core\Utility\GeneralUtility::_GET('DDcopy');
-		$reference = (int)\TYPO3\CMS\Core\Utility\GeneralUtility::_GET('reference');
+		$DDcopy = (int)GeneralUtility::_GET('DDcopy');
+		$reference = (int)GeneralUtility::_GET('reference');
 		$containerUpdateArray = array();
 
-		if ($command === 'copy' &&
-			!$commandIsProcessed &&
-			$table === 'tt_content' &&
-			!$this->getTceMain()->isImporting
+		if ($command === 'copy' && !$commandIsProcessed && $table === 'tt_content' && !$this->getTceMain()->isImporting
 		) {
 
 			$copyAfterDuplicationFields = $GLOBALS['TCA']['tt_content']['ctrl']['copyAfterDuplFields'];
 			$GLOBALS['TCA']['tt_content']['ctrl']['copyAfterDuplFields'] .= ',tx_gridelements_container,tx_gridelements_columns';
 
-			if((int)$DDcopy === 1 || (int)$reference === 1) {
+			if ((int)$DDcopy === 1 || (int)$reference === 1) {
 
 				$overrideArray = array();
 
-				if((int)$reference === 1) {
-					foreach($GLOBALS['TCA']['tt_content']['columns'] as $key => $column) {
-						if(strpos(',' . $GLOBALS['TCA']['tt_content']['ctrl']['copyAfterDuplFields'] . ',', ',' . $key . ',') === FALSE) {
+				if ((int)$reference === 1) {
+					foreach ($GLOBALS['TCA']['tt_content']['columns'] as $key => $column) {
+						if (strpos(',' . $GLOBALS['TCA']['tt_content']['ctrl']['copyAfterDuplFields'] . ',', ',' . $key . ',') === FALSE) {
 							$overrideArray[$key] = '';
 						}
 					}
@@ -96,32 +94,34 @@ class ProcessCmdmap extends AbstractDataHandler {
 						$overrideArray['tx_gridelements_container'] = abs($valueArray[0]);
 						$overrideArray['tx_gridelements_columns'] = (int)$valueArray[1];
 					}
-					$targetRecord = \TYPO3\CMS\Backend\Utility\BackendUtility::getRecordWSOL($targetTable, abs($valueArray[0]));
-					if($targetRecord[$GLOBALS['TCA'][$table]['ctrl']['transOrigPointerField']]) {
+					$targetRecord = BackendUtility::getRecordWSOL($targetTable, abs($valueArray[0]));
+					if ($targetRecord[$GLOBALS['TCA'][$table]['ctrl']['transOrigPointerField']]) {
 						$overrideArray['sys_language_uid'] = $targetRecord['sys_language_uid'];
 					}
-					$this->getTceMain()->copyRecord($table, $id, (int)$valueArray[0], 1, $overrideArray);
+					$this->getTceMain()
+					     ->copyRecord($table, $id, (int)$valueArray[0], 1, $overrideArray);
 					$this->doGridContainerUpdate($containerUpdateArray);
-					if($targetTable === 'tt_content') {
+					if ($targetTable === 'tt_content') {
 						$this->checkAndUpdateTranslatedChildren($containerUpdateArray);
 					}
 				} else {
 					$value = (int)$value;
-					if($value < 0) {
+					if ($value < 0) {
 						$targetTable = 'tt_content';
 					} else {
 						$targetTable = 'pages';
 					}
-					$targetRecord = \TYPO3\CMS\Backend\Utility\BackendUtility::getRecordWSOL($targetTable, abs($value));
-					if($targetRecord[$GLOBALS['TCA'][$table]['ctrl']['transOrigPointerField']]) {
-						if($targetTable === 'tt_content') {
+					$targetRecord = BackendUtility::getRecordWSOL($targetTable, abs($value));
+					if ($targetRecord[$GLOBALS['TCA'][$table]['ctrl']['transOrigPointerField']]) {
+						if ($targetTable === 'tt_content') {
 							$overrideArray['tx_gridelements_container'] = $targetRecord['tx_gridelements_container'];
 						}
 						$overrideArray['sys_language_uid'] = $targetRecord['sys_language_uid'];
 					}
-					$this->getTceMain()->copyRecord($table, $id, $value, 1, $overrideArray);
-					if($value < 0) {
-						if($targetRecord['tx_gridelements_container'] > 0) {
+					$this->getTceMain()
+					     ->copyRecord($table, $id, $value, 1, $overrideArray);
+					if ($value < 0) {
+						if ($targetRecord['tx_gridelements_container'] > 0) {
 							$containerUpdateArray[$targetRecord['tx_gridelements_container']] = 1;
 							$this->doGridContainerUpdate($containerUpdateArray);
 						}
@@ -129,27 +129,28 @@ class ProcessCmdmap extends AbstractDataHandler {
 				}
 			} else {
 				$value = (int)$value;
-				if($value > 0) {
+				if ($value > 0) {
 					$overrideArray['tx_gridelements_container'] = 0;
 					$overrideArray['tx_gridelements_columns'] = 0;
 					$overrideArray['colPos'] = 0;
 					$overrideArray['sorting'] = 0;
 				}
-				if($value < 0) {
+				if ($value < 0) {
 					$targetTable = 'tt_content';
 				} else {
 					$targetTable = 'pages';
 				}
-				$targetRecord = \TYPO3\CMS\Backend\Utility\BackendUtility::getRecordWSOL($targetTable, abs($value));
-				if($targetRecord[$GLOBALS['TCA'][$table]['ctrl']['transOrigPointerField']]) {
-					if($targetTable === 'tt_content') {
+				$targetRecord = BackendUtility::getRecordWSOL($targetTable, abs($value));
+				if ($targetRecord[$GLOBALS['TCA'][$table]['ctrl']['transOrigPointerField']]) {
+					if ($targetTable === 'tt_content') {
 						$overrideArray['tx_gridelements_container'] = $targetRecord['tx_gridelements_container'];
 					}
 					$overrideArray['sys_language_uid'] = $targetRecord['sys_language_uid'];
 				}
-				$this->getTceMain()->copyRecord($table, $id, $value, 1, $overrideArray);
-				if($value < 0) {
-					if($targetRecord['tx_gridelements_container'] > 0) {
+				$this->getTceMain()
+				     ->copyRecord($table, $id, $value, 1, $overrideArray);
+				if ($value < 0) {
+					if ($targetRecord['tx_gridelements_container'] > 0) {
 						$containerUpdateArray[$targetRecord['tx_gridelements_container']] = 1;
 						$this->doGridContainerUpdate($containerUpdateArray);
 					}
