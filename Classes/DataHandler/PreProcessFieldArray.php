@@ -243,7 +243,7 @@ class PreProcessFieldArray extends AbstractDataHandler {
 		if (count($fieldArray) && strpos($fieldArray['pid'], 'x') !== FALSE) {
 			$target = explode('x', $fieldArray['pid']);
 			$fieldArray['pid'] = $pid;
-			$targetUid = abs((int)$target[0]);
+			$targetUid = $target[0] === '-NEW' || $target[0] === 'NEW' ? 'NEW' : abs((int)$target[0]);
 			$this->setFieldEntriesForColumnTargets($fieldArray, $targetUid, $target);
 		} else {
 			$this->setFieldEntriesForSimpleTargets($fieldArray);
@@ -260,7 +260,7 @@ class PreProcessFieldArray extends AbstractDataHandler {
 	 * @return void
 	 */
 	public function setFieldEntriesForColumnTargets(array &$fieldArray, $targetUid, array $target) {
-		if ($targetUid !== $this->getPageUid()) {
+		if ($targetUid !== $this->getPageUid() && $targetUid !== 'NEW') {
 			$fieldArray['colPos'] = -1;
 			$fieldArray['sorting'] = 0;
 			$fieldArray['tx_gridelements_container'] = $targetUid;
@@ -293,6 +293,7 @@ class PreProcessFieldArray extends AbstractDataHandler {
 				$fieldArray['colPos'] = -1;
 			}
 			$fieldArray['colPos'] = $targetElement['colPos'];
+			$fieldArray['sys_language_uid'] = $targetElement['sys_language_uid'];
 			$fieldArray['sorting'] = $targetElement['sorting'] + 2;
 		}
 	}
@@ -309,12 +310,15 @@ class PreProcessFieldArray extends AbstractDataHandler {
 			$fieldArray['colPos'] = -1;
 			$fieldArray['tx_gridelements_columns'] = 0;
 		} else if (isset($fieldArray['tx_gridelements_container']) && (int)$fieldArray['tx_gridelements_container'] === 0 && (int)$fieldArray['colPos'] === -1) {
-			$originalContainer = $this->databaseConnection->exec_SELECTgetSingleRow('tx_gridelements_container', 'tt_content', 'uid=' . $this->getPageUid());
+			$originalContainer = $this->databaseConnection->exec_SELECTgetSingleRow('tx_gridelements_container, sys_language_uid', 'tt_content', 'uid=' . $this->getPageUid());
 			$containerUpdateArray[$originalContainer['tx_gridelements_container']] = -1;
 			$this->doGridContainerUpdate($containerUpdateArray);
-
+			$fieldArray['sys_language_uid'] = $originalContainer['sys_language_uid'];
 			$fieldArray['colPos'] = $this->checkForRootColumn((int)$this->getPageUid());
 			$fieldArray['tx_gridelements_columns'] = 0;
+		} else if (isset($fieldArray['tx_gridelements_container']) && (int)$fieldArray['tx_gridelements_container'] > 0 && (int)$fieldArray['colPos'] === -1) {
+			$originalContainer = $this->databaseConnection->exec_SELECTgetSingleRow('sys_language_uid', 'tt_content', 'uid=' . (int)$fieldArray['tx_gridelements_container']);
+			$fieldArray['sys_language_uid'] = $originalContainer['sys_language_uid'];
 		}
 	}
 
@@ -330,13 +334,11 @@ class PreProcessFieldArray extends AbstractDataHandler {
 	 */
 	public function checkForRootColumn($contentId, $colPos = 0) {
 		$parent = $this->databaseConnection->exec_SELECTgetSingleRow('t1.colPos, t1.tx_gridelements_container', 'tt_content AS t1, tt_content AS t2', 't1.uid=t2.tx_gridelements_container AND t2.uid=' . $contentId);
-
 		if (count($parent) > 0 && $parent['tx_gridelements_container'] > 0) {
 			$colPos = $this->checkForRootColumn($parent['tx_gridelements_container'], $parent['colPos']);
 		} else {
 			$colPos = (int)$parent['colPos'];
 		}
-
 		return $colPos;
 	}
 

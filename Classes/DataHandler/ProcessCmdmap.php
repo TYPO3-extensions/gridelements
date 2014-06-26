@@ -56,8 +56,7 @@ class ProcessCmdmap extends AbstractDataHandler {
 		$reference = (int)GeneralUtility::_GET('reference');
 		$containerUpdateArray = array();
 
-		if ($command === 'copy' && !$commandIsProcessed && $table === 'tt_content' && !$this->getTceMain()->isImporting
-		) {
+		if ($command === 'copy' && !$commandIsProcessed && $table === 'tt_content' && !$this->getTceMain()->isImporting) {
 
 			$copyAfterDuplicationFields = $GLOBALS['TCA']['tt_content']['ctrl']['copyAfterDuplFields'];
 			$GLOBALS['TCA']['tt_content']['ctrl']['copyAfterDuplFields'] .= ',tx_gridelements_container,tx_gridelements_columns';

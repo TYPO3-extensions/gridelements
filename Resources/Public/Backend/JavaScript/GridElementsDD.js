@@ -454,40 +454,82 @@ GridElementsDD = function() {
 
 			actionURL = top.TYPO3.configuration.PATH_typo3 + 'alt_doc.php?' + this.el.dom.rel + '&edit[tt_content][]=new';
 
-			Ext.Ajax.request({
-				url: actionURL,
-				params: {
-					doSave: 1,
-					'data[tt_content][NEW][pid]': '-' + top.targetUID,
-					'data[tt_content][NEW][header]': TYPO3.l10n.localize('tx_gridelements_js.newcontentelementheader'),
-					DDinsertNew : top.DDpid,
-					formToken : top.DDtoken
-				},
-				method: 'GET',
-				success: function( result, request ) {
-					if(GridElementsDD.baseConf.doReloadsAfterDrops) {
-						// reload page to verify/show updates
-						locationSplit = self.location.href.split('#');
-						self.location.href = locationSplit[0] + '#ce' + top.targetUID;
-						self.location.reload(true);
-					}else{
-						// after the operation has finished, we simply hide the spinner
-						top.TYPO3.Backend.ContentContainer.removeMask();
+			var languageLink = Ext.get(targetElId).parent().parent().select('.t3-page-ce-wrapper-new-ce a').elements[0];
+			if(typeof languageLink !== 'undefined') {
+				languageLink = languageLink.getAttribute('onclick').split('&sys_language_uid=');
+				var languageUid = languageLink[1].split('&')[0];
+				Ext.Ajax.request({
+					url: actionURL,
+					params: {
+						doSave: 1,
+						'data[tt_content][NEW][pid]': '-' + top.targetUID,
+						'data[tt_content][NEW][sys_language_uid]': languageUid,
+						'data[tt_content][NEW][header]': TYPO3.l10n.localize('tx_gridelements_js.newcontentelementheader'),
+						DDinsertNew : top.DDpid,
+						formToken : top.DDtoken
+					},
+					method: 'GET',
+					success: function( result, request ) {
+						if(GridElementsDD.baseConf.doReloadsAfterDrops) {
+							// reload page to verify/show updates
+							locationSplit = self.location.href.split('#');
+							self.location.href = locationSplit[0] + '#ce' + top.targetUID;
+							self.location.reload(true);
+						}else{
+							// after the operation has finished, we simply hide the spinner
+							top.TYPO3.Backend.ContentContainer.removeMask();
+						}
+					},
+					failure: function( result, request ) {
+						if(GridElementsDD.baseConf.doReloadsAfterDrops) {
+							// reload page to verify/show updates
+							locationSplit = self.location.href.split('#');
+							self.location.href = locationSplit[0] + '#ce' + top.targetUID;
+							self.location.reload(true);
+						}else{
+							// TODO: error happened - remove just dropped element and show error');
+							// after the operation has finished, we simply hide the spinner
+							top.TYPO3.Backend.ContentContainer.removeMask();
+						}
 					}
-				},
-				failure: function( result, request ) {
-					if(GridElementsDD.baseConf.doReloadsAfterDrops) {
-						// reload page to verify/show updates
-						locationSplit = self.location.href.split('#');
-						self.location.href = locationSplit[0] + '#ce' + top.targetUID;
-						self.location.reload(true);
-					}else{
-						// TODO: error happened - remove just dropped element and show error');
-						// after the operation has finished, we simply hide the spinner
-						top.TYPO3.Backend.ContentContainer.removeMask();
+				});
+			} else {
+				Ext.Ajax.request({
+					url: actionURL,
+					params: {
+						doSave: 1,
+						'data[tt_content][NEW][pid]': '-' + top.targetUID,
+						'data[tt_content][NEW][header]': TYPO3.l10n.localize('tx_gridelements_js.newcontentelementheader'),
+						DDinsertNew : top.DDpid,
+						formToken : top.DDtoken
+					},
+					method: 'GET',
+					success: function( result, request ) {
+						if(GridElementsDD.baseConf.doReloadsAfterDrops) {
+							// reload page to verify/show updates
+							locationSplit = self.location.href.split('#');
+							self.location.href = locationSplit[0] + '#ce' + top.targetUID;
+							self.location.reload(true);
+						}else{
+							// after the operation has finished, we simply hide the spinner
+							top.TYPO3.Backend.ContentContainer.removeMask();
+						}
+					},
+					failure: function( result, request ) {
+						if(GridElementsDD.baseConf.doReloadsAfterDrops) {
+							// reload page to verify/show updates
+							locationSplit = self.location.href.split('#');
+							self.location.href = locationSplit[0] + '#ce' + top.targetUID;
+							self.location.reload(true);
+						}else{
+							// TODO: error happened - remove just dropped element and show error');
+							// after the operation has finished, we simply hide the spinner
+							top.TYPO3.Backend.ContentContainer.removeMask();
+						}
 					}
-				}
-			});
+				});
+			}
+
 
 		} else {
 			// This was an invalid drop, initiate a repair
