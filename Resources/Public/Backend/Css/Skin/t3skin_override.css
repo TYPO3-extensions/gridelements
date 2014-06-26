@@ -372,7 +372,7 @@ td.t3-page-column, td.t3-page-lang-column {
 .t3-page-ce:hover > div > div > a > .t3-icon-document-new,
 .t3-page-ce:hover > div > div > a > .t3-icon-gridelements-copyfrompage,
 .t3-page-ce:hover > div > div > a > .t3-icon-gridelements-pastecopy,
-.t3-page-ce:hover > div > div > a > .t3-icon-gridelements-pastere {
+.t3-page-ce:hover > div > div > a > .t3-icon-gridelements-pasteref {
 	display: inline-block!important;
 }
 
