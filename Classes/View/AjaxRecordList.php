@@ -105,7 +105,7 @@ class AjaxRecordList {
 			$level = (int)$this->getParamValue('level');
 			$this->initializeTemplateContainer();
 
-			$elementChilds = Helper::getInstance()
+			$elementChildren = Helper::getInstance()
 			                       ->getChildren($table, $uid, GeneralUtility::_GP('sortField'), (int)GeneralUtility::_GP('sortRev'));
 
 			$row = BackendUtility::getRecord($table, $uid);
@@ -113,7 +113,7 @@ class AjaxRecordList {
 
 			if ($recordList instanceof DatabaseRecordList) {
 				$level++;
-				foreach ($elementChilds as $elementChild) {
+				foreach ($elementChildren as $elementChild) {
 					$listRows[] = $recordList->renderListRow($elementChild->getTable(), BackendUtility::getRecord($elementChild->getTable(), $elementChild->getId()), 0, $GLOBALS['TCA'][$table]['ctrl']['label'], $GLOBALS['TCA'][$table]['ctrl']['thumbnail'], 1, $level);
 				}
 			}

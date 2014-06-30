@@ -128,16 +128,19 @@ class ProcessCmdmap extends AbstractDataHandler {
 				}
 			} else {
 				$value = (int)$value;
-				if ($value > 0) {
-					$overrideArray['tx_gridelements_container'] = 0;
-					$overrideArray['tx_gridelements_columns'] = 0;
-					$overrideArray['colPos'] = 0;
-					$overrideArray['sorting'] = 0;
-				}
 				if ($value < 0) {
 					$targetTable = 'tt_content';
 				} else {
 					$targetTable = 'pages';
+				}
+				$originalRecord = BackendUtility::getRecordWSOL($targetTable, abs($id));
+				if ($value > 0) {
+					$overrideArray['tx_gridelements_container'] = 0;
+					$overrideArray['tx_gridelements_columns'] = 0;
+					if($originalRecord['colPos'] === -1) {
+						$overrideArray['colPos'] = 0;
+					}
+					$overrideArray['sorting'] = 0;
 				}
 				$targetRecord = BackendUtility::getRecordWSOL($targetTable, abs($value));
 				if ($targetRecord[$GLOBALS['TCA'][$table]['ctrl']['transOrigPointerField']]) {
