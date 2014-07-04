@@ -86,32 +86,33 @@ class AfterDatabaseOperations extends AbstractDataHandler {
 		if ($this->getTable() === 'tt_content') {
 			$changedGridElements[$this->getPageUid()] = TRUE;
 			$availableColumns = $this->getAvailableColumns($fieldArray['tx_gridelements_backend_layout'], 'tt_content', $this->getPageUid());
-			$childElementsInUnavailableColumns = array_keys($this->databaseConnection->exec_SELECTgetRows('uid', 'tt_content', 'tx_gridelements_container = ' . $this->getPageUid() . '
+			if($availableColumns !== '') {
+				$childElementsInUnavailableColumns = array_keys($this->databaseConnection->exec_SELECTgetRows('uid', 'tt_content', 'tx_gridelements_container = ' . $this->getPageUid() . '
 					AND tx_gridelements_columns NOT IN (' . $availableColumns . ')', '', '', '', 'uid'));
-			if (count($childElementsInUnavailableColumns) > 0) {
-				$this->databaseConnection->sql_query('
-					UPDATE tt_content
-					SET colPos = -2, backupColPos = -1
-					WHERE uid IN (' . join(',', $childElementsInUnavailableColumns) . ')
-				');
-				array_flip($childElementsInUnavailableColumns);
-			} else {
-				$childElementsInUnavailableColumns = array();
-			}
+				if (count($childElementsInUnavailableColumns) > 0) {
+					$this->databaseConnection->sql_query('
+						UPDATE tt_content
+						SET colPos = -2, backupColPos = -1
+						WHERE uid IN (' . join(',', $childElementsInUnavailableColumns) . ')
+					');
+					array_flip($childElementsInUnavailableColumns);
+				} else {
+					$childElementsInUnavailableColumns = array();
+				}
 
-			$childElementsInAvailableColumns = array_keys($this->databaseConnection->exec_SELECTgetRows('uid', 'tt_content', 'tx_gridelements_container = ' . $this->getPageUid() . '
-					AND tx_gridelements_columns IN (' . $availableColumns . ')', '', '', '', 'uid'));
-			if (count($childElementsInAvailableColumns) > 0) {
-				$this->databaseConnection->sql_query('
-					UPDATE tt_content
-					SET colPos = -1, backupColPos = -2
-					WHERE uid IN (' . join(',', $childElementsInAvailableColumns) . ')
-				');
-				array_flip($childElementsInAvailableColumns);
-			} else {
-				$childElementsInAvailableColumns = array();
+				$childElementsInAvailableColumns = array_keys($this->databaseConnection->exec_SELECTgetRows('uid', 'tt_content', 'tx_gridelements_container = ' . $this->getPageUid() . '
+						AND tx_gridelements_columns IN (' . $availableColumns . ')', '', '', '', 'uid'));
+				if (count($childElementsInAvailableColumns) > 0) {
+					$this->databaseConnection->sql_query('
+						UPDATE tt_content
+						SET colPos = -1, backupColPos = -2
+						WHERE uid IN (' . join(',', $childElementsInAvailableColumns) . ')
+					');
+					array_flip($childElementsInAvailableColumns);
+				} else {
+					$childElementsInAvailableColumns = array();
+				}
 			}
-
 			$changedGridElements = array_merge($changedGridElements, $childElementsInUnavailableColumns, $childElementsInAvailableColumns);
 		}
 

@@ -400,20 +400,23 @@ class Gridelements extends ContentObjectRenderer {
 		if ($child['uid'] > 0) {
 
 			// update SYS_LASTCHANGED if necessary
+
 			$this->cObj->lastChanged($child['tstamp']);
 
-			$this->cObj->start(array_merge($child, $parentGridData), 'tt_content');
+			$local_cObj = $this->cObj;
+			$local_cObj->start(array_merge($child, $parentGridData), 'tt_content');
 
 			$parentRecordNumbers[$columnKey]++;
-			$this->cObj->parentRecordNumber = $parentRecordNumbers[$columnKey];
+			$local_cObj->parentRecordNumber = $parentRecordNumbers[$columnKey];
 
 			// we render each child into the children key to provide them prerendered for usage with your own templating
-			$child = $this->cObj->cObjGetSingle($typoScriptSetup['columns.'][$columnSetupKey]['renderObj'], $typoScriptSetup['columns.'][$columnSetupKey]['renderObj.']);
+			$child = $local_cObj->cObjGetSingle($typoScriptSetup['columns.'][$columnSetupKey]['renderObj'], $typoScriptSetup['columns.'][$columnSetupKey]['renderObj.']);
 			// then we assign the prerendered child to the appropriate column
 			if (isset($columns[$column_number])) {
 				$parentGridData['tx_gridelements_view_columns'][$column_number] .= $child;
 			}
 			unset($columns);
+			$local_cObj = null;
 		}
 
 		unset($typoScriptSetup);
