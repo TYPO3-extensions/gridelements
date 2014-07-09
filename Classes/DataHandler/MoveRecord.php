@@ -59,6 +59,7 @@ class MoveRecord extends AbstractDataHandler {
 	 * @return void
 	 */
 	public function execute_moveRecord($table, $uid, &$destPid, &$propArr, &$moveRec, $resolvedPid, &$recordWasMoved, &$parentObj) {
+		$uid = (int)$uid;
 		$this->init($table, $uid, $parentObj);
 		if ($table === 'tt_content' && !$this->getTceMain()->isImporting) {
 			$copyAfterDuplFields = $GLOBALS['TCA']['tt_content']['ctrl']['copyAfterDuplFields'];
