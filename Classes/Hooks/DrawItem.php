@@ -243,6 +243,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 	 * @return void
 	 */
 	public function renderGridColumns(PageLayoutView $parentObject, &$colPosValues, &$gridContent, &$row, &$editUidList, &$singleColumn, &$head, $showHidden, $deleteClause) {
+		$outerTtContentDataArray = $parentObject->tt_contentData['nextThree'];
 		foreach ($colPosValues as $colPos => $values) {
 			// first we have to create the column content separately for each column
 			// so we can check for the first and the last element to provide proper sorting
@@ -256,6 +257,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 			// we will need a header for each of the columns to activate mass editing for elements of that column
 			$this->setColumnHeader($parentObject, $head, $colPos, $values['name'], $editUidList);
 		}
+		$parentObject->tt_contentData['nextThree'] = $outerTtContentDataArray;
 	}
 
 	/**
