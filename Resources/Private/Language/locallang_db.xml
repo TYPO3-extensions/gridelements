@@ -11,6 +11,8 @@
 			<label index="tx_gridelements_backend_layout.title">Title</label>
 			<label index="tx_gridelements_backend_layout.alias">Alias</label>
 			<label index="tx_gridelements_backend_layout.description">Description</label>
+			<label index="tx_gridelements_backend_layout.horizontal">Group children</label>
+			<label index="tx_gridelements_backend_layout.horizontal.I.0">Side by side</label>
 			<label index="tx_gridelements_backend_layout.palette.appearance">Appearance</label>
 			<label index="tx_gridelements_backend_layout.icon">Icon</label>
 			<label index="tx_gridelements_backend_layout.frame">Frame</label>
@@ -57,6 +59,8 @@
 			<label index="tx_gridelements_backend_layout.title">Titel</label>
 			<label index="tx_gridelements_backend_layout.alias">Alias</label>
 			<label index="tx_gridelements_backend_layout.description">Beschreibung</label>
+			<label index="tx_gridelements_backend_layout.horizontal">Gruppiere Kinder</label>
+			<label index="tx_gridelements_backend_layout.horizontal.I.0">nebeneinander</label>
 			<label index="tx_gridelements_backend_layout.palette.appearance">Darstellung</label>
 			<label index="tx_gridelements_backend_layout.frame">Rahmen</label>
 			<label index="tx_gridelements_backend_layout.icon">Icon</label>

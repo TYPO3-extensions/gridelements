@@ -363,7 +363,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 	 * @return void
 	 */
 	public function setColumnHeader(PageLayoutView $parentObject, &$head, &$colPos, &$name, &$editUidList) {
-		$head[$colPos] = $this->tt_content_drawColHeader($name, ($parentObject->doEdit && $editUidList[$colPos]) ? '&edit[tt_content][' . $editUidList[$colPos] . ']=edit' . $parentObject->pageTitleParamForAltDoc : '', $parentObject);
+		$head[$colPos] = $this->tt_content_drawColHeader($name, ($parentObject->doEdit && $editUidList[$colPos]) ? '&blubbedit[tt_content][' . $editUidList[$colPos] . ']=edit' . $parentObject->pageTitleParamForAltDoc : '', $parentObject);
 	}
 
 	/**
@@ -460,7 +460,15 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 				// render the grid cell
 				$colSpan = (int)$columnConfig['colspan'];
 				$rowSpan = (int)$columnConfig['rowspan'];
-				$grid .= '<td valign="top"' . (isset($columnConfig['colspan']) ? ' colspan="' . $colSpan . '"' : '') . (isset($columnConfig['rowspan']) ? ' rowspan="' . $rowSpan . '"' : '') . 'id="column-' . $specificUid . 'x' . $columnKey . '" class="t3-gridCell t3-page-column t3-page-column-' . $columnKey . (!isset($columnConfig['colPos']) || $columnConfig['colPos'] === '' ? ' t3-gridCell-unassigned' : '') . (isset($columnConfig['colspan']) && $columnConfig['colPos'] !== '' ? ' t3-gridCell-width' . $colSpan : '') . (isset($columnConfig['rowspan']) && $columnConfig['colPos'] !== '' ? ' t3-gridCell-height' . $rowSpan : '') . ' ' . (count($allowedCTypes) ? join(' ', $allowedCTypes) : 't3-allow-all') . '">';
+				$grid .= '<td valign="top"' .
+					(isset($columnConfig['colspan']) ? ' colspan="' . $colSpan . '"' : '') .
+					(isset($columnConfig['rowspan']) ? ' rowspan="' . $rowSpan . '"' : '') .
+					'id="column-' . $specificUid . 'x' . $columnKey . '" class="t3-gridCell t3-page-column t3-page-column-' . $columnKey .
+					(!isset($columnConfig['colPos']) || $columnConfig['colPos'] === '' ? ' t3-gridCell-unassigned' : '') .
+					(isset($columnConfig['colspan']) && $columnConfig['colPos'] !== '' ? ' t3-gridCell-width' . $colSpan : '') .
+					(isset($columnConfig['rowspan']) && $columnConfig['colPos'] !== '' ? ' t3-gridCell-height' . $rowSpan : '') . ' ' .
+					($layoutSetup['horizontal'] ? ' t3-gridCell-horizontal' : '') .
+					(count($allowedCTypes) ? join(' ', $allowedCTypes) : ' t3-allow-all') . '">';
 
 				$grid .= ($GLOBALS['BE_USER']->uc['hideColumnHeaders'] ? '' : $head[$columnKey]) . $gridContent[$columnKey];
 				$grid .= '</td>';

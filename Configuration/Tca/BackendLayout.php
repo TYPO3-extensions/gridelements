@@ -58,6 +58,18 @@ $TCA['tx_gridelements_backend_layout'] = array(
 				'rows' => '5',
 			)
 		),
+		'horizontal' => array(
+			'exclude' => 1,
+			'label' => 'LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tx_gridelements_backend_layout.horizontal',
+			'config' => array(
+				'type' => 'check',
+				'items' => array (
+					'1'	=> array(
+						'0' => 'LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tx_gridelements_backend_layout.horizontal.I.0',
+					),
+				),
+			),
+		),
 		'icon' => array(
 			'exclude' => 1,
 			'label' => 'LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tx_gridelements_backend_layout.icon',
@@ -145,7 +157,7 @@ $TCA['tx_gridelements_backend_layout'] = array(
 	),
 	'palettes' => array(
 		'general' => array('canNotCollapse' => 1, 'showitem' => 'title, --linebreak--, description'),
-		'appearance' => array('canNotCollapse' => 1, 'showitem' => 'icon, frame'),
+		'appearance' => array('canNotCollapse' => 1, 'showitem' => 'icon, horizontal, frame'),
 		'visibility' => array('canNotCollapse' => 1, 'showitem' => 'hidden'),
 		'flexform' => array('canNotCollapse' => 1, 'showitem' => 'pi_flexform_ds, --linebreak--, pi_flexform_ds_file'),
 	),

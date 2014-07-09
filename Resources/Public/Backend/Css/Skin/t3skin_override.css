@@ -389,3 +389,12 @@ td.t3-page-column, td.t3-page-lang-column {
 #ext-gridelements-Classes-Wizard-index-php table#editor td {
 	text-align: center;
 }
+
+.t3-gridCell-horizontal > .t3-page-ce-wrapper {
+	white-space: nowrap;
+}
+
+.t3-gridCell-horizontal > .t3-page-ce-wrapper > .t3-page-ce {
+	display: inline-block;
+	vertical-align: top;
+}
