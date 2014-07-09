@@ -195,11 +195,11 @@ abstract class AbstractDataHandler {
 		if (is_array($containerUpdateArray) && count($containerUpdateArray > 0)) {
 			foreach ($containerUpdateArray as $containerUid => $newElement) {
 				$fieldArray = array(
-					'tx_gridelements_children' => 'tx_gridelements_children + ' . $newElement
+					'tx_gridelements_children' => 'tx_gridelements_children + ' . (int)$newElement
 				);
-				$this->databaseConnection->exec_UPDATEquery('tt_content', 'uid=' . $containerUid, $fieldArray, 'tx_gridelements_children');
+				$this->databaseConnection->exec_UPDATEquery('tt_content', 'uid=' . (int)$containerUid, $fieldArray, 'tx_gridelements_children');
 				$this->getTceMain()
-				     ->updateRefIndex('tt_content', $containerUid);
+				     ->updateRefIndex('tt_content', (int)$containerUid);
 			}
 		}
 	}
@@ -214,15 +214,15 @@ abstract class AbstractDataHandler {
 	public function checkAndUpdateTranslatedChildren($containerUpdateArray = array()) {
 		if (is_array($containerUpdateArray) && count($containerUpdateArray > 0)) {
 			foreach ($containerUpdateArray as $containerUid => $newElement) {
-				$translatedContainers = $this->databaseConnection->exec_SELECTgetRows('uid,sys_language_uid', 'tt_content', 'l18n_parent = ' . $containerUid . \TYPO3\CMS\Backend\Utility\BackendUtility::BEenableFields('tt_content'));
+				$translatedContainers = $this->databaseConnection->exec_SELECTgetRows('uid,sys_language_uid', 'tt_content', 'l18n_parent = ' . (int)$containerUid . \TYPO3\CMS\Backend\Utility\BackendUtility::BEenableFields('tt_content'));
 				if (count($translatedContainers) > 0) {
 					foreach ($translatedContainers as $languageArray) {
 						$targetContainer = \TYPO3\CMS\Backend\Utility\BackendUtility::getRecordWSOL('tt_content', $languageArray['uid']);
 						$fieldArray['tx_gridelements_container'] = $targetContainer['uid'];
-						$where = 'tx_gridelements_container = ' . $containerUid . ' AND sys_language_uid = ' . $targetContainer['sys_language_uid'];
+						$where = 'tx_gridelements_container = ' . (int)$containerUid . ' AND sys_language_uid = ' . (int)$targetContainer['sys_language_uid'];
 						$this->databaseConnection->exec_UPDATEquery('tt_content', $where, $fieldArray, 'tx_gridelements_container');
 						$this->getTceMain()
-						     ->updateRefIndex('tt_content', $targetContainer['uid']);
+						     ->updateRefIndex('tt_content', (int)$targetContainer['uid']);
 					}
 				}
 			}
