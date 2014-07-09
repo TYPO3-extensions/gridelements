@@ -367,11 +367,11 @@ class LayoutSetup {
 		$pageTSconfigId = isset($pageTSconfig['TCEFORM.']['tt_content.']['tx_gridelements_backend_layout.']['PAGE_TSCONFIG_ID']) ? $pageTSconfig['TCEFORM.']['tt_content.']['tx_gridelements_backend_layout.']['PAGE_TSCONFIG_ID'] : 0;
 
 		// Load records.
-		$result = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows(//			'uid, title, description, frame, icon, config, pi_flexform_ds',
-		                              '*', 'tx_gridelements_backend_layout', '(
-				( ' . $pageTSconfigId . ' = 0 AND ' . $storagePid . ' = 0 ) OR
-				( tx_gridelements_backend_layout.pid = ' . $pageTSconfigId . ' OR tx_gridelements_backend_layout.pid = ' . $storagePid . ' ) OR
-				( ' . $pageTSconfigId . ' = 0 AND tx_gridelements_backend_layout.pid = ' . $pageId . ' )
+		$result = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows(
+			'*', 'tx_gridelements_backend_layout', '(
+				( ' . $pageTSconfigId . ' = 0 AND ' . (int)$storagePid . ' = 0 ) OR
+				( tx_gridelements_backend_layout.pid = ' . (int)$pageTSconfigId . ' OR tx_gridelements_backend_layout.pid = ' . (int)$storagePid . ' ) OR
+				( ' . $pageTSconfigId . ' = 0 AND tx_gridelements_backend_layout.pid = ' . (int)$pageId . ' )
 			) AND NOT tx_gridelements_backend_layout.hidden AND NOT tx_gridelements_backend_layout.deleted', '', 'sorting ASC', '', 'uid');
 
 		$gridLayoutRecords = array();
