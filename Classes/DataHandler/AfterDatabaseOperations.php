@@ -193,7 +193,7 @@ class AfterDatabaseOperations extends AbstractDataHandler {
 							$subPageElementsInUnavailableColumns = array();
 						}
 
-						$subPageElementsInAvailableColumns = array_keys($this->databaseConnection->exec_SELECTgetRows('uid', 'tt_content', 'pid = ' . $page['uid'] . '
+						$subPageElementsInAvailableColumns = array_keys($this->databaseConnection->exec_SELECTgetRows('uid', 'tt_content', 'pid = ' . (int)$page['uid'] . '
 								AND backupColPos != -2
 								AND backupColPos IN (' . $availableColumns . ')', '', '', '', 'uid'));
 						if (count($subPageElementsInAvailableColumns) > 0) {
@@ -267,7 +267,7 @@ class AfterDatabaseOperations extends AbstractDataHandler {
 			$temp = array();
 			foreach ($tcaColumns AS $item) {
 				if (trim($item[1]) !== '') {
-					$temp[] = $item[1];
+					$temp[] = (int)$item[1];
 				}
 			}
 			// Implode into a CSV string as BackendLayoutView->getColPosListItemsParsed returns an array

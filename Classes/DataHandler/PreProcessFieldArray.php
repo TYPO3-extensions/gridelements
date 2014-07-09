@@ -333,7 +333,7 @@ class PreProcessFieldArray extends AbstractDataHandler {
 	 * @return integer $colPos: The new column of this content element
 	 */
 	public function checkForRootColumn($contentId, $colPos = 0) {
-		$parent = $this->databaseConnection->exec_SELECTgetSingleRow('t1.colPos, t1.tx_gridelements_container', 'tt_content AS t1, tt_content AS t2', 't1.uid=t2.tx_gridelements_container AND t2.uid=' . $contentId);
+		$parent = $this->databaseConnection->exec_SELECTgetSingleRow('t1.colPos, t1.tx_gridelements_container', 'tt_content AS t1, tt_content AS t2', 't1.uid=t2.tx_gridelements_container AND t2.uid=' . (int)$contentId);
 		if (count($parent) > 0 && $parent['tx_gridelements_container'] > 0) {
 			$colPos = $this->checkForRootColumn($parent['tx_gridelements_container'], $parent['colPos']);
 		} else {
