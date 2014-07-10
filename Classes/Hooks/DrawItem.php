@@ -468,7 +468,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 					(isset($columnConfig['colspan']) && $columnConfig['colPos'] !== '' ? ' t3-gridCell-width' . $colSpan : '') .
 					(isset($columnConfig['rowspan']) && $columnConfig['colPos'] !== '' ? ' t3-gridCell-height' . $rowSpan : '') . ' ' .
 					($layoutSetup['horizontal'] ? ' t3-gridCell-horizontal' : '') .
-					(count($allowedCTypes) ? join(' ', $allowedCTypes) : ' t3-allow-all') . '">';
+					(count($allowedCTypes) ? ' ' . join(' ', $allowedCTypes) : ' t3-allow-all') . '">';
 
 				$grid .= ($GLOBALS['BE_USER']->uc['hideColumnHeaders'] ? '' : $head[$columnKey]) . $gridContent[$columnKey];
 				$grid .= '</td>';
