@@ -163,3 +163,7 @@
 .x-dd-draggableiteminfotext {
 	margin: 0px 0px 10px 10px;
 }
+
+.t3-dd-spacer {
+	display: inline-block;
+}
