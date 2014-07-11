@@ -395,6 +395,7 @@ td.t3-page-column, td.t3-page-lang-column {
 }
 
 .t3-gridCell-horizontal > .t3-page-ce-wrapper > .t3-page-ce {
+	white-space: normal;
 	display: inline-block;
 	vertical-align: top;
 	max-width: 250px;
