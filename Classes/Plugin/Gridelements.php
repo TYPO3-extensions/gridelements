@@ -232,12 +232,13 @@ class Gridelements extends ContentObjectRenderer {
 		// each of the children will now be rendered separately and the output will be added to it's particular column
 		if (count($this->cObj->data['tx_gridelements_view_children'])) {
 			foreach ($this->cObj->data['tx_gridelements_view_children'] as $child) {
-				$this->cObj->data['tx_gridelements_view_raw_columns'][$child['tx_gridelements_columns']][] = $child;
+				$rawColumns[$child['tx_gridelements_columns']][] = $child;
 				$renderedChild = $child;
 				$this->renderChildIntoParentColumn($columns, $renderedChild, $parentGridData, $parentRecordNumbers, $typoScriptSetup);
 				$currentParentGrid['data']['tx_gridelements_view_child_' . $child['uid']] = $renderedChild;
 				unset($renderedChild);
 			}
+			$this->cObj->data['tx_gridelements_view_raw_columns'] = $rawColumns;
 		}
 
 		// now we can reset the depth counter and the data array so that the element will behave just as usual
@@ -403,20 +404,18 @@ class Gridelements extends ContentObjectRenderer {
 
 			$this->cObj->lastChanged($child['tstamp']);
 
-			$local_cObj = $this->cObj;
-			$local_cObj->start(array_merge($child, $parentGridData), 'tt_content');
+			$this->cObj->start(array_merge($child, $parentGridData), 'tt_content');
 
 			$parentRecordNumbers[$columnKey]++;
-			$local_cObj->parentRecordNumber = $parentRecordNumbers[$columnKey];
+			$this->cObj->parentRecordNumber = $parentRecordNumbers[$columnKey];
 
 			// we render each child into the children key to provide them prerendered for usage with your own templating
-			$child = $local_cObj->cObjGetSingle($typoScriptSetup['columns.'][$columnSetupKey]['renderObj'], $typoScriptSetup['columns.'][$columnSetupKey]['renderObj.']);
+			$child = $this->cObj->cObjGetSingle($typoScriptSetup['columns.'][$columnSetupKey]['renderObj'], $typoScriptSetup['columns.'][$columnSetupKey]['renderObj.']);
 			// then we assign the prerendered child to the appropriate column
 			if (isset($columns[$column_number])) {
 				$parentGridData['tx_gridelements_view_columns'][$column_number] .= $child;
 			}
 			unset($columns);
-			$local_cObj = null;
 		}
 
 		unset($typoScriptSetup);
