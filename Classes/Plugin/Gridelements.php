@@ -238,7 +238,7 @@ class Gridelements extends ContentObjectRenderer {
 				$currentParentGrid['data']['tx_gridelements_view_child_' . $child['uid']] = $renderedChild;
 				unset($renderedChild);
 			}
-			$this->cObj->data['tx_gridelements_view_raw_columns'] = $rawColumns;
+			$currentParentGrid['data']['tx_gridelements_view_raw_columns'] = $rawColumns;
 		}
 
 		// now we can reset the depth counter and the data array so that the element will behave just as usual
