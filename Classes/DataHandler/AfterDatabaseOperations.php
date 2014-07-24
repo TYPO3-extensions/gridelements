@@ -236,10 +236,10 @@ class AfterDatabaseOperations extends AbstractDataHandler {
 
 		if (count($childPages)) {
 			foreach ($childPages as $page) {
-				if ($page['backend_layout'] === 0) {
+				if (empty($page['backend_layout'])) {
 					$subpages[] = $page;
 				}
-				if ($page['backend_layout_next_level'] === 0) {
+				if (empty($page['backend_layout_next_level'])) {
 					$this->getSubpagesRecursively($page['uid'], $subpages);
 				}
 			}
