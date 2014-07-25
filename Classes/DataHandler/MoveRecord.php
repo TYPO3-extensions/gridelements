@@ -115,7 +115,7 @@ class MoveRecord extends AbstractDataHandler {
 			$column = (int)$target[1];
 			$updateArray = array(
 				'colPos'                    => -1,
-				'sorting'                   => 0,
+				'sorting'                   => $this->dataHandler->getSortNumber('tt_content', $recordUid, (int)$target[0]),
 				'tx_gridelements_container' => $targetUid,
 				'tx_gridelements_columns'   => $column,
 				'pid'                       => $targetElement['pid']
@@ -123,7 +123,7 @@ class MoveRecord extends AbstractDataHandler {
 		} else {
 			$updateArray = array(
 				'colPos'                    => (int)$target[1],
-				'sorting'                   => 0,
+				'sorting'                   => $this->dataHandler->getSortNumber('tt_content', $recordUid, (int)$target[0]),
 				'tx_gridelements_container' => 0,
 				'tx_gridelements_columns'   => 0
 			);
