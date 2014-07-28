@@ -11,7 +11,9 @@ namespace GridElementsTeam\Gridelements\Helper;
 class Helper {
 
 	/**
-	 * @var \GridElementsTeam\Gridelements\Helper\Helper
+	 * Local instance of the helper
+	 *
+	 * @var Helper
 	 */
 	protected static $instance = NULL;
 
@@ -19,30 +21,41 @@ class Helper {
 	 * Get instance from the class.
 	 *
 	 * @static
-	 * @return	\GridElementsTeam\Gridelements\Helper\Helper
+	 * @return    Helper
 	 */
 	public static function getInstance() {
-		if (!self::$instance instanceof \GridElementsTeam\Gridelements\Helper\Helper) {
+		if (!self::$instance instanceof Helper) {
 			self::$instance = new self();
 		}
 
 		return self::$instance;
 	}
 
+	/**
+	 * @param string $table
+	 * @param int    $uid
+	 * @param string $sortingField
+	 * @param int    $sortRev
+	 *
+	 * @return array
+	 */
 	public function getChildren($table = '', $uid = 0, $sortingField = '', $sortRev = 0) {
 		$retVal = array();
 
 		if (trim($table) && $uid > 0) {
 
 			/** @var $dependency \TYPO3\CMS\Version\Dependency\DependencyResolver */
-			$dependency = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Version\Dependency\DependencyResolver');
+			$dependency = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Version\\Dependency\\DependencyResolver');
 
 			$dependencyElement = $dependency->addElement($table, $uid);
 			$children = $dependencyElement->getChildren();
 
-			foreach($children as $key => $child) {
-				if ($child->getElement()->getTable() === $table && $child->getField() === 'tx_gridelements_children') {
-					$record = $child->getElement()->getRecord();
+			foreach ($children as $child) {
+				if ($child->getElement()
+				          ->getTable() === $table && $child->getField() === 'tx_gridelements_children'
+				) {
+					$record = $child->getElement()
+					                ->getRecord();
 
 					if (trim($sortingField) && isset($record[$sortingField]) && $sortingField !== 'sorting') {
 						$sortField = $record[$sortingField];
@@ -70,13 +83,14 @@ class Helper {
 	 * otherwise the regular uid is used.
 	 *
 	 * @param array $record Overlayed record data
+	 *
 	 * @return integer
 	 */
 	public function getSpecificUid(array $record) {
-		$specificUid = $uid = (int) $record['uid'];
+		$specificUid = $uid = (int)$record['uid'];
 
 		if ($this->getBackendUser()->workspace > 0 && !empty($record['_ORIG_uid'])) {
-			$specificUid = (int) $record['_ORIG_uid'];
+			$specificUid = (int)$record['_ORIG_uid'];
 		}
 
 		return $specificUid;
@@ -85,7 +99,7 @@ class Helper {
 	/**
 	 * Gets the current backend user.
 	 *
-	 * @return t3lib_beUserAuth
+	 * @return \TYPO3\CMS\Core\Authentication\BackendUserAuthentication
 	 */
 	public function getBackendUser() {
 		return $GLOBALS['BE_USER'];

@@ -25,7 +25,7 @@
 class tx_gridelements_ttContentTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 
 	/**
-	 * @var t3lib_db
+	 * @var \TYPO3\CMS\Core\Database\DatabaseConnection
 	 */
 	var $tempT3libDb;
 
@@ -60,7 +60,7 @@ class tx_gridelements_ttContentTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTe
 		$ttContent->columnsItemsProcFunc($params);
 		$this->assertEquals($expectedParams, $params);
 
-		$t3libDb = $this->getMock('t3lib_db', array('exec_SELECTgetSingleRow'));
+		$t3libDb = $this->getMock('TYPO3\\CMS\\Core\\Database\\DatabaseConnection', array('exec_SELECTgetSingleRow'));
 		$t3libDb
 			->expects($this->once())
 			->method('exec_SELECTgetSingleRow')

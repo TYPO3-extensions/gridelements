@@ -25,7 +25,7 @@
 class tx_gridelements_wizarditemshookTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 
 	/**
-	 * @var t3lib_db
+	 * @var \TYPO3\CMS\Core\Database\DatabaseConnection
 	 */
 	var $tempT3libDb;
 

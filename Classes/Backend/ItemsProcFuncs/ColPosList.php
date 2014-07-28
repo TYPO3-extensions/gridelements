@@ -23,22 +23,23 @@ namespace GridElementsTeam\Gridelements\Backend\ItemsProcFuncs;
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Class/Function which manipulates the item-array for table/field tt_content colPos.
  *
- * @author		Jo Hasenau <info@cybercraft.de>
- * @package		TYPO3
- * @subpackage	tx_gridelements
+ * @author         Jo Hasenau <info@cybercraft.de>
+ * @package        TYPO3
+ * @subpackage     tx_gridelements
  */
-
 class ColPosList extends AbstractItemsProcFunc {
 
 	/**
 	 * ItemProcFunc for colpos items
 	 *
-	 * @param	array	$params: The array of parameters that is used to render the item list
-	 * @return	void
+	 * @param    array $params : The array of parameters that is used to render the item list
+	 *
+	 * @return    void
 	 */
 	public function itemsProcFunc(&$params) {
 		if ($params['row']['pid'] > 0) {
@@ -57,17 +58,18 @@ class ColPosList extends AbstractItemsProcFunc {
 	 * Adds items to a colpos list
 	 *
 	 * @param   integer $pageId : The uid of the page we are currently working on
-	 * @param   array   $items : The array of items before the action
-	 * @param   string  $CType : The content type of the item holding the colPosList
+	 * @param   array   $items  : The array of items before the action
+	 * @param   string  $CType  : The content type of the item holding the colPosList
+	 *
 	 * @return  array   $items: The ready made array of items
 	 */
 	protected function addColPosListLayoutItems($pageId, array $items, $CType = '') {
 		$layout = $this->getSelectedBackendLayout($pageId);
 
-		if($layout) {
-			if($CType !== '' && count($layout['__items']) > 0) {
-				foreach($layout['__items'] as $itemKey => $itemArray) {
-					if($itemArray[3] !== '' && !\TYPO3\CMS\Core\Utility\GeneralUtility::inList($itemArray[3], $CType) && !\TYPO3\CMS\Core\Utility\GeneralUtility::inList($itemArray[3], '*')) {
+		if ($layout) {
+			if ($CType !== '' && count($layout['__items']) > 0) {
+				foreach ($layout['__items'] as $itemKey => $itemArray) {
+					if ($itemArray[3] !== '' && !GeneralUtility::inList($itemArray[3], $CType) && !GeneralUtility::inList($itemArray[3], '*')) {
 						unset($layout['__items'][$itemKey]);
 					}
 				}

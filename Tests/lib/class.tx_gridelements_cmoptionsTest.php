@@ -49,10 +49,10 @@ class tx_gridelements_cmoptionsTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTe
 	 * test main method
 	 */
 	public function testMain() {
-		$cmOptions = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_gridelements_cmoptions');
+		$cmOptions = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('GridElementsTeam\\Gridelements\\Backend\\CmOptions');
 
 		//$backRef = new clickMenu;
-		$backRef = $this->getMock('stdClass', array(), array(), 'clickMenu');
+		$backRef = $this->getMock('stdClass', array(), array(), 'clickmenu');
 		$menuItems['copy'][0] = '<span class="t3-icon t3-icon-empty t3-icon-empty-empty t3-icon-empty c-roimg" id="roimg_5">&nbsp;</span><a href="#" onclick="showClickmenu_raw(\'/typo3/alt_clickmenu.php?table=tt_content&amp;uid=254&amp;listFr=1&amp;enDisItems=&amp;backPath=..%2F..%2F..%2F%7C5aadecccad&amp;addParams=&amp;ajax=1&amp;reloadListFrame=1&amp;CB[el][tt_content%7C254]=1&amp;CB[setCopyMode]=1\');return false;" onmouseover="mo(5);" onmouseout="mout(5);">Kopieren <span class="t3-icon t3-icon-actions t3-icon-actions-edit t3-icon-edit-copy">&nbsp;</span></a>';
 		$menuItems['copy'][1] = 'Copy';
 		$menuItems['copy'][2] = ' <span class="t3-icon t3-icon-actions t3-icon-actions-edit t3-icon-edit-copy">&nbsp;</span>';
@@ -66,7 +66,7 @@ class tx_gridelements_cmoptionsTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTe
 		$result = $cmOptions->main($backRef, $menuItems, $table, $uid);
 		$this->assertEquals($expectedMenuItems, $result);
 
-		$clipObj = new t3lib_clipboard();
+		$clipObj = new \TYPO3\CMS\Backend\Clipboard\Clipboard();
 		$clipObj->current = 'normal';
 		$clipObj->clipData['normal']['mode'] = 'copy';
 		$backRef->clipObj = $clipObj;

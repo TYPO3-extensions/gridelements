@@ -25,7 +25,7 @@
 class tx_gridelements_itemsprocfunc_colposlistTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 
 	/**
-	 * @var t3lib_db
+	 * @var \TYPO3\CMS\Core\Database\DatabaseConnection
 	 */
 	protected $tempT3libDb;
 
@@ -89,7 +89,7 @@ class tx_gridelements_itemsprocfunc_colposlistTest extends \TYPO3\CMS\Extbase\Te
 		$params['row']['pid'] = -15;
 		$dbReturnValue['pid'] = -12;
 		$dbReturnValue['CType'] = 'gridelements';
-		$t3libDb = $this->getMock('t3lib_db', array('exec_SELECTgetSingleRow'));
+		$t3libDb = $this->getMock('TYPO3\\CMS\\Core\\Database\\DatabaseConnection', array('exec_SELECTgetSingleRow'));
 		$t3libDb
 			->expects($this->once())
 			->method('exec_SELECTgetSingleRow')
@@ -107,7 +107,7 @@ class tx_gridelements_itemsprocfunc_colposlistTest extends \TYPO3\CMS\Extbase\Te
 		$params['row']['pid'] = -15;
 		$dbReturnValue['pid'] = 12;
 		$dbReturnValue['CType'] = 'gridelements';
-		$t3libDb = $this->getMock('t3lib_db', array('exec_SELECTgetSingleRow'));
+		$t3libDb = $this->getMock('TYPO3\\CMS\\Core\\Database\\DatabaseConnection', array('exec_SELECTgetSingleRow'));
 		$t3libDb
 			->expects($this->once())
 			->method('exec_SELECTgetSingleRow')

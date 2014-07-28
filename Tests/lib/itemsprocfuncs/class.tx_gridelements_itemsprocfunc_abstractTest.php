@@ -25,7 +25,7 @@
 class tx_gridelements_itemsprocfunc_abstract extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 
 	/**
-	 * @var t3lib_db
+	 * @var \TYPO3\CMS\Core\Database\DatabaseConnection
 	 */
 	var $tempT3libDb;
 
@@ -65,7 +65,7 @@ class tx_gridelements_itemsprocfunc_abstract extends \TYPO3\CMS\Extbase\Tests\Un
 		);
 
 		// create the first 3 db results for each rootline entry
-		$t3lib_db = $this->getMock('t3lib_db', array('exec_SELECTgetSingleRow'));
+		$t3lib_db = $this->getMock('TYPO3\\CMS\\Core\\Database\\DatabaseConnection', array('exec_SELECTgetSingleRow'));
 
 		$t3lib_db
 			->expects($this->at(0))
@@ -130,7 +130,7 @@ class tx_gridelements_itemsprocfunc_abstract extends \TYPO3\CMS\Extbase\Tests\Un
 			->will($this->returnValue($rootline));
 
 		// create the first 3 db results for each rootline entry
-		$t3lib_db = $this->getMock('t3lib_db', array('exec_SELECTgetSingleRow'));
+		$t3lib_db = $this->getMock('TYPO3\\CMS\\Core\\Database\\DatabaseConnection', array('exec_SELECTgetSingleRow'));
 		$t3lib_db
 			->expects($this->at(0))
 			->method('exec_SELECTgetSingleRow')
@@ -188,7 +188,7 @@ class tx_gridelements_itemsprocfunc_abstract extends \TYPO3\CMS\Extbase\Tests\Un
 			->will($this->returnValue($rootline));
 
 		// create the first 3 db results for each rootline entry
-		$t3lib_db = $this->getMock('t3lib_db', array('exec_SELECTgetSingleRow'));
+		$t3lib_db = $this->getMock('TYPO3\\CMS\\Core\\Database\\DatabaseConnection', array('exec_SELECTgetSingleRow'));
 		$t3lib_db
 			->expects($this->at(0))
 			->method('exec_SELECTgetSingleRow')

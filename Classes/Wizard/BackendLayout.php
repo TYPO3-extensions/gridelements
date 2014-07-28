@@ -3,25 +3,20 @@ namespace GridElementsTeam\Gridelements\Wizard;
 
 require_once('conf.php');
 
-if ($BACK_PATH_ABS !== false) {
-	require($BACK_PATH_ABS . 'init.php');
-	require($BACK_PATH_ABS . 'template.php');
-} else {
-	require($BACK_PATH . 'init.php');
-	require($BACK_PATH . 'template.php');
-}
+use TYPO3\CMS\Backend\Utility\IconUtility;
+use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 $LANG->includeLLFile('EXT:lang/locallang_wizards.xml');
 
 /**
  * Script Class for grid wizard
  *
- * @author    T3UXW09 Team1 <modernbe@cybercraft.de>
- * @package TYPO3
- * @subpackage core
+ * @author      T3UXW09 Team1 <modernbe@cybercraft.de>
+ * @package     TYPO3
+ * @subpackage  core
  */
-class BackendLayout
-{
+class BackendLayout {
 
 	// GET vars:
 	protected $P; // Wizard parameters, coming from TCEforms linking to the wizard.
@@ -43,7 +38,7 @@ class BackendLayout
 	public function init() {
 
 		// Setting GET vars (used in frameset script):
-		$this->P = \TYPO3\CMS\Core\Utility\GeneralUtility::_GP('P', 1);
+		$this->P = GeneralUtility::_GP('P', 1);
 
 		//data[layouts][2][config]
 		$this->formName = $this->P['formName'];
@@ -52,11 +47,11 @@ class BackendLayout
 		$uid = intval($this->P['uid']);
 
 		// Initialize document object:
-		$this->doc = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Backend\Template\StandardDocumentTemplate');
+		$this->doc = GeneralUtility::makeInstance('TYPO3\CMS\Backend\Template\StandardDocumentTemplate');
 		$this->doc->backPath = $GLOBALS['BACK_PATH'];
 
 		$pageRenderer = $this->doc->getPageRenderer();
-		$pageRenderer->addJsFile($GLOBALS['BACK_PATH'] . \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath('gridelements') . 'Resources/Public/Backend/JavaScript/grideditor.js');
+		$pageRenderer->addJsFile($GLOBALS['BACK_PATH'] . ExtensionManagementUtility::extRelPath('gridelements') . 'Resources/Public/Backend/JavaScript/grideditor.js');
 		$pageRenderer->addJsInlineCode('storeData', '
 			function storeData(data)	{
 				if (parent.opener && parent.opener.document && parent.opener.document.' . $this->formName . ' && parent.opener.document.' . $this->formName . '["' . $this->fieldName . '"])	{
@@ -115,7 +110,7 @@ class BackendLayout
 		} else {
 
 			// load TS parser
-			$parser = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Core\TypoScript\Parser\TypoScriptParser');
+			$parser = GeneralUtility::makeInstance('TYPO3\CMS\Core\TypoScript\Parser\TypoScriptParser');
 			$parser->parse($record[0][$this->P['field']]);
 			$data = $parser->setup['backend_layout.'];
 			$rows = array();
@@ -193,7 +188,7 @@ class BackendLayout
 			t3Grid.drawTable();
 		');
 
-		$this->doc->styleSheetFile_post = \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath('gridelements') . 'Resources/Public/Backend/Css//grideditor.css';
+		$this->doc->styleSheetFile_post = ExtensionManagementUtility::extRelPath('gridelements') . 'Resources/Public/Backend/Css//grideditor.css';
 
 	}
 
@@ -206,15 +201,15 @@ class BackendLayout
 
 		$content = '<a href="#" title="' .
 			$GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.php:rm.saveDoc', TRUE) . '" onclick="storeData(t3Grid.export2LayoutRecord());return true;">' .
-			\TYPO3\CMS\Backend\Utility\IconUtility::getSpriteIcon('actions-document-save') . '</a>';
+			IconUtility::getSpriteIcon('actions-document-save') . '</a>';
 
 		$content .= '<a href="#" title="' .
 			$GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.php:rm.saveCloseDoc', TRUE) . '" onclick="storeData(t3Grid.export2LayoutRecord());window.close();return true;">' .
-			\TYPO3\CMS\Backend\Utility\IconUtility::getSpriteIcon('actions-document-save-close') . '</a>';
+			IconUtility::getSpriteIcon('actions-document-save-close') . '</a>';
 
 		$content .= '<a href="#" title="' .
 			$GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.php:rm.closeDoc', TRUE) . '" onclick="window.close();return true;">' .
-			\TYPO3\CMS\Backend\Utility\IconUtility::getSpriteIcon('actions-document-close') . '</a>';
+			IconUtility::getSpriteIcon('actions-document-close') . '</a>';
 
 
 		$content .= $this->doc->spacer(10);
@@ -271,7 +266,7 @@ if (defined('TYPO3_MODE') && isset($GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLA
 
 // Make instance:
 /* @var $SOBE \GridElementsTeam\Gridelements\Backend\Wizards\BackendLayout */
-$SOBE = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('GridElementsTeam\Gridelements\Wizard\BackendLayout');
+$SOBE = GeneralUtility::makeInstance('GridElementsTeam\Gridelements\Wizard\BackendLayout');
 $SOBE->init();
 $SOBE->main();
 $SOBE->printContent();

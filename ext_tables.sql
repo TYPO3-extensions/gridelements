@@ -24,6 +24,7 @@ CREATE TABLE tx_gridelements_backend_layout (
 	alias varchar(255) DEFAULT '' NOT NULL,
 	frame int(11) DEFAULT '0' NOT NULL,
 	description text,
+	horizontal tinyint(4) DEFAULT '0' NOT NULL,
 	top_level_layout tinyint(4) DEFAULT '0' NOT NULL,
 	config text,
 	pi_flexform_ds mediumtext,

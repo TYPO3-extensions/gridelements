@@ -25,7 +25,7 @@
 class tx_gridelements_tcemain_preProcessFieldArrayTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 
 	/**
-	 * @var t3lib_db
+	 * @var \TYPO3\CMS\Core\Database\DatabaseConnection
 	 */
 	var $tempT3libDb;
 
@@ -53,7 +53,7 @@ class tx_gridelements_tcemain_preProcessFieldArrayTest extends \TYPO3\CMS\Extbas
 	public function testGetSubpagesRecursively() {
 		$preProcess = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_gridelements_tcemain_preProcessFieldArray');
 
-		$t3lib_db = $this->getMock('t3lib_db', array('exec_SELECTgetRows'));
+		$t3lib_db = $this->getMock('TYPO3\\CMS\\Core\\Database\\DatabaseConnection', array('exec_SELECTgetRows'));
 		$t3lib_db
 			->expects($this->at(0))
 			->method('exec_SELECTgetRows')
@@ -80,7 +80,7 @@ class tx_gridelements_tcemain_preProcessFieldArrayTest extends \TYPO3\CMS\Extbas
 		$preProcess->getSubpagesRecursively(30, $subpages);
 		$this->assertEquals($expectedSubpages, $subpages);
 
-		$t3lib_db = $this->getMock('t3lib_db', array('exec_SELECTgetRows'));
+		$t3lib_db = $this->getMock('TYPO3\\CMS\\Core\\Database\\DatabaseConnection', array('exec_SELECTgetRows'));
 		$t3lib_db
 			->expects($this->once())
 			->method('exec_SELECTgetRows')
@@ -121,7 +121,7 @@ class tx_gridelements_tcemain_preProcessFieldArrayTest extends \TYPO3\CMS\Extbas
 		$table = 'tt_content';
 		$tcaColumns['CSV'] = 'Hello world';
 		$expectedTcaColumns = 'Hello world';
-		$layoutSetup = $this->getMock('\GridElementsTeam\Gridelements\Backend\LayoutSetup', array('getLayoutColumns'));
+		$layoutSetup = $this->getMock('GridElementsTeam\\Gridelements\\Backend\\LayoutSetup', array('getLayoutColumns'));
 		$layoutSetup
 			->expects($this->once())
 			->method('getLayoutColumns')

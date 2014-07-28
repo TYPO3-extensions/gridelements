@@ -30,7 +30,7 @@ class tx_gridelements_db_list_extra_hookTest extends \TYPO3\CMS\Extbase\Tests\Un
 	 * @test
 	 */
 	public function testMakeClip() {
-		$dbList = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_gridelements_db_list_extraHook');
+		$dbList = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('GridElementsTeam\\Gridelements\\Hooks\\DatabaseRecordList');
 
 		$table = 'pages';
 		$row = array(
@@ -50,7 +50,7 @@ class tx_gridelements_db_list_extra_hookTest extends \TYPO3\CMS\Extbase\Tests\Un
 	 * @test
 	 */
 	public function testMakeControl() {
-		$dbList = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_gridelements_db_list_extraHook');
+		$dbList = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('GridElementsTeam\\Gridelements\\Hooks\\DatabaseRecordList');
 
 		$table = 'pages';
 		$row = array(
@@ -70,7 +70,7 @@ class tx_gridelements_db_list_extra_hookTest extends \TYPO3\CMS\Extbase\Tests\Un
 	 * @test
 	 */
 	public function testRenderListHeader() {
-		$dbList = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_gridelements_db_list_extraHook');
+		$dbList = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('GridElementsTeam\\Gridelements\\Hooks\\DatabaseRecordList');
 
 		$table = 'pages';
 		$currentIdList = '12,23,34';
@@ -87,7 +87,7 @@ class tx_gridelements_db_list_extra_hookTest extends \TYPO3\CMS\Extbase\Tests\Un
 	 * @test
 	 */
 	public function testRenderListHeaderActions() {
-		$dbList = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_gridelements_db_list_extraHook');
+		$dbList = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('GridElementsTeam\\Gridelements\\Hooks\\DatabaseRecordList');
 
 		$table = 'pages';
 		$currentIdList = '12,23,34';

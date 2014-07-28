@@ -123,7 +123,7 @@ $tempColumns = array(
 
 
 \TYPO3\CMS\Core\Utility\GeneralUtility::loadTCA('tt_content');
-\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addTCAcolumns('tt_content', $tempColumns, 1);
+\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addTCAcolumns('tt_content', $tempColumns);
 \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addStaticFile($_EXTKEY, 'Configuration/TypoScript/', 'Gridelements');
 
 $TCA['tt_content']['ctrl']['requestUpdate'] .= ',tx_gridelements_container,tx_gridelements_columns,colPos';
@@ -146,9 +146,12 @@ $TCA['tt_content']['columns']['records']['config']['allowed'] .= ',pages';
 \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addToAllTCAtypes('tt_content', 'pi_flexform, tx_gridelements_children', $_EXTKEY . '_pi1', 'replace:rte_enabled');
 \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addToAllTCAtypes('tt_content', 'tx_gridelements_container, tx_gridelements_columns');
 
-\TYPO3\CMS\Core\Utility\GeneralUtility::loadTCA('backend_layout');
-$TCA['backend_layout']['columns']['config']['config']['wizards']['0']['script'] =
-    \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath($_EXTKEY) . 'Classes/Wizard/BackendLayout.php';
+// Register backend_layout wizard
+\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addModulePath(
+	'wizard_gridelements_backend_layout',
+	\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath($_EXTKEY) . 'Classes/Wizard/'
+);
+$TCA['backend_layout']['columns']['config']['config']['wizards']['0']['module']['name'] = 'wizard_gridelements_backend_layout';
 
 \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addPlugin(
 	array(
@@ -224,4 +227,4 @@ $geIcons = array(
 	\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::siteRelPath('gridelements') . 'Resources/Public/Backend/Css/Skin/t3skin_override.css'
 );
 
-$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['typo3/template.php']['preHeaderRenderHook'][] = 'EXT:gridelements/Classes/Hooks/PreHeaderRenderHook.php:Tx_Gridelements_Hooks_PreHeaderRenderHook->main';
+$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['typo3/template.php']['preHeaderRenderHook'][] = 'GridElementsTeam\\Gridelements\\Hooks\\PreHeaderRenderHook->main';

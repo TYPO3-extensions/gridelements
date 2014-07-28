@@ -24,26 +24,28 @@ namespace GridElementsTeam\Gridelements\Hooks;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-use \TYPO3\CMS\Recordlist\RecordList\RecordListHookInterface;
+use GridElementsTeam\Gridelements\Helper\Helper;
+use TYPO3\CMS\Recordlist\RecordList\RecordListHookInterface;
 
 /**
  * Class/Function which offers TCE main hook functions.
  *
- * @author		Jo Hasenau <info@cybercraft.de>
- * @author		Dirk Hoffmann <hoffmann@vmd-jena.de>
- * @package		TYPO3
- * @subpackage	tx_gridelements
+ * @author         Jo Hasenau <info@cybercraft.de>
+ * @author         Dirk Hoffmann <hoffmann@vmd-jena.de>
+ * @package        TYPO3
+ * @subpackage     tx_gridelements
  */
 class DatabaseRecordList implements RecordListHookInterface {
 
 	/**
 	 * modifies Web>List clip icons (copy, cut, paste, etc.) of a displayed row
 	 *
-	 * @param	string		the current database table
-	 * @param	array		the current record row
-	 * @param	array		the default clip-icons to get modified
-	 * @param	object		Instance of calling object
-	 * @return	array		the modified clip-icons
+	 * @param    string $table        the current database table
+	 * @param    array  $row          the current record row
+	 * @param    array  $cells        the default clip-icons to get modified
+	 * @param    object $parentObject Instance of calling object
+	 *
+	 * @return    array        the modified clip-icons
 	 */
 	public function makeClip($table, $row, $cells, &$parentObject) {
 
@@ -60,15 +62,15 @@ class DatabaseRecordList implements RecordListHookInterface {
 		return $cells;
 	}
 
-
 	/**
 	 * modifies Web>List control icons of a displayed row
 	 *
-	 * @param	string		the current database table
-	 * @param	array		the current record row
-	 * @param	array		the default control-icons to get modified
-	 * @param	object		Instance of calling object
-	 * @return	array		the modified control-icons
+	 * @param    string $table        the current database table
+	 * @param    array  $row          the current record row
+	 * @param    array  $cells        the default control-icons to get modified
+	 * @param    object $parentObject Instance of calling object
+	 *
+	 * @return    array        the modified control-icons
 	 */
 	public function makeControl($table, $row, $cells, &$parentObject) {
 		/*if ($table == 'tt_content' && get_class($parentObject) == 'localRecordList') {
@@ -83,29 +85,29 @@ class DatabaseRecordList implements RecordListHookInterface {
 		return $cells;
 	}
 
-
 	/**
 	 * modifies Web>List header row columns/cells
 	 *
-	 * @param	string		the current database table
-	 * @param	array		Array of the currently displayed uids of the table
-	 * @param	array		An array of rendered cells/columns
-	 * @param	object		Instance of calling (parent) object
-	 * @return	array		Array of modified cells/columns
+	 * @param    string $table         the current database table
+	 * @param    array  $currentIdList Array of the currently displayed uids of the table
+	 * @param    array  $headerColumns An array of rendered cells/columns
+	 * @param    object $parentObject  Instance of calling (parent) object
+	 *
+	 * @return    array        Array of modified cells/columns
 	 */
 	public function renderListHeader($table, $currentIdList, $headerColumns, &$parentObject) {
 		return $headerColumns;
 	}
 
-
 	/**
 	 * modifies Web>List header row clipboard/action icons
 	 *
-	 * @param	string		the current database table
-	 * @param	array		Array of the currently displayed uids of the table
-	 * @param	array		An array of the current clipboard/action icons
-	 * @param	object		Instance of calling (parent) object
-	 * @return	array		Array of modified clipboard/action icons
+	 * @param    string $table         the current database table
+	 * @param    array  $currentIdList Array of the currently displayed uids of the table
+	 * @param    array  $cells         An array of the current clipboard/action icons
+	 * @param    object $parentObject  Instance of calling (parent) object
+	 *
+	 * @return    array        Array of modified clipboard/action icons
 	 */
 	public function renderListHeaderActions($table, $currentIdList, $cells, &$parentObject) {
 		return $cells;
@@ -114,17 +116,18 @@ class DatabaseRecordList implements RecordListHookInterface {
 	/**
 	 * check if current row has child elements and add info to $theData array
 	 *
-	 * @param string    $table
-	 * @param array     $row
-	 * @param int       $level
-	 * @param array     $theData
-	 * @param object    $parentObject
+	 * @param string $table
+	 * @param array  $row
+	 * @param int    $level
+	 * @param array  $theData
+	 * @param object $parentObject
 	 *
 	 * @return void
 	 */
 	public function checkChildren($table, $row, $level, &$theData, &$parentObject) {
 		if ($table === 'tt_content' && $row['CType'] === 'gridelements_pi1') {
-			$elementChildren = \GridElementsTeam\Gridelements\Helper\Helper::getInstance()->getChildren($table, $row['uid']);
+			$elementChildren = Helper::getInstance()
+			                         ->getChildren($table, $row['uid']);
 			if (count($elementChildren) > 0) {
 				$theData['_EXPANDABLE_'] = TRUE;
 				$theData['_EXPAND_ID_'] = $table . ':' . $row['uid'];
@@ -137,11 +140,12 @@ class DatabaseRecordList implements RecordListHookInterface {
 	/**
 	 * return content collapse icon
 	 *
-	 * @param array     $data
-	 * @param string    $sortField
-	 * @param int       $level
-	 * @param string    $contentCollapseIcon
-	 * @param object    $parentObject
+	 * @param array  $data
+	 * @param string $sortField
+	 * @param int    $level
+	 * @param string $contentCollapseIcon
+	 * @param object $parentObject
+	 *
 	 * @return void
 	 */
 	public function contentCollapseIcon($data, $sortField, $level, &$contentCollapseIcon, &$parentObject) {

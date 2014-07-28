@@ -25,7 +25,7 @@
 class tx_gridelements_itemsprocfunc_ctypelistTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 
 	/**
-	 * @var t3lib_db
+	 * @var \TYPO3\CMS\Core\Database\DatabaseConnection
 	 */
 	var $tempT3libDb;
 
@@ -78,7 +78,7 @@ class tx_gridelements_itemsprocfunc_ctypelistTest extends \TYPO3\CMS\Extbase\Tes
 		$colPosList->itemsProcFunc($params);
 
 		$params['row']['pid'] = -12;
-		$t3libDb = $this->getMock('t3lib_db', array('exec_SELECTgetSingleRow'));
+		$t3libDb = $this->getMock('TYPO3\\CMS\\Core\\Database\\DatabaseConnection', array('exec_SELECTgetSingleRow'));
 		$t3libDb
 			->expects($this->once())
 			->method('exec_SELECTgetSingleRow')
@@ -100,7 +100,7 @@ class tx_gridelements_itemsprocfunc_ctypelistTest extends \TYPO3\CMS\Extbase\Tes
 		$returnValue['colPos'] = 20;
 		$returnValue['tx_gridelements_container'] = 45;
 		$returnValue['tx_gridelements_columns'] = 67;
-		$t3libDb = $this->getMock('t3lib_db', array('exec_SELECTgetSingleRow'));
+		$t3libDb = $this->getMock('TYPO3\\CMS\\Core\\Database\\DatabaseConnection', array('exec_SELECTgetSingleRow'));
 		$t3libDb
 			->expects($this->once())
 			->method('exec_SELECTgetSingleRow')
@@ -159,7 +159,7 @@ class tx_gridelements_itemsprocfunc_ctypelistTest extends \TYPO3\CMS\Extbase\Tes
 		$pageColumn = -5;
 		$gridContainerId = 2;
 		$gridColumn = 3;
-		$layoutSetup = $this->getMock('\GridElementsTeam\Gridelements\Backend\LayoutSetup', array('getLayoutSetup'));
+		$layoutSetup = $this->getMock('GridElementsTeam\\Gridelements\\Backend\\LayoutSetup', array('getLayoutSetup'));
 		$layoutSetup
 			->expects($this->once())
 			->method('getLayoutSetup')
@@ -174,7 +174,7 @@ class tx_gridelements_itemsprocfunc_ctypelistTest extends \TYPO3\CMS\Extbase\Tes
 		$gridContainerId = 2;
 		$gridColumn = 3;
 		$returnValue['columns'][3] = '1,2';
-		$layoutSetup = $this->getMock('\GridElementsTeam\Gridelements\Backend\LayoutSetup', array('getLayoutSetup'));
+		$layoutSetup = $this->getMock('GridElementsTeam\\Gridelements\\Backend\\LayoutSetup', array('getLayoutSetup'));
 		$layoutSetup
 			->expects($this->once())
 			->method('getLayoutSetup')

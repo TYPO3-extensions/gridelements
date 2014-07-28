@@ -22,9 +22,6 @@
 	 *  This copyright notice MUST APPEAR in all copies of the script!
 	 ***************************************************************/
 
-// Include classes
-require_once (PATH_typo3 . '/sysext/backend/Classes/View/PageLayoutView.php');
-
 class tx_gridelements_drawitemhookTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 
 	/**
@@ -33,7 +30,7 @@ class tx_gridelements_drawitemhookTest extends \TYPO3\CMS\Extbase\Tests\Unit\Bas
 	 * @test
 	 */
 	public function testPreProcessCTypeEmpty() {
-		$drawItemHook = $this->getMock('tx_gridelements_drawItemHook', array('renderCTypeGridelements', 'renderCTypeShortcut'));
+		$drawItemHook = $this->getMock('GridElementsTeam\\Gridelements\\Hooks\\DrawItem', array('renderCTypeGridelements', 'renderCTypeShortcut'));
 		$drawItemHook
 			->expects($this->never())
 			->method('renderCTypeGridelements')
@@ -43,7 +40,7 @@ class tx_gridelements_drawitemhookTest extends \TYPO3\CMS\Extbase\Tests\Unit\Bas
 			->method('renderCTypeShortcut')
 			->will($this->returnValue('shortcut'));
 
-		$parentObject = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Backend\View\PageLayoutView');
+		$parentObject = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Backend\\View\\PageLayoutView');
 		$drawItem = TRUE;
 		$headerContent = 'header';
 		$itemContent = '<li>Entry</li>';
@@ -62,7 +59,7 @@ class tx_gridelements_drawitemhookTest extends \TYPO3\CMS\Extbase\Tests\Unit\Bas
 	 * @test
 	 */
 	public function testPreProcessCTypeGridElements() {
-		$drawItemHook = $this->getMock('tx_gridelements_drawItemHook', array('renderCTypeGridelements', 'renderCTypeShortcut'));
+		$drawItemHook = $this->getMock('GridElementsTeam\\Gridelements\\Hooks\\DrawItem', array('renderCTypeGridelements', 'renderCTypeShortcut'));
 		$drawItemHook
 			->expects($this->once())
 			->method('renderCTypeGridelements')
@@ -92,7 +89,7 @@ class tx_gridelements_drawitemhookTest extends \TYPO3\CMS\Extbase\Tests\Unit\Bas
 	 * @test
 	 */
 	public function testPreProcessCTypeShortcut() {
-		$drawItemHook = $this->getMock('tx_gridelements_drawItemHook', array('renderCTypeGridelements', 'renderCTypeShortcut'));
+		$drawItemHook = $this->getMock('GridElementsTeam\\Gridelements\\Hooks\\DrawItem', array('renderCTypeGridelements', 'renderCTypeShortcut'));
 		$drawItemHook
 			->expects($this->never())
 			->method('renderCTypeGridelements')
@@ -122,7 +119,7 @@ class tx_gridelements_drawitemhookTest extends \TYPO3\CMS\Extbase\Tests\Unit\Bas
 	 * @test
 	 */
 	public function testSetMultipleColPosValues() {
-		$drawItemHook = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_gridelements_drawItemHook');
+		$drawItemHook = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('GridElementsTeam\\Gridelements\\Hooks\\DrawItem');
 
 		$parserRows = NULL;
 		$colPosValues = NULL;

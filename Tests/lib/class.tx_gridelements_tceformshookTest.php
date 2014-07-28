@@ -30,7 +30,7 @@ class tx_gridelements_tceformshookTest extends \TYPO3\CMS\Extbase\Tests\Unit\Bas
 	 * @test
 	 */
 	public function testGetSingleFieldBeforeRender() {
-		$hook = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_gridelements_TCEformsHook');
+		$hook = GeneralUtility::makeInstance('tx_gridelements_TCEformsHook');
 
 		$expectedTable = $table = 'tt_content';
 		$expectedField = $field = 'bodytext';
