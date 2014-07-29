@@ -7,6 +7,14 @@ use TYPO3\CMS\Backend\Utility\IconUtility;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
+if ($BACK_PATH_ABS !== false) {
+	require($BACK_PATH_ABS . 'init.php');
+	require($BACK_PATH_ABS . 'template.php');
+} else {
+	require($BACK_PATH . 'init.php');
+	require($BACK_PATH . 'template.php');
+}
+
 $LANG->includeLLFile('EXT:lang/locallang_wizards.xml');
 
 /**
