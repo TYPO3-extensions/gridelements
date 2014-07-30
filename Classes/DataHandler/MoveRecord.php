@@ -113,17 +113,19 @@ class MoveRecord extends AbstractDataHandler {
 			$targetElement = BackendUtility::getRecordWSOL('tt_content', $targetUid, 'pid');
 			$containerUpdateArray[$targetUid] += 1;
 			$column = (int)$target[1];
+			$sortNumberArray = $this->dataHandler->getSortNumber('tt_content', $recordUid, $targetElement['pid']);
 			$updateArray = array(
 				'colPos'                    => -1,
-				'sorting'                   => $this->dataHandler->getSortNumber('tt_content', $recordUid, (int)$target[0]),
+				'sorting'                   => $sortNumberArray['sortNumber'],
 				'tx_gridelements_container' => $targetUid,
 				'tx_gridelements_columns'   => $column,
 				'pid'                       => $targetElement['pid']
 			);
 		} else {
+			$sortNumber = $this->dataHandler->getSortNumber('tt_content', $recordUid, $targetUid);
 			$updateArray = array(
 				'colPos'                    => (int)$target[1],
-				'sorting'                   => $this->dataHandler->getSortNumber('tt_content', $recordUid, (int)$target[0]),
+				'sorting'                   => $sortNumber,
 				'tx_gridelements_container' => 0,
 				'tx_gridelements_columns'   => 0
 			);

@@ -88,7 +88,8 @@ class DataHandler {
 			} else {
 				$pid = (int)$positionArray[0];
 			}
-			$fieldArray['sorting'] = $parentObj->getSortNumber('tt_content', 0, $pid);
+			$sortNumber = $parentObj->getSortNumber('tt_content', 0, abs($pid));
+			$fieldArray['sorting'] = $sortNumber;
 		}
 	}
 
