@@ -110,7 +110,7 @@ class LayoutSetup {
 	public function getTypoScriptSetup($layoutId) {
 		$typoScriptSetup = array();
 
-		if ((int)$layoutId === '0' && isset($this->typoScriptSetup['setup.']['default.'])) {
+		if ((int)$layoutId === 0 && isset($this->typoScriptSetup['setup.']['default.'])) {
 			$typoScriptSetup = $this->typoScriptSetup['setup.']['default.'];
 		} else if ($layoutId && isset($this->typoScriptSetup['setup.'][$layoutId . '.'])) {
 			$typoScriptSetup = $this->typoScriptSetup['setup.'][$layoutId . '.'];
