@@ -450,11 +450,13 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 				$columnKey = $columnConfig['colPos'] !== '' ? (int)$columnConfig['colPos'] : 32768;
 				// allowed CTypes
 				if (!empty($columnConfig['allowed'])) {
-					$allowedCTypes = array_flip(explode(',', $columnConfig['allowed']));
+					$allowedCTypes = array_flip(GeneralUtility::trimExplode(',', $columnConfig['allowed']));
 					if (!isset($allowedCTypes['*'])) {
 						foreach ($allowedCTypes as $key => &$ctype) {
 							$ctype = 't3-allow-' . $key;
 						}
+					} else {
+						unset($allowedCTypes);
 					}
 				}
 				// render the grid cell
