@@ -329,7 +329,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 				if (is_array($itemRow)) {
 					$statusHidden = $parentObject->isDisabled('tt_content', $itemRow) ? ' t3-page-ce-hidden' : '';
 					$gridContent[$colPos] .= '
-				<div class="t3-page-ce' . $statusHidden . '"><div class="t3-page-ce-dragitem">' . $this->renderSingleElementHTML($parentObject, $itemRow) . '</div></div>';
+				<div class="t3-page-ce' . $statusHidden . '" id="element-tt_content-'.$itemRow['uid'].'"><div class="t3-page-ce-dragitem">' . $this->renderSingleElementHTML($parentObject, $itemRow) . '</div></div>';
 					// New content element:
 					if ($parentObject->option_newWizard) {
 						$onClick = 'window.location.href=\'db_new_content_el.php?id=' . $itemRow['pid'] . '&sys_language_uid=' . $itemRow['sys_language_uid'] . '&colPos=' . $itemRow['colPos'] . '&uid_pid=' . -$itemRow['uid'] . '&returnUrl=' . rawurlencode(GeneralUtility::getIndpEnv('REQUEST_URI')) . '\';';
