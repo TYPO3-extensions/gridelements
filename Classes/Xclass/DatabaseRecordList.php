@@ -305,10 +305,6 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
 
 				$lastColPos='';
 				foreach($accRows as $key => $row)	{
-					// initialize labels and other stuff by dummy rendering the first row
-					if($cc == 0) {
-						$this->renderListRow($table, $row, $cc, $titleCol, $thumbsCol);
-					}
 					// Render item row if counter < limit
 					if ($cc < $this->iLimit) {
 						$cc++;
