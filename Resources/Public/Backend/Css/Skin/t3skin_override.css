@@ -154,7 +154,7 @@ td.t3-page-column.t3-gridCell .t3-page-colHeader {
 }
 
 #ext-cms-layout-db-layout-php .t3-page-ce .t3-page-colHeader .t3-page-colHeader-icons {
-	visibility: hidden !important;
+	/* visibility: hidden !important;*/
 }
 
 #ext-cms-layout-db-layout-php .t3-gridContainer--1 {
