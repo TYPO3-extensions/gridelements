@@ -109,8 +109,8 @@ class MoveRecord extends AbstractDataHandler {
 	 * @return array UpdateArray
 	 */
 	public function createUpdateArrayForSplitElements($recordUid, &$destPid, $targetUid, array $target, array &$containerUpdateArray) {
+		$targetElement = BackendUtility::getRecordWSOL('tt_content', $targetUid, 'pid');
 		if ($targetUid !== $recordUid && (int)$target[0] < 0) {
-			$targetElement = BackendUtility::getRecordWSOL('tt_content', $targetUid, 'pid');
 			$containerUpdateArray[$targetUid] += 1;
 			$column = (int)$target[1];
 			$sortNumberArray = $this->dataHandler->getSortNumber('tt_content', $recordUid, $targetElement['pid']);
@@ -122,7 +122,7 @@ class MoveRecord extends AbstractDataHandler {
 				'pid'                       => $targetElement['pid']
 			);
 		} else {
-			$sortNumber = $this->dataHandler->getSortNumber('tt_content', $recordUid, $targetUid);
+			$sortNumber = $this->dataHandler->getSortNumber('tt_content', $recordUid, $targetElement['pid']);
 			$updateArray = array(
 				'colPos'                    => (int)$target[1],
 				'sorting'                   => $sortNumber,
