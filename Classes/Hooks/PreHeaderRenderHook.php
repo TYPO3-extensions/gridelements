@@ -16,6 +16,6 @@ class PreHeaderRenderHook {
 	function main($arg) {
 		/** @var $pagerenderer \TYPO3\CMS\Core\Page\PageRenderer */
 		$pagerenderer = $arg['pageRenderer'];
-		$pagerenderer->addCssFile(ExtensionManagementUtility::extRelPath('gridelements') . 'Resources/Public/Backend/Css/Skin/t3skin_override.css');
+		$pagerenderer->addCssFile($GLOBALS['BACK_PATH'] . ExtensionManagementUtility::extRelPath('gridelements') . 'Resources/Public/Backend/Css/Skin/t3skin_override.css');
 	}
 }
