@@ -26,7 +26,7 @@ It offers a lot of new features like advanced drag & drop or real references, th
 	'uploadfolder' => 1,
 	'createDirs' => '',
 	'modify_tables' => 'tt_content',
-	'clearcacheonload' => 0,
+	'clearcacheonload' => 1,
 	'lockType' => '',
 	'author' => 'Grid Elements Team',
 	'author_email' => 'info@cybercraft.de',
