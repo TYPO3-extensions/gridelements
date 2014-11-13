@@ -130,10 +130,10 @@ class Gridelements extends ContentObjectRenderer {
 
 			if ($GLOBALS['TSFE']->sys_language_uid > 0) {
 				if ($GLOBALS['TSFE']->sys_language_contentOL) {
-					if ((int)$this->cObj->data['sys_language_uid'] !== $GLOBALS['TSFE']->sys_language_uid && (int)$this->cObj->data['sys_language_uid'] !== -1) {
-						$translatedElement = $GLOBALS['TYPO3_DB']->exec_SELECTgetSingleRow('uid', 'tt_content', 'l18n_parent=' . (int)$element);
-						$element = (int)$translatedElement['uid'];
+					if (isset($this->cObj->data['_LOCALIZED_UID']) && $this->cObj->data['_LOCALIZED_UID'] !== 0) {
+						$element = (int)$this->cObj->data['_LOCALIZED_UID'];
 					}
+
 					if ($element) {
 						$where .= '  OR (
 						tx_gridelements_container = ' . $element . $this->cObj->enableFields('tt_content') . ' AND sys_language_uid IN (-1,' . $GLOBALS['TSFE']->sys_language_uid . ')
