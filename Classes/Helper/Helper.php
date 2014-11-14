@@ -8,6 +8,7 @@ namespace GridElementsTeam\Gridelements\Helper;
  * @package     TYPO3
  * @subpackage  tx_gridelements
  */
+
 class Helper {
 
 	/**
@@ -52,10 +53,10 @@ class Helper {
 
 			foreach ($children as $child) {
 				if ($child->getElement()
-				          ->getTable() === $table && $child->getField() === 'tx_gridelements_children'
+						->getTable() === $table && $child->getField() === 'tx_gridelements_children'
 				) {
 					$record = $child->getElement()
-					                ->getRecord();
+						->getRecord();
 
 					if (trim($sortingField) && isset($record[$sortingField]) && $sortingField !== 'sorting') {
 						$sortField = $record[$sortingField];
@@ -86,14 +87,17 @@ class Helper {
 	 *
 	 * @return integer
 	 */
-	public function getSpecificUid(array $record) {
-		$specificUid = $uid = (int)$record['uid'];
+	public function getSpecificIds(array $record) {
+		$specificIds = array();
+		$specificIds['uid'] = (int)$record['uid'];
+		$specificIds['pid'] = (int)$record['pid'];
 
-		if ($this->getBackendUser()->workspace > 0 && !empty($record['_ORIG_uid'])) {
-			$specificUid = (int)$record['_ORIG_uid'];
+		if ($this->getBackendUser()->workspace > 0 && !empty($record['t3ver_oid'])) {
+			$specificIds['uid'] = (int)$record['t3ver_oid'];
+			$specificIds['pid'] = -1;
 		}
 
-		return $specificUid;
+		return $specificIds;
 	}
 
 	/**

@@ -93,7 +93,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 		/** @var $layoutSetup \GridElementsTeam\Gridelements\Backend\LayoutSetup */
 		$layoutSetup = GeneralUtility::makeInstance('GridElementsTeam\\Gridelements\\Backend\\LayoutSetup');
 		$gridElement = $layoutSetup->init($row['pid'])
-		                           ->cacheCurrentParent($gridContainerId, TRUE);
+			->cacheCurrentParent($gridContainerId, TRUE);
 		$layoutUid = $gridElement['tx_gridelements_backend_layout'];
 		$layout = $layoutSetup->getLayoutSetup($layoutUid);
 		if (isset($layout['config']) && isset($layout['config']['rows.'])) {
@@ -212,11 +212,11 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 	public function setSingleColPosItems(PageLayoutView $parentObject, &$colPosValues, &$row, $showHidden, $deleteClause) {
 		// Due to the pid being "NOT USED" in makeQueryArray we have to set pidSelect here
 		$originalPidSelect = $parentObject->pidSelect;
-		$parentObject->pidSelect = 'pid = ' . $row['pid'];
-		$specificUid = Helper::getInstance()
-		                     ->getSpecificUid($row);
+		$specificIds = Helper::getInstance()
+			->getSpecificIds($row);
+		$parentObject->pidSelect = 'pid = ' . $specificIds['pid'];
 
-		$queryParts = $parentObject->makeQueryArray('tt_content', $row['pid'], 'AND colPos = -1 AND tx_gridelements_container=' . $specificUid . $showHidden . $deleteClause . $parentObject->showLanguage);
+		$queryParts = $parentObject->makeQueryArray('tt_content', $specificIds['pid'], 'AND colPos = -1 AND tx_gridelements_container IN (' . $row['uid'] . ',' . $specificIds['uid'] . ') ' . $showHidden . $deleteClause . $parentObject->showLanguage);
 
 		// Due to the pid being "NOT USED" in makeQueryArray we have to reset pidSelect here
 		$parentObject->pidSelect = $originalPidSelect;
@@ -274,7 +274,10 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 	public function collectItemsForColumn(PageLayoutView $parentObject, &$colPos, &$row, &$showHidden, &$deleteClause) {
 		// Due to the pid being "NOT USED" in makeQueryArray we have to set pidSelect here
 		$originalPidSelect = $parentObject->pidSelect;
-		$parentObject->pidSelect = 'pid = ' . $row['pid'];
+		$specificIds = Helper::getInstance()
+			->getSpecificIds($row);
+
+		$parentObject->pidSelect = 'pid = ' . $specificIds['pid'];
 
 		if (!$parentObject->tt_contentConfig['languageMode']) {
 			$showLanguage = ' AND (sys_language_uid = -1 OR sys_language_uid=' . $parentObject->tt_contentConfig['sys_language_uid'] . ')';
@@ -284,9 +287,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 			$showLanguage = '';
 		}
 
-		$specificUid = Helper::getInstance()
-		                     ->getSpecificUid($row);
-		$queryParts = $parentObject->makeQueryArray('tt_content', $row['pid'], 'AND colPos = -1 AND tx_gridelements_container=' . $specificUid . ' AND tx_gridelements_columns=' . $colPos . $showHidden . $deleteClause . $showLanguage);
+		$queryParts = $parentObject->makeQueryArray('tt_content', $specificIds['pid'], 'AND t3ver_id = ' . $row['t3ver_id'] . ' AND colPos = -1 AND tx_gridelements_container IN (' . $row['uid'] . ',' . $specificIds['uid'] . ') AND tx_gridelements_columns=' . $colPos . $showHidden . $deleteClause . $showLanguage);
 
 		// Due to the pid being "NOT USED" in makeQueryArray we have to reset pidSelect here
 		$parentObject->pidSelect = $originalPidSelect;
@@ -309,11 +310,11 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 	 */
 	public function renderSingleGridColumn(PageLayoutView $parentObject, &$items, &$colPos, &$gridContent, $row, &$editUidList) {
 
-		$specificUid = Helper::getInstance()
-		                     ->getSpecificUid($row);
+		$specificIds = Helper::getInstance()
+			->getSpecificIds($row);
 
 		if ($colPos < 32768) {
-			$newParams = $parentObject->newContentElementOnClick($row['pid'], '-1' . '&tx_gridelements_container=' . $specificUid . '&tx_gridelements_columns=' . $colPos, $parentObject->lP);
+			$newParams = $parentObject->newContentElementOnClick($parentObject->id, '-1' . '&tx_gridelements_container=' . $specificIds['uid'] . '&tx_gridelements_columns=' . $colPos, $parentObject->lP);
 		}
 
 		$gridContent[$colPos] .= '
@@ -329,7 +330,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 				if (is_array($itemRow)) {
 					$statusHidden = $parentObject->isDisabled('tt_content', $itemRow) ? ' t3-page-ce-hidden' : '';
 					$gridContent[$colPos] .= '
-				<div class="t3-page-ce' . $statusHidden . '" id="element-tt_content-'.$itemRow['uid'].'"><div class="t3-page-ce-dragitem">' . $this->renderSingleElementHTML($parentObject, $itemRow) . '</div></div>';
+				<div class="t3-page-ce' . $statusHidden . '"><div class="t3-page-ce-dragitem">' . $this->renderSingleElementHTML($parentObject, $itemRow) . '</div></div>';
 					// New content element:
 					if ($parentObject->option_newWizard) {
 						$onClick = 'window.location.href=\'db_new_content_el.php?id=' . $itemRow['pid'] . '&sys_language_uid=' . $itemRow['sys_language_uid'] . '&colPos=' . $itemRow['colPos'] . '&uid_pid=' . -$itemRow['uid'] . '&returnUrl=' . rawurlencode(GeneralUtility::getIndpEnv('REQUEST_URI')) . '\';';
@@ -410,8 +411,8 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 	 * @return string
 	 */
 	public function renderGridLayoutTable($layoutSetup, $row, $head, $gridContent) {
-		$specificUid = Helper::getInstance()
-		                     ->getSpecificUid($row);
+		$specificIds = Helper::getInstance()
+			->getSpecificIds($row);
 
 		$grid = '<div class="t3-gridContainer' . ($layoutSetup['frame'] ? ' t3-gridContainer-framed t3-gridContainer-' . $layoutSetup['frame'] : '') . ($layoutSetup['top_level_layout'] ? ' t3-gridTLContainer' : '') . '">';
 		if ($layoutSetup['frame']) {
@@ -465,7 +466,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 				$grid .= '<td valign="top"' .
 					(isset($columnConfig['colspan']) ? ' colspan="' . $colSpan . '"' : '') .
 					(isset($columnConfig['rowspan']) ? ' rowspan="' . $rowSpan . '"' : '') .
-					'id="column-' . $specificUid . 'x' . $columnKey . '" class="t3-gridCell t3-page-column t3-page-column-' . $columnKey .
+					'id="column-' . $specificIds['uid'] . 'x' . $columnKey . '" class="t3-gridCell t3-page-column t3-page-column-' . $columnKey .
 					(!isset($columnConfig['colPos']) || $columnConfig['colPos'] === '' ? ' t3-gridCell-unassigned' : '') .
 					(isset($columnConfig['colspan']) && $columnConfig['colPos'] !== '' ? ' t3-gridCell-width' . $colSpan : '') .
 					(isset($columnConfig['rowspan']) && $columnConfig['colPos'] !== '' ? ' t3-gridCell-height' . $rowSpan : '') . ' ' .
@@ -558,5 +559,3 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 		return $singleElementHTML;
 	}
 }
-
-

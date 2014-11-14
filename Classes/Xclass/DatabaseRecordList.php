@@ -667,7 +667,6 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
 		if ($this->dontShowClipControlPanels) {
 			return '';
 		}
-		$rowUid = \GridElementsTeam\Gridelements\Helper\Helper::getInstance()->getSpecificUid($row);
 		$rowUid = $row['uid'];
 		if (ExtensionManagementUtility::isLoaded('version') && isset($row['_ORIG_uid'])) {
 			$rowUid = $row['_ORIG_uid'];

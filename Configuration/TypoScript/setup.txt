@@ -10,10 +10,9 @@ lib.gridelements.defaultGridSetup { // stdWrap functions being applied to each e
 				# 30 = RESTORE_REGISTER
 			}
 		}
-		2 < .default
-		2 {
-
-		}
+		#2 < .default
+		#2 {
+		#}
 	}
 	# if you want to provide your own templating, just insert a cObject here
 	# this will prevent the collected content from being rendered directly
