@@ -214,15 +214,17 @@ abstract class AbstractDataHandler {
 	public function checkAndUpdateTranslatedChildren($containerUpdateArray = array()) {
 		if (is_array($containerUpdateArray) && count($containerUpdateArray > 0)) {
 			foreach ($containerUpdateArray as $containerUid => $newElement) {
-				$translatedContainers = $this->databaseConnection->exec_SELECTgetRows('uid,sys_language_uid', 'tt_content', 'l18n_parent = ' . (int)$containerUid . \TYPO3\CMS\Backend\Utility\BackendUtility::deleteClause('tt_content'));
-				if (count($translatedContainers) > 0) {
-					foreach ($translatedContainers as $languageArray) {
-						$targetContainer = \TYPO3\CMS\Backend\Utility\BackendUtility::getRecordWSOL('tt_content', $languageArray['uid']);
-						$fieldArray['tx_gridelements_container'] = $targetContainer['uid'];
-						$where = 'tx_gridelements_container = ' . (int)$containerUid . ' AND sys_language_uid = ' . (int)$targetContainer['sys_language_uid'];
-						$this->databaseConnection->exec_UPDATEquery('tt_content', $where, $fieldArray, 'tx_gridelements_container');
-						$this->getTceMain()
-						     ->updateRefIndex('tt_content', (int)$targetContainer['uid']);
+				if((int)$containerUid > 0) {
+					$translatedContainers = $this->databaseConnection->exec_SELECTgetRows('uid,sys_language_uid', 'tt_content', 'l18n_parent = ' . (int)$containerUid . \TYPO3\CMS\Backend\Utility\BackendUtility::deleteClause('tt_content'));
+					if (count($translatedContainers) > 0) {
+						foreach ($translatedContainers as $languageArray) {
+							$targetContainer = \TYPO3\CMS\Backend\Utility\BackendUtility::getRecordWSOL('tt_content', $languageArray['uid']);
+							$fieldArray['tx_gridelements_container'] = $targetContainer['uid'];
+							$where = 'tx_gridelements_container = ' . (int)$containerUid . ' AND sys_language_uid = ' . (int)$targetContainer['sys_language_uid'];
+							$this->databaseConnection->exec_UPDATEquery('tt_content', $where, $fieldArray, 'tx_gridelements_container');
+							$this->getTceMain()
+								->updateRefIndex('tt_content', (int)$targetContainer['uid']);
+						}
 					}
 				}
 			}
