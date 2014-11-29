@@ -96,6 +96,10 @@ abstract class AbstractDataHandler {
 		$this->setTceMain($dataHandler);
 		$this->setDatabaseConnection($GLOBALS['TYPO3_DB']);
 		if (!$this->layoutSetup instanceof \GridElementsTeam\Gridelements\Backend\LayoutSetup) {
+			if ($pageUid < 0) {
+				$triggerElement = $GLOBALS['TYPO3_DB']->exec_SELECTgetSingleRow('pid', 'tt_content', 'uid = ' . -$pageUid);
+				$pageUid = (int)$triggerElement['pid'];
+			}
 			$this->injectLayoutSetup(GeneralUtility::makeInstance('GridElementsTeam\\Gridelements\\Backend\\LayoutSetup')
 			                                                               ->init($pageUid));
 		}
