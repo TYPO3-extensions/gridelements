@@ -693,7 +693,7 @@ GridElementsDD = function() {
 				arrNewicons = [];
 
 			// add all other ”New" icons to array
-			Ext.each(Ext.select('.t3-icon-document-new', true, Ext.select('.t3-page-ce-wrapper-new-ce, .t3-page-ce-new-ce').elements).elements, function(){
+			Ext.each(Ext.select('.t3-icon-document-new, .fa-plus-square', true, Ext.select('.t3-page-ce-wrapper-new-ce, .t3-page-ce-new-ce').elements).elements, function(){
 				arrNewicons.push(this);
 			});
 

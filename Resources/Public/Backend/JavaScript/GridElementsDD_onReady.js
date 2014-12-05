@@ -207,8 +207,7 @@ if(typeof GridElementsDD === "undefined"){
 		firstNewIconContainer = Ext.get(Ext.get('typo3-docheader').select('.left .buttongroup').elements[0]);
 
 		// get link around the "new content element" icon and if there is one do the magic
-		if(firstNewIconContainer) {
-
+		if(firstNewIconContainer && firstNewIconContainer.select('.t3-icon:last').elements[0]) {
 
 			var
 				lastIcon = Ext.get(firstNewIconContainer.select('.t3-icon:last').elements[0].parentNode.cloneNode(true));
