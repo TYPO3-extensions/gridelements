@@ -368,11 +368,14 @@ class LayoutSetup {
 
 		// Load records.
 		$result = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows(
-			'*', 'tx_gridelements_backend_layout', '(
-				( ' . $pageTSconfigId . ' = 0 AND ' . (int)$storagePid . ' = 0 ) OR
-				( tx_gridelements_backend_layout.pid = ' . (int)$pageTSconfigId . ' OR tx_gridelements_backend_layout.pid = ' . (int)$storagePid . ' ) OR
-				( ' . $pageTSconfigId . ' = 0 AND tx_gridelements_backend_layout.pid = ' . (int)$pageId . ' )
-			) AND NOT tx_gridelements_backend_layout.hidden AND NOT tx_gridelements_backend_layout.deleted', '', 'sorting ASC', '', 'uid');
+			'*',
+			'tx_gridelements_backend_layout',
+			'(( ' . $pageTSconfigId . ' = 0 AND ' . (int)$storagePid . ' = 0 ) OR ( tx_gridelements_backend_layout.pid = ' . (int)$pageTSconfigId . ' OR tx_gridelements_backend_layout.pid = ' . (int)$storagePid . ' ) OR ( ' . $pageTSconfigId . ' = 0 AND tx_gridelements_backend_layout.pid = ' . (int)$pageId . ' )) AND tx_gridelements_backend_layout.hidden = 0 AND tx_gridelements_backend_layout.deleted = 0',
+			'',
+			'sorting ASC',
+			'',
+			'uid'
+		);
 
 		$gridLayoutRecords = array();
 
