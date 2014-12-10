@@ -274,8 +274,8 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 	public function collectItemsForColumn(PageLayoutView $parentObject, &$colPos, &$row, &$showHidden, &$deleteClause) {
 		// Due to the pid being "NOT USED" in makeQueryArray we have to set pidSelect here
 		$originalPidSelect = $parentObject->pidSelect;
-		$specificIds = Helper::getInstance()
-			->getSpecificIds($row);
+		$helper = Helper::getInstance();
+		$specificIds = $helper->getSpecificIds($row);
 
 		$parentObject->pidSelect = 'pid = ' . $specificIds['pid'];
 
@@ -287,7 +287,12 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 			$showLanguage = '';
 		}
 
-		$queryParts = $parentObject->makeQueryArray('tt_content', $specificIds['pid'], 'AND t3ver_id = ' . $row['t3ver_id'] . ' AND colPos = -1 AND tx_gridelements_container IN (' . $row['uid'] . ',' . $specificIds['uid'] . ') AND tx_gridelements_columns=' . $colPos . $showHidden . $deleteClause . $showLanguage);
+		if($helper->getBackendUser()->workspace > 0) {
+			$where = 'AND t3ver_wsid = ' . $row['t3ver_wsid'];
+		}
+		$where .= ' AND colPos = -1 AND tx_gridelements_container IN (' . $row['uid'] . ',' . $specificIds['uid'] . ') AND tx_gridelements_columns=' . $colPos . $showHidden . $deleteClause . $showLanguage;
+
+		$queryParts = $parentObject->makeQueryArray('tt_content', $specificIds['pid'], $where);
 
 		// Due to the pid being "NOT USED" in makeQueryArray we have to reset pidSelect here
 		$parentObject->pidSelect = $originalPidSelect;

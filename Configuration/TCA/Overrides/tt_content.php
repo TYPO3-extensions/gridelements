@@ -63,6 +63,7 @@ $tempColumns = array(
 			),
 			'foreign_table'       => 'tt_content',
 			'foreign_table_where' => 'AND (tt_content.sys_language_uid = ###REC_FIELD_sys_language_uid### OR tt_content.sys_language_uid = -1) AND tt_content.pid=###CURRENT_PID### AND tt_content.CType=\'gridelements_pi1\' AND (tt_content.uid != ###THIS_UID###) AND (tt_content.tx_gridelements_container != ###THIS_UID### OR tt_content.tx_gridelements_container=0) ORDER BY tt_content.header, tt_content.uid',
+			'dontRemapTablesOnCopy' => 'tt_content',
 			'itemsProcFunc'       => 'GridElementsTeam\Gridelements\Backend\TtContent->containerItemsProcFunc',
 			'size'                => 1,
 			'minitems'            => 0,
