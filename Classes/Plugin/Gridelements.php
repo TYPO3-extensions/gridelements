@@ -23,12 +23,13 @@ namespace GridElementsTeam\Gridelements\Plugin;
 	 *
 	 *  This copyright notice MUST APPEAR in all copies of the script!
 	 ***************************************************************/
-	/**
-	 * [CLASS/FUNCTION INDEX of SCRIPT]
-	 *
-	 * Hint: use extdeveval to insert/update function index above.
-	 */
+/**
+ * [CLASS/FUNCTION INDEX of SCRIPT]
+ *
+ * Hint: use extdeveval to insert/update function index above.
+ */
 use TYPO3\CMS\Core\Resource\Service\FrontendContentAdapterService;
+use TYPO3\CMS\Core\Utility\DebugUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\MathUtility;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
@@ -155,10 +156,12 @@ class Gridelements extends ContentObjectRenderer {
 				$this->cObj->data['tx_gridelements_view_children'] = array();
 				while ($child = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res)) {
 					// Versioning preview:
-					$GLOBALS['TSFE']->sys_page->versionOL('tt_content', $child);
+					$sorting = $child['sorting'];
+					$GLOBALS['TSFE']->sys_page->versionOL('tt_content', $child, TRUE);
 
 					// Language overlay:
 					if (is_array($child)) {
+						$child['sorting'] = $sorting;
 						if ($GLOBALS['TSFE']->sys_language_contentOL) {
 							$child = $GLOBALS['TSFE']->sys_page->getRecordOverlay('tt_content', $child, $GLOBALS['TSFE']->sys_language_content, $GLOBALS['TSFE']->sys_language_contentOL);
 						}

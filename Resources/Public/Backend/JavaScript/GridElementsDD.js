@@ -58,7 +58,7 @@ GridElementsDD = function() {
 				// is this a new or an existing element?
 				var dragEl = Ext.get(this.el);
 				if(dragEl.select('span.ce-icons-left a span').elements.length > 0) {
-					top.elementUID = dragEl.select('span.ce-icons-left a span').elements[0].getAttribute('title').replace('id=', '').match(/^(\d)+/g);
+					top.elementUID = dragEl.select('span.ce-icons-left a span').elements[0].getAttribute('title').split(' ')[0].replace('id=', '').match(/^(\d)+/g);
 
 					var currentSpacer = document.createElement('div');
 					Ext.get(currentSpacer).addClass('t3-dd-spacer');
@@ -186,21 +186,21 @@ GridElementsDD = function() {
 				// colorize the drag target if the drag node's parent is not the same as the drop target
 				if(
 					targetElId !== this.getEl().id
-						&&
-						(
-							(
-								top.originalPositionDropTargetId
-									&&
-									top.originalPositionDropTargetId !== targetElId
-								)
-								||
-								(
-									!top.originalPositionDropTargetId
-										&&
-										top.originalfirstDroptarget !== targetElId
-									)
-							)
-					) {
+					&&
+					(
+					(
+					top.originalPositionDropTargetId
+					&&
+					top.originalPositionDropTargetId !== targetElId
+					)
+					||
+					(
+					!top.originalPositionDropTargetId
+					&&
+					top.originalfirstDroptarget !== targetElId
+					)
+					)
+				) {
 					Ext.get(targetElId).addClass('x-dd-overdroparea');
 				}
 			},
@@ -227,17 +227,17 @@ GridElementsDD = function() {
 				this.invalidDrop = false;
 
 				if(
-				// move node only if the drag element is not the same as the drop target
-					Ext.get(targetElId).hasClass('x-dd-showdroptarget')
-						&&
-					this.el.dom.id !== targetElId
-						&&
-						// cancel drops resulting in current position
-						(top.originalPositionDropTargetId !== targetElId)
-						&&
-						// cancel drops resulting in current position
-						(top.originalfirstDroptarget !== targetElId)
-					) {
+					// move node only if the drag element is not the same as the drop target
+				Ext.get(targetElId).hasClass('x-dd-showdroptarget')
+				&&
+				this.el.dom.id !== targetElId
+				&&
+					// cancel drops resulting in current position
+				(top.originalPositionDropTargetId !== targetElId)
+				&&
+					// cancel drops resulting in current position
+				(top.originalfirstDroptarget !== targetElId)
+				) {
 
 					// we need a flag to define, if we have to insert the element on top of any column
 					var columnInsert = true;
@@ -250,7 +250,7 @@ GridElementsDD = function() {
 					if(targetTitle.substr(0,7) === 'column-') {
 						top.targetUID = targetTitle.substr(7);
 					} else if(targetTitle.substr(0,3) === 'id=') {
-						top.targetUID = targetTitle.substr(3);
+						top.targetUID = targetTitle.substr(3).split(' ')[0];
 						columnInsert = false;
 					} else {
 						top.targetUID = targetTitle.replace(/DD_DROP_PID/g, top.elementUID);
@@ -709,9 +709,9 @@ GridElementsDD = function() {
 						containerMatch = onclickAttr.match(/tx_gridelements_container=([-\d]+)/),
 						containerColPosMatch = onclickAttr.match(/tx_gridelements_columns=([-\d]+)/),
 						uidPid = uidPidMatch !== null && typeof uidPidMatch !== 'undefined' ? uidPidMatch[1] : '';
-						colPos = colPosMatch !== null && typeof colPosMatch !== 'undefined' ? colPosMatch[1] : '';
-						container = containerMatch !== null && typeof containerMatch !== 'undefined' ? containerMatch[1] : '';
-						containerColPos = containerColPosMatch !== null && typeof containerColPosMatch !== 'undefined' ? containerColPosMatch[1] : '';
+					colPos = colPosMatch !== null && typeof colPosMatch !== 'undefined' ? colPosMatch[1] : '';
+					container = containerMatch !== null && typeof containerMatch !== 'undefined' ? containerMatch[1] : '';
+					containerColPos = containerColPosMatch !== null && typeof containerColPosMatch !== 'undefined' ? containerColPosMatch[1] : '';
 
 					if(container > 0) {
 						newFromPageIconConf.rel = - container + 'x' + containerColPos;

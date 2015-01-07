@@ -90,7 +90,6 @@ $GLOBALS['TCA']['tt_content']['ctrl']['typeicons']['gridelements_pi1'] = 'backen
 $GLOBALS['TCA']['tt_content']['ctrl']['useColumnsForDefaultValues'] .= ',tx_gridelements_container,tx_gridelements_columns';
 $GLOBALS['TCA']['tt_content']['ctrl']['shadowColumnsForNewPlaceholders'] .= ',tx_gridelements_container,tx_gridelements_columns';
 $GLOBALS['TCA']['tt_content']['ctrl']['typeicon_classes']['gridelements_pi1'] = 'tcarecords-tx_gridelements_backend_layout-default';
-// $GLOBALS['TCA']['tt_content']['ctrl']['keepFields'] .= 'tx_gridelements_backend_layout,tx_gridelements_children,tx_gridelements_container,tx_gridelements_columns';
 
 $GLOBALS['TCA']['tt_content']['types']['gridelements_pi1']['showitem'] = $GLOBALS['TCA']['tt_content']['types']['text']['showitem'];
 

@@ -132,6 +132,26 @@ class DataHandler {
 	}
 
 	/**
+	 * Function to handle record movement to the first position of a column
+	 *
+	 * @param string                                   $table          : The name of the table we are working on
+	 * @param int                                      $uid            : The uid of the record that is going to be moved
+	 * @param string                                   $destPid        : The resolved target the record should be moved to
+	 * @param string                                   $origDestPid    : The original target the record should be moved to
+	 * @param array                                    $moveRec        : An array of some values of the record that is going to be moved
+	 * @param array                                    $updateFields   : An array of some values of the record that have been updated
+	 * @param \TYPO3\CMS\Core\DataHandling\DataHandler $parentObj      : The parent object that triggered this hook
+	 *
+	 */
+	public function moveRecord_afterAnotherElementPostProcess($table, $uid, $destPid, $origDestPid, $moveRec, $updateFields, \TYPO3\CMS\Core\DataHandling\DataHandler &$parentObj) {
+		/** @var $hook \GridElementsTeam\Gridelements\DataHandler\MoveRecord */
+		if (!$parentObj->isImporting) {
+			$hook = GeneralUtility::makeInstance('GridElementsTeam\\Gridelements\\DataHandler\\MoveRecord');
+			$hook->execute_moveRecord_afterAnotherElementPostProcess($table, $uid, $destPid, $origDestPid, $moveRec, $updateFields, $parentObj);
+		}
+	}
+
+	/**
 	 * Function to process the drag & drop copy action
 	 *
 	 * @param string                                   $command            : The command to be handled by the command map
