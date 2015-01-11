@@ -59,6 +59,7 @@ class MoveRecord extends AbstractDataHandler {
 	 * @return void
 	 */
 	public function execute_moveRecord($table, $uid, &$destPid, &$propArr, &$moveRec, $resolvedPid, &$recordWasMoved, &$parentObj) {
+		$targetAvailable = TRUE;
 		$record = BackendUtility::getRecordWSOL('tt_content', $uid, 'uid');
 		$uid = (int)$record['_ORIG_uid'];
 
@@ -69,9 +70,13 @@ class MoveRecord extends AbstractDataHandler {
 			$originalElement = BackendUtility::getRecordWSOL('tt_content', $uid, 'tx_gridelements_container');
 			$containerUpdateArray[$originalElement['tx_gridelements_container']] = -1;
 			if (strpos($cmd['tt_content'][$uid]['move'], 'x') !== FALSE) {
-				$this->updateTargetContainerAndResolveTargetId($cmd, $uid, $destPid, $containerUpdateArray);
+				$targetAvailable = $this->updateTargetContainerAndResolveTargetId($cmd, $uid, $destPid, $containerUpdateArray);
 			}
-			$this->doGridContainerUpdate($containerUpdateArray);
+			if($targetAvailable === TRUE) {
+				$this->doGridContainerUpdate($containerUpdateArray);
+			} else {
+				$recordWasMoved = TRUE;
+			}
 		}
 	}
 
@@ -149,18 +154,31 @@ class MoveRecord extends AbstractDataHandler {
 	/**
 	 * move records to the top of a page or a container column
 	 *
-	 * @param array   $cmd
+	 * @param array $cmd
 	 * @param integer $recordUid
-	 * @param         $destPid
-	 * @param array   $containerUpdateArray
+	 * @param string $destPid
+	 * @param array $containerUpdateArray
+	 * @return boolean Will be true, if there is a target page or container
 	 */
 	public function updateTargetContainerAndResolveTargetId($cmd, $recordUid, &$destPid, &$containerUpdateArray) {
 		$target = explode('x', $cmd['tt_content'][$recordUid]['move']);
 		$targetUid = abs((int)$target[0]);
+		if((int)$target[0] < 0) {
+			$targetContainer = BackendUtility::getRecord('tt_content', $targetUid, 'uid');
+			if(!isset($targetContainer['uid'])) {
+				return FALSE;
+			}
+		} else {
+			$targetPage = BackendUtility::getRecord('pages', $targetUid, 'uid');
+			if(!isset($targetPage['uid'])) {
+				return FALSE;
+			}
+		}
 		if ($targetUid !== $recordUid && (int)$target[0] < 0) {
 			$containerUpdateArray[$targetUid] += 1;
 		}
 		$destPid = -$recordUid;
+		return TRUE;
 	}
 
 	/**
