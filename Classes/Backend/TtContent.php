@@ -83,7 +83,7 @@ class TtContent {
 			$gridElement = $this->layoutSetup->cacheCurrentParent($gridContainerId, TRUE);
 			$params['items'] = $this->layoutSetup->getLayoutColumnsSelectItems($gridElement['tx_gridelements_backend_layout']);
 
-			if ($params['row']['CType'] !== '' && count($params['items']) > 0) {
+			if ($params['row']['CType'] !== '' && is_array($params['items'])) {
 				foreach ($params['items'] as $itemKey => $itemArray) {
 					if ($itemArray[3] !== '' && $itemArray[3] !== '*' && !GeneralUtility::inList($itemArray[3], $params['row']['CType'])) {
 						unset($params['items'][$itemKey]);
