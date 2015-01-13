@@ -51,7 +51,7 @@ class tx_gridelements_ttContentTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTe
 	 * @test
 	 */
 	public function testColumnsItemsProcFunc() {
-		$ttContent = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_gridelements_tt_content');
+		$ttContent = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('GridElementsTeam\\Gridelements\\Backend\\TtContent');
 
 		$layoutSetup = $this->getMock('\GridElementsTeam\Gridelements\Backend\LayoutSetup');
 		$ttContent->injectLayoutSetup($layoutSetup);
@@ -65,14 +65,14 @@ class tx_gridelements_ttContentTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTe
 			->expects($this->once())
 			->method('exec_SELECTgetSingleRow')
 			->with(
-				$this->equalTo('tx_gridelements_backend_layout'),
+				$this->equalTo('*'),
 				$this->equalTo('tt_content'),
-				$this->equalTo('tt_content.uid=123')
+				$this->equalTo('uid=123 AND tt_content.deleted=0')
 			)->will(
 				$this->returnValue(array('tx_gridelements_backend_layout' => '2'))
 			);
 		$GLOBALS['TYPO3_DB'] = $t3libDb;
-		$layoutSetup = $this->getMock('\GridElementsTeam\Gridelements\Backend\LayoutSetup', array('getLayoutColumnsSelectItems'));
+		$layoutSetup = $this->getMock('GridElementsTeam\\Gridelements\\Backend\\LayoutSetup', array('getLayoutColumnsSelectItems'));
 		$layoutSetup
 			->expects($this->once())
 			->method('getLayoutColumnsSelectItems')
@@ -87,12 +87,11 @@ class tx_gridelements_ttContentTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTe
 
 		$t3libDb = $this->getMock('t3lib_db', array('exec_SELECTgetSingleRow'));
 		$t3libDb
-			->expects($this->once())
 			->method('exec_SELECTgetSingleRow')
 			->with(
-				$this->equalTo('tx_gridelements_backend_layout'),
+				$this->equalTo('*'),
 				$this->equalTo('tt_content'),
-				$this->equalTo('tt_content.uid=123')
+				$this->equalTo('uid=123 AND tt_content.deleted=0')
 			)->will(
 				$this->returnValue(array('tx_gridelements_backend_layout' => '2'))
 			);
@@ -109,7 +108,7 @@ class tx_gridelements_ttContentTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTe
 		$returnValue[2][1] = '2';
 		$returnValue[2][2] = '';
 		$returnValue[2][3] = 'image,gridelements,form';
-		$layoutSetup = $this->getMock('\GridElementsTeam\Gridelements\Backend\LayoutSetup', array('getLayoutColumnsSelectItems'));
+		$layoutSetup = $this->getMock('GridElementsTeam\\Gridelements\\Backend\\LayoutSetup', array('getLayoutColumnsSelectItems'));
 		$layoutSetup
 			->expects($this->once())
 			->method('getLayoutColumnsSelectItems')
@@ -138,9 +137,9 @@ class tx_gridelements_ttContentTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTe
 	 * @test
 	 */
 	public function testContainerItemsProcFunc() {
-		$ttContent = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_gridelements_tt_content');
+		$ttContent = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('GridElementsTeam\\Gridelements\\Backend\\TtContent');
 
-		$layoutSetup = $this->getMock('\GridElementsTeam\Gridelements\Backend\LayoutSetup');
+		$layoutSetup = $this->getMock('GridElementsTeam\\Gridelements\\Backend\\LayoutSetup');
 		$ttContent->injectLayoutSetup($layoutSetup);
 		$params = array();
 		$ttContent->containerItemsProcFunc($params);
@@ -200,7 +199,7 @@ class tx_gridelements_ttContentTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTe
 	 * @test
 	 */
 	public function testLayoutItemsProcFunc() {
-		$ttContent = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_gridelements_tt_content');
+		$ttContent = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('GridElementsTeam\\Gridelements\\Backend\\TtContent');
 
 		$returnValue['0']['0'] = 'Hello world';
 		$returnValue['0']['1'] = 123;

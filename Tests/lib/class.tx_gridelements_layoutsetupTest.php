@@ -64,7 +64,7 @@ class LayoutSetupTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 
 		$layoutSetup = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('GridElementsTeam\Gridelements\Backend\LayoutSetup');
 		$layoutSetup->setTypoScriptSetup($setup);
-		$result = $layoutSetup->getTypoScriptSetup();
+		$result = $layoutSetup->getTypoScriptSetup(NULL);
 		$expectedResult['columns.']['default.']['renderObj'] = '<tt_content';
 		$this->assertEquals($expectedResult, $result);
 
@@ -97,7 +97,7 @@ class LayoutSetupTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 
 		$layoutSetup = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('GridElementsTeam\Gridelements\Backend\LayoutSetup');
 		$layoutSetup->setLayoutSetup($setup);
-		$result = $layoutSetup->getLayoutColumns();
+		$result = $layoutSetup->getLayoutColumns(NULL);
 		$expectedResult = array();
 		$this->assertEquals($expectedResult, $result);
 

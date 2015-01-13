@@ -133,12 +133,11 @@ class tx_gridelements_drawitemhookTest extends \TYPO3\CMS\Extbase\Tests\Unit\Bas
 		$this->assertEquals('Hello world', $parserRows);
 		$this->assertEquals(NULL, $colPosValues);
 
-		$parserRows = array(
-			'columns.' => 'Test'
-		);
-		$expectedRows = array(
-			'columns.' => 'Test'
-		);
+		$parserRows = array();
+		$expectedRows = array();
+		$parserRows['1.']['columns.'] = array();
+		$expectedRows['1.']['columns.'] = array();
+
 		$colPosValues = NULL;
 		$drawItemHook->setMultipleColPosValues($parserRows, $colPosValues);
 		$this->assertEquals($expectedRows, $parserRows);
@@ -184,7 +183,7 @@ class tx_gridelements_drawitemhookTest extends \TYPO3\CMS\Extbase\Tests\Unit\Bas
 		$expectedColPosValues = array();
 		$expectedColPosValues[1]['name'] = 'Überschrift';
 		$expectedColPosValues[1]['allowed'] = '';
-		$expectedColPosValues[32768]['name'] = 'Text';
+		$expectedColPosValues[32768]['name'] = 'Nicht zugewiesen';
 		$expectedColPosValues[32768]['allowed'] = '';
 		$expectedColPosValues[2]['name'] = 'Bild';
 		$expectedColPosValues[2]['allowed'] = '';
@@ -194,6 +193,10 @@ class tx_gridelements_drawitemhookTest extends \TYPO3\CMS\Extbase\Tests\Unit\Bas
 			->expects($this->any())
 			->method('sL')
 			->will($this->onConsecutiveCalls('Überschrift', 'Text', 'Bild'));
+		$drawItemHook->lang
+			->expects($this->any())
+			->method('getLL')
+			->will($this->returnValue('Nicht zugewiesen'));
 		$drawItemHook->setMultipleColPosValues($parserRows, $colPosValues);
 		$this->assertEquals($expectedRows, $parserRows);
 		$this->assertEquals($expectedColPosValues, $colPosValues);
@@ -242,8 +245,6 @@ class tx_gridelements_drawitemhookTest extends \TYPO3\CMS\Extbase\Tests\Unit\Bas
 		$expectedColPosValues = array();
 		$expectedColPosValues[1]['name'] = 'Überschrift';
 		$expectedColPosValues[1]['allowed'] = '';
-		$expectedColPosValues[32768]['name'] = 'Nicht zugewiesen';
-		$expectedColPosValues[32768]['allowed'] = '';
 		$expectedColPosValues[32768]['name'] = 'Nicht zugewiesen';
 		$expectedColPosValues[32768]['allowed'] = '';
 

@@ -30,7 +30,7 @@ class tx_gridelements_tcemain_abstractTest extends \TYPO3\CMS\Extbase\Tests\Unit
 	 * @test
 	 */
 	public function testGetTable() {
-		$hook = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_gridelements_tcemain_abstract');
+		$hook = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('GridElementsTeam\\Gridelements\\DataHandler\\AfterDatabaseOperations');
 		$table = 'tt_content';
 		$hook->setTable($table);
 		$result = $hook->getTable();
@@ -43,7 +43,7 @@ class tx_gridelements_tcemain_abstractTest extends \TYPO3\CMS\Extbase\Tests\Unit
 	 * @test
 	 */
 	public function testGetPageUid() {
-		$hook = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_gridelements_tcemain_abstract');
+		$hook = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('GridElementsTeam\\Gridelements\\DataHandler\\AfterDatabaseOperations');
 		$pageUid = 123;
 		$hook->setPageUid($pageUid);
 		$result = $hook->getPageUid();
@@ -56,39 +56,11 @@ class tx_gridelements_tcemain_abstractTest extends \TYPO3\CMS\Extbase\Tests\Unit
 	 * @test
 	 */
 	public function testGetTceMain() {
-		$hook = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_gridelements_tcemain_abstract');
+		$hook = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('GridElementsTeam\\Gridelements\\DataHandler\\AfterDatabaseOperations');
 		$tceMain = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\DataHandling\\DataHandler');
 		$hook->setTceMain($tceMain);
 		$result = $hook->getTceMain();
 		$this->assertEquals($tceMain, $result);
 	}
 
-	/**
-	 * test process datamap after database operations
-	 *
-	 * @test
-	 */
-	public function testDoGridContainerUpdate() {
-		$hook = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_gridelements_tcemain_abstract');
-		$t3lib_db = $this->getMock('TYPO3\\CMS\\Core\\Database\\DatabaseConnection', array('exec_UPDATEquery'));
-		$t3lib_db
-			->expects($this->never())
-			->method('exec_UPDATEquery')
-			->will($this->returnValue(TRUE));
-		$GLOBALS['TYPO3_DB'] = $t3lib_db;
-
-		$containerUpdateArray = array();
-		$hook->doGridContainerUpdate($containerUpdateArray);
-
-		$hook = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_gridelements_tcemain_abstract');
-		$t3lib_db = $this->getMock('TYPO3\\CMS\\Core\\Database\\DatabaseConnection', array('exec_UPDATEquery'));
-		$t3lib_db
-			->expects($this->exactly(4))
-			->method('exec_UPDATEquery')
-			->will($this->returnValue(TRUE));
-		$GLOBALS['TYPO3_DB'] = $t3lib_db;
-
-		$containerUpdateArray = array(1, 2, 3, 4);
-		$hook->doGridContainerUpdate($containerUpdateArray);
-	}
 }

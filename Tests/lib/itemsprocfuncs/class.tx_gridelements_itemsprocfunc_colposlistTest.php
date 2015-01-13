@@ -72,7 +72,7 @@ class tx_gridelements_itemsprocfunc_colposlistTest extends \TYPO3\CMS\Extbase\Te
 		$expectedParams['row']['pid'] = 12;
 		$expectedParams['row']['CType'] = 'gridelements';
 		$expectedParams['items'] = 'Hello world';
-		$colPosList = $this->getMock('tx_gridelements_itemsprocfunc_colPosList', array('addColPosListLayoutItems'));
+		$colPosList = $this->getMock('GridElementsTeam\\Gridelements\\Backend\\ItemsProcFuncs\\ColPosList', array('addColPosListLayoutItems'));
 		$colPosList
 			->expects($this->once())
 			->method('addColPosListLayoutItems')
@@ -118,7 +118,7 @@ class tx_gridelements_itemsprocfunc_colposlistTest extends \TYPO3\CMS\Extbase\Te
 			)
 			->will($this->returnValue($dbReturnValue));
 		$GLOBALS['TYPO3_DB'] = $t3libDb;
-		$colPosList = $this->getMock('tx_gridelements_itemsprocfunc_colPosList', array('addColPosListLayoutItems'));
+		$colPosList = $this->getMock('GridElementsTeam\\Gridelements\\Backend\\ItemsProcFuncs\\ColPosList', array('addColPosListLayoutItems'));
 		$colPosList
 			->expects($this->once())
 			->method('addColPosListLayoutItems')

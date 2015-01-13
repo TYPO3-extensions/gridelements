@@ -42,37 +42,6 @@ class tx_gridelements_tcemainhookTest extends \TYPO3\CMS\Extbase\Tests\Unit\Base
 	}
 
 
-
-
-
-	/**
-	 * test process datamap after database operations
-	 *
-	 * @test
-	 */
-	public function testProcessDatamapAfterDatabaseOperations() {
-		$hook = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('GridElementsTeam\\Gridelements\\Hooks\\DataHandler');
-
-		$status = '';
-		$table = '';
-		$id = 12;
-		$fieldArray = array();
-		$parentObj = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\DataHandling\\DataHandler');
-		$parentObj->substNEWwithIDs[$id] = 'Hello world';
-		unset($GLOBALS['actionOnGridElement']);
-		$hook->processDatamap_afterDatabaseOperations($status, $table, $id, $fieldArray, $parentObj);
-		$this->assertEquals(array(), $GLOBALS['actionOnGridElement']);
-
-		$fieldArray['CType'] = 'gridelements_pi1';
-		$fieldArray['sys_language_uid'] = 2;
-		unset($GLOBALS['actionOnGridElement']);
-		$expectedResult[0]['table'] = $table;
-		$expectedResult[0]['id'] = 'Hello world';
-		$expectedResult[0]['value'] = $fieldArray['sys_language_uid'];
-		$hook->processDatamap_afterDatabaseOperations($status, $table, $id, $fieldArray, $parentObj);
-		$this->assertEquals($expectedResult, $GLOBALS['actionOnGridElement']);
-	}
-
 	/**
 	 * test process datamap post process field array
 	 *
@@ -126,7 +95,7 @@ class tx_gridelements_tcemainhookTest extends \TYPO3\CMS\Extbase\Tests\Unit\Base
 			)
 		));
 		$GLOBALS['TYPO3_DB'] = $t3lib_db;
-		$expectedFieldArray['sorting'] = 'noPid';
+		$expectedFieldArray['sorting'] = null;
 		$hook->processDatamap_postProcessFieldArray($status, $table, $id, $fieldArray, $parentObj);
 		$this->assertEquals($expectedFieldArray, $fieldArray);
 

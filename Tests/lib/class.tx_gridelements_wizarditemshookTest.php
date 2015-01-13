@@ -56,7 +56,7 @@ class tx_gridelements_wizarditemshookTest extends \TYPO3\CMS\Extbase\Tests\Unit\
 	 * test removing empty headers from wizard
 	 */
 	public function testRemoveEmptyHeadersFromWizard() {
-		$itemsHook = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_gridelements_wizardItemsHook');
+		$itemsHook = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('GridElementsTeam\\Gridelements\\Hooks\\WizardItems');
 
 		$wizardItems['test']['header'] = 'Header without element';
 		$wizardItems['common']['header'] = 'Content elements';
@@ -77,10 +77,10 @@ class tx_gridelements_wizarditemshookTest extends \TYPO3\CMS\Extbase\Tests\Unit\
 	 * test remove disallowed wizard items
 	 */
 	public function testRemoveDisallowedWizardItems() {
-		$itemsHook = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_gridelements_wizardItemsHook');
+		$itemsHook = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('GridElementsTeam\\Gridelements\\Hooks\\WizardItems');
 
-		$allowed[] = 'text';
-		$allowed[] = 'login';
+		$allowed['text'] = 1;
+		$allowed['login'] = 1;
 		$wizardItems['common']['header'] = 'Content elements';
 		$wizardItems['common_text']['title'] = 'Text';
 		$wizardItems['common_text']['description'] = 'Typical Text Element';
@@ -102,7 +102,7 @@ class tx_gridelements_wizarditemshookTest extends \TYPO3\CMS\Extbase\Tests\Unit\
 	 * test add grid items to wizard
 	 */
 	public function testAddGridItemsToWizard() {
-		$itemsHook = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_gridelements_wizardItemsHook');
+		$itemsHook = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('GridElementsTeam\\Gridelements\\Hooks\\WizardItems');
 		$language = $this->getMock('language', array('sL'));
 		$language
 			->expects($this->once())
@@ -154,11 +154,11 @@ class tx_gridelements_wizarditemshookTest extends \TYPO3\CMS\Extbase\Tests\Unit\
 	 * @test
 	 */
 	public function testAddGridValuesToWizardItems() {
-		$ttContent = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_gridelements_wizardItemsHook');
+		$ttContent = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('GridElementsTeam\\Gridelements\\Hooks\\WizardItems');
 
 		$wizardItems = array();
 		$container = 0;
-		$columns = 0;
+		$column = 0;
 		$ttContent->addGridValuesToWizardItems($wizardItems, $container, $column);
 		$this->assertEquals(array(), $wizardItems);
 
@@ -175,7 +175,7 @@ class tx_gridelements_wizarditemshookTest extends \TYPO3\CMS\Extbase\Tests\Unit\
 		$this->assertEquals($expectedWizardItems, $wizardItemsForTesting);
 
 		$container = 1;
-		$columns = 0;
+		$column = 0;
 		$expectedWizardItems['common_text']['tt_content_defValues']['tx_gridelements_container'] = 1;
 		$expectedWizardItems['common_text']['params'] .= '&defVals[tt_content][tx_gridelements_container]=1';
 		$expectedWizardItems['common_image']['tt_content_defValues']['tx_gridelements_container'] = 1;

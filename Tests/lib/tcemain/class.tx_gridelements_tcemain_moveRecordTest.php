@@ -41,9 +41,9 @@ class tx_gridelements_tcemain_moveRecordTest extends \TYPO3\CMS\Extbase\Tests\Un
 		$expectedUpdateArray['sorting'] = 0;
 		$expectedUpdateArray['tx_gridelements_container'] = 456;
 		$expectedUpdateArray['tx_gridelements_columns'] = 34;
+		$expectedUpdateArray['pid'] = null;
 		$tceMain = $this->getMock('TYPO3\\CMS\\Core\\DataHandling\\DataHandler', array('updateDB'));
 		$tceMain
-			->expects($this->once())
 			->method('updateDB')
 			->with(
 				$this->equalTo('tt_content'),
@@ -51,23 +51,22 @@ class tx_gridelements_tcemain_moveRecordTest extends \TYPO3\CMS\Extbase\Tests\Un
 				$this->equalTo($expectedUpdateArray)
 			)
 			->will($this->returnValue(''));
-		$moveRecord = $this->getMock('tx_gridelements_tcemain_moveRecord', array('doGridContainerUpdate'));
+		$moveRecord = $this->getMock('GridElementsTeam\\Gridelements\\DataHandler\\MoveRecord', array('doGridContainerUpdate'));
 		$moveRecord
-			->expects($this->once())
 			->method('doGridContainerUpdate')
 			->with(
 				$this->equalTo(array(0 => 456)),
 				$this->equalTo($tceMain)
 			)
 			->will($this->returnValue(NULL));
-		$result = $moveRecord->createUpdateArrayForSplittedElements($recordUid, $destPid, $targetUid, $target, $containerUpdateArray, $tceMain);
+		$moveRecord->setTceMain($tceMain);
+		$result = $moveRecord->createUpdateArrayForSplitElements($recordUid, $destPid, $targetUid, $target, $containerUpdateArray);
 		$this->assertEquals($expectedUpdateArray, $result);
 		$this->assertEquals(-123, $destPid);
 
 		$containerUpdateArray[0] = 123;
 		$tceMain = $this->getMock('TYPO3\\CMS\\Core\\DataHandling\\DataHandler', array('updateDB'));
 		$tceMain
-			->expects($this->once())
 			->method('updateDB')
 			->with(
 				$this->equalTo('tt_content'),
@@ -75,9 +74,8 @@ class tx_gridelements_tcemain_moveRecordTest extends \TYPO3\CMS\Extbase\Tests\Un
 				$this->equalTo($expectedUpdateArray)
 			)
 			->will($this->returnValue(''));
-		$moveRecord = $this->getMock('tx_gridelements_tcemain_moveRecord', array('doGridContainerUpdate'));
+		$moveRecord = $this->getMock('GridElementsTeam\\Gridelements\\DataHandler\\MoveRecord', array('doGridContainerUpdate'));
 		$moveRecord
-			->expects($this->once())
 			->method('doGridContainerUpdate')
 			->with(
 				$this->equalTo(array(
@@ -87,19 +85,19 @@ class tx_gridelements_tcemain_moveRecordTest extends \TYPO3\CMS\Extbase\Tests\Un
 				$this->equalTo($tceMain)
 			)
 			->will($this->returnValue(NULL));
-		$result = $moveRecord->createUpdateArrayForSplittedElements($recordUid, $destPid, $targetUid, $target, $containerUpdateArray, $tceMain);
+		$moveRecord->setTceMain($tceMain);
+		$result = $moveRecord->createUpdateArrayForSplitElements($recordUid, $destPid, $targetUid, $target, $containerUpdateArray, $tceMain);
 		$this->assertEquals($expectedUpdateArray, $result);
 		$this->assertEquals(-123, $destPid);
 
 		$target[0] = 12;
 		$expectedUpdateArray['pid'] = 12;
 		$expectedUpdateArray['colPos'] = 34;
-		$expectedUpdateArray['sorting'] = 0;
+		$expectedUpdateArray['sorting'] = 256;
 		$expectedUpdateArray['tx_gridelements_container'] = 0;
 		$expectedUpdateArray['tx_gridelements_columns'] = 0;
 		$tceMain = $this->getMock('TYPO3\\CMS\\Core\\DataHandling\\DataHandler', array('updateDB'));
 		$tceMain
-			->expects($this->once())
 			->method('updateDB')
 			->with(
 				$this->equalTo('tt_content'),
@@ -107,16 +105,16 @@ class tx_gridelements_tcemain_moveRecordTest extends \TYPO3\CMS\Extbase\Tests\Un
 				$this->equalTo($expectedUpdateArray)
 			)
 			->will($this->returnValue(''));
-		$moveRecord = $this->getMock('tx_gridelements_tcemain_moveRecord', array('doGridContainerUpdate'));
+		$moveRecord = $this->getMock('GridElementsTeam\\Gridelements\\DataHandler\\MoveRecord', array('doGridContainerUpdate'));
 		$moveRecord
-			->expects($this->once())
 			->method('doGridContainerUpdate')
 			->with(
 				$this->equalTo(array(0 => 123)),
 				$this->equalTo($tceMain)
 			)
 			->will($this->returnValue(NULL));
-		$result = $moveRecord->createUpdateArrayForSplittedElements($recordUid, $destPid, $targetUid, $target, $containerUpdateArray, $tceMain);
+		$moveRecord->setTceMain($tceMain);
+		$result = $moveRecord->createUpdateArrayForSplitElements($recordUid, $destPid, $targetUid, $target, $containerUpdateArray, $tceMain);
 		$this->assertEquals($expectedUpdateArray, $result);
 		$this->assertEquals(-123, $destPid);
 
@@ -125,12 +123,11 @@ class tx_gridelements_tcemain_moveRecordTest extends \TYPO3\CMS\Extbase\Tests\Un
 		$targetUid = 456;
 		$expectedUpdateArray = array();
 		$expectedUpdateArray['colPos'] = 34;
-		$expectedUpdateArray['sorting'] = 0;
+		$expectedUpdateArray['sorting'] = 256;
 		$expectedUpdateArray['tx_gridelements_container'] = 0;
 		$expectedUpdateArray['tx_gridelements_columns'] = 0;
 		$tceMain = $this->getMock('TYPO3\\CMS\\Core\\DataHandling\\DataHandler', array('updateDB'));
 		$tceMain
-			->expects($this->once())
 			->method('updateDB')
 			->with(
 				$this->equalTo('tt_content'),
@@ -138,16 +135,16 @@ class tx_gridelements_tcemain_moveRecordTest extends \TYPO3\CMS\Extbase\Tests\Un
 				$this->equalTo($expectedUpdateArray)
 			)
 			->will($this->returnValue(''));
-		$moveRecord = $this->getMock('tx_gridelements_tcemain_moveRecord', array('doGridContainerUpdate'));
+		$moveRecord = $this->getMock('GridElementsTeam\\Gridelements\\DataHandler\\MoveRecord', array('doGridContainerUpdate'));
 		$moveRecord
-			->expects($this->once())
 			->method('doGridContainerUpdate')
 			->with(
 				$this->equalTo(array(0 => 123)),
 				$this->equalTo($tceMain)
 			)
 			->will($this->returnValue(NULL));
-		$result = $moveRecord->createUpdateArrayForSplittedElements($recordUid, $destPid, $targetUid, $target, $containerUpdateArray, $tceMain);
+		$moveRecord->setTceMain($tceMain);
+		$result = $moveRecord->createUpdateArrayForSplitElements($recordUid, $destPid, $targetUid, $target, $containerUpdateArray, $tceMain);
 		$this->assertEquals($expectedUpdateArray, $result);
 		$this->assertEquals(-456, $destPid);
 	}
@@ -158,8 +155,6 @@ class tx_gridelements_tcemain_moveRecordTest extends \TYPO3\CMS\Extbase\Tests\Un
 	 * @test
 	 */
 	public function testCreateUpdateArrayForContainerMove() {
-		$recordUid = 123;
-		$containerUpdateArray = array();
 		$originalElement = array();
 		$expectedUpdateArray = array();
 		$expectedUpdateArray['colPos'] = 0;
@@ -168,7 +163,6 @@ class tx_gridelements_tcemain_moveRecordTest extends \TYPO3\CMS\Extbase\Tests\Un
 		$expectedUpdateArray['tx_gridelements_columns'] = 0;
 		$tceMain = $this->getMock('TYPO3\\CMS\\Core\\DataHandling\\DataHandler', array('updateDB'));
 		$tceMain
-			->expects($this->once())
 			->method('updateDB')
 			->with(
 				$this->equalTo('tt_content'),
@@ -177,21 +171,19 @@ class tx_gridelements_tcemain_moveRecordTest extends \TYPO3\CMS\Extbase\Tests\Un
 			)
 			->will($this->returnValue(''));
 		$tceMain->moveChildren = FALSE;
-		$moveRecord = $this->getMock('tx_gridelements_tcemain_moveRecord', array('doGridContainerUpdate'));
+		$moveRecord = $this->getMock('GridElementsTeam\\Gridelements\\DataHandler\\MoveRecord', array('doGridContainerUpdate'));
 		$moveRecord
-			->expects($this->once())
 			->method('doGridContainerUpdate')
 			->with(
 				$this->equalTo(array()),
 				$this->equalTo($tceMain)
 			)
 			->will($this->returnValue(NULL));
-		$result = $moveRecord->createUpdateArrayForContainerMove($recordUid, $containerUpdateArray, $originalElement, $tceMain);
+		$moveRecord->setTceMain($tceMain);
+		$result = $moveRecord->createUpdateArrayForContainerMove($originalElement);
 		$this->assertEquals($expectedUpdateArray, $result);
 		$this->assertEquals(FALSE, $tceMain->moveChildren);
 
-		$recordUid = 123;
-		$containerUpdateArray = array(0 => 123);
 		$originalElement['CType'] = 'gridelements_pi1';
 		$expectedUpdateArray = array();
 		$expectedUpdateArray['colPos'] = 0;
@@ -200,7 +192,6 @@ class tx_gridelements_tcemain_moveRecordTest extends \TYPO3\CMS\Extbase\Tests\Un
 		$expectedUpdateArray['tx_gridelements_columns'] = 0;
 		$tceMain = $this->getMock('TYPO3\\CMS\\Core\\DataHandling\\DataHandler', array('updateDB'));
 		$tceMain
-			->expects($this->once())
 			->method('updateDB')
 			->with(
 				$this->equalTo('tt_content'),
@@ -209,16 +200,16 @@ class tx_gridelements_tcemain_moveRecordTest extends \TYPO3\CMS\Extbase\Tests\Un
 			)
 			->will($this->returnValue(''));
 		$tceMain->moveChildren = FALSE;
-		$moveRecord = $this->getMock('tx_gridelements_tcemain_moveRecord', array('doGridContainerUpdate'));
+		$moveRecord = $this->getMock('GridElementsTeam\\Gridelements\\DataHandler\\MoveRecord', array('doGridContainerUpdate'));
 		$moveRecord
-			->expects($this->once())
 			->method('doGridContainerUpdate')
 			->with(
 				$this->equalTo(array(0 => 123)),
 				$this->equalTo($tceMain)
 			)
 			->will($this->returnValue(NULL));
-		$result = $moveRecord->createUpdateArrayForContainerMove($recordUid, $containerUpdateArray, $originalElement, $tceMain);
+		$moveRecord->setTceMain($tceMain);
+		$result = $moveRecord->createUpdateArrayForContainerMove($originalElement);
 		$this->assertEquals($expectedUpdateArray, $result);
 		$this->assertEquals(TRUE, $tceMain->moveChildren);
 	}

@@ -34,9 +34,9 @@ class tx_gridelements_pagerendererhookTest extends \TYPO3\CMS\Extbase\Tests\Unit
 
 
 	public function setUp() {
-		$GLOBALS['TSFE'] = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Frontend\\Controller\\TypoScriptFrontendController', $GLOBALS['TYPO3_CONF_VARS'], 0);
+		$GLOBALS['TSFE'] = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Frontend\\Controller\\TypoScriptFrontendController', $GLOBALS['TYPO3_CONF_VARS'], 0, NULL);
 		$GLOBALS['TSFE']->sys_page = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Frontend\\Page\\PageRepository');
-		$this->view = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_gridelements_view');
+		$this->view = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('GridElementsTeam\\Gridelements\\Plugin\\Gridelements');
 		$this->view->cObj = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Frontend\\ContentObject\\ContentObjectRenderer');
 	}
 
@@ -45,33 +45,6 @@ class tx_gridelements_pagerendererhookTest extends \TYPO3\CMS\Extbase\Tests\Unit
 	}
 
 
-
-
-
-	/**
-	 * test get sys language content
-	 *
-	 * @test
-	 */
-	public function testGetSysLanguageContent() {
-		$result = $this->view->getSysLanguageContent();
-		$this->assertEquals(0, $result);
-
-		$GLOBALS['TSFE']->sys_language_content = 'test';
-		$result = $this->view->getSysLanguageContent();
-		$this->assertEquals(0, $result);
-
-		$GLOBALS['TSFE']->sys_language_content = '12';
-		$result = $this->view->getSysLanguageContent();
-		$this->assertEquals(12, $result);
-
-		$GLOBALS['TSFE']->sys_language_contentOL = '25';
-		$result = $this->view->getSysLanguageContent();
-		$this->assertEquals('0,-1', $result);
-
-		unset($GLOBALS['TSFE']);
-	}
-
 	/**
 	 * fetches all available children for a certain grid container
 	 *
@@ -79,7 +52,7 @@ class tx_gridelements_pagerendererhookTest extends \TYPO3\CMS\Extbase\Tests\Unit
 	 */
 	public function testGetChildrenWithEmptyValues() {
 		$result = $this->view->getChildren();
-		$this->assertEquals(array(), $result);
+		$this->assertEquals(NULL, $result);
 		// add additional test here with DB
 	}
 }
