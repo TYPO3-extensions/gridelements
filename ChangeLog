@@ -1,3 +1,57 @@
+3.1.0 => 2015-02-17 Jo Hasenau <info@cybercraft.de>
+    Security fix, PLEASE UPDATE For details read http://typo3.org/teams/security/security-bulletins/typo3-extensions/typo3-ext-sa-2015-005/
+    Done: Task #64976 Convert manual into ReST
+    Done: Check for an array instead of counting
+    Done: Removed and adjusted test cases to match the current code structure
+    Fixed: Issue #60674 Check if a target still exists or has been deleted
+    Fixed: Issue #64125 Execute move actions in the correct order for workspaces
+    Fixed: Issue #63958 Use WS is instead of version ID to get new elements as well
+    Fixed: Issue #62938 Get original page id to fetch layouts
+    Fixed: Issue #63958 Assure same WS ID for children of containers in a WS only
+    Fixed: Issue #63756 Avoid assigning children to the wrong container version
+    Fixed: Issue #63663 Made SQL queries DBAL compatible
+    Fixed: Issue #63593 Get the correct class of the new "add new element" icon
+    Done: TYPO3 compat version to be installable with CMS 7
+    Fixed: Issue #63370 Fetch correct pid when negative pageUid indicates CE trigger
+    Done: Check for existing UID to avoid update of elements with 0 as container
+    Fixed: Issue #62938 Correct usage of specific and original IDs
+    Fixed: Issue #61625 Include records without default translation
+    Done: Use the new modern TCA structure
+    Done: Renaming TCA Folder in upper case
+    Done: Renaming TCA Folder / temp
+    Fixed: Issue #61625 Include records without default translation
+    Fixed: Issue #61918 Ensure correct path to t3skin_override.css in BE
+    Done: layout field to varchar to enable alias names for layouts
+    Fixed: Issue #61715 Use correct page id for sorting.
+    Fixed: Issue #61102 Make mass editing and toggle icons of GE columns visible
+    Fixed: Issue #60769 Fixes the automatic scroll of the page module to the changed element upon editing
+
+3.0.1 => 2015-02-17 Jo Hasenau <info@cybercraft.de>
+    Security Fix, PLEASE UPDATE For details read http://typo3.org/teams/security/security-bulletins/typo3-extensions/typo3-ext-sa-2015-005/
+
+3.0.0 => 2014-08-10 Jo Hasenau <info@cybercraft.de>
+    Lots of fixes to make Gridelements work with the new layout and design of the TYPO3 6.2 backend.
+
+2.1.3 => 2015-02-17 Jo Hasenau <info@cybercraft.de>
+    Security Fix, PLEASE UPDATE For details read http://typo3.org/teams/security/security-bulletins/typo3-extensions/typo3-ext-sa-2015-005/
+
+2.1.2 => 2014-08-10 Jo Hasenau <info@cybercraft.de>
+    Fixed: Issue #60739 Make allowed * usable again
+    Fixed: Issue #60709 ID is not converted to an integer to enable string IDs again
+    Fixed: Issue #60671 Fixed typo in getTypoScriptSetup()
+    Fixed: Issue #60674 Sortnumber gets the correct ID now and returns an array key
+
+2.1.1 => 2014-07-29 Jo Hasenau <info@cybercraft.de>
+    Fixed: Issue #60661 Wizard crashes in Gridelements 2.1.0
+
+2.1.0 => 2014-07-28 Jo Hasenau <info@cybercraft.de>
+    Feature: Added horizontal positioning of children to layout setups via “Group children: Side by side”
+    Backport: Fixes from master especially regarding namespaces and coding guidelines
+    Fixed: Fixed problems due to core patch fixing “Movements pollute colPos value of content elements”
+
+2.0.3 => 2014-05-27 Jo Hasenau <info@cybercraft.de>
+    Security Fix, PLEASE UPDATE For details read http://typo3.org/teams/security/security-bulletins/typo3-extensions/typo3-ext-sa-2014-008/
+
 2.0.2 2013-06-17 Jo Hasenau <info@cybercraft.de>
     Fixed: Wrong dependency setting in ext_emconf.php
     Fixed: Remove superfluous JS comma that breaks IE8
@@ -32,6 +86,39 @@
     Fixed: Issue #44533	Modified TYPO3-Icons
     Fixed: Issue #44530	Problem with Drag and Drop
     Fixed: Issue #44529	missing icons and wrong color
+
+1.5.3 => 2014-08-10 Jo Hasenau <info@cybercraft.de>
+    Fixed: Sorting of elements into first positions of columns
+
+1.5.2 => 2014-07-26 Jo Hasenau <info@cybercraft.de>
+    Fixed: Fixed problems due to core patch fixing “Movements pollute colPos value of content elements”
+    Fixed: Fixed wrong path to class in XCLASS section
+    Fixed: Issue #59689 Content elements are moved accidentally to column -2 when backend layout is updated
+
+1.5.1 => 2014-05-27 Jo Hasenau <info@cybercraft.de>
+    Security Fix, PLEASE UPDATE For details read http://typo3.org/teams/security/security-bulletins/typo3-extensions/typo3-ext-sa-2014-008/
+
+1.5.0 => 2014-05-03 Jo Hasenau <info@cybercraft.de>
+    Fixed: Issue #58326 Restrict language selectors of children to match the language of their container
+    Fixed: Issue #53951Translated copies of children being put into the wrong container
+    Fixed: Issue #48863 Error in languages mode when drag&drop CE
+    Fixed: Issue #57502 "Hide column headers", which should not remove dropzones and icons
+    Fixed: Issue #54961 Respect enable fields for child translations.
+    Backported: Fix for containers with language "all"
+    Fixed: Issue #33884 Missing children with sys_language_overlay = 0
+    Fixed: Issue #49053 Broken insertion of copies via column header icons and small CGL fixes
+    Fixed: csvColumns can be 0, so the check must be against an empty string
+    Backported: Fixes from 3.0 master
+    Fixed: #50094 Translation problems and problems with paste icons
+    Fixed: #44243 Show only translated subset of children for language "all"
+    Fixed: locallang_db.xml
+    Added: Feature alias field to get IDs independently from autoincremented UIDs
+    Merged: Fixes and features of the 2.x branch
+    Fixed: Frontend output of flexform sections
+    Fixed: Avoid PHP warnings
+    Reverted: Latest revision changed file of a tag instead of trunk - reverted and applied to the correct file again
+    Backported: Fixes while moving or importing elements
+    Fixed: Broken "get me a copy from another page" icon
 
 1.4.1 2013-05-09 Jo Hasenau <info@cybercraft.de>
 	Fixed: Issue #44243 Content not shown in FE without default language of it
