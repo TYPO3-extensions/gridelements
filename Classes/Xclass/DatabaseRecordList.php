@@ -1068,7 +1068,7 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
 				} elseif ($fCol == '_LOCALIZATION_b') {
 					$theData[$fCol] = $lC2;
 				} else {
-					$theData[$fCol] = BackendUtility::getProcessedValueExtra($table, $fCol, $row[$fCol], 0, $row['uid']);
+					$theData[$fCol] = htmlspecialchars(BackendUtility::getProcessedValueExtra($table, $fCol, $row[$fCol], 0, $row['uid']));
 				}
 			}
 			// Reset the ID if it was overwritten
