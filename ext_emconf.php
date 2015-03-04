@@ -16,7 +16,7 @@ $EM_CONF[$_EXTKEY] = array(
 It offers a lot of new features like advanced drag & drop or real references, that improve the usability of the page and list module to speed up the daily work with the backend.',
 	'category' => 'be',
 	'shy' => 0,
-	'version' => '3.1.0-dev',
+	'version' => '3.1.0',
 	'dependencies' => 'cms,version',
 	'conflicts' => 'templavoila,jfmulticontent',
 	'priority' => 'bottom',
