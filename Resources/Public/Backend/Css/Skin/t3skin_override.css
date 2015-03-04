@@ -1,5 +1,6 @@
 .t3-page-ce-dropzone {
-	margin: -20px 0 0 0!important;
+	margin: 10px 0 10px 0!important;
+	padding: 0px!important;
 }
 
 .t3-page-ce-dragitem {
@@ -50,7 +51,7 @@ table.t3-gridTable, table.t3-page-langMode {
 }
 
 .t3-page-ce-wrapper {
-	padding: 0px 0px 6px 0px;
+	padding: 0px 0px 0px 0px;
 }
 
 td.t3-page-column.t3-gridCell .t3-page-colHeader {

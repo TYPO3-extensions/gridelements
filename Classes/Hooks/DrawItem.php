@@ -331,7 +331,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 			<div class="t3-page-ce-wrapper">
 				<div class="t3-page-ce-dropzone">
 					<div class="t3-page-ce-wrapper-new-ce">
-						<a href="#" onclick="' . htmlspecialchars($newParams) . '" title="' . $GLOBALS['LANG']->getLL('newInColumn', TRUE) . '">' . IconUtility::getSpriteIcon('actions-document-new') . '</a>
+						<a href="#" onclick="' . htmlspecialchars($newParams) . '" title="' . $GLOBALS['LANG']->getLL('newContentElement', TRUE) . '" class="btn btn-default btn-sm">' . IconUtility::getSpriteIcon('actions-document-new') . ' ' . $GLOBALS['LANG']->getLL('content', TRUE) . '</a>
 					</div>
 			</div>';
 
@@ -350,7 +350,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 					}
 					$gridContent[$colPos] .= '
 				<div class="t3-page-ce-dropzone"><div class="t3-page-ce-new-ce">
-					<a href="#" onclick="' . htmlspecialchars($onClick) . '" title="' . $GLOBALS['LANG']->getLL('newRecordHere', 1) . '">' . IconUtility::getSpriteIcon('actions-document-new') . '</a>
+					<a href="#" onclick="' . htmlspecialchars($onClick) . '" title="' . $GLOBALS['LANG']->getLL('newContentElement', TRUE) . '" class="btn btn-default btn-sm">' . IconUtility::getSpriteIcon('actions-document-new') . ' ' . $GLOBALS['LANG']->getLL('content', TRUE) . '</a>
 				</div></div></div>
 					';
 					$editUidList[$colPos] .= $editUidList[$colPos] ? ',' . $itemRow['uid'] : $itemRow['uid'];
