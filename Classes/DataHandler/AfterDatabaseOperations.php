@@ -52,9 +52,11 @@ class AfterDatabaseOperations extends AbstractDataHandler {
 	 * @return void
 	 */
 	public function execute_afterDatabaseOperations(&$fieldArray, $table, $id, &$parentObj) {
-		$this->init($table, $id, $parentObj);
-		if (!$this->getTceMain()->isImporting) {
-			$this->saveCleanedUpFieldArray($fieldArray);
+		if ($table === 'tt_content') {
+			$this->init($table, $id, $parentObj);
+			if (!$this->getTceMain()->isImporting) {
+				$this->saveCleanedUpFieldArray($fieldArray);
+			}
 		}
 	}
 
