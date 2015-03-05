@@ -340,7 +340,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 				if (is_array($itemRow)) {
 					$statusHidden = $parentObject->isDisabled('tt_content', $itemRow) ? ' t3-page-ce-hidden' : '';
 					$gridContent[$colPos] .= '
-				<div class="t3-page-ce' . $statusHidden . '"><div class="t3-page-ce-dragitem">' . $this->renderSingleElementHTML($parentObject, $itemRow) . '</div></div>';
+				<div class="t3-page-ce' . $statusHidden . '"><div class="t3-page-ce-dragitem" id="' . str_replace('.', '', uniqid('', TRUE)) . '">' . $this->renderSingleElementHTML($parentObject, $itemRow) . '</div></div>';
 					// New content element:
 					if ($parentObject->option_newWizard) {
 						$moduleUrlParameters = array(
@@ -355,7 +355,8 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 						$onClick = BackendUtility::editOnClick($params, $this->backPath);
 					}
 					$gridContent[$colPos] .= '
-				<div class="t3-page-ce-dropzone"><div class="t3-page-ce-new-ce">
+				<div class="t3-page-ce-dropzone" id="colpos--1-page-' . $itemRow['pid'] .
+						'-' . str_replace('.', '', uniqid('', TRUE)) . '"><div class="t3-page-ce-new-ce">
 					<a href="#" onclick="' . htmlspecialchars($onClick) . '" title="' . $GLOBALS['LANG']->getLL('newContentElement', TRUE) . '" class="btn btn-default btn-sm">' . IconUtility::getSpriteIcon('actions-document-new') . ' ' . $GLOBALS['LANG']->getLL('content', TRUE) . '</a>
 				</div></div></div>
 					';
@@ -482,7 +483,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 				$grid .= '<td valign="top"' .
 					(isset($columnConfig['colspan']) ? ' colspan="' . $colSpan . '"' : '') .
 					(isset($columnConfig['rowspan']) ? ' rowspan="' . $rowSpan . '"' : '') .
-					'id="column-' . $specificIds['uid'] . 'x' . $columnKey . '" class="t3-gridCell t3-page-column t3-page-column-' . $columnKey .
+					'data-colpos="-1" id="column-' . $specificIds['uid'] . 'x' . $columnKey . '" class="t3-gridCell t3-page-column t3-page-column-' . $columnKey .
 					(!isset($columnConfig['colPos']) || $columnConfig['colPos'] === '' ? ' t3-gridCell-unassigned' : '') .
 					(isset($columnConfig['colspan']) && $columnConfig['colPos'] !== '' ? ' t3-gridCell-width' . $colSpan : '') .
 					(isset($columnConfig['rowspan']) && $columnConfig['colPos'] !== '' ? ' t3-gridCell-height' . $rowSpan : '') . ' ' .
