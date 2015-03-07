@@ -15,109 +15,9 @@
  * this JS code does the drag+drop logic for the Layout module (Web => Page)
  * based on jQuery UI
  */
-define(['jquery', 'jquery-ui/draggable', 'jquery-ui/droppable'], function ($) {
 
-	var DragDrop = {
-		contentIdentifier: '.t3-page-ce',
-		gridContainerIdentifier: '.t3-gridElementContainer',
-		dragIdentifier: '.t3-page-ce-dragitem',
-		dragHeaderIdentifier: '.t3-page-ce-header',
-		dropZoneIdentifier: '.t3-page-ce-dropzone',
-		columnIdentifier: '.t3-page-column',
-		validDropZoneClass: 't3-page-ce-dropzone-available',
-		dropPossibleHoverClass: 't3-page-ce-drop-possible'
-	};
-
-	/**
-	 * initializes Drag+Drop for all content elements on the page
-	 */
-	DragDrop.initialize = function() {
-		$(this.contentIdentifier).draggable({
-			handle: this.dragHeaderIdentifier,
-			scope: 'tt_content',
-			cursor: 'move',
-			distance: 20,
-			addClasses: 'active-drag',
-			revert: 'invalid',
-			zIndex: 100,
-			start: function(evt, ui) {
-				DragDrop.onDragStart($(this));
-			},
-			stop: function(evt, ui) {
-				DragDrop.onDragStop($(this));
-			}
-		});
-
-		$(this.dropZoneIdentifier).droppable({
-			accept: this.contentIdentifier,
-			scope: 'tt_content',
-			tolerance: 'pointer',
-			over: function(evt, ui) {
-				DragDrop.onDropHoverOver($(ui.draggable), $(this));
-			},
-			out: function(evt, ui) {
-				DragDrop.onDropHoverOut($(ui.draggable), $(this));
-			},
-			drop: function(evt, ui) {
-				DragDrop.onDrop($(ui.draggable), $(this));
-			}
-		});
-	};
-
-	/**
-	 * called when a draggable is selected to be moved
-	 * @param $element a jQuery object for the draggable
-	 * @private
-	 */
-	DragDrop.onDragStart = function($element) {
-		// Add css class for the drag shadow
-		$element.children(DragDrop.dragIdentifier).addClass('dragitem-shadow');
-		// Hide create new element button
-		$element.children(DragDrop.dropZoneIdentifier).addClass('drag-start');
-		$element.closest(DragDrop.columnIdentifier).removeClass('active');
-
-		// make the dropzones visible (all except the previous one in the current list)
-		var $previousDropZone = $element.prev().children(DragDrop.dropZoneIdentifier);
-		$(DragDrop.dropZoneIdentifier).not($previousDropZone).addClass(DragDrop.validDropZoneClass);
-	};
-
-	/**
-	 * called when a draggable is released
-	 * @param $element a jQuery object for the draggable
-	 * @private
-	 */
-	DragDrop.onDragStop = function($element) {
-		// Remove css class for the drag shadow
-		$element.children(DragDrop.dragIdentifier).removeClass('dragitem-shadow');
-		// Show create new element button
-		$element.children(DragDrop.dropZoneIdentifier).removeClass('drag-start');
-		$element.closest(DragDrop.columnIdentifier).addClass('active');
-		$('.' + DragDrop.validDropZoneClass).removeClass(DragDrop.validDropZoneClass);
-	};
-
-	/**
-	 * adds CSS classes when hovering over a dropzone
-	 * @param $draggableElement
-	 * @param $droppableElement
-	 * @private
-	 */
-	DragDrop.onDropHoverOver = function($draggableElement, $droppableElement) {
-		if ($droppableElement.hasClass(DragDrop.validDropZoneClass)) {
-			$droppableElement.addClass(DragDrop.dropPossibleHoverClass);
-			$draggableElement.addClass(DragDrop.dropPossibleHoverClass);
-		}
-	};
-
-	/**
-	 * removes the CSS classes after hovering out of a dropzone again
-	 * @param $draggableElement
-	 * @param $droppableElement
-	 * @private
-	 */
-	DragDrop.onDropHoverOut = function($draggableElement, $droppableElement) {
-		$droppableElement.removeClass(DragDrop.dropPossibleHoverClass);
-		$draggableElement.removeClass(DragDrop.dropPossibleHoverClass);
-	};
+define(['TYPO3/CMS/Backend/LayoutModule/DragDrop'], function (DragDrop) {
+	DragDrop.gridContainerIdentifier = '.t3-gridElementContainer';
 
 	/**
 	 * this method does the whole logic when a draggable is dropped on to a dropzone
@@ -128,8 +28,7 @@ define(['jquery', 'jquery-ui/draggable', 'jquery-ui/droppable'], function ($) {
 	 * @private
 	 */
 	DragDrop.onDrop = function($draggableElement, $droppableElement) {
-		var oldColumn = DragDrop.getColumnPositionForElement($draggableElement),
-			newColumn = DragDrop.getColumnPositionForElement($droppableElement),
+		var newColumn = DragDrop.getColumnPositionForElement($droppableElement),
 			gridColumn = DragDrop.getGridColumnPositionForElement($droppableElement);
 		if(gridColumn) {
 			newColumn = -1;
