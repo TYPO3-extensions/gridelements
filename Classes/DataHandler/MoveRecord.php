@@ -125,28 +125,27 @@ class MoveRecord extends AbstractDataHandler {
 						'sorting' => $sortNumber,
 						'tx_gridelements_container' => 0,
 						'tx_gridelements_columns' => 0,
+//						'header' => 'Fall 1' . $column . ' # ' . $targetContainer . ' # ' . $column . ' # ' . $sortNumber . ' # ' . $cmd['tt_content'][$pointerUid]['move'] . ' # ' . $pointerUid
 					);
 					$setPid = $targetElement['pid'];
-					// $updateArray['header'] = $uid . ' # ' . $pointerUid . ' # ' . $origDestPid . ' mit X equal';
 				} else {
 					$GLOBALS['TCA']['tt_content']['ctrl']['copyAfterDuplFields'] = str_replace('colPos,', '', $GLOBALS['TCA']['tt_content']['ctrl']['copyAfterDuplFields']);
 					$updateArray = array(
 						'colPos' => -1,
 						'sorting' => $sortNumber,
 						'tx_gridelements_container' => $targetContainer,
-						'tx_gridelements_columns' => $column
+						'tx_gridelements_columns' => $column,
+//						'header' => 'Fall 2 # ' . $targetContainer . ' # ' . $column . ' # ' . $sortNumber . ' # ' . $cmd['tt_content'][$pointerUid]['move'] . ' # ' . $pointerUid
 					);
-					// $updateArray['header'] = $uid . ' # ' . $pointerUid . ' # ' . $origDestPid . ' mit X unequal';
 				}
 			} else {
 				$updateArray = array(
 					'colPos' => $targetElement['colPos'],
 					'tx_gridelements_container' => $targetElement['tx_gridelements_container'],
-					'tx_gridelements_columns' => $targetElement['tx_gridelements_columns']
+					'tx_gridelements_columns' => $targetElement['tx_gridelements_columns'],
+//					'header' => 'Fall 3 ' . $targetElement['colPos'] . ' # ' . $targetElement['tx_gridelements_container'] . ' # ' . $targetElement['tx_gridelements_columns'] . ' # ' . $cmd['tt_content'][$pointerUid]['move'] . ' # ' . $pointerUid
 				);
-				// $updateArray['header'] = $uid . ' # ' . $pointerUid . ' # ' . $origDestPid . ' ohne X';
 			}
-			// $updateArray['bodytext'] = $cmd['tt_content'][$pointerUid]['move'];
 			$this->getTceMain()->updateDB('tt_content', $originalUid, $updateArray);
 			if($setPid) {
 				$updateArray['pid'] = $setPid;
