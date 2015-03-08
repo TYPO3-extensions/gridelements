@@ -16,8 +16,44 @@
  * based on jQuery UI
  */
 
-define(['TYPO3/CMS/Backend/LayoutModule/DragDrop'], function (DragDrop) {
+define(['jquery', 'TYPO3/CMS/Backend/LayoutModule/DragDrop'], function ($, DragDrop) {
 	DragDrop.gridContainerIdentifier = '.t3-gridElementContainer';
+
+	/**
+	 * initializes Drag+Drop for all content elements on the page
+	 */
+	DragDrop.initialize = function() {
+		$(this.contentIdentifier).draggable({
+			handle: this.dragHeaderIdentifier,
+			scope: 'tt_content',
+			cursor: 'move',
+			distance: 20,
+			addClasses: 'active-drag',
+			revert: 'invalid',
+			zIndex: 100,
+			start: function(evt, ui) {
+				DragDrop.onDragStart($(this));
+			},
+			stop: function(evt, ui) {
+				DragDrop.onDragStop($(this));
+			}
+		});
+
+		$(this.dropZoneIdentifier).droppable({
+			accept: this.contentIdentifier,
+			scope: 'tt_content',
+			tolerance: 'pointer',
+			over: function(evt, ui) {
+				DragDrop.onDropHoverOver($(ui.draggable), $(this));
+			},
+			out: function(evt, ui) {
+				DragDrop.onDropHoverOut($(ui.draggable), $(this));
+			},
+			drop: function(evt, ui) {
+				DragDrop.onDrop($(ui.draggable), $(this), evt);
+			}
+		});
+	};
 
 	/**
 	 * this method does the whole logic when a draggable is dropped on to a dropzone
@@ -27,7 +63,7 @@ define(['TYPO3/CMS/Backend/LayoutModule/DragDrop'], function (DragDrop) {
 	 * @param $droppableElement
 	 * @private
 	 */
-	DragDrop.onDrop = function($draggableElement, $droppableElement) {
+	DragDrop.onDrop = function($draggableElement, $droppableElement, evt) {
 		var newColumn = DragDrop.getColumnPositionForElement($droppableElement),
 			gridColumn = DragDrop.getGridColumnPositionForElement($droppableElement);
 		if(gridColumn) {
@@ -58,18 +94,27 @@ define(['TYPO3/CMS/Backend/LayoutModule/DragDrop'], function (DragDrop) {
 			}
 
 			parameters['cmd'] = {tt_content: {}};
-			parameters['cmd']['tt_content'][contentElementUid] = {move: targetContentElementUid};
+			if(evt.originalEvent.ctrlKey) {
+				parameters['cmd']['tt_content'][contentElementUid] = {copy: targetContentElementUid, DDcopy: 1};
+			} else {
+				parameters['cmd']['tt_content'][contentElementUid] = {move: targetContentElementUid};
+			}
 			// fire the request, and show a message if it has failed
 			require(['TYPO3/CMS/Backend/AjaxDataHandler'], function(DataHandler) {
 				DataHandler.process(parameters).done(function(result) {
 					if (!result.hasErrors) {
 						// insert draggable on the new position
-						$draggableElement.detach().css({top: 0, left: 0})
-							.insertAfter($droppableElement.closest(DragDrop.contentIdentifier));
+						if(!$droppableElement.parent().hasClass(DragDrop.contentIdentifier.substring(1))) {
+							$draggableElement.detach().css({top: 0, left: 0})
+								.insertAfter($droppableElement.closest(DragDrop.dropZoneIdentifier));
+						} else {
+							$draggableElement.detach().css({top: 0, left: 0})
+								.insertAfter($droppableElement.closest(DragDrop.contentIdentifier));
+						}
 					}
-					self.location.reload(true);
 				});
 			});
+			self.location.reload(true);
 		}
 	};
 
