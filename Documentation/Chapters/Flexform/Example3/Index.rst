@@ -1,4 +1,4 @@
-﻿.. include:: Images.txt
+.. include:: Images.txt
 
 .. ==================================================
 .. FOR YOUR INFORMATION
@@ -113,10 +113,10 @@ and some text.
 
 
 Be aware of wrapped lines. For a working, easy to copy scripting, have
-a look at https://gist.github.com/3294052.The backend form of this
-setup will look like this:
+a look at https://gist.github.com/3294052.
+The backend form of this setup will look like this:
 
 |img-20|
 
-Take a look at the TypoScript section to find out how this would be
+Take a look at the :ref:`TypoScript <TypoScript>` section to find out how this would be
 rendered in the frontend.

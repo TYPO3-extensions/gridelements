@@ -1,14 +1,11 @@
-﻿.. |img-11|     image:: ../../Images/manual_html_7d7ea899.png
-   :height: 401
-   :width: 517
-.. :align: left
+.. |img-11|     image:: ../../Images/GridTsSyntax/ResultOfTheExampleCode.png
+   :width: 800
+.. :align: center
 .. :border: 0
 .. :name: Grafik7
 
-.. |img-12|     image:: ../../Images/manual_html_7dc363d4.png
-   :height: 386
-   :width: 430
-.. :align: left
+.. |img-12|     image:: ../../Images/GridTsSyntax/EditPageContent.png
+   :width: 600
+.. :align: center
 .. :border: 0
 .. :name: Grafik8
-

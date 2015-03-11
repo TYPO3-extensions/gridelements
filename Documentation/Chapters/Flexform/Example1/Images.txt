@@ -1,21 +1,5 @@
-﻿.. |img-18|     image:: ../../Images/manual_html_755ae7a2.png
-   :height: 327
-   :width: 276
-.. :align: left
+.. |img-18|     image:: ../../../Images/Flexform/Example1.png
+   :width: 400
+.. :align: center
 .. :border: 0
 .. :name: Grafik15
-
-.. |img-19|     image:: ../../Images/manual_html_m6c06063.png
-   :height: 409
-   :width: 276
-.. :align: left
-.. :border: 0
-.. :name: Grafik14
-
-.. |img-20|     image:: ../../Images/manual_html_4ac461ee.png
-   :height: 412
-   :width: 306
-.. :align: left
-.. :border: 0
-.. :name: Grafik16
-

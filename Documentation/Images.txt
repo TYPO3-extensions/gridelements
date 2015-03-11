@@ -1,4 +1,4 @@
-﻿.. |img-4|      image:: Images/manual_html_m49cd7e24.png
+.. |img-4|      image:: Images/GridElementsBanner.png
    :height: 196
    :width: 668
 .. :align: left

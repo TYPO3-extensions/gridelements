@@ -1,6 +1,5 @@
-﻿.. |img-21|     image:: ../../Images/manual_html_4d33e6ce.png
-   :height: 324
-   :width: 248
-.. :align: left
+.. |img-21|     image:: ../../../Images/Typoscript/Example.png
+   :width: 300
+.. :align: center
 .. :border: 0
 .. :name: Grafik17
