@@ -4,6 +4,7 @@
  * 
  * - FEATURE: reload-less DnD: compare page lastchange to current page "age" on ajax (pageRenderTime inserted by onReady injector)
  */
+
 GridElementsListView = function() {
 
 	return {
