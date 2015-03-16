@@ -66,7 +66,7 @@ define(['jquery', 'TYPO3/CMS/Backend/LayoutModule/DragDrop'], function ($, DragD
 	DragDrop.onDrop = function($draggableElement, $droppableElement, evt) {
 		var newColumn = DragDrop.getColumnPositionForElement($droppableElement),
 			gridColumn = DragDrop.getGridColumnPositionForElement($droppableElement);
-		if(gridColumn) {
+		if(gridColumn !== '') {
 			newColumn = -1;
 		}
 
@@ -87,7 +87,7 @@ define(['jquery', 'TYPO3/CMS/Backend/LayoutModule/DragDrop'], function ($, DragD
 				// the negative value of the content element after where it should be moved
 				targetContentElementUid = 0-parseInt(targetContentElementUid);
 			}
-			if (targetContentElementUid < 0 && gridColumn) {
+			if (targetContentElementUid < 0 && gridColumn !== '') {
 				targetContentElementUid += 'x' + gridColumn;
 			} else if (targetContentElementUid > 0) {
 				targetContentElementUid += 'x' + newColumn;
