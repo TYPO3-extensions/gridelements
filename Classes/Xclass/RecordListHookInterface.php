@@ -14,12 +14,14 @@ namespace GridElementsTeam\Gridelements\Xclass;
  * The TYPO3 project - inspiring people to share!
  */
 
+use TYPO3\CMS\Recordlist\RecordList\RecordListHookInterface as OriginalRecordListHookInterface;
+
 /**
  * Interface for classes which hook into \TYPO3\CMS\Recordlist\RecordList\DatabaseRecordList and modify clip-icons
  *
  * @author Bernhard Kraft <kraftb@kraftb.at>
  */
-interface RecordListHookInterface {
+interface RecordListHookInterface extends OriginalRecordListHookInterface {
 
 	/**
 	 * Modifies Web>List clip icons (copy, cut, paste, etc.) of a displayed row
