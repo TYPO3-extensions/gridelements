@@ -9,6 +9,7 @@
 
 .t3-page-ce .t3-page-ce-body {
 	margin-bottom: 5px!important;
+	cursor: default;
 }
 
 td.t3-gridCell div.t3-page-ce,
@@ -47,6 +48,7 @@ table.t3-gridTable, table.t3-page-langMode {
 
 .t3-page-ce-wrapper > .x-dd-makedroptarget > .x-dd-droptargetarea{
 	margin: 5px 10px 0px 10px!important;
+	cursor: default;
 }
 
 .t3-page-ce-wrapper {

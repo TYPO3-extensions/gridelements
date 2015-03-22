@@ -50,11 +50,11 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 			$showHidden = $parentObject->tt_contentConfig['showHidden'] ? '' : BackendUtility::BEenableFields('tt_content');
 			$deleteClause = BackendUtility::deleteClause('tt_content');
 
-			if ($GLOBALS['BE_USER']->uc['hideContentPreview']) {
-				$drawItem = FALSE;
-			}
+            if ($GLOBALS['BE_USER']->uc['hideContentPreview']) {
+                $drawItem = FALSE;
+            }
 
-			switch ($row['CType']) {
+            switch ($row['CType']) {
 				case 'gridelements_pi1':
 					$drawItem = FALSE;
 					$itemContent .= $this->renderCTypeGridelements($parentObject, $row, $showHidden, $deleteClause);
@@ -428,6 +428,9 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 		if ($layoutSetup['frame']) {
 			$grid .= '<h4 class="t3-gridContainer-title-' . $layoutSetup['frame'] . '">' . $this->lang->sL($layoutSetup['title'], TRUE) . '</h4>';
 		}
+        if ($GLOBALS['BE_USER']->uc['showGridInformation'] === 1) {
+            $grid .= '<span class="t3-help-link" href="#" data-title="' . htmlspecialchars($this->lang->sL($layoutSetup['title'])) . '" data-description="' . htmlspecialchars($this->lang->sL($layoutSetup['description'])) . '"><abbr class="t3-help-teaser">' . $this->lang->sL($layoutSetup['title'], TRUE) . '</abbr></span>';
+        }
 		$grid .= '<table border="0" cellspacing="1" cellpadding="4" width="100%" height="100%" class="t3-page-columns t3-gridTable">';
 		// add colgroups
 		$colCount = 0;
