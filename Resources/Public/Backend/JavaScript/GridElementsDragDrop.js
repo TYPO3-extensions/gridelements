@@ -66,7 +66,7 @@ define(['jquery', 'TYPO3/CMS/Backend/LayoutModule/DragDrop'], function ($, DragD
 	DragDrop.onDrop = function($draggableElement, $droppableElement, evt) {
 		var newColumn = DragDrop.getColumnPositionForElement($droppableElement),
 			gridColumn = DragDrop.getGridColumnPositionForElement($droppableElement);
-		if(gridColumn !== '') {
+		if(gridColumn !== false && gridColumn !== '') {
 			newColumn = -1;
 		}
 
@@ -87,12 +87,11 @@ define(['jquery', 'TYPO3/CMS/Backend/LayoutModule/DragDrop'], function ($, DragD
 				// the negative value of the content element after where it should be moved
 				targetContentElementUid = 0-parseInt(targetContentElementUid);
 			}
-			if (targetContentElementUid < 0 && gridColumn !== '') {
+			if (targetContentElementUid < 0 && gridColumn !== false && gridColumn !== '') {
 				targetContentElementUid += 'x' + gridColumn;
 			} else if (targetContentElementUid > 0) {
 				targetContentElementUid += 'x' + newColumn;
 			}
-
 			parameters['cmd'] = {tt_content: {}};
 			if(evt.originalEvent.ctrlKey) {
 				parameters['cmd']['tt_content'][contentElementUid] = {copy: targetContentElementUid, DDcopy: 1};
@@ -132,7 +131,7 @@ define(['jquery', 'TYPO3/CMS/Backend/LayoutModule/DragDrop'], function ($, DragD
 		if ($columnContainer.length && $columnContainer.data('colpos') !== 'undefined') {
 			return $columnContainer.data('colpos');
 		} else {
-			return null;
+			return false;
 		}
 	};
 
@@ -147,7 +146,7 @@ define(['jquery', 'TYPO3/CMS/Backend/LayoutModule/DragDrop'], function ($, DragD
 		if (!$element.parent().hasClass(DragDrop.contentIdentifier.substring(1)) && $gridContainer.length && $columnContainer.length && $columnContainer.data('colpos') !== 'undefined') {
 			return $columnContainer.data('colpos');
 		} else {
-			return null;
+			return false;
 		}
 	};
 
