@@ -110,10 +110,10 @@ define(['jquery', 'TYPO3/CMS/Backend/LayoutModule/DragDrop'], function ($, DragD
 							$draggableElement.detach().css({top: 0, left: 0})
 								.insertAfter($droppableElement.closest(DragDrop.contentIdentifier));
 						}
+						self.location.reload(true);
 					}
 				});
 			});
-			self.location.reload(true);
 		}
 	};
 
