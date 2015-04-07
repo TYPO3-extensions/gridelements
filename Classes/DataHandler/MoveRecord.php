@@ -62,13 +62,13 @@ class MoveRecord extends AbstractDataHandler {
 		if ($table === 'tt_content') {
 			$targetAvailable = TRUE;
 			$record = BackendUtility::getRecordWSOL('tt_content', $uid, 'uid');
-			$uid = (int)$record['_ORIG_uid'];
+			$origUid = (int)$record['_ORIG_uid'];
 
 			$this->init($table, $uid, $parentObj);
 
-			if ($table === 'tt_content' && !$this->getTceMain()->isImporting) {
-				$cmd = GeneralUtility::_GET('cmd');
-				$originalElement = BackendUtility::getRecordWSOL('tt_content', $uid, 'tx_gridelements_container');
+			if (!$this->getTceMain()->isImporting) {
+				$cmd = GeneralUtility::_GP('cmd');
+				$originalElement = BackendUtility::getRecordWSOL('tt_content', $origUid, 'tx_gridelements_container');
 				$containerUpdateArray[$originalElement['tx_gridelements_container']] = -1;
 				if (strpos($cmd['tt_content'][$uid]['move'], 'x') !== FALSE) {
 					$targetAvailable = $this->updateTargetContainerAndResolveTargetId($cmd, $uid, $destPid, $containerUpdateArray);
