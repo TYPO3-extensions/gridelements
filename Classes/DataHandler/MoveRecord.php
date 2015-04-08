@@ -64,9 +64,9 @@ class MoveRecord extends AbstractDataHandler {
 			$record = BackendUtility::getRecordWSOL('tt_content', $uid, 'uid');
 			$origUid = (int)$record['_ORIG_uid'];
 
-			$this->init($table, $uid, $parentObj);
+			$this->init($table, $origUid, $parentObj);
 
-			if (!$this->getTceMain()->isImporting) {
+			if ($table === 'tt_content' && !$this->getTceMain()->isImporting) {
 				$cmd = GeneralUtility::_GP('cmd');
 				$originalElement = BackendUtility::getRecordWSOL('tt_content', $origUid, 'tx_gridelements_container');
 				$containerUpdateArray[$originalElement['tx_gridelements_container']] = -1;
@@ -176,11 +176,11 @@ class MoveRecord extends AbstractDataHandler {
 			if(!isset($targetPage['uid'])) {
 				return FALSE;
 			}
+			$destPid = -$recordUid;
 		}
 		if ($targetUid !== $recordUid && (int)$target[0] < 0) {
 			$containerUpdateArray[$targetUid] += 1;
 		}
-		$destPid = -$recordUid;
 		return TRUE;
 	}
 
