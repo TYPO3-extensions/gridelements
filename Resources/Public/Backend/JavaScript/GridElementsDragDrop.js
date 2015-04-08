@@ -92,7 +92,6 @@ define(['jquery', 'TYPO3/CMS/Backend/LayoutModule/DragDrop'], function ($, DragD
 			} else if (targetContentElementUid > 0) {
 				targetContentElementUid += 'x' + newColumn;
 			}
-			alert(targetContentElementUid);
 			parameters['cmd'] = {tt_content: {}};
 			if(evt.originalEvent.ctrlKey) {
 				parameters['cmd']['tt_content'][contentElementUid] = {copy: targetContentElementUid, DDcopy: 1};
