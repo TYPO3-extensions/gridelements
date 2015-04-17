@@ -187,15 +187,16 @@ class LayoutSetup {
 					foreach ($setup['config']['rows.'] as $row) {
 						if (isset($row['columns.']) && is_array($row['columns.'])) {
 							foreach ($row['columns.'] as $column) {
-								$availableColumns['CSV'] .= ',' . $column['colPos'];
-								$availableColumns[$column['colPos']] = $column['allowed'] ? $column['allowed'] : '*';
-								$availableColumns['allowed'] .= $availableColumns['allowed'] ? ',' . $availableColumns[$column['colPos']] : $availableColumns[$column['colPos']];
+								if(isset($column['colPos'])) {
+									$availableColumns['CSV'] .= ',' . $column['colPos'];
+									$availableColumns[$column['colPos']] = $column['allowed'] ? $column['allowed'] : '*';
+									$availableColumns['allowed'] .= $availableColumns['allowed'] ? ',' . $availableColumns[$column['colPos']] : $availableColumns[$column['colPos']];
+								}
 							}
 						}
 					}
 				}
 			}
-		}
 		return $availableColumns;
 	}
 
