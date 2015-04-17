@@ -1,4 +1,4 @@
-﻿.. include:: Images.txt
+.. include:: Images.txt
 
 .. ==================================================
 .. FOR YOUR INFORMATION
@@ -67,7 +67,7 @@ The TypoScript is like this:
 
 
 The easy to copy scripting can be found at
-`https://gist.github.com/3294347 <https://gist.github.com/3294347>`_ .
+`https://gist.github.com/3294347 <https://gist.github.com/3294347>`_
 
 The “1” in line 2 and 3 reflect the uid of the gridelements record,
 fit this to your needs.
