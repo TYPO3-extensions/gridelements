@@ -36,6 +36,7 @@ lib.tt_content.shortcut.pages {
 		select {
 			pidInList.data = register:pidInList
 			where = colPos >= 0
+			languageField = sys_language_uid
 			orderBy = colPos,sorting
 			orderBy.dataWrap = FIND_IN_SET(pid,'{register:pidInList}'),|
 		}
