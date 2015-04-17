@@ -22,7 +22,7 @@ It offers a lot of new features like advanced drag & drop or real references, th
 	'priority' => 'bottom',
 	'loadOrder' => '',
 	'module' => '',
-	'state' => 'beta',
+	'state' => 'stable',
 	'uploadfolder' => 1,
 	'createDirs' => '',
 	'modify_tables' => 'tt_content',
@@ -30,7 +30,7 @@ It offers a lot of new features like advanced drag & drop or real references, th
 	'lockType' => '',
 	'author' => 'Grid Elements Team',
 	'author_email' => 'info@cybercraft.de',
-	'author_company' => '',
+	'author_company' => 'Cybercraft Media Manufactory',
 	'CGLcompliance' => '',
 	'CGLcompliance_note' => '',
 	'constraints' => array(
