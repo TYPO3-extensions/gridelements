@@ -455,9 +455,12 @@ GridElementsDD = function() {
 			actionURL = top.TYPO3.configuration.PATH_typo3 + 'alt_doc.php?' + this.el.dom.rel + '&edit[tt_content][]=new';
 
 			var languageLink = Ext.get(targetElId).parent().parent().select('.t3-page-ce-wrapper-new-ce a').elements[0];
+			var languageUid = 0;
 			if(typeof languageLink !== 'undefined') {
 				languageLink = languageLink.getAttribute('onclick').split('&sys_language_uid=');
-				var languageUid = languageLink[1].split('&')[0];
+				if(languageLink[1] !== 'undefined') {
+					languageUid = languageLink[1].split('&')[0];
+				}
 				Ext.Ajax.request({
 					url: actionURL,
 					params: {
