@@ -197,8 +197,8 @@ class LayoutSetup {
 					}
 				}
 			}
-			return $availableColumns;
 		}
+		return $availableColumns;
 	}
 
 	/**
