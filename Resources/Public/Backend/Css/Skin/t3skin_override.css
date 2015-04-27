@@ -4,7 +4,12 @@
 }
 
 .t3-page-column-header {
-  min-width: 180px;
+  min-width: 95px;
+  padding: 5px 10px;
+}
+
+.t3-page-ce-header {
+  min-width: 195px;
 }
 
 .t3-page-columns {
