@@ -356,10 +356,12 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 						$onClick = BackendUtility::editOnClick($params, $this->backPath);
 					}
 					$gridContent[$colPos] .= '
-				<div class="t3-page-ce-dropzone" id="colpos-' . $itemRow['tx_gridelements_columns'] . '-page-' . $itemRow['pid'] . '-gridcontainer-' . $itemRow['tx_gridelements_container'] .
-						'-' . str_replace('.', '', uniqid('', TRUE)) . '"><div class="t3-page-ce-new-ce">
+				<div class="t3js-page-new-ce t3-page-ce-wrapper-new-ce" id="colpos-' . $itemRow['tx_gridelements_columns'] . '-page-' . $itemRow['pid'] . '-gridcontainer-' . $itemRow['tx_gridelements_container'] .
+						'-' . str_replace('.', '', uniqid('', TRUE)) . '">
 					<a href="#" onclick="' . htmlspecialchars($onClick) . '" title="' . $GLOBALS['LANG']->getLL('newContentElement', TRUE) . '" class="btn btn-default btn-sm">' . IconUtility::getSpriteIcon('actions-document-new') . ' ' . $GLOBALS['LANG']->getLL('content', TRUE) . '</a>
-				</div></div></div>
+				</div>
+				<div class="t3-page-ce-dropzone-available t3js-page-ce-dropzone-available"></div>
+				</div>
 					';
 					$editUidList[$colPos] .= $editUidList[$colPos] ? ',' . $itemRow['uid'] : $itemRow['uid'];
 				}
@@ -411,7 +413,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 		}
 
 		// Create header row:
-		$out = '<div class="t3-page-column-header t3-row-header">
+		$out = '<div class="t3-page-column-header">
 					' . $icons . '
 					<div class="t3-page-column-header-label">' . htmlspecialchars($colName) . '</div>
 				</div>';
