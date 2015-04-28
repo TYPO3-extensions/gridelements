@@ -329,7 +329,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 
 		$gridContent[$colPos] .= '
 			<div data-colpos="' . $colPos . '" data-language-uid="' . $row['sys_language_uid'] . '" class="t3js-sortable t3js-sortable-lang t3js-sortable-lang-' . $row['sys_language_uid'] . ' t3-page-ce-wrapper ui-sortable">
-				<div class="t3-page-ce t3js-page-ce" data-page="' . $row['pid'] . '" id="' . str_replace('.', '', uniqid('', TRUE)) . '">
+				<div class="t3-page-ce t3js-page-ce" data-container="' . $row['uid'] . '" id="' . str_replace('.', '', uniqid('', TRUE)) . '">
 					<div class="t3js-page-new-ce t3-page-ce-wrapper-new-ce" id="colpos-' . $colPos . '-' . str_replace('.', '', uniqid('', TRUE)) . '">
 						<a href="#" onclick="' . htmlspecialchars($newParams) . '" title="' . $GLOBALS['LANG']->getLL('newContentElement', TRUE) . '" class="btn btn-default btn-sm">' . IconUtility::getSpriteIcon('actions-document-new') . ' ' . $GLOBALS['LANG']->getLL('content', TRUE) . '</a>
 					</div>
