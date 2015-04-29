@@ -486,7 +486,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 				$grid .= '<td valign="top"' .
 					(isset($columnConfig['colspan']) ? ' colspan="' . $colSpan . '"' : '') .
 					(isset($columnConfig['rowspan']) ? ' rowspan="' . $rowSpan . '"' : '') .
-					'data-colpos="' . $columnKey . '" id="column-' . $specificIds['uid'] . 'x' . $columnKey . '" class="t3-grid-cell t3-page-column t3-page-column-' . $columnKey .
+					'data-colpos="' . $columnKey . '" id="column-' . $specificIds['uid'] . 'x' . $columnKey . '" class="t3-grid-cell t3js-page-column t3-page-column t3-page-column-' . $columnKey .
 					(!isset($columnConfig['colPos']) || $columnConfig['colPos'] === '' ? ' t3-grid-cell-unassigned' : '') .
 					(isset($columnConfig['colspan']) && $columnConfig['colPos'] !== '' ? ' t3-grid-cell-width' . $colSpan : '') .
 					(isset($columnConfig['rowspan']) && $columnConfig['colPos'] !== '' ? ' t3-grid-cell-height' . $rowSpan : '') . ' ' .
@@ -559,7 +559,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 	 * @return string
 	 */
 	public function renderSingleElementHTML(PageLayoutView $parentObject, $itemRow) {
-		$singleElementHTML = $parentObject->tt_content_drawHeader($itemRow, $parentObject->tt_contentConfig['showInfo'] ? 15 : 5, $parentObject->defLangBinding && $parentObject->lP > 0, TRUE);
+		$singleElementHTML = $parentObject->tt_content_drawHeader($itemRow, $parentObject->tt_contentConfig['showInfo'] ? 15 : 5, $parentObject->defLangBinding && $parentObject->lP > 0, TRUE, TRUE);
 		$isRTE = $parentObject->RTE && $parentObject->isRTEforField('tt_content', $itemRow, 'bodytext');
 		$singleElementHTML .= '<div ' . (!empty($itemRow['_ORIG_uid']) ? ' class="ver-element"' : '') . '><div class="t3-page-ce-body-inner t3-page-ce-body-inner-' . $itemRow['CType'] . '">' . $parentObject->tt_content_drawItem($itemRow, $isRTE) . '</div></div>';
 		$footerContent = '';
