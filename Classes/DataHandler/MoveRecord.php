@@ -96,19 +96,20 @@ class MoveRecord extends AbstractDataHandler {
 	 */
 	public function execute_moveRecord_afterAnotherElementPostProcess($table, $uid, $destPid, $origDestPid, $moveRec, $updateFields, \TYPO3\CMS\Core\DataHandling\DataHandler &$parentObj) {
 		if ($table === 'tt_content') {
-			$movedRecord = BackendUtility::getRecordWSOL('tt_content', $uid, 'uid,t3ver_oid,t3ver_move_id');
+			$movedRecord = BackendUtility::getRecordWSOL('tt_content', $uid, 'uid,t3ver_oid,t3ver_move_id,l18n_parent');
 			$targetElement = BackendUtility::getRecordWSOL('tt_content', -$origDestPid, 'uid,pid,colPos,tx_gridelements_container,tx_gridelements_columns');
 			$targetContainer = (int)($targetElement['t3ver_oid'] ? $targetElement['t3ver_oid'] : $targetElement['uid']);
 
 			$originalUid = (int)($movedRecord['_ORIG_uid'] ? $movedRecord['_ORIG_uid'] : $uid);
 			$pointerUid = (int)($movedRecord['t3ver_oid'] ? $movedRecord['t3ver_oid'] : $uid);
+			$commandUid = (int)($movedRecord['l18n_parent']) ? $movedRecord['l18n_parent'] : $pointerUid;
 			$placeholderUid = (int)($movedRecord['t3ver_move_id'] ? $movedRecord['t3ver_move_id'] : $uid);
 
 			$this->init($table, $uid, $parentObj);
 			$cmd = GeneralUtility::_GET('cmd');
 
-			if (strpos($cmd['tt_content'][$pointerUid]['move'], 'x') !== FALSE) {
-				$target = explode('x', $cmd['tt_content'][$pointerUid]['move']);
+			if (strpos($cmd['tt_content'][$commandUid]['move'], 'x') !== FALSE) {
+				$target = explode('x', $cmd['tt_content'][$commandUid]['move']);
 				$column = (int)$target[1];
 				$sortNumberArray = $this->dataHandler->getSortNumber('tt_content', $originalUid, $targetElement['pid']);
 				if (is_array($sortNumberArray)) {
@@ -119,12 +120,12 @@ class MoveRecord extends AbstractDataHandler {
 					$sortNumber = 0;
 				}
 				$GLOBALS['TCA']['tt_content']['ctrl']['copyAfterDuplFields'] = str_replace('colPos,', '', $GLOBALS['TCA']['tt_content']['ctrl']['copyAfterDuplFields']);
-				if($uid === -$origDestPid || $pointerUid === -$origDestPid || $placeholderUid === -$origDestPid) {
+				if($uid === -$origDestPid || $commandUid === -$origDestPid || $placeholderUid === -$origDestPid) {
 					$updateArray = array(
 						'colPos' => $column,
 						'sorting' => $sortNumber,
 						'tx_gridelements_container' => 0,
-						'tx_gridelements_columns' => 0,
+						'tx_gridelements_columns' => 0
 					);
 					$setPid = $targetElement['pid'];
 					// $updateArray['header'] = $uid . ' # ' . $pointerUid . ' # ' . $origDestPid . ' mit X equal';
