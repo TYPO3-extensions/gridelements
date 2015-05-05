@@ -102,12 +102,13 @@ class MoveRecord extends AbstractDataHandler {
 
 			$originalUid = (int)($movedRecord['_ORIG_uid'] ? $movedRecord['_ORIG_uid'] : $uid);
 			$pointerUid = (int)($movedRecord['t3ver_oid'] ? $movedRecord['t3ver_oid'] : $uid);
+			$commandUid = (int)($movedRecord['l18n_parent']) ? $movedRecord['l18n_parent'] : $pointerUid;
 			$placeholderUid = (int)($movedRecord['t3ver_move_id'] ? $movedRecord['t3ver_move_id'] : $uid);
 
 			$this->init($table, $uid, $parentObj);
 			$cmd = GeneralUtility::_GET('cmd');
 
-			if (strpos($cmd['tt_content'][$pointerUid]['move'], 'x') !== FALSE) {
+			if (strpos($cmd['tt_content'][$pointerUid]['move'], 'x') !== FALSE || strpos($cmd['tt_content'][$commandUid]['move'], 'x') !== FALSE) {
 				$target = explode('x', $cmd['tt_content'][$pointerUid]['move']);
 				$column = (int)$target[1];
 				$sortNumberArray = $this->dataHandler->getSortNumber('tt_content', $originalUid, $targetElement['pid']);
