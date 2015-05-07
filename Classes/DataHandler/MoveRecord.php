@@ -108,8 +108,8 @@ class MoveRecord extends AbstractDataHandler {
 			$this->init($table, $uid, $parentObj);
 			$cmd = GeneralUtility::_GET('cmd');
 
-			if (strpos($cmd['tt_content'][$pointerUid]['move'], 'x') !== FALSE || strpos($cmd['tt_content'][$commandUid]['move'], 'x') !== FALSE) {
-				$target = explode('x', $cmd['tt_content'][$pointerUid]['move']);
+			if (strpos($cmd['tt_content'][$commandUid]['move'], 'x') !== FALSE) {
+				$target = explode('x', $cmd['tt_content'][$commandUid]['move']);
 				$column = (int)$target[1];
 				$sortNumberArray = $this->dataHandler->getSortNumber('tt_content', $originalUid, $targetElement['pid']);
 				if (is_array($sortNumberArray)) {
@@ -120,13 +120,12 @@ class MoveRecord extends AbstractDataHandler {
 					$sortNumber = 0;
 				}
 				$GLOBALS['TCA']['tt_content']['ctrl']['copyAfterDuplFields'] = str_replace('colPos,', '', $GLOBALS['TCA']['tt_content']['ctrl']['copyAfterDuplFields']);
-				if($uid === -$origDestPid || $pointerUid === -$origDestPid || $placeholderUid === -$origDestPid) {
+				if($uid === -$origDestPid || $commandUid === -$origDestPid || $placeholderUid === -$origDestPid) {
 					$updateArray = array(
 						'colPos' => $column,
 						'sorting' => $sortNumber,
 						'tx_gridelements_container' => 0,
-						'tx_gridelements_columns' => 0,
-//						'header' => 'Fall 1' . $column . ' # ' . $targetContainer . ' # ' . $column . ' # ' . $sortNumber . ' # ' . $cmd['tt_content'][$pointerUid]['move'] . ' # ' . $pointerUid
+						'tx_gridelements_columns' => 0
 					);
 					$setPid = $targetElement['pid'];
 				} else {
@@ -135,16 +134,14 @@ class MoveRecord extends AbstractDataHandler {
 						'colPos' => -1,
 						'sorting' => $sortNumber,
 						'tx_gridelements_container' => $targetContainer,
-						'tx_gridelements_columns' => $column,
-//						'header' => 'Fall 2 # ' . $targetContainer . ' # ' . $column . ' # ' . $sortNumber . ' # ' . $cmd['tt_content'][$pointerUid]['move'] . ' # ' . $pointerUid
+						'tx_gridelements_columns' => $column
 					);
 				}
 			} else {
 				$updateArray = array(
 					'colPos' => $targetElement['colPos'],
 					'tx_gridelements_container' => $targetElement['tx_gridelements_container'],
-					'tx_gridelements_columns' => $targetElement['tx_gridelements_columns'],
-//					'header' => 'Fall 3 ' . $targetElement['colPos'] . ' # ' . $targetElement['tx_gridelements_container'] . ' # ' . $targetElement['tx_gridelements_columns'] . ' # ' . $cmd['tt_content'][$pointerUid]['move'] . ' # ' . $pointerUid
+					'tx_gridelements_columns' => $targetElement['tx_gridelements_columns']
 				);
 			}
 			$this->getTceMain()->updateDB('tt_content', $originalUid, $updateArray);
