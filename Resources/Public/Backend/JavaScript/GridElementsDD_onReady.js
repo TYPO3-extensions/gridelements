@@ -25,16 +25,55 @@ if(typeof GridElementsDD === "undefined"){
 		  })
 		});
 
+		// add top dropzones after t3-page-colHeader elements
+		var dropZoneTpl = '<div class="x-dd-droptargetarea">' + TYPO3.l10n.localize('tx_gridelements_js.drophere') + '</div>',
+			dropZonePar = Ext.select('.t3-page-ce-wrapper').elements;
+
+		Ext.each(dropZonePar, function(currentColWrapper){
+			var parentCell = Ext.get(currentColWrapper).parent(),
+				dropZoneID = null;
+			if(Ext.get(parentCell).dom.className.search(/t3-gridCell-unassigned/g) === -1) {
+				if(Ext.get(parentCell).id.substr(0, 6) !== 'column') {
+					var parentCellClass = Ext.get(parentCell).dom.className.split(' ');
+					for(i = 0; i < parentCellClass.length; i++) {
+						if(parentCellClass[i].substr(0, 15) === 't3-page-column-') {
+							dropZoneID = 'DD_DROP_PIDx' + parentCellClass[i].substr(15);
+						}
+					};
+				} else {
+					dropZoneID = Ext.get(parentCell).id;
+				}
+				if(Ext.get(parentCell).hasClass('t3-page-lang-column')) {
+					var dropZone = Ext.get(parentCell).select('.t3-page-ce-dropzone').elements[0];
+					var dropZoneIdParts = dropZone.id.split('-page');
+					var colPos = dropZoneIdParts[0].substr(7);
+					dropZoneID = 'DD_DROP_PIDx' + colPos;
+					Ext.get(parentCell).addClass('t3-page-lang-column-' + colPos);
+				}
+				var currentDropZone = document.createElement('div');
+				Ext.get(currentDropZone).addClass([
+					'x-dd-makedroptarget',
+					'x-dd-droptargetgroup-els'
+				]);
+				currentDropZone.innerHTML = dropZoneTpl;
+				Ext.get(currentDropZone).select('div.x-dd-droptargetarea').set({title: dropZoneID});
+				currentColWrapper.insertBefore(currentDropZone, currentColWrapper.childNodes[0]);
+			}
+		});
+
 		var mainGrid = Ext.select('table.t3-page-columns, table.t3-page-langMode').elements[0];
 		if(mainGrid){
 			// add "allowed ctypes" classes to pageColumns
 			var pageColumnsAllowedCTypes = top.pageColumnsAllowedCTypes.split('|');
 			for (var i = 0; i < pageColumnsAllowedCTypes.length; i++) {
 				var currentColClass = pageColumnsAllowedCTypes[i].split(':');
-				var currentCol = Ext.get(mainGrid).select('> tbody > tr > td.t3-page-column-' + currentColClass[0]);
+				currentColClasses = currentColClass[1].split(' ');
+				var currentCol = Ext.get(mainGrid).select('> tbody > tr > td.t3-page-column-' + currentColClass[0] + ', > tbody > tr > td.t3-page-lang-column-' + currentColClass[0]);
 				Ext.each(currentCol, function(column) {
 					if(Ext.get(column).hasClass('t3-gridCell')) {
-						Ext.get(column).addClass(currentColClass[1]);
+						for (var j = 0; j < currentColClasses.length; j++) {
+							Ext.get(column).addClass(currentColClasses[j]);
+						}
 					}
 				});
 			}
@@ -148,40 +187,6 @@ if(typeof GridElementsDD === "undefined"){
 					gridTable.select('> tbody > tr > td > .t3-page-colHeader > .t3-page-colHeader-icons').removeClass('t3-page-colHeader-icons-active');
 				}
 			});
-		});
-
-		// add top dropzones after t3-page-colHeader elements
-		var dropZoneTpl = '<div class="x-dd-droptargetarea">' + TYPO3.l10n.localize('tx_gridelements_js.drophere') + '</div>',
-			dropZonePar = Ext.select('.t3-page-ce-wrapper').elements;
-
-		Ext.each(dropZonePar, function(currentColWrapper){
-			var parentCell = Ext.get(currentColWrapper).parent(),
-				dropZoneID = null;
-			if(Ext.get(parentCell).dom.className.search(/t3-gridCell-unassigned/g) === -1) {
-				if(Ext.get(parentCell).id.substr(0, 6) !== 'column') {
-					var parentCellClass = Ext.get(parentCell).dom.className.split(' ');
-					for(i = 0; i < parentCellClass.length; i++) {
-						if(parentCellClass[i].substr(0, 15) === 't3-page-column-') {
-							dropZoneID = 'DD_DROP_PIDx' + parentCellClass[i].substr(15);
-						}
-					};
-				} else {
-					dropZoneID = Ext.get(parentCell).id;
-				}
-				if(Ext.get(parentCell).hasClass('t3-page-lang-column')) {
-					var dropZone = Ext.get(parentCell).select('.t3-page-ce-dropzone').elements[0];
-					var dropZoneIdParts = dropZone.id.split('-page');
-					dropZoneID = 'DD_DROP_PIDx' + dropZoneIdParts[0].substr(7);
-				}
-				var currentDropZone = document.createElement('div');
-				Ext.get(currentDropZone).addClass([
-					'x-dd-makedroptarget',
-					'x-dd-droptargetgroup-els'
-				]);
-				currentDropZone.innerHTML = dropZoneTpl;
-				Ext.get(currentDropZone).select('div.x-dd-droptargetarea').set({title: dropZoneID});
-				currentColWrapper.insertBefore(currentDropZone, currentColWrapper.childNodes[0]);
-			}
 		});
 
 		// add dropzones within .t3-page-ce existing elements
