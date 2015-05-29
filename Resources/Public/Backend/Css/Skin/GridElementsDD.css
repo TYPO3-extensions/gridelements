@@ -105,6 +105,34 @@
   min-height: 122px;
 }
 
+#new-element-drag-in-wizard .nav-tabs {
+  margin: 0px;
+  text-align: right;
+}
+
+#new-element-drag-in-wizard .nav-tabs li {
+  display: inline-block;
+  float: none;
+}
+
+#new-element-drag-in-wizard .nav-tabs a {
+  padding: 6px 12px;
+  font-weight: normal;
+}
+
+#new-element-drag-in-wizard .nav-tabs a img {
+  display: none;
+}
+
+#new-element-drag-in-wizard .tab-content {
+  margin: 0px 1px 0px 0px;
+  clear: both;
+}
+
+#new-element-drag-in-wizard .tab-content:hover {
+  min-height: 122px;
+}
+
 #x-dd-draggablecontainer.dragging-active .typo3-dyntabmenu-divs:hover {
   min-height: 0px;
 }
