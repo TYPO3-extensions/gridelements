@@ -81,8 +81,13 @@ $GLOBALS['TYPO3_USER_SETTINGS']['columns']['hideContentPreview'] = array(
 	'label' => 'LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:hideContentPreview'
 );
 
+$GLOBALS['TYPO3_USER_SETTINGS']['columns']['showGridInformation'] = array(
+	'type' => 'check',
+	'label' => 'LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:showGridInformation'
+);
+
 $GLOBALS['TYPO3_USER_SETTINGS']['showitem'] .=
-	',--div--;LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:gridElements,dragAndDropHideNewElementWizardInfoOverlay,hideColumnHeaders,hideContentPreview';
+	',--div--;LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:gridElements,dragAndDropHideNewElementWizardInfoOverlay,hideColumnHeaders,hideContentPreview,showGridInformation';
 
 $TBE_STYLES['skins']['gridelements']['name'] = 'gridelements';
 $TBE_STYLES['skins']['gridelements']['stylesheetDirectories']['structure'] = 'EXT:' . ($_EXTKEY) . '/Resources/Public/Backend/Css/Skin/';

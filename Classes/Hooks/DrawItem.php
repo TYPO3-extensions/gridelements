@@ -435,8 +435,18 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 			->getSpecificIds($row);
 
 		$grid = '<div class="t3-grid-container t3-grid-element-container' . ($layoutSetup['frame'] ? ' t3-grid-container-framed t3-grid-container-' . $layoutSetup['frame'] : '') . ($layoutSetup['top_level_layout'] ? ' t3-grid-tl-container' : '') . '">';
-		if ($layoutSetup['frame']) {
-			$grid .= '<h4 class="t3-grid-container-title-' . $layoutSetup['frame'] . '">' . $this->lang->sL($layoutSetup['title'], TRUE) . '</h4>';
+		if ($layoutSetup['frame'] || $GLOBALS['BE_USER']->uc['showGridInformation'] === 1) {
+			$grid .= '<h4 class="t3-grid-container-title-' . (int)$layoutSetup['frame'] . '">' .
+				BackendUtility::wrapInHelp(
+					'tx_gridelements_backend_layouts',
+					'title',
+					$this->lang->sL($layoutSetup['title']),
+					array(
+						'title' => $this->lang->sL($layoutSetup['title']),
+						'description' => $this->lang->sL($layoutSetup['description'])
+					)
+				)
+				. '</h4>';
 		}
 		$grid .= '<table border="0" cellspacing="0" cellpadding="0" width="100%" height="100%" class="t3-page-columns t3-grid-table">';
 		// add colgroups

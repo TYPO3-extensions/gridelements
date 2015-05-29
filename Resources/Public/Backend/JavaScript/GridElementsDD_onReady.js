@@ -1,4 +1,7 @@
 /* this is executed inside Ext.onReady() */
+
+alert('TEST');
+
 if(typeof GridElementsDD === "undefined"){
 	//console.error("GridElementsDD.initAll not loaded!");
 } else {
@@ -20,9 +23,9 @@ if(typeof GridElementsDD === "undefined"){
 		// add action for show/hide gridColumn contents
 		var toggleIcons = Ext.select('.toggle-content').elements;
 		Ext.each(toggleIcons, function(el) {
-		  Ext.get(el).on('click', function(e) {
-			  Ext.get(e.target).findParent('td.t3-gridCell', 99, true).toggleClass('t3-gridCell-invisibleContent');
-		  })
+			Ext.get(el).on('click', function(e) {
+				Ext.get(e.target).findParent('td.t3-gridCell', 99, true).toggleClass('t3-gridCell-invisibleContent');
+			})
 		});
 
 		var mainGrid = Ext.select('table.t3-page-columns, table.t3-page-langMode').elements[0];
@@ -218,15 +221,15 @@ if(typeof GridElementsDD === "undefined"){
 
 			var
 			// create container for content draggables
-					draggableContainer = new Ext.Element(document.createElement ('div'), true),
-					firstNewIconLink = Ext.get(firstNewIconContainer.select('.t3-icon-document-new').elements[0].parentNode),
-					draggableContainerFilled = false;
+				draggableContainer = new Ext.Element(document.createElement ('div'), true),
+				firstNewIconLink = Ext.get(firstNewIconContainer.select('.t3-icon-document-new').elements[0].parentNode),
+				draggableContainerFilled = false;
 
-				// add id and "loading..." text to draggables container
-				Ext.get(draggableContainer).dom.id = 'x-dd-draggablecontainer';
+			// add id and "loading..." text to draggables container
+			Ext.get(draggableContainer).dom.id = 'x-dd-draggablecontainer';
 
-				// add draggables container to DOM, right after firstNewIconLink
-				draggableContainer.insertBefore(Ext.get(Ext.get('typo3-inner-docbody').select('h1, h2').elements[0]));
+			// add draggables container to DOM, right after firstNewIconLink
+			draggableContainer.insertBefore(Ext.get(Ext.get('typo3-inner-docbody').select('h1, h2').elements[0]));
 
 			// define callback function executed when tempDiv (below) finishes loading
 			var fillDraggableContainer = function(tempDiv, success){
@@ -238,39 +241,39 @@ if(typeof GridElementsDD === "undefined"){
 				draggableContainerFilled = true;
 
 				Ext.get(draggableContainer).dom.innerHTML = '';
-				
+
 				var dyntabMenuTabs = Ext.get(tempDiv).select('#user-setup-wrapper div.typo3-dyntabmenu-tabs');
 				draggableContainer.appendChild(dyntabMenuTabs);
 				var dyntabMenuDivs = Ext.get(tempDiv).select('#user-setup-wrapper div.typo3-dyntabmenu-divs');
 				draggableContainer.appendChild(dyntabMenuDivs);
 
-                Ext.each(Ext.get(draggableContainer).select('div.typo3-dyntabmenu-divs div').elements, function(layer){
-                    var layerContent = '';
-                    Ext.each(Ext.get(layer).select('tr, ul li').elements, function(row) {
-                        var headerText = Ext.get(row).select('td:last a strong, div.contentelement-wizard-item-text a strong').elements[0].innerHTML;
-                        Ext.get(row).select('td:last a strong, div.contentelement-wizard-item-text a strong').remove();
-                        var descText = Ext.get(row).select('td:last a, div.contentelement-wizard-item-text a').elements[0].innerHTML;
+				Ext.each(Ext.get(draggableContainer).select('div.typo3-dyntabmenu-divs div').elements, function(layer){
+					var layerContent = '';
+					Ext.each(Ext.get(layer).select('tr, ul li').elements, function(row) {
+						var headerText = Ext.get(row).select('td:last a strong, div.contentelement-wizard-item-text a strong').elements[0].innerHTML;
+						Ext.get(row).select('td:last a strong, div.contentelement-wizard-item-text a strong').remove();
+						var descText = Ext.get(row).select('td:last a, div.contentelement-wizard-item-text a').elements[0].innerHTML;
 
-                        Ext.get(row).select('td:last a strong, div.contentelement-wizard-item-text a strong').remove();
-                        Ext.get(row).select('td:first, td:last, div.contentelement-wizard-item-input, div.contentelement-wizard-item-text').remove();
+						Ext.get(row).select('td:last a strong, div.contentelement-wizard-item-text a strong').remove();
+						Ext.get(row).select('td:first, td:last, div.contentelement-wizard-item-input, div.contentelement-wizard-item-text').remove();
 
-                        // set additional info either to rel or to title
-                        if(!top.skipDraggableDetails) {
-                            descText = descText.replace('<br>', '').replace('<BR>', '');
-                            Ext.get(row).select('td a, div a').set({title: '', rel: headerText + '|' + descText}).addClass('x-dd-draggableitem x-dd-droptargetgroup-els x-dd-usetpl-useradd');
-                        }else{
-                            descText = descText.replace('<br>', ' - ').replace('<BR>', ' - ');
-                            Ext.get(row).select('td a, div a').set({title: headerText + descText}).addClass('x-dd-draggableitem x-dd-droptargetgroup-els x-dd-usetpl-useradd');
-                        }
+						// set additional info either to rel or to title
+						if(!top.skipDraggableDetails) {
+							descText = descText.replace('<br>', '').replace('<BR>', '');
+							Ext.get(row).select('td a, div a').set({title: '', rel: headerText + '|' + descText}).addClass('x-dd-draggableitem x-dd-droptargetgroup-els x-dd-usetpl-useradd');
+						}else{
+							descText = descText.replace('<br>', ' - ').replace('<BR>', ' - ');
+							Ext.get(row).select('td a, div a').set({title: headerText + descText}).addClass('x-dd-draggableitem x-dd-droptargetgroup-els x-dd-usetpl-useradd');
+						}
 
-                    });
-                    Ext.each(Ext.get(layer).select('td, div.contentelement-wizard-item-icon').elements, function(cell) {
-                        layerContent += '<div class="x-dd-new-element-link">' + cell.innerHTML + '</div>';
-                    });
-                    // add content and a container for additional info
-                    layer.innerHTML = layerContent;
-                });
-                
+					});
+					Ext.each(Ext.get(layer).select('td, div.contentelement-wizard-item-icon').elements, function(cell) {
+						layerContent += '<div class="x-dd-new-element-link">' + cell.innerHTML + '</div>';
+					});
+					// add content and a container for additional info
+					layer.innerHTML = layerContent;
+				});
+
 				Ext.get(draggableContainer).select('div.typo3-dyntabmenu-divs div').show();
 
 				var dyntabMenuID = Ext.get(draggableContainer).select('.tab').elements[0].id.replace('-1-MENU', '');
@@ -281,16 +284,16 @@ if(typeof GridElementsDD === "undefined"){
 				Ext.each(Ext.get(draggableContainer).select('div.typo3-dyntabmenu-divs a').elements, function(draggerNow){
 					GridElementsDD.makeDragger(draggerNow);
 				});
-				
+
 				// show additional info for each icon on mouseover below all tab containers if not deactivated
 				if(!top.skipDraggableDetails) {
 					var detailInfoTpl = new Ext.XTemplate(
 							'<div>',
-								'<img class="x-dd-draggableiteminfoimg" src="{bigIconSrc}">',
-								'<div class="x-dd-draggableiteminfotext">',
-									'<strong>{addInfoHeader}</strong><br>',
-									'{addInfoText}',
-								'</div>',
+							'<img class="x-dd-draggableiteminfoimg" src="{bigIconSrc}">',
+							'<div class="x-dd-draggableiteminfotext">',
+							'<strong>{addInfoHeader}</strong><br>',
+							'{addInfoText}',
+							'</div>',
 							'</div>',
 							'<br>'
 						),
@@ -315,28 +318,28 @@ if(typeof GridElementsDD === "undefined"){
 									return;
 								}
 								var
-									// get the image tag before this dragger
+								// get the image tag before this dragger
 									imgTag = aTag.select('img').elements[0],
-									// get data array from data attribute
+								// get data array from data attribute
 									aData = aTag.dom.rel.split('|'),
-									// template data object
+								// template data object
 									detailInfoData = {
 										// description is in aData
 										addInfoHeader: aData[0],
 										// text is in aData too
 										addInfoText: aData[1]
 									},
-									// bigger icon is "hidden" in the aTag onclick JS code, here we extract it
+								// bigger icon is "hidden" in the aTag onclick JS code, here we extract it
 									aTagOnClickPartOne = aTag.dom.onclick.toString().split('largeIconImage%3D')[1];
-									bigIcon = typeof aTagOnClickPartOne !== 'undefined' ? aTagOnClickPartOne.split('%26')[0].split('%2F') : false;
-									detailInfoData.bigIconSrc = imgTag.src.replace(imgTag.src.substr(imgTag.src.lastIndexOf('/') + 1), bigIcon[bigIcon.length - 1]);
+								bigIcon = typeof aTagOnClickPartOne !== 'undefined' ? aTagOnClickPartOne.split('%26')[0].split('%2F') : false;
+								detailInfoData.bigIconSrc = imgTag.src.replace(imgTag.src.substr(imgTag.src.lastIndexOf('/') + 1), bigIcon[bigIcon.length - 1]);
 
 								Ext.get(divNow).select('.x-dd-draggableiteminfo').update(detailInfoTpl.apply(detailInfoData));
 								if(!bigIcon) {
 									Ext.get(divNow).select('.x-dd-draggableiteminfo img').remove();
 								}
 								Ext.get(divNow).select('.x-dd-draggableiteminfo').show();
-							// hide container on mouseout of an icon
+								// hide container on mouseout of an icon
 							}).on('mouseout', function(evtObj, thisNode) {
 								Ext.get(divNow).select('.x-dd-draggableiteminfo').hide();
 								Ext.get(divNow).select('.x-dd-draggableiteminfo').update('');
@@ -344,10 +347,10 @@ if(typeof GridElementsDD === "undefined"){
 						});
 					});
 				}
-				
+
 				DTM_activate(dyntabMenuID, top.DTM_currentTabs[dyntabMenuID] ? top.DTM_currentTabs[dyntabMenuID] : 1, 0);
 			};
-			
+
 			if(top.draggableContainerActive) {
 
 				// load HTML output from /typo3/sysext/cms/layout/db_new_content_el.php to temp element
@@ -361,7 +364,7 @@ if(typeof GridElementsDD === "undefined"){
 						callback: fillDraggableContainer
 					});
 				}
-				
+
 				// show content draggables dialog instead
 				draggableContainer.toggle();
 				Ext.get(draggableContainer).dom.style.display = Ext.get(draggableContainer).dom.style.display === 'block' ? 'none' : 'block';
@@ -375,18 +378,18 @@ if(typeof GridElementsDD === "undefined"){
 				e.preventDefault();
 
 				top.draggableContainerActive = top.draggableContainerActive === true ? false : true;
-				
+
 				// load HTML output from /typo3/sysext/cms/layout/db_new_content_el.php to temp element
 				// e.g. http://core-540-rgeorgi.typo3-entw.telekom.de/typo3/sysext/cms/layout/db_new_content_el.php?id=4722&colPos=1&sys_language_uid=0&uid_pid=4722
 				if(draggableContainerFilled === false) {
-				    Ext.get(document.createElement('div')).load({
-					url: top.TYPO3.configuration.PATH_typo3 + 'sysext/cms/layout/db_new_content_el.php' + top.TYPO3.Backend.ContentContainer.iframe.window.location.search,
-					method: 'GET',
-					scripts: false,
-					params: {
-					},
-					callback: fillDraggableContainer
-				    });
+					Ext.get(document.createElement('div')).load({
+						url: top.TYPO3.configuration.PATH_typo3 + 'sysext/cms/layout/db_new_content_el.php' + top.TYPO3.Backend.ContentContainer.iframe.window.location.search,
+						method: 'GET',
+						scripts: false,
+						params: {
+						},
+						callback: fillDraggableContainer
+					});
 				}
 
 				// show content draggables dialog instead
@@ -398,16 +401,16 @@ if(typeof GridElementsDD === "undefined"){
 			});
 
 		}
-		
+
 		// set current server time and base conf values within JS object
 		GridElementsDD.baseConf.pageRenderTime = 'insert_server_time_here';
 		GridElementsDD.baseConf.extBaseUrl = 'insert_ext_baseurl_here';
 		GridElementsDD.baseConf.doReloadsAfterDrops = true;
 		GridElementsDD.baseConf.useIconsForNew = true;
-		
+
 		// init DD library
 		GridElementsDD.initAll();
-		
+
 		if(top.DDclipboardfilled && top.DDclipboardElId) {
 			GridElementsDD.addPasteAndRefIcons(top.DDclipboardElId);
 		}
@@ -415,7 +418,7 @@ if(typeof GridElementsDD === "undefined"){
 		// bend Clickmenu.callURL() to our liking (only once)
 		if(typeof Clickmenu !== 'undefined' && !GridElementsDD.originalClickmenucallURL){
 			GridElementsDD.originalClickmenucallURL = Clickmenu.callURL;
-			
+
 			// patched version of Clickmenu.callURL
 			Clickmenu.callURL = function(params) {
 				if(this.ajax && Ajax.getTransport()) { // run with AJAX
@@ -425,14 +428,14 @@ if(typeof GridElementsDD === "undefined"){
 						parameters: params,
 						onComplete: function(xhr) {
 							var response = xhr.responseXML;
-							
+
 							// patching starts here
 							var clipboardItemUID = params.match(/&uid=(\d+)&/)[1];
 							if(params.search(/&CB.+/) !== -1) {
 								GridElementsDD.handleClipboardItem(clipboardItemUID, params);
 							}
 							// patch ends
-							
+
 							if(!response.getElementsByTagName('data')[0]) {
 								return;
 							}
@@ -445,7 +448,7 @@ if(typeof GridElementsDD === "undefined"){
 				}
 			};
 			// end patched version of Clickmenu.callURL
-			
+
 		}
 	}
 }

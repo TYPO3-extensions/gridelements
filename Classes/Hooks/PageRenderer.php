@@ -46,7 +46,8 @@ class PageRenderer {
 	 * @return    void
 	 */
 	public function addJSCSS($parameters, &$pageRenderer) {
-		$pageRenderer->loadRequireJsModule($GLOBALS['BACK_PATH'] . ExtensionManagementUtility::extRelPath('gridelements') . 'Resources/Public/Backend/JavaScript/GridElementsDragDrop');
+		$pageRenderer->loadRequireJsModule('TYPO3/CMS/Gridelements/GridElementsDragDrop');
+		$pageRenderer->loadRequireJsModule('TYPO3/CMS/Gridelements/GridElementsDragInWizard');
 	}
 
 	/**
@@ -88,10 +89,13 @@ class PageRenderer {
 				// $pageRenderer->addJsFile($GLOBALS['BACK_PATH'] . ExtensionManagementUtility::extRelPath('gridelements') . 'Resources/Public/Backend/JavaScript/dbNewContentElWizardFixDTM.js', $type = 'text/javascript', $compress = TRUE, $forceOnTop = FALSE, $allWrap = '');
 
 				// add JavaScript library
-				$pageRenderer->addJsFile($GLOBALS['BACK_PATH'] . ExtensionManagementUtility::extRelPath('gridelements') . 'Resources/Public/Backend/JavaScript/GridElementsDragDrop.js', $type = 'text/javascript', $compress = FALSE, $forceOnTop = FALSE, $allWrap = '');
+				$pageRenderer->addJsFile($GLOBALS['BACK_PATH'] . ExtensionManagementUtility::extRelPath('gridelements') . 'Resources/Public/JavaScript/GridElementsDragDrop.js', $type = 'text/javascript', $compress = FALSE, $forceOnTop = FALSE, $allWrap = '');
 
 				// add JavaScript library
-				$pageRenderer->addJsFile($GLOBALS['BACK_PATH'] . ExtensionManagementUtility::extRelPath('gridelements') . 'Resources/Public/Backend/JavaScript/GridElementsListView.js', $type = 'text/javascript', $compress = FALSE, $forceOnTop = FALSE, $allWrap = '');
+				$pageRenderer->addJsFile($GLOBALS['BACK_PATH'] . ExtensionManagementUtility::extRelPath('gridelements') . 'Resources/Public/JavaScript/GridElementsDragInWizard.js', $type = 'text/javascript', $compress = FALSE, $forceOnTop = FALSE, $allWrap = '');
+
+				// add JavaScript library
+				$pageRenderer->addJsFile($GLOBALS['BACK_PATH'] . ExtensionManagementUtility::extRelPath('gridelements') . 'Resources/Public/JavaScript/GridElementsListView.js', $type = 'text/javascript', $compress = FALSE, $forceOnTop = FALSE, $allWrap = '');
 
 				if (!$pageRenderer->getCharSet()) {
 					$pageRenderer->setCharSet($GLOBALS['LANG']->charSet ? $GLOBALS['LANG']->charSet : 'utf-8');
@@ -147,7 +151,7 @@ class PageRenderer {
 
 				// add Ext.onReady() code from file
 				$pageRenderer->addExtOnReadyCode(// add some more JS here
-				             $pRaddExtOnReadyCode . "
+					$pRaddExtOnReadyCode . "
 						top.pageColumnsAllowedCTypes = '" . join('|', $allowedCTypesClassesByColPos) . "';
 						top.pasteURL = '" . $pasteURL . "';
 						top.moveURL = '" . $moveURL . "';
@@ -159,31 +163,31 @@ class PageRenderer {
 						top.DDclipboardfilled = '" . ($clipBoardHasContent ? $clipBoardHasContent : 'false') . "';
 						top.DDclipboardElId = '" . $intFirstCBEl . "';
 					" . // replace placeholder for detail info on draggables
-				             str_replace(array(
-						             'top.skipDraggableDetails = 0;',
-						             // set extension path
-						             'insert_ext_baseurl_here',
-						             // set current server time
-						             'insert_server_time_here',
-						             // additional sprites
-						             'top.geSprites = {};',
-						             // back path
-						             "top.backPath = '';"
-					             ), array(
-						             $GLOBALS['BE_USER']->uc['dragAndDropHideNewElementWizardInfoOverlay'] ? 'top.skipDraggableDetails = true;' : 'top.skipDraggableDetails = false;',
-						             // set extension path
-						             GeneralUtility::locationHeaderUrl('/' . ExtensionManagementUtility::siteRelPath('gridelements')),
-						             // set current server time, format matches "+new Date" in JS, accuracy in seconds is fine
-						             time() . '000',
-						             // add sprite icon classes
-						             "top.geSprites = {
+					str_replace(array(
+						'top.skipDraggableDetails = 0;',
+						// set extension path
+						'insert_ext_baseurl_here',
+						// set current server time
+						'insert_server_time_here',
+						// additional sprites
+						'top.geSprites = {};',
+						// back path
+						"top.backPath = '';"
+					), array(
+						$GLOBALS['BE_USER']->uc['dragAndDropHideNewElementWizardInfoOverlay'] ? 'top.skipDraggableDetails = true;' : 'top.skipDraggableDetails = false;',
+						// set extension path
+						GeneralUtility::locationHeaderUrl('/' . ExtensionManagementUtility::siteRelPath('gridelements')),
+						// set current server time, format matches "+new Date" in JS, accuracy in seconds is fine
+						time() . '000',
+						// add sprite icon classes
+						"top.geSprites = {
 							copyfrompage: '" . IconUtility::getSpriteIconClasses('extensions-gridelements-copyfrompage') . "',
 								pastecopy: '" . IconUtility::getSpriteIconClasses('extensions-gridelements-pastecopy') . "',
 								pasteref: '" . IconUtility::getSpriteIconClasses('extensions-gridelements-pasteref') . "'
 							};",
-						             "top.backPath = '" . $GLOBALS['BACK_PATH'] . "';"
-					             ), // load content from file
-					             file_get_contents(ExtensionManagementUtility::extPath('gridelements') . 'Resources/Public/Backend/JavaScript/GridElementsDD_onReady.js')), TRUE);
+						"top.backPath = '" . $GLOBALS['BACK_PATH'] . "';"
+					), // load content from file
+						file_get_contents(ExtensionManagementUtility::extPath('gridelements') . 'Resources/Public/Backend/JavaScript/GridElementsDD_onReady.js')), TRUE);
 			}
 		}
 	}
