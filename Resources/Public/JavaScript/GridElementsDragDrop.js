@@ -85,7 +85,13 @@ define(['jquery', 'jquery-ui/sortable', 'jquery-ui/droppable'], function($) {
 
 		// make the dropzones visible (all except the previous one in the current list)
 		var $previousDropZone = $element.prev().children(DragDrop.dropZoneIdentifier);
-		$(DragDrop.dropZoneIdentifier).not($previousDropZone).addClass(DragDrop.validDropZoneClass);
+		var $allowedElementMimeType = $element.find('.t3-ctype-identifier').data('ctype');
+		$(DragDrop.dropZoneIdentifier).not($previousDropZone).each(function() {
+			var $closestColumn = $(this).closest(DragDrop.columnIdentifier);
+			if($closestColumn.hasClass('t3-allow-all') || $closestColumn.hasClass('t3-allow-' + $allowedElementMimeType)) {
+				$(this).addClass(DragDrop.validDropZoneClass);
+			}
+		});
 	};
 
 	/**
