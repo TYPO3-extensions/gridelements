@@ -155,6 +155,10 @@ define(['jquery', 'jquery-ui/sortable', 'jquery-ui/droppable'], function($) {
 			// the item was moved to the top of the colPos, so the page ID is used here
 			if (typeof targetContentElementUid === 'undefined') {
 				// the actual page is needed
+				targetContentElementUid = $droppableElement.closest(DragDrop.contentIdentifier).data('container');
+			}
+			if (typeof targetContentElementUid === 'undefined') {
+				// the actual page is needed
 				targetContentElementUid = parseInt($droppableElement.closest(DragDrop.contentIdentifier).data('page'));
 			} else {
 				// the negative value of the content element after where it should be moved
@@ -232,7 +236,7 @@ define(['jquery', 'jquery-ui/sortable', 'jquery-ui/droppable'], function($) {
 	DragDrop.getGridColumnPositionForElement = function($element) {
 		var $gridContainer = $element.closest(DragDrop.gridContainerIdentifier);
 		var $columnContainer = $element.closest(DragDrop.columnIdentifier);
-		if (!$element.parent().hasClass(DragDrop.contentIdentifier.substring(1)) && $gridContainer.length && $columnContainer.length && $columnContainer.data('colpos') !== 'undefined') {
+		if ($gridContainer.length && $columnContainer.length && $columnContainer.data('colpos') !== 'undefined') {
 			return $columnContainer.data('colpos');
 		} else {
 			return false;
