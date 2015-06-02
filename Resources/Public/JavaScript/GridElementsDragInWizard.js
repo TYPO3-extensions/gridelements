@@ -64,6 +64,7 @@ define(['jquery', 'TYPO3/CMS/Gridelements/GridElementsDragDrop', 'jquery-ui/sort
 			$('#typo3-inner-docbody').prepend('<div id="' + DragInWizard.wizardIdentifier + '"></div>');
 			$('#' + DragInWizard.wizardIdentifier).load(DragInWizard.wizardUrl + ' #typo3-inner-docbody div[role=\'tabpanel\']:first', function() {
 				DragInWizard.makeItemsSortable();
+				DragInWizard.rearrangeItems();
 			});
 			$('#' + DragInWizard.wizardIdentifier).css('visibility', 'visible');
 		}
@@ -73,8 +74,19 @@ define(['jquery', 'TYPO3/CMS/Gridelements/GridElementsDragDrop', 'jquery-ui/sort
 	 * make wizard items sortable so they can be dragged into content columns
 	 */
 	DragInWizard.makeItemsSortable = function() {
-		$('#' + DragInWizard.wizardIdentifier + ' .panel-body .media').addClass('t3js-sortable t3js-sortable-lang t3js-sortable-lang-0').attr('language-uid', 0).find('.media-left img').addClass('t3js-page-ce-draghandle').parent().addClass('t3-page-ce-dragitem').parent().addClass('t3js-page-ce t3js-page-ce-sortable');
+		$('#' + DragInWizard.wizardIdentifier + ' .panel-body .media').attr('language-uid', 0).find('.media-left img').addClass('t3js-page-ce-draghandle').parent().addClass('t3-page-ce-dragitem').closest('.media').addClass('t3js-page-ce t3js-page-ce-sortable');
 		DragDrop.initialize();
+	};
+
+	/**
+	 * rearrange wizard items, so only icons will remain as the draggable part
+	 */
+	DragInWizard.rearrangeItems = function() {
+		$('#' + DragInWizard.wizardIdentifier + ' .media').each(function() {
+			var CType = $(this).find('input').attr('value').split('_')[1];
+			$(this).find('.media-left').addClass('t3-ctype-identifier').attr('data-ctype', CType);
+		});
+		$('#' + DragInWizard.wizardIdentifier + ' .media-left input').parent().remove();
 	};
 
 	/**

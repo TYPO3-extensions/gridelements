@@ -93,6 +93,8 @@ define(['jquery', 'jquery-ui/sortable', 'jquery-ui/droppable'], function($) {
 			var $closestColumn = $(this).closest(DragDrop.columnIdentifier);
 			if($closestColumn.hasClass('t3-allow-all') || $closestColumn.hasClass('t3-allow-' + $allowedElementMimeType)) {
 				$(this).addClass(DragDrop.validDropZoneClass);
+			} else {
+				$(this).closest(DragDrop.contentIdentifier).find('> ' + DragDrop.addContentIdentifier + ', > > ' + DragDrop.addContentIdentifier).show();
 			}
 		});
 	};
