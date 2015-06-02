@@ -27,8 +27,10 @@ define(['jquery', 'TYPO3/CMS/Gridelements/GridElementsDragDrop', 'jquery-ui/sort
 	 * initializes Drag+Drop for all content elements on the page
 	 */
 	DragInWizard.initialize = function() {
-		DragInWizard.getWizardUrl();
-		DragInWizard.createToggleIcon();
+		if($('#ext-backend-Modules-Layout-index-php').length && $('.t3js-page-new-ce a').first().attr('onclick')) {
+			DragInWizard.getWizardUrl();
+			DragInWizard.createToggleIcon();
+		}
 	};
 
 	/**

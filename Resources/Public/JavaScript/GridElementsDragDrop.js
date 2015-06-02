@@ -28,13 +28,16 @@ define(['jquery', 'jquery-ui/sortable', 'jquery-ui/droppable'], function($) {
 		dropPossibleHoverClass: 't3-page-ce-dropzone-possible',
 		addContentIdentifier: '.t3js-page-new-ce',
 		gridContainerIdentifier: '.t3-grid-element-container',
-		copy: true
+		clone: true
 	};
 
 	/**
 	 * initializes Drag+Drop for all content elements on the page
 	 */
 	DragDrop.initialize = function() {
+		$('table.t3js-page-columns > tbody > tr > td').each(function() {
+			$(this).addClass(top.pageColumnsAllowedCTypes[$(this).data('colpos')]);
+		});
 		$(this.contentIdentifier).draggable({
 			handle: this.dragHeaderIdentifier,
 			scope: 'tt_content',
