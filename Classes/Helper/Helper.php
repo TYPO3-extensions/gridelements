@@ -43,30 +43,19 @@ class Helper {
 	public function getChildren($table = '', $uid = 0, $sortingField = '', $sortRev = 0) {
 		$retVal = array();
 
-		if (trim($table) && $uid > 0) {
+		if (trim($table) === 'tt_content' && $uid > 0) {
 
-			/** @var $dependency \TYPO3\CMS\Version\Dependency\DependencyResolver */
-			$dependency = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Version\\Dependency\\DependencyResolver');
-
-			$dependencyElement = $dependency->addElement($table, $uid);
-			$children = $dependencyElement->getChildren();
+			$children = $GLOBALS['TYPO3_DB']->exec_SELECTquery('*', 'tt_content', 'tx_gridelements_container = ' . $uid . ' AND deleted = 0');
 
 			foreach ($children as $child) {
-				if ($child->getElement()
-						->getTable() === $table && $child->getField() === 'tx_gridelements_children'
-				) {
-					$record = $child->getElement()
-						->getRecord();
-
-					if (trim($sortingField) && isset($record[$sortingField]) && $sortingField !== 'sorting') {
-						$sortField = $record[$sortingField];
-					} else {
-						$sortField = sprintf('%1$011d', $record['sorting']);
-					}
-					$sortKey = sprintf('%1$011d', $record['tx_gridelements_columns']) . '.' . $sortField . ':' . sprintf('%1$011d', $record['uid']);
-
-					$retVal[$sortKey] = $child->getElement();
+				if (trim($sortingField) && isset($child[$sortingField]) && $sortingField !== 'sorting') {
+					$sortField = $child[$sortingField];
+				} else {
+					$sortField = sprintf('%1$011d', $child['sorting']);
 				}
+				$sortKey = sprintf('%1$011d', $child['tx_gridelements_columns']) . '.' . $sortField . ':' . sprintf('%1$011d', $child['uid']);
+
+				$retVal[$sortKey] = $child;
 			}
 		}
 
