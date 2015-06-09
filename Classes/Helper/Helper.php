@@ -45,7 +45,7 @@ class Helper {
 
 		if (trim($table) === 'tt_content' && $uid > 0) {
 
-			$children = $GLOBALS['TYPO3_DB']->exec_SELECTquery('*', 'tt_content', 'tx_gridelements_container = ' . $uid . ' AND deleted = 0');
+			$children = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows('*', 'tt_content', 'tx_gridelements_container = ' . $uid . ' AND deleted = 0');
 
 			foreach ($children as $child) {
 				if (trim($sortingField) && isset($child[$sortingField]) && $sortingField !== 'sorting') {
