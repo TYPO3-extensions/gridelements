@@ -28,6 +28,8 @@ define(['jquery', 'jquery-ui/sortable', 'jquery-ui/droppable'], function($) {
 		dropPossibleHoverClass: 't3-page-ce-dropzone-possible',
 		addContentIdentifier: '.t3js-page-new-ce',
 		gridContainerIdentifier: '.t3-grid-element-container',
+		newContentElementWizardIdentifier: '#new-element-drag-in-wizard',
+		newCTypeIdentifier: '.t3-ctype-identifier',
 		clone: true
 	};
 
@@ -159,31 +161,73 @@ define(['jquery', 'jquery-ui/sortable', 'jquery-ui/droppable'], function($) {
 
 		// send an AJAX requst via the AjaxDataHandler
 		var contentElementUid = parseInt($draggableElement.data('uid'));
-		if (contentElementUid > 0) {
+		var newContentElementType = '';
+		var txGridelementsBackendLayout = '';
+		if($draggableElement.closest(DragDrop.newContentElementWizardIdentifier).length) {
+			newContentElementType = $draggableElement.find(DragDrop.newCTypeIdentifier).data('ctype');
+			txGridelementsBackendLayout = $draggableElement.find(DragDrop.newCTypeIdentifier).data('tx_gridelements_backend_layout');
+		}
+		if (contentElementUid > 0 || newContentElementType.length) {
 			var parameters = {};
 			// add the information about a possible column position change
-			var targetContentElementUid = $droppableElement.closest(DragDrop.contentIdentifier).data('uid');
+			var targetFound = $droppableElement.closest(DragDrop.contentIdentifier).data('uid');
 			// the item was moved to the top of the colPos, so the page ID is used here
-			if (typeof targetContentElementUid === 'undefined') {
+			var container = 0;
+			var targetPid = 0;
+			if (typeof targetFound === 'undefined') {
 				// the actual page is needed
-				targetContentElementUid = $droppableElement.closest(DragDrop.contentIdentifier).data('container');
-			}
-			if (typeof targetContentElementUid === 'undefined') {
-				// the actual page is needed
-				targetContentElementUid = parseInt($droppableElement.closest(DragDrop.contentIdentifier).data('page'));
+				targetPid = $('[data-page]').first().data('page');
+				container = parseInt($droppableElement.closest(DragDrop.contentIdentifier).data('container'));
 			} else {
 				// the negative value of the content element after where it should be moved
-				targetContentElementUid = 0-parseInt(targetContentElementUid);
+				targetPid = 0 - parseInt(targetFound);
 			}
-			if (targetContentElementUid < 0 && gridColumn !== false && gridColumn !== '') {
-				targetContentElementUid += 'x' + gridColumn;
-			} else if (targetContentElementUid > 0) {
-				targetContentElementUid += 'x' + newColumn;
+			var colPos = 0;
+			if (container > 0 && gridColumn !== false && gridColumn !== '') {
+				colPos = -1;
+			} else if (targetPid > 0) {
+				colPos = newColumn;
 			}
 			parameters['cmd'] = {tt_content: {}};
-			if(evt.originalEvent.ctrlKey) {
-				parameters['cmd']['tt_content'][contentElementUid] = {copy: targetContentElementUid};
-				parameters['DDcopy'] = 1;
+			parameters['data'] = {tt_content: {}};
+			if(newContentElementType.length) {
+				parameters['data']['tt_content']['NEW234134'] = {
+					pid: targetPid,
+					colPos: colPos,
+					CType: newContentElementType,
+					tx_gridelements_container: container,
+					tx_gridelements_columns: gridColumn,
+					tx_gridelements_backend_layout: txGridelementsBackendLayout,
+					header: TYPO3.l10n.localize('tx_gridelements_js.newcontentelementheader')
+				};
+				// fire the request, and show a message if it has failed
+				require(['TYPO3/CMS/Backend/AjaxDataHandler'], function(DataHandler) {
+					DataHandler.process(parameters).done(function(result) {
+						if (!result.hasErrors) {
+							// insert draggable on the new position
+							if(!$droppableElement.parent().hasClass(DragDrop.contentIdentifier.substring(1))) {
+								$draggableElement.detach().css({top: 0, left: 0})
+									.insertAfter($droppableElement.closest(DragDrop.dropZoneIdentifier));
+							} else {
+								$draggableElement.detach().css({top: 0, left: 0})
+									.insertAfter($droppableElement.closest(DragDrop.contentIdentifier));
+							}
+							self.location.reload(true);
+						}
+					});
+				});
+			} else if(evt.originalEvent.ctrlKey) {
+				parameters['cmd']['tt_content'][contentElementUid] = {
+					copy: {
+						action: 'paste',
+						target: targetPid,
+						update: {
+							colPos: colPos,
+							tx_gridelements_container: container,
+							tx_gridelements_columns: gridColumn
+						}
+					}
+				};
 				// fire the request, and show a message if it has failed
 				require(['TYPO3/CMS/Backend/AjaxDataHandler'], function(DataHandler) {
 					DataHandler.process(parameters).done(function(result) {
@@ -201,7 +245,12 @@ define(['jquery', 'jquery-ui/sortable', 'jquery-ui/droppable'], function($) {
 					});
 				});
 			} else {
-				parameters['cmd']['tt_content'][contentElementUid] = {move: targetContentElementUid};
+				parameters['data']['tt_content'][contentElementUid] = {
+					colPos: colPos,
+					tx_gridelements_container: container,
+					tx_gridelements_columns: gridColumn
+				};
+				parameters['cmd']['tt_content'][contentElementUid] = {move: targetPid};
 				// fire the request, and show a message if it has failed
 				require(['TYPO3/CMS/Backend/AjaxDataHandler'], function(DataHandler) {
 					DataHandler.process(parameters).done(function(result) {

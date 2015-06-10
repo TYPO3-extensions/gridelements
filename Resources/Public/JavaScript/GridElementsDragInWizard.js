@@ -50,8 +50,12 @@ define(['jquery', 'TYPO3/CMS/Gridelements/GridElementsDragDrop', 'jquery-ui/sort
 		newIcon.removeAttr('onclick').attr('title', 'Toggle Drag In Wizard');
 		newIcon.find('span').removeAttr('class').addClass('t3-icon fa fa-plus-square');
 		newIcon.click(function() {
+			top.dragInWizardActive = top.dragInWizardActive === true ? false : true;
 			DragInWizard.toggleWizard();
 		});
+		if(top.dragInWizardActive) {
+			DragInWizard.toggleWizard();
+		}
 	};
 
 	/**
@@ -83,7 +87,14 @@ define(['jquery', 'TYPO3/CMS/Gridelements/GridElementsDragDrop', 'jquery-ui/sort
 	 */
 	DragInWizard.rearrangeItems = function() {
 		$('#' + DragInWizard.wizardIdentifier + ' .media').each(function() {
-			var CType = $(this).find('input').attr('value').split('_')[1];
+			var CTypeCheck = $(this).find('input').attr('value').split('_');
+			if(CTypeCheck[0] === 'gridelements') {
+				CType = 'gridelements_pi1';
+				var txGridelementsBackendLayout = CTypeCheck[1];
+				$(this).find('.media-left').addClass('t3-ctype-identifier').attr('data-tx_gridelements_backend_layout', txGridelementsBackendLayout);
+			} else {
+				CType = CTypeCheck[1];
+			}
 			$(this).find('.media-left').addClass('t3-ctype-identifier').attr('data-ctype', CType);
 		});
 		$('#' + DragInWizard.wizardIdentifier + ' .media-left input').parent().remove();
