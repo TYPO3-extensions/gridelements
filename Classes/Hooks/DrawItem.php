@@ -374,7 +374,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 	 * @return void
 	 */
 	public function setColumnHeader(PageLayoutView $parentObject, &$head, &$colPos, &$name, &$editUidList) {
-		$head[$colPos] = $this->tt_content_drawColHeader($name, ($parentObject->doEdit && $editUidList[$colPos]) ? '&blubbedit[tt_content][' . $editUidList[$colPos] . ']=edit' . $parentObject->pageTitleParamForAltDoc : '', $parentObject);
+		$head[$colPos] = $this->tt_content_drawColHeader($name, ($parentObject->doEdit && $editUidList[$colPos]) ? '&edit[tt_content][' . $editUidList[$colPos] . ']=edit' . $parentObject->pageTitleParamForAltDoc : '', $parentObject);
 	}
 
 	/**
