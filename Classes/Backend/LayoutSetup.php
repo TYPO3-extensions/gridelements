@@ -263,7 +263,11 @@ class LayoutSetup {
 	 */
 	public function getLayoutWizardItems($colPos, $excludeLayouts = array()) {
 		$wizardItems = array();
-		$excludeLayouts = array_flip(explode(',', $excludeLayouts));
+		
+		if (!is_array($excludeLayouts)) {
+			$excludeLayouts = array_flip(explode(',', $excludeLayouts));
+		}
+
 		foreach ($this->layoutSetup as $layoutId => $item) {
 
 			if (((int)$colPos === -1 && $item['top_level_layout']) || isset($excludeLayouts[$item['uid']])) {
