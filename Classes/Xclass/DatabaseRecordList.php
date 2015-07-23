@@ -855,7 +855,7 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
 						$params = '&cmd[' . $table . '][' . $row['uid'] . '][move]=' . $this->currentTable['prev'][$row['uid']];
 					}
 					$moveUpAction = '<a class="btn btn-default" href="#" onclick="'
-						. htmlspecialchars('return jumpToUrl(\'' . $module->doc->issueCommand($params, -1) . '\');')
+						. htmlspecialchars('return jumpToUrl(' . $module->doc->issueCommand($params, -1) . ');')
 						. '" title="' . $this->getLanguageService()->getLL('moveUp', TRUE) . '">'
 						. IconUtility::getSpriteIcon('actions-move-up') . '</a>';
 				} else {
@@ -868,7 +868,7 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
 					$params = '&cmd[' . $table . '][' . $row['uid'] . '][move]=' . $this->currentTable['next'][$row['uid']];
 					$this->lastMoveDownParams = $params;
 					$moveDownAction = '<a class="btn btn-default" href="#" onclick="'
-						. htmlspecialchars('return jumpToUrl(\'' . $module->doc->issueCommand($params, -1) . '\');')
+						. htmlspecialchars('return jumpToUrl(' . $module->doc->issueCommand($params, -1) . ');')
 						. '" title="' . $this->getLanguageService()->getLL('moveDown', TRUE) . '">'
 						. IconUtility::getSpriteIcon('actions-move-down') . '</a>';
 				} else {
@@ -935,7 +935,7 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
 				if ($this->calcPerms & 8) {
 					$params = '&cmd[' . $table . '][' . $row['uid'] . '][move]=' . -$this->id;
 					$moveLeftAction = '<a class="btn btn-default" href="#" onclick="'
-						. htmlspecialchars('return jumpToUrl(\'' . $module->doc->issueCommand($params, -1) . '\');')
+						. htmlspecialchars('return jumpToUrl(' . $module->doc->issueCommand($params, -1) . ');')
 						. '" title="' . $this->getLanguageService()->getLL('prevLevel', TRUE) . '">'
 						. IconUtility::getSpriteIcon('actions-move-left') . '</a>';
 					$this->addActionToCellGroup($cells, $moveLeftAction, 'moveLeft');
@@ -946,7 +946,7 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
 					if ($localCalcPerms & 8) {
 						$params = '&cmd[' . $table . '][' . $row['uid'] . '][move]=' . $this->currentTable['prevUid'][$row['uid']];
 						$moveRightAction = '<a class="btn btn-default" href="#" onclick="'
-							. htmlspecialchars('return jumpToUrl(\'' . $module->doc->issueCommand($params, -1) . '\');')
+							. htmlspecialchars('return jumpToUrl(' . $module->doc->issueCommand($params, -1) . ');')
 							. '" title="' . $this->getLanguageService()->getLL('nextLevel', TRUE) . '">'
 							. IconUtility::getSpriteIcon('actions-move-right') . '</a>';
 					} else {
