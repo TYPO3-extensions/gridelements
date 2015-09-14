@@ -1,0 +1,27 @@
+{
+  "name": "gridelementsteam/gridelements",
+  "description": "This extension integrates the grid layout concept also to regular content elements - the grid elements. It offers a lot of new features like advanced drag & drop or real references, that improve the usability of the page and list module to speed up the daily work with the backend.",
+  "type": "typo3-cms-extension",
+  "license": "GPL-2.0+",
+  "authors": [
+    {
+      "name": "Grid Elements Team",
+      "role": "Developer",
+      "email": "info@cybercraft.de"
+    }
+  ],
+  "replace": {
+    "gridelements": "*"
+  },
+  "require": {
+    "typo3/cms-core": "~7.4"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "~4.8"
+  },
+  "autoload": {
+    "psr-4": {
+      "GridElementsTeam\\Gridelements\\": "Classes/"
+    }
+  }
+}

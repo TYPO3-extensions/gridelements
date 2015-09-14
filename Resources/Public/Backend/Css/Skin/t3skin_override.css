@@ -1,9 +1,5 @@
-.t3-page-ce-dropzone {
-	margin: -20px 0 0 0!important;
-}
-
 .t3-page-ce-dragitem {
-	margin-bottom: 0px!important;
+	margin-bottom: 0!important;
 	margin-top: 6px!important;
 }
 
@@ -14,7 +10,7 @@
 
 td.t3-gridCell div.t3-page-ce,
 div.t3-page-lang-copyce {
-	padding: 0px 10px!important;
+	padding: 0 10px!important;
 }
 
 .t3-page-ce-body-inner {
@@ -22,15 +18,15 @@ div.t3-page-lang-copyce {
 }
 
 .exampleContent .t3-gridContainer {
-	margin: 0px 0px 0px 0px!important;
+	margin: 0 0 0 0!important;
 }
 
 .exampleContent .t3-gridContainer > table {
-	margin: 0px -10px -5px -10px!important;
+	margin: 0 -10px -5px -10px!important;
 }
 
 .exampleContent .t3-gridContainer-framed > table {
-	margin: 0px 0px -5px 0px!important;
+	margin: 0 0 -5px 0!important;
 }
 
 table.t3-gridTable, table.t3-page-langMode {
@@ -38,7 +34,7 @@ table.t3-gridTable, table.t3-page-langMode {
 }
 
 .t3-page-columns {
-	margin: 0px!important;
+	margin: 0!important;
 }
 
 .reference .t3-page-colHeader,
@@ -47,12 +43,12 @@ table.t3-gridTable, table.t3-page-langMode {
 }
 
 .t3-page-ce-wrapper > .x-dd-makedroptarget > .x-dd-droptargetarea{
-	margin: 5px 10px 0px 10px!important;
+	margin: 5px 10px 0 10px!important;
 	cursor: default;
 }
 
 .t3-page-ce-wrapper {
-	padding: 0px 0px 6px 0px;
+	padding: 0 0 6px 0;
 }
 
 td.t3-page-column.t3-gridCell .t3-page-colHeader {
@@ -84,12 +80,12 @@ td.t3-page-column.t3-gridCell .t3-page-colHeader {
 }
 
 .t3-page-ce-wrapper-new-ce {
-	margin: 0px!important;
+	margin: 0!important;
 }
 
 .t3-lang-gridContainer .t3-gridContainer .t3-page-ce-wrapper-new-ce,
 .t3-page-ce-wrapper .t3-gridContainer .t3-page-ce-wrapper-new-ce {
-	margin: 0px 10px!important;
+	margin: 0 10px!important;
 }
 
 .t3-gridCell-invisibleContent .t3-page-ce {
@@ -163,7 +159,7 @@ td.t3-page-column.t3-gridCell .t3-page-colHeader {
 	border-style: solid;
 	border-width: 1px 1px 1px 1px;
 	border-color: #999999;
-	margin: 2px 0px 0px 0px;
+	margin: 2px 0 0 0;
 }
 
 #ext-cms-layout-db-layout-php .t3-gridContainer-title--1 {
@@ -172,14 +168,14 @@ td.t3-page-column.t3-gridCell .t3-page-colHeader {
 	color: #494949;
 	background: none;
 	padding: 2px 5px;
-	margin: 0px;
+	margin: 0;
 }
 
 #ext-cms-layout-db-layout-php .t3-gridContainer-1 {
 	border-style: solid;
 	border-width: 1px 1px 1px 1px;
 	border-color: #B48062;
-	margin: 2px 0px 0px 0px;
+	margin: 2px 0 0 0;
 }
 
 #ext-cms-layout-db-layout-php .t3-gridContainer-title-1 {
@@ -188,14 +184,14 @@ td.t3-page-column.t3-gridCell .t3-page-colHeader {
 	color: #5A4031;
 	background: #D9BFB0;
 	padding: 2px 5px;
-	margin: 0px;
+	margin: 0;
 }
 
 #ext-cms-layout-db-layout-php .t3-gridContainer-2 {
 	border-style: solid;
 	border-width: 1px 1px 1px 1px;
 	border-color: #BABD5A;
-	margin: 2px 0px 0px 0px;
+	margin: 2px 0 0 0;
 }
 
 #ext-cms-layout-db-layout-php .t3-gridContainer-title-2 {
@@ -204,14 +200,14 @@ td.t3-page-column.t3-gridCell .t3-page-colHeader {
 	color: #5D5F2D;
 	background: #DCDEAC;
 	padding: 2px 5px;
-	margin: 0px;
+	margin: 0;
 }
 
 #ext-cms-layout-db-layout-php .t3-gridContainer-3 {
 	border-style: solid;
 	border-width: 1px 1px 1px 1px;
 	border-color: #427BAB;
-	margin: 2px 0px 0px 0px;
+	margin: 2px 0 0 0;
 }
 
 #ext-cms-layout-db-layout-php .t3-gridContainer-title-3 {
@@ -220,7 +216,7 @@ td.t3-page-column.t3-gridCell .t3-page-colHeader {
 	color: #213E56;
 	background: #A0BDD5;
 	padding: 2px 5px;
-	margin: 0px;
+	margin: 0;
 }
 
 #ext-cms-layout-db-layout-php .t3-gridContainer-noColumnHeaders .t3-gridContainer-1 .t3-gridCell {
@@ -242,8 +238,8 @@ td.t3-page-column.t3-gridCell .t3-page-colHeader {
 
 #ext-cms-layout-db-layout-php .exampleContent .reference-overlay {
 	position: absolute;
-	top: 0px;
-	left: 0px;
+	top: 0;
+	left: 0;
 	width: 100%;
 	height: 100%;
 	background: #427BAB;

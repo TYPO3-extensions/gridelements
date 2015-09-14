@@ -2,4 +2,4 @@
 additionalStylesheet =
 
 # cat=basic; type=boolean; label=LLL:EXT:gridelements/Resources/Private/Language/locallang.xlf:nestingInListModule
-nestingInListModule = 1
+nestingInListModule = 0

@@ -83,7 +83,7 @@ div.cell_container:hover {
 
 .link_shrink_left {
 	background-image: url(../Images/t3grid-editor-left-inactive.png);
-	left: 0px;
+	left: 0;
 	top: 14px;
 }
 
@@ -104,7 +104,7 @@ div.cell_container:hover {
 .link_shrink_up {
 	background-image: url(../Images/t3grid-editor-up-inactive.png);
 	left: 14px;
-	top: 0px;
+	top: 0;
 }
 
 .link_shrink_up:hover {
@@ -219,7 +219,7 @@ div.cell_container:hover {
 
 .link_shrink_left {
 	background-image: url(../Images/t3grid-editor-left-inactive.png);
-	left: 0px;
+	left: 0;
 	top: 14px;
 }
 
@@ -240,7 +240,7 @@ div.cell_container:hover {
 .link_shrink_up {
 	background-image: url(../Images/t3grid-editor-up-inactive.png);
 	left: 14px;
-	top: 0px;
+	top: 0;
 }
 
 .link_shrink_up:hover {

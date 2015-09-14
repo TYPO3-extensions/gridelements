@@ -86,12 +86,14 @@ class ProcessCmdmap extends AbstractDataHandler {
 						$overrideArray['tx_gridelements_container'] = 0;
 						$overrideArray['tx_gridelements_columns'] = 0;
 						$overrideArray['colPos'] = (int)$valueArray[1];
-					} else if ($valueArray[1] !== '') {
+					} elseif ($valueArray[1] !== '') {
 						$targetTable = 'tt_content';
 						$containerUpdateArray[abs($valueArray[0])] = 1;
 						$overrideArray['colPos'] = -1;
 						$overrideArray['tx_gridelements_container'] = abs($valueArray[0]);
 						$overrideArray['tx_gridelements_columns'] = (int)$valueArray[1];
+					} else {
+						throw new \UnexpectedValueException('No target table identified.', 1442269491);
 					}
 					$targetRecord = BackendUtility::getRecordWSOL($targetTable, abs($valueArray[0]));
 					if ($targetRecord[$GLOBALS['TCA'][$table]['ctrl']['transOrigPointerField']]) {
@@ -134,6 +136,7 @@ class ProcessCmdmap extends AbstractDataHandler {
 					$targetTable = 'pages';
 				}
 				$originalRecord = BackendUtility::getRecordWSOL($targetTable, abs($id));
+				$overrideArray = [];
 				if ($value > 0) {
 					$overrideArray['tx_gridelements_container'] = 0;
 					$overrideArray['tx_gridelements_columns'] = 0;

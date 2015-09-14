@@ -73,6 +73,7 @@ class PageRenderer {
 
 				$clipBoardHasContent = FALSE;
 
+				$pasteURL = '';
 				if (isset($clipObj->clipData['normal']['el']) && strpos(key($clipObj->clipData['normal']['el']), 'tt_content') !== FALSE) {
 					$pasteURL = str_replace('&amp;', '&', $clipObj->pasteUrl('tt_content', 'DD_PASTE_UID', 0));
 					if (isset($clipObj->clipData['normal']['mode'])) {
@@ -88,9 +89,6 @@ class PageRenderer {
 				$copyURL = str_replace('&amp;', '&', htmlspecialchars($GLOBALS['SOBE']->doc->issueCommand($copyParams, 1)));
 
 				// add JavaScript library
-				$pageRenderer->addJsFile($GLOBALS['BACK_PATH'] . ExtensionManagementUtility::extRelPath('gridelements') . 'Resources/Public/Backend/JavaScript/dbNewContentElWizardFixDTM.js', $type = 'text/javascript', $compress = TRUE, $forceOnTop = FALSE, $allWrap = '');
-
-				// add JavaScript library
 				$pageRenderer->addJsFile($GLOBALS['BACK_PATH'] . ExtensionManagementUtility::extRelPath('gridelements') . 'Resources/Public/Backend/JavaScript/GridElementsDD.js', $type = 'text/javascript', $compress = TRUE, $forceOnTop = FALSE, $allWrap = '');
 
 				// add JavaScript library
@@ -100,6 +98,7 @@ class PageRenderer {
 					$pageRenderer->setCharSet($GLOBALS['LANG']->charSet ? $GLOBALS['LANG']->charSet : 'utf-8');
 				}
 
+				$intFirstCBEl = '';
 				if (is_array($clipObj->clipData['normal']['el'])) {
 					$arrCBKeys = array_keys($clipObj->clipData['normal']['el']);
 					$intFirstCBEl = str_replace('tt_content|', '', $arrCBKeys[0]);
@@ -202,8 +201,8 @@ class PageRenderer {
 	protected function addCSS($parameters, &$pageRenderer) {
 		if (count($parameters['cssFiles'])) {
 			// get configuration
-			$this->confArr = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['gridelements']);
-			$filename = $this->confArr['additionalStylesheet'];
+			$confArr = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['gridelements']);
+			$filename = $confArr['additionalStylesheet'];
 			if ($filename) {
 				// evaluate filename
 				if (substr($filename, 0, 4) === 'EXT:') { // extension
