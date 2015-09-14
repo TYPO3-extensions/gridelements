@@ -152,10 +152,7 @@ class MoveRecord extends AbstractDataHandler {
 			$this->init($table, $uid, $parentObj);
 			$cmd = GeneralUtility::_GET('cmd');
 
-			$originalUid = (int)($movedRecord['_ORIG_uid'] ? $movedRecord['_ORIG_uid'] : $uid);
-			$commandUid = key($cmd['tt_content']);
-			$placeholderUid = (int)($movedRecord['t3ver_move_id'] ? $movedRecord['t3ver_move_id'] : $uid);
-
+			$setPid = 0;
 			if (strpos($cmd['tt_content'][$commandUid]['move'], 'x') !== FALSE) {
 				$target = explode('x', $cmd['tt_content'][$commandUid]['move']);
 				$column = (int)$target[1];
@@ -268,27 +265,4 @@ class MoveRecord extends AbstractDataHandler {
 		return $updateArray;
 	}
 
-	/**
-	 * create update array for split elements (tt_content)
-	 *
-	 * @param array $originalElement
-	 *
-	 * @return array UpdateArray
-	 * @deprecated     Has been deprecated with Gridelements 3.1 and will be removed 2 minor versions later or with the next major version
-	 */
-	public function createUpdateArrayForContainerMove(array $originalElement) {
-		GeneralUtility::logDeprecatedFunction();
-		if ($originalElement['CType'] === 'gridelements_pi1') {
-			$this->getTceMain()->moveChildren = TRUE;
-		}
-
-		$updateArray = array(
-				'colPos' => 0,
-				'sorting' => 0,
-				'tx_gridelements_container' => 0,
-				'tx_gridelements_columns' => 0
-		);
-
-		return $updateArray;
-	}
 }

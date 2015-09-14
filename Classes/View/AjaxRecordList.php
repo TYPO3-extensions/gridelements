@@ -6,7 +6,7 @@ use GridElementsTeam\Gridelements\Helper\Helper;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Http\AjaxRequestHandler;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Recordlist\RecordList\DatabaseRecordList;
+use GridElementsTeam\Gridelements\Xclass\DatabaseRecordList;
 
 /**
  * AJAX request disatcher for record list
@@ -44,7 +44,12 @@ class AjaxRecordList {
 	 *
 	 * @var    array
 	 */
-	protected $params = array();
+	protected $paramValues = array();
+
+	/**
+	 * @var string
+	 */
+	protected $cmd = '';
 
 	/**
 	 * Initialize method
@@ -54,7 +59,7 @@ class AjaxRecordList {
 	 *
 	 * @return void
 	 */
-	public function init($params, AjaxRequestHandler &$ajaxObj) {
+	public function init($params, AjaxRequestHandler $ajaxObj) {
 
 		// fill local params because that's not done in typo3/ajax.php yet ($params is always empty)
 		foreach ($this->validParams as $validParam) {
@@ -77,7 +82,7 @@ class AjaxRecordList {
 	 *
 	 * @return    void
 	 **/
-	protected function dispatch(AjaxRequestHandler &$ajaxObj) {
+	protected function dispatch(AjaxRequestHandler $ajaxObj) {
 		if (!is_string($this->paramValues['cmd'])) {
 			$ajaxObj->addContent('error', array('message' => 'cmd is not a string'));
 		} else {
@@ -96,7 +101,7 @@ class AjaxRecordList {
 	 *
 	 * @return    void
 	 */
-	public function getListRows(AjaxRequestHandler &$ajaxObj) {
+	public function getListRows(AjaxRequestHandler $ajaxObj) {
 		$uid = (int)$this->getParamValue('uid');
 		if ($uid > 0) {
 			$table = (string)$this->getParamValue('table');
@@ -111,6 +116,7 @@ class AjaxRecordList {
 			$row = BackendUtility::getRecord($table, $uid);
 			$recordList = $this->getRecordList($table, $uid, $row);
 
+			$listRows = [];
 			if ($recordList instanceof DatabaseRecordList) {
 				$level++;
 				foreach ($elementChildren as $elementChild) {

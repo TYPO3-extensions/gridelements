@@ -22,12 +22,17 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 	/**
 	 * @var \TYPO3\CMS\Lang\LanguageService
 	 */
-	var $lang;
+	protected $lang;
 
 	/**
 	 * @var QueryGenerator
 	 */
 	protected $tree;
+
+	/**
+	 * @var string
+	 */
+	protected $backPath = '';
 
 	public function __construct() {
 		$this->lang = GeneralUtility::makeInstance('TYPO3\\CMS\\Lang\\LanguageService');
@@ -103,6 +108,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 				->cacheCurrentParent($gridContainerId, TRUE);
 		$layoutUid = $gridElement['tx_gridelements_backend_layout'];
 		$layout = $layoutSetup->getLayoutSetup($layoutUid);
+		$parserRows = NULL;
 		if (isset($layout['config']) && isset($layout['config']['rows.'])) {
 			$parserRows = $layout['config']['rows.'];
 		}
@@ -294,8 +300,9 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 			$showLanguage = '';
 		}
 
+		$where = '';
 		if ($helper->getBackendUser()->workspace > 0 && $row['t3ver_wsid'] > 0) {
-			$where = 'AND t3ver_wsid = ' . $row['t3ver_wsid'];
+			$where .= 'AND t3ver_wsid = ' . $row['t3ver_wsid'];
 		}
 		$where .= ' AND colPos = -1 AND tx_gridelements_container IN (' . $row['uid'] . ',' . $specificIds['uid'] . ') AND tx_gridelements_columns=' . $colPos . $showHidden . $deleteClause . $showLanguage;
 
@@ -320,11 +327,12 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 	 *
 	 * @return void
 	 */
-	public function renderSingleGridColumn(PageLayoutView $parentObject, &$items, &$colPos, &$gridContent, $row, &$editUidList) {
+	protected function renderSingleGridColumn(PageLayoutView $parentObject, &$items, &$colPos, &$gridContent, $row, &$editUidList) {
 
 		$specificIds = Helper::getInstance()
 				->getSpecificIds($row);
 
+		$newParams = '';
 		if ($colPos < 32768) {
 			if ($row{'sys_language_uid'}) {
 				$language = (int)$row['sys_language_uid'];
@@ -401,7 +409,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 		if ($parentObject->tt_contentConfig['showCommands']) {
 			// Edit whole of column:
 			if ($editParams) {
-				$icons .= '<a href="#" onclick="' . htmlspecialchars(BackendUtility::editOnClick($editParams, $parentObject->backPath)) . '" title="' . $GLOBALS['LANG']->getLL('editColumn', TRUE) . '">' . IconUtility::getSpriteIcon('actions-document-open') . '</a>';
+				$icons .= '<a href="#" onclick="' . htmlspecialchars(BackendUtility::editOnClick($editParams)) . '" title="' . $GLOBALS['LANG']->getLL('editColumn', TRUE) . '">' . IconUtility::getSpriteIcon('actions-document-open') . '</a>';
 			}
 			$icons .= '<a href="#" class="toggle-content toggle-up" title="' . $this->lang->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tx_gridelements_togglecontent') . '">' . IconUtility::getSpriteIcon('actions-move-to-top') . '</a>';
 			$icons .= '<a href="#" class="toggle-content toggle-down" title="' . $this->lang->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tx_gridelements_togglecontent') . '">' . IconUtility::getSpriteIcon('actions-move-to-bottom') . '</a>';
@@ -499,15 +507,14 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 				$colSpan = (int)$columnConfig['colspan'];
 				$rowSpan = (int)$columnConfig['rowspan'];
 				$grid .= '<td valign="top"' .
-						(isset($columnConfig['colspan']) ? ' colspan="' . $colSpan . '"' : '') .
-						(isset($columnConfig['rowspan']) ? ' rowspan="' . $rowSpan . '"' : '') .
-						'id="column-' . $specificIds['uid'] . 'x' . $columnKey . '" class="t3-gridCell t3-page-column t3-page-column-' . $columnKey .
-						(!isset($columnConfig['colPos']) || $columnConfig['colPos'] === '' ? ' t3-gridCell-unassigned' : '') .
-						(isset($columnConfig['colspan']) && $columnConfig['colPos'] !== '' ? ' t3-gridCell-width' . $colSpan : '') .
-						(isset($columnConfig['rowspan']) && $columnConfig['colPos'] !== '' ? ' t3-gridCell-height' . $rowSpan : '') . ' ' .
-						($layoutSetup['horizontal'] ? ' t3-gridCell-horizontal' : '') .
-						(count($allowedCTypes) ? ' ' . join(' ', $allowedCTypes) : ' t3-allow-all') .
-						(count($allowedGridTypes) ? ' ' . join(' ', $allowedGridTypes) : '') . '">';
+					(isset($columnConfig['colspan']) ? ' colspan="' . $colSpan . '"' : '') .
+					(isset($columnConfig['rowspan']) ? ' rowspan="' . $rowSpan . '"' : '') .
+					'id="column-' . $specificIds['uid'] . 'x' . $columnKey . '" class="t3-gridCell t3-page-column t3-page-column-' . $columnKey .
+					(!isset($columnConfig['colPos']) || $columnConfig['colPos'] === '' ? ' t3-gridCell-unassigned' : '') .
+					(isset($columnConfig['colspan']) && $columnConfig['colPos'] !== '' ? ' t3-gridCell-width' . $colSpan : '') .
+					(isset($columnConfig['rowspan']) && $columnConfig['colPos'] !== '' ? ' t3-gridCell-height' . $rowSpan : '') . ' ' .
+					($layoutSetup['horizontal'] ? ' t3-gridCell-horizontal' : '') .
+					(!empty($allowedCTypes) ? ' ' . join(' ', $allowedCTypes) : ' t3-allow-all') . '">';
 
 				$grid .= ($GLOBALS['BE_USER']->uc['hideColumnHeaders'] ? '' : $head[$columnKey]) . $gridContent[$columnKey];
 				$grid .= '</td>';
@@ -577,8 +584,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 	 */
 	public function renderSingleElementHTML(PageLayoutView $parentObject, $itemRow) {
 		$singleElementHTML = $parentObject->tt_content_drawHeader($itemRow, $parentObject->tt_contentConfig['showInfo'] ? 15 : 5, $parentObject->defLangBinding && $parentObject->lP > 0, TRUE);
-		$isRTE = $parentObject->RTE && $parentObject->isRTEforField('tt_content', $itemRow, 'bodytext');
-		$singleElementHTML .= '<div ' . (!empty($itemRow['_ORIG_uid']) ? ' class="ver-element"' : '') . '><div class="t3-page-ce-body-inner t3-page-ce-body-inner-' . $itemRow['CType'] . '">' . $parentObject->tt_content_drawItem($itemRow, $isRTE) . '</div></div>';
+		$singleElementHTML .= '<div ' . (!empty($itemRow['_ORIG_uid']) ? ' class="ver-element"' : '') . '><div class="t3-page-ce-body-inner t3-page-ce-body-inner-' . $itemRow['CType'] . '">' . $parentObject->tt_content_drawItem($itemRow) . '</div></div>';
 		$footerContent = '';
 		// Get processed values:
 		$info = array();

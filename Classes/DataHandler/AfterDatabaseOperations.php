@@ -117,6 +117,8 @@ class AfterDatabaseOperations extends AbstractDataHandler {
 		}
 
 		if ($this->getTable() === 'pages') {
+			$backendLayoutUid = 0;
+			$backendLayoutNextLevelUid = 0;
 			$rootline = BackendUtility::BEgetRootLine($this->getPageUid());
 			for ($i = count($rootline); $i > 0; $i--) {
 				$page = $this->databaseConnection->exec_SELECTgetSingleRow('uid, backend_layout, backend_layout_next_level', 'pages', 'uid=' . (int)$rootline[$i]['uid']);
@@ -255,7 +257,7 @@ class AfterDatabaseOperations extends AbstractDataHandler {
 	 * @param   string $table : The name of the table to get the layout for
 	 * @param   int $id : the uid of the parent container - being the page id for the table "pages"
 	 *
-	 * @return  CSV     $tcaColumns: The columns available for the selected layout as CSV list
+	 * @return  string     $tcaColumns: The columns available for the selected layout as CSV list
 	 *
 	 */
 	public function getAvailableColumns($layout = '', $table = '', $id = 0) {
