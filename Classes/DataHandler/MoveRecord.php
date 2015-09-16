@@ -100,13 +100,13 @@ class MoveRecord extends AbstractDataHandler {
 			$targetElement = BackendUtility::getRecordWSOL('tt_content', -$origDestPid, 'uid,pid,colPos,tx_gridelements_container,tx_gridelements_columns');
 			$targetContainer = (int)($targetElement['t3ver_oid'] ? $targetElement['t3ver_oid'] : $targetElement['uid']);
 
-			$originalUid = (int)($movedRecord['_ORIG_uid'] ? $movedRecord['_ORIG_uid'] : $uid);
-			$pointerUid = (int)($movedRecord['t3ver_oid'] ? $movedRecord['t3ver_oid'] : $uid);
-			$commandUid = (int)($movedRecord['l18n_parent']) ? $movedRecord['l18n_parent'] : $pointerUid;
-			$placeholderUid = (int)($movedRecord['t3ver_move_id'] ? $movedRecord['t3ver_move_id'] : $uid);
-
 			$this->init($table, $uid, $parentObj);
 			$cmd = GeneralUtility::_GET('cmd');
+
+			$originalUid = (int)($movedRecord['_ORIG_uid'] ? $movedRecord['_ORIG_uid'] : $uid);
+			$pointerUid = (int)($movedRecord['t3ver_oid'] ? $movedRecord['t3ver_oid'] : $uid);
+			$commandUid = key($cmd['tt_content']);
+			$placeholderUid = (int)($movedRecord['t3ver_move_id'] ? $movedRecord['t3ver_move_id'] : $uid);
 
 			if (strpos($cmd['tt_content'][$commandUid]['move'], 'x') !== FALSE) {
 				$target = explode('x', $cmd['tt_content'][$commandUid]['move']);
@@ -147,7 +147,7 @@ class MoveRecord extends AbstractDataHandler {
 				);
 				// $updateArray['header'] = $uid . ' # ' . $pointerUid . ' # ' . $origDestPid . ' ohne X';
 			}
-			// $updateArray['bodytext'] = $cmd['tt_content'][$pointerUid]['move'];
+			// $updateArray['bodytext'] = serialize($cmd) . ' originalUid: ' . $originalUid . ' pointerUid: ' . $pointerUid . ' commandUid: ' . $commandUid . ' placeholderUid: ' . $placeholderUid;
 			$this->getTceMain()->updateDB('tt_content', $originalUid, $updateArray);
 			if($setPid) {
 				$updateArray['pid'] = $setPid;
