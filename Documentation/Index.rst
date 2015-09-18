@@ -1,4 +1,4 @@
-.. include:: Images.txt
+﻿.. include:: Images.txt
 
 .. ==================================================
 .. FOR YOUR INFORMATION
@@ -20,10 +20,10 @@ Grid Elements
 =============
 
 :Extension key:
-      gridelements
+      gridelements2
 
 :Version:
-      4.0.0
+      3.1.0-dev
 
 :Language:
       en

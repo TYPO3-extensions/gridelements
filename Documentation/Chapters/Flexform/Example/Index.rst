@@ -1,4 +1,4 @@
-.. include:: Images.txt
+﻿.. include:: Images.txt
 
 .. ==================================================
 .. FOR YOUR INFORMATION

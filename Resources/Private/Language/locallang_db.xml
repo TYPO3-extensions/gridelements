@@ -95,8 +95,8 @@
 			<label index="dragAndDropHideNewElementWizardInfoOverlay">Info-Overlays beim Drag-In-Wizard für neue Inhaltselemente ausblenden.</label>
 			<label index="hideColumnHeaders">Spaltenüberschriften ausblenden.</label>
 			<label index="hideContentPreview">Vorschau der Inhaltselemente ausblenden.</label>
-			<label index="hideContentPreview">Vorschau der Inhaltselemente ausblenden.</label>
 			<label index="showGridInformation">Grid-Layout-Informationen einblenden.</label>
+			<label index="tx_gridelements_clickmenu_pastereference">Referenz danach einfügen</label>
 			<label index="tx_gridelements_togglecontent">Inhaltsanzeige umschalten</label>
 			<label index="tx_gridelements_js.pastecopy">Kopie hier einfügen</label>
 			<label index="tx_gridelements_js.pasteref">Referenz hier einfügen</label>

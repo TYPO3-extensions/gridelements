@@ -38,7 +38,7 @@ class Helper {
 	 * @param string $sortingField
 	 * @param int $sortRev
 	 *
-	 * @return \TYPO3\CMS\Version\Dependency\ElementEntity[]
+	 * @return array
 	 */
 	public function getChildren($table = '', $uid = 0, $sortingField = '', $sortRev = 0) {
 		$retVal = array();
