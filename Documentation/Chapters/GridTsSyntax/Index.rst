@@ -1,4 +1,4 @@
-.. include:: Images.txt
+﻿
 
 .. ==================================================
 .. FOR YOUR INFORMATION
@@ -14,8 +14,6 @@
    :class:  typoscript
 .. role::   php(code)
 
-.. _GridTsSyntax:
-
 
 Grid TS Syntax
 --------------
@@ -30,7 +28,7 @@ We could have used serialized objects or arrays as well, but decided
 to go for TypoScript, since this can easily be written by advanced
 integrators. For those, who are not familiar with TypoScript or just
 prefer the usability of a point and click interface, there is a
-comfortable :ref:`Grid Wizard <GridWizard>`, that will help
+comfortable `Grid Wizard <#1.5.Grid%20Wizard|outline>`_ that will help
 to create the TypoScript code. Later on it might be more convenient to
 modify the structures by hand, especially when backend layouts that
 are based on a similar structure haven't got too many differences.

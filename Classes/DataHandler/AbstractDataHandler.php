@@ -24,7 +24,6 @@ namespace GridElementsTeam\Gridelements\DataHandler;
 	 *
 	 *  This copyright notice MUST APPEAR in all copies of the script!
 	 ***************************************************************/
-use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -51,9 +50,25 @@ abstract class AbstractDataHandler {
 	protected $databaseConnection;
 
 	/**
+	 * @var \TYPO3\CMS\Backend\Form\FormEngine
+	 */
+	protected $formEngine;
+
+	/**
 	 * @var \GridElementsTeam\Gridelements\Backend\LayoutSetup
 	 */
 	protected $layoutSetup;
+
+	/**
+	 * inject tce forms
+	 *
+	 * @param \TYPO3\CMS\Backend\Form\FormEngine $formEngine
+	 *
+	 * @return void
+	 */
+	public function injectTceForms(\TYPO3\CMS\Backend\Form\FormEngine $formEngine) {
+		$this->formEngine = $formEngine;
+	}
 
 	/**
 	 * inject layout setup
@@ -82,11 +97,14 @@ abstract class AbstractDataHandler {
 		$this->setDatabaseConnection($GLOBALS['TYPO3_DB']);
 		if (!$this->layoutSetup instanceof \GridElementsTeam\Gridelements\Backend\LayoutSetup) {
 			if ($pageUid < 0) {
-				$triggerElement = $this->databaseConnection->exec_SELECTgetSingleRow('pid', 'tt_content', 'uid = ' . -$pageUid);
+				$triggerElement = $GLOBALS['TYPO3_DB']->exec_SELECTgetSingleRow('pid', 'tt_content', 'uid = ' . -$pageUid);
 				$pageUid = (int)$triggerElement['pid'];
 			}
 			$this->injectLayoutSetup(GeneralUtility::makeInstance('GridElementsTeam\\Gridelements\\Backend\\LayoutSetup')
 			                                                               ->init($pageUid));
+		}
+		if (!$this->formEngine instanceof \TYPO3\CMS\Backend\Form\FormEngine) {
+			$this->injectTceForms(GeneralUtility::makeInstance('TYPO3\\CMS\\Backend\\Form\\FormEngine'));
 		}
 	}
 
@@ -178,7 +196,7 @@ abstract class AbstractDataHandler {
 	 * @return void
 	 */
 	public function doGridContainerUpdate($containerUpdateArray = array()) {
-		if (is_array($containerUpdateArray) && count($containerUpdateArray) > 0) {
+		if (is_array($containerUpdateArray) && count($containerUpdateArray > 0)) {
 			foreach ($containerUpdateArray as $containerUid => $newElement) {
 				$fieldArray = array(
 					'tx_gridelements_children' => 'tx_gridelements_children + ' . (int)$newElement
@@ -198,13 +216,13 @@ abstract class AbstractDataHandler {
 	 * @return void
 	 */
 	public function checkAndUpdateTranslatedChildren($containerUpdateArray = array()) {
-		if (is_array($containerUpdateArray) && count($containerUpdateArray) > 0) {
+		if (is_array($containerUpdateArray) && count($containerUpdateArray > 0)) {
 			foreach ($containerUpdateArray as $containerUid => $newElement) {
 				if((int)$containerUid > 0) {
-					$translatedContainers = $this->databaseConnection->exec_SELECTgetRows('uid,sys_language_uid', 'tt_content', 'l18n_parent = ' . (int)$containerUid . BackendUtility::deleteClause('tt_content'));
+					$translatedContainers = $this->databaseConnection->exec_SELECTgetRows('uid,sys_language_uid', 'tt_content', 'l18n_parent = ' . (int)$containerUid . \TYPO3\CMS\Backend\Utility\BackendUtility::deleteClause('tt_content'));
 					if (count($translatedContainers) > 0) {
 						foreach ($translatedContainers as $languageArray) {
-							$targetContainer = BackendUtility::getRecordWSOL('tt_content', $languageArray['uid']);
+							$targetContainer = \TYPO3\CMS\Backend\Utility\BackendUtility::getRecordWSOL('tt_content', $languageArray['uid']);
 							$fieldArray['tx_gridelements_container'] = $targetContainer['uid'];
 							$where = 'tx_gridelements_container = ' . (int)$containerUid . ' AND sys_language_uid = ' . (int)$targetContainer['sys_language_uid'];
 							$this->databaseConnection->exec_UPDATEquery('tt_content', $where, $fieldArray, 'tx_gridelements_container');

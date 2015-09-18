@@ -202,8 +202,8 @@ class Gridelements extends ContentObjectRenderer {
 
 		if (is_array($piFlexForm) && is_array($piFlexForm['data'])) {
 			foreach ($piFlexForm['data'] as $sheet => $data) {
-				foreach ($data as $lang => $value) {
-					foreach ($value as $key => $val) {
+				foreach ((array)$data as $lang => $value) {
+					foreach ((array)$value as $key => $val) {
 						$this->cObj->data['flexform_' . $key] = $this->getFFvalue($piFlexForm, $key, $sheet);
 					}
 				}

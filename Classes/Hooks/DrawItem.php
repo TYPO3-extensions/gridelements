@@ -55,11 +55,11 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 			$showHidden = $parentObject->tt_contentConfig['showHidden'] ? '' : BackendUtility::BEenableFields('tt_content');
 			$deleteClause = BackendUtility::deleteClause('tt_content');
 
-            if ($GLOBALS['BE_USER']->uc['hideContentPreview']) {
-                $drawItem = FALSE;
-            }
+			if ($GLOBALS['BE_USER']->uc['hideContentPreview']) {
+				$drawItem = FALSE;
+			}
 
-            switch ($row['CType']) {
+			switch ($row['CType']) {
 				case 'gridelements_pi1':
 					$drawItem = FALSE;
 					$itemContent .= $this->renderCTypeGridelements($parentObject, $row, $showHidden, $deleteClause);
@@ -73,7 +73,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 					break;
 			}
 		}
-		$headerContent = '<div id="ce' . $row['uid'] . '" class="t3-ctype-' . $row['CType'] . '">' . $headerContent . '</div>';
+		$headerContent = '<div id="ce' . $row['uid'] . '" class="t3-ctype-identifier " data-ctype="' . $row['CType'] . '">' . $headerContent . '</div>';
 	}
 
 	/**
@@ -131,9 +131,9 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 		if ($layoutUid && isset($layout['config'])) {
 			$itemContent = $this->renderGridLayoutTable($layout, $gridElement, $head, $gridContent);
 		} else {
-			$itemContent = '<div class="t3-gridContainer">';
-			$itemContent .= '<table border="0" cellspacing="1" cellpadding="4" width="100%" height="100%" class="t3-page-columns t3-gridTable">';
-			$itemContent .= '<tr><td valign="top" class="t3-gridCell t3-page-column t3-page-column-0">' . $gridContent[0] . '</td></tr>';
+			$itemContent = '<div class="t3-grid-container t3-grid-element-container">';
+			$itemContent .= '<table border="0" cellspacing="0" cellpadding="0" width="100%" height="100%" class="t3-page-columns t3-grid-table">';
+			$itemContent .= '<tr><td valign="top" class="t3-grid-cell t3-page-column t3-page-column-0">' . $gridContent[0] . '</td></tr>';
 			$itemContent .= '</table></div>';
 		}
 		return $itemContent;
@@ -299,7 +299,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 		}
 
 		$where = '';
-		if ($helper->getBackendUser()->workspace > 0 && $row['t3ver_wsid'] > 0) {
+		if($helper->getBackendUser()->workspace > 0 && $row['t3ver_wsid'] > 0) {
 			$where .= 'AND t3ver_wsid = ' . $row['t3ver_wsid'];
 		}
 		$where .= ' AND colPos = -1 AND tx_gridelements_container IN (' . $row['uid'] . ',' . $specificIds['uid'] . ') AND tx_gridelements_columns=' . $colPos . $showHidden . $deleteClause . $showLanguage;
@@ -336,30 +336,40 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 		}
 
 		$gridContent[$colPos] .= '
-			<div class="t3-page-ce-wrapper">
-				<div class="t3-page-ce-dropzone">
-					<div class="t3-page-ce-wrapper-new-ce">
-						<a href="#" onclick="' . htmlspecialchars($newParams) . '" title="' . $GLOBALS['LANG']->getLL('newInColumn', TRUE) . '">' . IconUtility::getSpriteIcon('actions-document-new') . '</a>
+			<div data-colpos="' . $colPos . '" data-language-uid="' . $row['sys_language_uid'] . '" class="t3js-sortable t3js-sortable-lang t3js-sortable-lang-' . $row['sys_language_uid'] . ' t3-page-ce-wrapper ui-sortable">
+				<div class="t3-page-ce t3js-page-ce" data-container="' . $row['uid'] . '" id="' . str_replace('.', '', uniqid('', TRUE)) . '">
+					<div class="t3js-page-new-ce t3-page-ce-wrapper-new-ce" id="colpos-' . $colPos . '-' . str_replace('.', '', uniqid('', TRUE)) . '">
+						<a href="#" onclick="' . htmlspecialchars($newParams) . '" title="' . $GLOBALS['LANG']->getLL('newContentElement', TRUE) . '" class="btn btn-default btn-sm">' . IconUtility::getSpriteIcon('actions-document-new') . ' ' . $GLOBALS['LANG']->getLL('content', TRUE) . '</a>
 					</div>
-			</div>';
+					<div class="t3-page-ce-dropzone-available t3js-page-ce-dropzone-available"></div>
+				</div>';
 
 		if (count($items) > 0) {
 			foreach ($items as $itemRow) {
 				if (is_array($itemRow)) {
 					$statusHidden = $parentObject->isDisabled('tt_content', $itemRow) ? ' t3-page-ce-hidden' : '';
 					$gridContent[$colPos] .= '
-				<div class="t3-page-ce' . $statusHidden . '"><div class="t3-page-ce-dragitem">' . $this->renderSingleElementHTML($parentObject, $itemRow) . '</div></div>';
+				<div class="t3-page-ce t3js-page-ce t3js-page-ce-sortable' . $statusHidden . '" data-table="tt_content" data-uid="' . $itemRow['uid'] . '" data-ctype="' . $itemRow['CType'] . '"><div class="t3-page-ce-dragitem" id="' . str_replace('.', '', uniqid('', TRUE)) . '">' . $this->renderSingleElementHTML($parentObject, $itemRow) . '</div></div>';
 					// New content element:
 					if ($parentObject->option_newWizard) {
-						$onClick = 'window.location.href=\'db_new_content_el.php?id=' . $itemRow['pid'] . '&sys_language_uid=' . $itemRow['sys_language_uid'] . '&colPos=' . $itemRow['colPos'] . '&uid_pid=' . -$itemRow['uid'] . '&returnUrl=' . rawurlencode(GeneralUtility::getIndpEnv('REQUEST_URI')) . '\';';
+						$moduleUrlParameters = array(
+							'id' => $itemRow['pid'],
+							'sys_language_uid' => $itemRow['sys_language_uid'],
+							'colPos' => $itemRow['colPos'],
+							'uid_pid' => -$itemRow['uid']
+						);
+						$onClick = 'window.location.href=\'' . BackendUtility::getModuleUrl('new_content_element', $moduleUrlParameters, '') . '&returnUrl=' . rawurlencode(GeneralUtility::getIndpEnv('REQUEST_URI')) . '\';';
 					} else {
 						$params = '&edit[tt_content][' . -$itemRow['uid'] . ']=new';
 						$onClick = BackendUtility::editOnClick($params, $this->backPath);
 					}
 					$gridContent[$colPos] .= '
-				<div class="t3-page-ce-dropzone"><div class="t3-page-ce-new-ce">
-					<a href="#" onclick="' . htmlspecialchars($onClick) . '" title="' . $GLOBALS['LANG']->getLL('newRecordHere', 1) . '">' . IconUtility::getSpriteIcon('actions-document-new') . '</a>
-				</div></div></div>
+				<div class="t3js-page-new-ce t3-page-ce-wrapper-new-ce" id="colpos-' . $itemRow['tx_gridelements_columns'] . '-page-' . $itemRow['pid'] . '-gridcontainer-' . $itemRow['tx_gridelements_container'] .
+						'-' . str_replace('.', '', uniqid('', TRUE)) . '">
+					<a href="#" onclick="' . htmlspecialchars($onClick) . '" title="' . $GLOBALS['LANG']->getLL('newContentElement', TRUE) . '" class="btn btn-default btn-sm">' . IconUtility::getSpriteIcon('actions-document-new') . ' ' . $GLOBALS['LANG']->getLL('content', TRUE) . '</a>
+				</div>
+				<div class="t3-page-ce-dropzone-available t3js-page-ce-dropzone-available"></div>
+				</div>
 					';
 					$editUidList[$colPos] .= $editUidList[$colPos] ? ',' . $itemRow['uid'] : $itemRow['uid'];
 				}
@@ -407,13 +417,13 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 			$icons .= '<a href="#" class="toggle-content toggle-down" title="' . $this->lang->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tx_gridelements_togglecontent') . '">' . IconUtility::getSpriteIcon('actions-move-to-bottom') . '</a>';
 		}
 		if (strlen($icons)) {
-			$icons = '<div class="t3-page-colHeader-icons">' . $icons . '</div>';
+			$icons = '<div class="t3-page-column-header-icons">' . $icons . '</div>';
 		}
 
 		// Create header row:
-		$out = '<div class="t3-page-colHeader t3-row-header">
+		$out = '<div class="t3-page-column-header">
 					' . $icons . '
-					<div class="t3-page-colHeader-label">' . htmlspecialchars($colName) . '</div>
+					<div class="t3-page-column-header-label">' . htmlspecialchars($colName) . '</div>
 				</div>';
 		return $out;
 	}
@@ -432,14 +442,21 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 		$specificIds = Helper::getInstance()
 			->getSpecificIds($row);
 
-		$grid = '<div class="t3-gridContainer' . ($layoutSetup['frame'] ? ' t3-gridContainer-framed t3-gridContainer-' . $layoutSetup['frame'] : '') . ($layoutSetup['top_level_layout'] ? ' t3-gridTLContainer' : '') . '">';
-		if ($layoutSetup['frame']) {
-			$grid .= '<h4 class="t3-gridContainer-title-' . $layoutSetup['frame'] . '">' . $this->lang->sL($layoutSetup['title'], TRUE) . '</h4>';
+		$grid = '<div class="t3-grid-container t3-grid-element-container' . ($layoutSetup['frame'] ? ' t3-grid-container-framed t3-grid-container-' . $layoutSetup['frame'] : '') . ($layoutSetup['top_level_layout'] ? ' t3-grid-tl-container' : '') . '">';
+		if ($layoutSetup['frame'] || $GLOBALS['BE_USER']->uc['showGridInformation'] === 1) {
+			$grid .= '<h4 class="t3-grid-container-title-' . (int)$layoutSetup['frame'] . '">' .
+				BackendUtility::wrapInHelp(
+					'tx_gridelements_backend_layouts',
+					'title',
+					$this->lang->sL($layoutSetup['title']),
+					array(
+						'title' => $this->lang->sL($layoutSetup['title']),
+						'description' => $this->lang->sL($layoutSetup['description'])
+					)
+				)
+				. '</h4>';
 		}
-        if ($GLOBALS['BE_USER']->uc['showGridInformation'] === 1) {
-            $grid .= '<span class="t3-help-link" href="#" data-title="' . htmlspecialchars($this->lang->sL($layoutSetup['title'])) . '" data-description="' . htmlspecialchars($this->lang->sL($layoutSetup['description'])) . '"><abbr class="t3-help-teaser">' . $this->lang->sL($layoutSetup['title'], TRUE) . '</abbr></span>';
-        }
-		$grid .= '<table border="0" cellspacing="1" cellpadding="4" width="100%" height="100%" class="t3-page-columns t3-gridTable">';
+		$grid .= '<table border="0" cellspacing="0" cellpadding="0" width="100%" height="100%" class="t3-page-columns t3-grid-table">';
 		// add colgroups
 		$colCount = 0;
 		$rowCount = 0;
@@ -487,12 +504,12 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 				$grid .= '<td valign="top"' .
 					(isset($columnConfig['colspan']) ? ' colspan="' . $colSpan . '"' : '') .
 					(isset($columnConfig['rowspan']) ? ' rowspan="' . $rowSpan . '"' : '') .
-					'id="column-' . $specificIds['uid'] . 'x' . $columnKey . '" class="t3-gridCell t3-page-column t3-page-column-' . $columnKey .
-					(!isset($columnConfig['colPos']) || $columnConfig['colPos'] === '' ? ' t3-gridCell-unassigned' : '') .
-					(isset($columnConfig['colspan']) && $columnConfig['colPos'] !== '' ? ' t3-gridCell-width' . $colSpan : '') .
-					(isset($columnConfig['rowspan']) && $columnConfig['colPos'] !== '' ? ' t3-gridCell-height' . $rowSpan : '') . ' ' .
-					($layoutSetup['horizontal'] ? ' t3-gridCell-horizontal' : '') .
-					(!empty($allowedCTypes) ? ' ' . join(' ', $allowedCTypes) : ' t3-allow-all') . '">';
+					'data-colpos="' . $columnKey . '" id="column-' . $specificIds['uid'] . 'x' . $columnKey . '" class="t3-grid-cell t3js-page-column t3-page-column t3-page-column-' . $columnKey .
+					(!isset($columnConfig['colPos']) || $columnConfig['colPos'] === '' ? ' t3-grid-cell-unassigned' : '') .
+					(isset($columnConfig['colspan']) && $columnConfig['colPos'] !== '' ? ' t3-grid-cell-width' . $colSpan : '') .
+					(isset($columnConfig['rowspan']) && $columnConfig['colPos'] !== '' ? ' t3-grid-cell-height' . $rowSpan : '') . ' ' .
+					($layoutSetup['horizontal'] ? ' t3-grid-cell-horizontal' : '') .
+					(count($allowedCTypes) ? ' ' . join(' ', $allowedCTypes) : ' t3-allow-all') . '">';
 
 				$grid .= ($GLOBALS['BE_USER']->uc['hideColumnHeaders'] ? '' : $head[$columnKey]) . $gridContent[$columnKey];
 				$grid .= '</td>';
@@ -560,8 +577,9 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 	 * @return string
 	 */
 	public function renderSingleElementHTML(PageLayoutView $parentObject, $itemRow) {
-		$singleElementHTML = $parentObject->tt_content_drawHeader($itemRow, $parentObject->tt_contentConfig['showInfo'] ? 15 : 5, $parentObject->defLangBinding && $parentObject->lP > 0, TRUE);
-		$singleElementHTML .= '<div ' . (!empty($itemRow['_ORIG_uid']) ? ' class="ver-element"' : '') . '><div class="t3-page-ce-body-inner t3-page-ce-body-inner-' . $itemRow['CType'] . '">' . $parentObject->tt_content_drawItem($itemRow) . '</div></div>';
+		$singleElementHTML = $parentObject->tt_content_drawHeader($itemRow, $parentObject->tt_contentConfig['showInfo'] ? 15 : 5, $parentObject->defLangBinding && $parentObject->lP > 0, TRUE, TRUE);
+		$isRTE = $parentObject->RTE && $parentObject->isRTEforField('tt_content', $itemRow, 'bodytext');
+		$singleElementHTML .= '<div ' . (!empty($itemRow['_ORIG_uid']) ? ' class="ver-element"' : '') . '><div class="t3-page-ce-body-inner t3-page-ce-body-inner-' . $itemRow['CType'] . '">' . $parentObject->tt_content_drawItem($itemRow, $isRTE) . '</div></div>';
 		$footerContent = '';
 		// Get processed values:
 		$info = array();

@@ -62,13 +62,13 @@ class MoveRecord extends AbstractDataHandler {
 		if ($table === 'tt_content') {
 			$targetAvailable = TRUE;
 			$record = BackendUtility::getRecordWSOL('tt_content', $uid, 'uid');
-			$uid = (int)$record['_ORIG_uid'];
+			$origUid = (int)$record['_ORIG_uid'];
 
-			$this->init($table, $uid, $parentObj);
+			$this->init($table, $origUid, $parentObj);
 
 			if ($table === 'tt_content' && !$this->getTceMain()->isImporting) {
-				$cmd = GeneralUtility::_GET('cmd');
-				$originalElement = BackendUtility::getRecordWSOL('tt_content', $uid, 'tx_gridelements_container');
+				$cmd = GeneralUtility::_GP('cmd');
+				$originalElement = BackendUtility::getRecordWSOL('tt_content', $origUid, 'tx_gridelements_container');
 				$containerUpdateArray[$originalElement['tx_gridelements_container']] = -1;
 				if (strpos($cmd['tt_content'][$uid]['move'], 'x') !== FALSE) {
 					$targetAvailable = $this->updateTargetContainerAndResolveTargetId($cmd, $uid, $destPid, $containerUpdateArray);
@@ -129,7 +129,6 @@ class MoveRecord extends AbstractDataHandler {
 						'tx_gridelements_columns' => 0
 					);
 					$setPid = $targetElement['pid'];
-					// $updateArray['header'] = $uid . ' # ' . $pointerUid . ' # ' . $origDestPid . ' mit X equal';
 				} else {
 					$GLOBALS['TCA']['tt_content']['ctrl']['copyAfterDuplFields'] = str_replace('colPos,', '', $GLOBALS['TCA']['tt_content']['ctrl']['copyAfterDuplFields']);
 					$updateArray = array(
@@ -138,7 +137,6 @@ class MoveRecord extends AbstractDataHandler {
 						'tx_gridelements_container' => $targetContainer,
 						'tx_gridelements_columns' => $column
 					);
-					// $updateArray['header'] = $uid . ' # ' . $pointerUid . ' # ' . $origDestPid . ' mit X unequal';
 				}
 			} else {
 				$updateArray = array(
@@ -146,9 +144,7 @@ class MoveRecord extends AbstractDataHandler {
 					'tx_gridelements_container' => $targetElement['tx_gridelements_container'],
 					'tx_gridelements_columns' => $targetElement['tx_gridelements_columns']
 				);
-				// $updateArray['header'] = $uid . ' # ' . $pointerUid . ' # ' . $origDestPid . ' ohne X';
 			}
-			// $updateArray['bodytext'] = $cmd['tt_content'][$pointerUid]['move'];
 			$this->getTceMain()->updateDB('tt_content', $originalUid, $updateArray);
 			if($setPid) {
 				$updateArray['pid'] = $setPid;

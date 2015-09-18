@@ -46,21 +46,8 @@ class PageRenderer {
 	 * @return    void
 	 */
 	public function addJSCSS($parameters, &$pageRenderer) {
-		if ($GLOBALS['MCONF']['name'] === 'web_layout' || $GLOBALS['MCONF']['name'] === 'web_list') {
-			$this->addJS($parameters, $pageRenderer);
-			$this->addCSS($parameters, $pageRenderer);
-		}
-	}
-
-	/**
-	 * method that adds JS files within the page renderer
-	 *
-	 * @param    array                             $parameters   : An array of available parameters while adding JS to the page renderer
-	 * @param    \TYPO3\CMS\Core\Page\PageRenderer $pageRenderer : The parent object that triggered this hook
-	 *
-	 * @return    void
-	 */
-	protected function addJS($parameters, &$pageRenderer) {
+		$pageRenderer->loadRequireJsModule('TYPO3/CMS/Gridelements/GridElementsDragDrop');
+		$pageRenderer->loadRequireJsModule('TYPO3/CMS/Gridelements/GridElementsDragInWizard');
 
 		$formprotection = FormProtectionFactory::get();
 
@@ -89,10 +76,7 @@ class PageRenderer {
 				$copyURL = str_replace('&amp;', '&', htmlspecialchars($GLOBALS['SOBE']->doc->issueCommand($copyParams, 1)));
 
 				// add JavaScript library
-				$pageRenderer->addJsFile($GLOBALS['BACK_PATH'] . ExtensionManagementUtility::extRelPath('gridelements') . 'Resources/Public/Backend/JavaScript/GridElementsDD.js', $type = 'text/javascript', $compress = TRUE, $forceOnTop = FALSE, $allWrap = '');
-
-				// add JavaScript library
-				$pageRenderer->addJsFile($GLOBALS['BACK_PATH'] . ExtensionManagementUtility::extRelPath('gridelements') . 'Resources/Public/Backend/JavaScript/GridElementsListView.js', $type = 'text/javascript', $compress = TRUE, $forceOnTop = FALSE, $allWrap = '');
+				// $pageRenderer->addJsFile($GLOBALS['BACK_PATH'] . ExtensionManagementUtility::extRelPath('gridelements') . 'Resources/Public/Backend/JavaScript/dbNewContentElWizardFixDTM.js', $type = 'text/javascript', $compress = TRUE, $forceOnTop = FALSE, $allWrap = '');
 
 				if (!$pageRenderer->getCharSet()) {
 					$pageRenderer->setCharSet($GLOBALS['LANG']->charSet ? $GLOBALS['LANG']->charSet : 'utf-8');
@@ -107,7 +91,7 @@ class PageRenderer {
 				// pull locallang_db.xml to JS side - only the tx_gridelements_js-prefixed keys
 				$pageRenderer->addInlineLanguageLabelFile('EXT:gridelements/Resources/Private/Language/locallang_db.xml', 'tx_gridelements_js');
 
-				$pRaddExtOnReadyCode = '
+				$pAddExtOnReadyCode = '
 					TYPO3.l10n = {
 						localize: function(langKey){
 							return TYPO3.lang[langKey];
@@ -140,7 +124,7 @@ class PageRenderer {
 									} else {
 										$classes = 't3-allow-all';
 									}
-									$allowedCTypesClassesByColPos[] = $col['colPos'] . ':' . trim($classes);
+									$allowedCTypesClassesByColPos[$col['colPos']] .=  ' ' . trim($classes);
 								}
 							}
 						}
@@ -148,44 +132,24 @@ class PageRenderer {
 				}
 
 				// add Ext.onReady() code from file
-				$pageRenderer->addExtOnReadyCode(// add some more JS here
-				             $pRaddExtOnReadyCode . "
-						top.pageColumnsAllowedCTypes = '" . join('|', $allowedCTypesClassesByColPos) . "';
-						top.pasteURL = '" . $pasteURL . "';
-						top.moveURL = '" . $moveURL . "';
-						top.copyURL = '" . $copyURL . "';
-						top.pasteTpl = '" . str_replace('&redirect=1', '', str_replace('DDcopy=1', 'DDcopy=1&reference=DD_REFYN', $copyURL)) . "';
-						top.DDtceActionToken = '" . $formprotection->generateToken('tceAction') . "';
-						top.DDtoken = '" . $formprotection->generateToken('editRecord') . "';
-						top.DDpid = '" . (int)GeneralUtility::_GP('id') . "';
-						top.DDclipboardfilled = '" . ($clipBoardHasContent ? $clipBoardHasContent : 'false') . "';
-						top.DDclipboardElId = '" . $intFirstCBEl . "';
-					" . // replace placeholder for detail info on draggables
-				             str_replace(array(
-						             'top.skipDraggableDetails = 0;',
-						             // set extension path
-						             'insert_ext_baseurl_here',
-						             // set current server time
-						             'insert_server_time_here',
-						             // additional sprites
-						             'top.geSprites = {};',
-						             // back path
-						             "top.backPath = '';"
-					             ), array(
-						             $GLOBALS['BE_USER']->uc['dragAndDropHideNewElementWizardInfoOverlay'] ? 'top.skipDraggableDetails = true;' : 'top.skipDraggableDetails = false;',
-						             // set extension path
-						             GeneralUtility::locationHeaderUrl('/' . ExtensionManagementUtility::siteRelPath('gridelements')),
-						             // set current server time, format matches "+new Date" in JS, accuracy in seconds is fine
-						             time() . '000',
-						             // add sprite icon classes
-						             "top.geSprites = {
-							copyfrompage: '" . IconUtility::getSpriteIconClasses('extensions-gridelements-copyfrompage') . "',
-								pastecopy: '" . IconUtility::getSpriteIconClasses('extensions-gridelements-pastecopy') . "',
-								pasteref: '" . IconUtility::getSpriteIconClasses('extensions-gridelements-pasteref') . "'
-							};",
-						             "top.backPath = '" . $GLOBALS['BACK_PATH'] . "';"
-					             ), // load content from file
-					             file_get_contents(ExtensionManagementUtility::extPath('gridelements') . 'Resources/Public/Backend/JavaScript/GridElementsDD_onReady.js')), TRUE);
+				$pAddExtOnReadyCode .= "
+				top.pageColumnsAllowedCTypes = " . json_encode($allowedCTypesClassesByColPos) . ";
+				top.pasteURL = '" . $pasteURL . "';
+				top.moveURL = '" . $moveURL . "';
+				top.copyURL = '" . $copyURL . "';
+				top.pasteTpl = '" . str_replace('&redirect=1', '', str_replace('DDcopy=1', 'DDcopy=1&reference=DD_REFYN', $copyURL)) . "';
+				top.skipDraggableDetails = " . ($GLOBALS['BE_USER']->uc['dragAndDropHideNewElementWizardInfoOverlay'] ? 'true;' : 'false;') . ";
+				top.geSprites = {
+				copyfrompage: '" . IconUtility::getSpriteIconClasses('extensions-gridelements-copyfrompage') . "',
+					pastecopy: '" . IconUtility::getSpriteIconClasses('extensions-gridelements-pastecopy') . "',
+					pasteref: '" . IconUtility::getSpriteIconClasses('extensions-gridelements-pasteref') . "'
+				};
+				top.backPath = '" . $GLOBALS['BACK_PATH'] . "'";
+
+				$pageRenderer->addJsInlineCode(// add some more JS here
+					'gridelementsExtOnReady',
+					$pAddExtOnReadyCode
+				);
 			}
 		}
 	}
@@ -201,8 +165,8 @@ class PageRenderer {
 	protected function addCSS($parameters, &$pageRenderer) {
 		if (count($parameters['cssFiles'])) {
 			// get configuration
-			$confArr = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['gridelements']);
-			$filename = $confArr['additionalStylesheet'];
+			$this->confArr = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['gridelements']);
+			$filename = $this->confArr['additionalStylesheet'];
 			if ($filename) {
 				// evaluate filename
 				if (substr($filename, 0, 4) === 'EXT:') { // extension

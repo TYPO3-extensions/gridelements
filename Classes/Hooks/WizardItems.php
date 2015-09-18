@@ -61,7 +61,7 @@ class WizardItems implements \TYPO3\CMS\Backend\Wizard\NewContentElementWizardHo
 				$pageUid = (int)$triggerElement['pid'];
 			}
 			$this->layoutSetup = GeneralUtility::makeInstance('GridElementsTeam\\Gridelements\\Backend\\LayoutSetup')
-			                                   ->init($pageUid);
+				->init($pageUid);
 		}
 	}
 
@@ -206,7 +206,8 @@ class WizardItems implements \TYPO3\CMS\Backend\Wizard\NewContentElementWizardHo
 
 			// traverse the gridelements and create wizard item for each gridelement
 			foreach ($gridItems as $key => $item) {
-				$wizardItems['gridelements_grid_' . $item['uid']] = array(
+				$itemIdentifier = $item['alias'] ? $item['alias'] : $item['uid'];
+				$wizardItems['gridelements_' . $itemIdentifier] = array(
 					'title'                => $item['title'],
 					'description'          => $item['description'],
 					'params'               => ($item['icon'][1] ? '&largeIconImage=' . $item['icon'][1] : '') . '&defVals[tt_content][CType]=gridelements_pi1&defVals[tt_content][tx_gridelements_backend_layout]=' . $item['uid'] . ($item['tll'] ? '&isTopLevelLayout' : ''),
@@ -216,16 +217,16 @@ class WizardItems implements \TYPO3\CMS\Backend\Wizard\NewContentElementWizardHo
 					),
 				);
 				if ($item['icon'][0]) {
-					$wizardItems['gridelements_grid_' . $item['uid']]['icon'] = $item['icon'][0];
+					$wizardItems['gridelements_' . $itemIdentifier]['icon'] = $item['icon'][0];
 				} else {
-					$wizardItems['gridelements_grid_' . $item['uid']]['icon'] = \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath('gridelements') . 'Resources/Public/Backend/Images/new_content_el.gif';
+					$wizardItems['gridelements_' . $itemIdentifier]['icon'] = \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath('gridelements') . 'Resources/Public/Backend/Images/new_content_el.gif';
 				}
 				/*
 				if($container != 0) {
-					$wizardItems['gridelements_grid_' . $item['uid']]['tx_gridelements_container'] = $container;
+					$wizardItems['gridelements_' . $item['uid']]['tx_gridelements_container'] = $container;
 				}
 				if($column != 0) {
-					$wizardItems['gridelements_grid_' . $item['uid']]['tx_gridelements_columns'] = $column;
+					$wizardItems['gridelements_' . $item['uid']]['tx_gridelements_columns'] = $column;
 				}
 				*/
 			}
