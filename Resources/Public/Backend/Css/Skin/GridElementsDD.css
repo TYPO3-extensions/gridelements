@@ -1,169 +1,206 @@
 .x-dd-dragger {
-	display: inline-block;
-	position: relative;
-	background: red;
-	opacity: 0.5;
-	filter: alpha(opacity=50);
+  display: inline-block;
+  position: relative;
+  background: red;
+  opacity: 0.5;
+  filter: alpha(opacity=50);
 }
 .x-dd-tpl {
-	display: none;
+  display: none;
 }
 .x-dd-makedroptarget {
 }
 
 .x-dd-droptargetarea {
-	visibility: hidden;
-	color: #73ab61;
-	background-color: #c8d9c3;
-	text-align: center;
-	position: relative;
-	margin: 0;
-	line-height: 25px;
-	height: 25px;
-	border: 1px dotted #73ab61;
-	box-sizing: border-box;
-	-moz-box-sizing: border-box;
+  visibility: hidden;
+  color: #73ab61;
+  background-color: #c8d9c3;
+  text-align: center;
+  position: relative;
+  margin: 0px 0px 0px 0px;
+  line-height: 25px;
+  height: 25px;
+  border: 1px dotted #73ab61;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
 }
 .x-dd-droptargetarea.x-dd-showdroptarget {
-	visibility: visible;
-	z-index: 10000;
+  visibility: visible;
+  z-index: 10000;
 }
 .x-dd-droptargetarea.x-dd-showdroptarget.x-dd-overdroparea {
-	background: #73ab61;
-	color: #ffffff;
+  background: #73ab61;
+  color: #ffffff;
 }
 .x-dd-dragging {
-	opacity: 0.6;
-	filter: alpha(opacity=60);
-	z-index: 100000;
+  opacity: 0.6;
+  filter: alpha(opacity=60);
+  z-index: 100000;
 }
 .x-dd-dragging .t3-page-ce-dropzone,
 .x-dd-dragging .x-dd-droptargetarea {
-	visibility: hidden;
-	display: none;
+  visibility: hidden;
+  display: none;
 }
 
 .x-dd-defaulttpl {
-	background: white;
-	color: red;
-	font-weight: bold;
+  background: white;
+  color: red;
+  font-weight: bold;
 }
 .x-dd-draggableitem {
-	display: inline-block;
+  display: inline-block;
 }
 .x-dd-draggableitem div {
-	display: inline-block;
-	vertical-align: top;
-	margin-right: 10px;
+  display: inline-block;
+  vertical-align: top;
+  margin-right: 10px;
 }
 .x-dd-droptargetgroup {
-	background: url('../../Images/clear.gif');
+  background: url('../../Images/clear.gif');
 }
 
-#x-dd-draggablecontainer {
-	visibility: hidden;
-	position: fixed;
-	height: auto;
-	top: 65px;
-	right: 38px;
-	max-width: 90%;
- 	z-index: 20000;
-	/* setting overflow makes items disappear when dragging
-	 * solution:  when dragging starts, put the element right after body in DOM
-	 */
+#new-element-drag-in-wizard {
+  position: fixed;
+  height: auto;
+  top: 10px;
+  right: 10px;
+  max-width: 90%;
+  z-index: 20000;
+  float: right;
+  /* setting overflow makes items disappear when dragging
+   * solution:  when dragging starts, put the element right after body in DOM
+   */
 }
 
-#x-dd-draggablecontainer .typo3-dyntabmenu-tabs {
-	margin: 0;
-	float: right;
+#new-element-drag-in-wizard .media-body {
+  width: auto;
 }
 
-#x-dd-draggablecontainer .typo3-dyntabmenu-tabs a {
-    padding: 2px 10px;
-    font-weight: normal;
+#new-element-drag-in-wizard .nav-tabs {
+  margin: 0px;
+  text-align: right;
 }
 
-#x-dd-draggablecontainer .typo3-dyntabmenu-tabs a img {
-    display: none;
+#new-element-drag-in-wizard .nav-tabs li {
+  display: inline-block;
+  float: none;
 }
 
-#x-dd-draggablecontainer .typo3-dyntabmenu-divs {
-	margin: 0 1px 0 0;
-	clear: both;
+#new-element-drag-in-wizard .nav-tabs a {
+  padding: 6px 12px;
+  font-weight: normal;
 }
 
-#x-dd-draggablecontainer .typo3-dyntabmenu-divs:hover {
-	min-height: 122px;
+#new-element-drag-in-wizard .nav-tabs a img {
+  display: none;
+}
+
+#new-element-drag-in-wizard .tab-content {
+  margin: 0px 1px 0px 0px;
+  clear: both;
+}
+
+#new-element-drag-in-wizard .tab-content:hover {
+  min-height: 122px;
+}
+
+#new-element-drag-in-wizard .nav-tabs {
+  margin: 0px;
+  text-align: right;
+}
+
+#new-element-drag-in-wizard .nav-tabs li {
+  display: inline-block;
+  float: none;
+}
+
+#new-element-drag-in-wizard .nav-tabs a {
+  padding: 6px 12px;
+  font-weight: normal;
+}
+
+#new-element-drag-in-wizard .nav-tabs a img {
+  display: none;
+}
+
+#new-element-drag-in-wizard .tab-content {
+  margin: 0px 1px 0px 0px;
+  clear: both;
+}
+
+#new-element-drag-in-wizard .tab-content:hover {
+  min-height: 122px;
 }
 
 #x-dd-draggablecontainer.dragging-active .typo3-dyntabmenu-divs:hover {
-	min-height: 0;
+  min-height: 0px;
 }
 
 #x-dd-draggablecontainer .typo3-dyntabmenu-divs .c-tablayer {
-	display: block;
-	width: 100%;
-	margin: 0 12px 0 2px;
+  display: block;
+  width: 100%;
+  margin: 0px 12px 0px 2px;
 }
 
 #x-dd-draggablecontainer .typo3-dyntabmenu-divs .x-dd-new-element-link {
-	display: inline-block;
-	vertical-align: top;
-	margin:  0;
-	padding: 7px 0 2px 5px;
+  display: inline-block;
+  vertical-align: top;
+  margin:  0px;
+  padding: 7px 0px 2px 5px;
 }
 
 #x-dd-draggablecontainer .typo3-dyntabmenu-divs a {
-	display: inline-block;
-	vertical-align: top;
-	margin:  1px 0 0 0;
-	padding: 2px 0 2px 3px;
+  display: inline-block;
+  vertical-align: top;
+  margin:  1px 0px 0px 0px;
+  padding: 2px 0px 2px 3px;
 }
 
 #x-dd-draggablecontainer .typo3-dyntabmenu-divs a img {
-	margin: 0;
+  margin: 0px;
 }
 
 #x-dd-draggablecontainer .typo3-dyntabmenu-divs a.x-dd-draggableitem img {
-	width: 24px;
-	height: 24px;
+  width: 24px;
+  height: 24px;
 }
 
 #x-dd-draggablecontainer .typo3-dyntabmenu-divs .c-tablayer div {
-	cursor: pointer;
+  cursor: pointer;
 }
 .x-dd-draggableiteminfo {
-	width: 90%;
-	margin: 0;
+  width: 90%;
+  margin: 0px;
 }
 .x-dd-draggableiteminfo > div {
-	width: 90%;
-	margin: 0;
-	display: inline-block;
+  width: 90%;
+  margin: 0px;
+  display: inline-block;
 }
 .x-dd-draggableiteminfo > div > div {
-    padding: 0 5px 10px 0;
-	display: inline-block;
-	width: 70%;
-	max-width: 500px;
+  padding: 0px 5px 10px 0px;
+  display: inline-block;
+  width: 70%;
+  max-width: 500px;
 }
 .x-dd-draggableiteminfo > br {
-	clear: both;
-	line-height: 1px;
-	font-size: 1px;
-	height: 1px;
+  clear: both;
+  line-height: 1px;
+  font-size: 1px;
+  height: 1px;
 }
 .x-dd-draggableiteminfoimg {
-	margin: 0 0 10px 10px;
-	width: auto;
-	height: 68px;
-	display: block;
-	float: left;
+  margin: 0px 0px 10px 10px;
+  width: auto;
+  height: 68px;
+  display: block;
+  float: left;
 }
 .x-dd-draggableiteminfotext {
-	margin: 0 0 10px 10px;
+  margin: 0px 0px 10px 10px;
 }
 
 .t3-dd-spacer {
-	display: inline-block;
+  display: inline-block;
 }

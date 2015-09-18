@@ -35,10 +35,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  ***************************************************************/
 class PreProcessFieldArray extends AbstractDataHandler {
 
-	protected $defVals;
-
-	protected $overrideVals;
-
 	/**
 	 * Function to set the colPos of an element depending on
 	 * whether it is a child of a parent container or not
@@ -72,7 +68,6 @@ class PreProcessFieldArray extends AbstractDataHandler {
 	 * @return void
 	 */
 	public function processFieldArrayForTtContent(array &$fieldArray) {
-		$pid = 0;
 		if ($this->getTable() === 'tt_content') {
 			$pid = (int)GeneralUtility::_GET('DDinsertNew');
 
@@ -145,7 +140,7 @@ class PreProcessFieldArray extends AbstractDataHandler {
 		// Fetch default values if a previous record exists
 		if ($pid < 0 && $GLOBALS['TCA']['tt_content']['ctrl']['useColumnsForDefaultValues']) {
 			// Fetches the previous record:
-			$res = $this->databaseConnection->exec_SELECTquery('*', 'tt_content', 'uid=' . abs($id) . BackendUtility::deleteClause('tt_content'));
+			$res = exec_SELECTquery('*', 'tt_content', 'uid=' . abs($id) . BackendUtility::deleteClause('tt_content'));
 			if ($row = $this->databaseConnection->sql_fetch_assoc($res)) {
 				// Gets the list of fields to copy from the previous record.
 				$fArr = explode(',', $GLOBALS['TCA']['tt_content']['ctrl']['useColumnsForDefaultValues']);

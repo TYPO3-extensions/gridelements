@@ -145,14 +145,13 @@ class MoveRecord extends AbstractDataHandler {
 	 */
 	public function execute_moveRecord_afterAnotherElementPostProcess($table, $uid, $destPid, $origDestPid, $moveRec, $updateFields, \TYPO3\CMS\Core\DataHandling\DataHandler &$parentObj) {
 		if ($table === 'tt_content') {
-			$movedRecord = BackendUtility::getRecordWSOL('tt_content', $uid, 'uid,t3ver_oid,t3ver_move_id,l18n_parent');
+			$movedRecord = BackendUtility::getRecordWSOL('tt_content', $uid, 'uid,t3ver_oid,t3ver_move_id');
 			$targetElement = BackendUtility::getRecordWSOL('tt_content', -$origDestPid, 'uid,pid,colPos,tx_gridelements_container,tx_gridelements_columns');
 			$targetContainer = (int)($targetElement['t3ver_oid'] ? $targetElement['t3ver_oid'] : $targetElement['uid']);
 
 			$this->init($table, $uid, $parentObj);
 			$cmd = GeneralUtility::_GET('cmd');
 
-			$setPid = 0;
 			if (strpos($cmd['tt_content'][$commandUid]['move'], 'x') !== FALSE) {
 				$target = explode('x', $cmd['tt_content'][$commandUid]['move']);
 				$column = (int)$target[1];
@@ -211,11 +210,11 @@ class MoveRecord extends AbstractDataHandler {
 			if (!isset($targetPage['uid'])) {
 				return FALSE;
 			}
+			$destPid = -$recordUid;
 		}
 		if ($targetUid !== $recordUid && (int)$target[0] < 0) {
 			$containerUpdateArray[$targetUid] += 1;
 		}
-		$destPid = -$recordUid;
 		return TRUE;
 	}
 
@@ -263,4 +262,27 @@ class MoveRecord extends AbstractDataHandler {
 		return $updateArray;
 	}
 
+	/**
+	 * create update array for split elements (tt_content)
+	 *
+	 * @param array $originalElement
+	 *
+	 * @return array UpdateArray
+	 * @deprecated	 Has been deprecated with Gridelements 3.1 and will be removed 2 minor versions later or with the next major version
+	 */
+	public function createUpdateArrayForContainerMove(array $originalElement) {
+		GeneralUtility::logDeprecatedFunction();
+		if ($originalElement['CType'] === 'gridelements_pi1') {
+			$this->getTceMain()->moveChildren = TRUE;
+		}
+
+		$updateArray = array(
+			'colPos'                    => 0,
+			'sorting'                   => 0,
+			'tx_gridelements_container' => 0,
+			'tx_gridelements_columns'   => 0
+		);
+
+		return $updateArray;
+	}
 }

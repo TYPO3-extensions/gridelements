@@ -44,7 +44,6 @@
 	Fixed: Issue #65766 Call page renderer hook in BE context only
 
 3.2.0 => 2015-04-17 Jo Hasenau <info@cybercraft.de>, Michael Schams <typo3@2015.trash.schams.net>
-	Fixed: Issue #66472 Check for existing language link before using split
 	Fixed: Issue #65533 Respect language settings when pointing to a referenced page
 	Fixed: Issue #65874 Only add the column settings to the layout if colPos exists
 	Added: Feature #55262 Add layout information plus CSH description to grid containers

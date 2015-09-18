@@ -22,17 +22,12 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 	/**
 	 * @var \TYPO3\CMS\Lang\LanguageService
 	 */
-	protected $lang;
+	var $lang;
 
 	/**
 	 * @var QueryGenerator
 	 */
 	protected $tree;
-
-	/**
-	 * @var string
-	 */
-	protected $backPath = '';
 
 	public function __construct() {
 		$this->lang = GeneralUtility::makeInstance('TYPO3\\CMS\\Lang\\LanguageService');
@@ -107,7 +102,6 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 				->cacheCurrentParent($gridContainerId, TRUE);
 		$layoutUid = $gridElement['tx_gridelements_backend_layout'];
 		$layout = $layoutSetup->getLayoutSetup($layoutUid);
-		$parserRows = NULL;
 		if (isset($layout['config']) && isset($layout['config']['rows.'])) {
 			$parserRows = $layout['config']['rows.'];
 		}
@@ -299,9 +293,8 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 			$showLanguage = '';
 		}
 
-		$where = '';
 		if($helper->getBackendUser()->workspace > 0 && $row['t3ver_wsid'] > 0) {
-			$where .= 'AND t3ver_wsid = ' . $row['t3ver_wsid'];
+			$where = 'AND t3ver_wsid = ' . $row['t3ver_wsid'];
 		}
 		$where .= ' AND colPos = -1 AND tx_gridelements_container IN (' . $row['uid'] . ',' . $specificIds['uid'] . ') AND tx_gridelements_columns=' . $colPos . $showHidden . $deleteClause . $showLanguage;
 
@@ -326,12 +319,11 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 	 *
 	 * @return void
 	 */
-	protected function renderSingleGridColumn(PageLayoutView $parentObject, &$items, &$colPos, &$gridContent, $row, &$editUidList) {
+	public function renderSingleGridColumn(PageLayoutView $parentObject, &$items, &$colPos, &$gridContent, $row, &$editUidList) {
 
 		$specificIds = Helper::getInstance()
 				->getSpecificIds($row);
 
-		$newParams = '';
 		if ($colPos < 32768) {
 			if ($row{'sys_language_uid'}) {
 				$language = (int)$row['sys_language_uid'];
@@ -418,7 +410,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 		if ($parentObject->tt_contentConfig['showCommands']) {
 			// Edit whole of column:
 			if ($editParams) {
-				$icons .= '<a href="#" onclick="' . htmlspecialchars(BackendUtility::editOnClick($editParams)) . '" title="' . $GLOBALS['LANG']->getLL('editColumn', TRUE) . '">' . IconUtility::getSpriteIcon('actions-document-open') . '</a>';
+				$icons .= '<a href="#" onclick="' . htmlspecialchars(BackendUtility::editOnClick($editParams, $parentObject->backPath)) . '" title="' . $GLOBALS['LANG']->getLL('editColumn', TRUE) . '">' . IconUtility::getSpriteIcon('actions-document-open') . '</a>';
 			}
 			$icons .= '<a href="#" class="toggle-content toggle-up" title="' . $this->lang->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tx_gridelements_togglecontent') . '">' . IconUtility::getSpriteIcon('actions-move-to-top') . '</a>';
 			$icons .= '<a href="#" class="toggle-content toggle-down" title="' . $this->lang->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tx_gridelements_togglecontent') . '">' . IconUtility::getSpriteIcon('actions-move-to-bottom') . '</a>';

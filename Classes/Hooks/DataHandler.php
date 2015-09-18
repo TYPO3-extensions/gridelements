@@ -84,8 +84,6 @@ class DataHandler {
 				$parentPage = $GLOBALS['TYPO3_DB']->exec_SELECTgetSingleRow('pid', 'tt_content', 'uid = ' . abs($positionArray[0]));
 				if ($parentPage['pid']) {
 					$pid = $parentPage['pid'];
-				} else {
-					$pid = 0;
 				}
 			} else {
 				$pid = (int)$positionArray[0];
