@@ -60,7 +60,6 @@ class PageRenderer {
 
 				$clipBoardHasContent = FALSE;
 
-				$pasteURL = '';
 				if (isset($clipObj->clipData['normal']['el']) && strpos(key($clipObj->clipData['normal']['el']), 'tt_content') !== FALSE) {
 					$pasteURL = str_replace('&amp;', '&', $clipObj->pasteUrl('tt_content', 'DD_PASTE_UID', 0));
 					if (isset($clipObj->clipData['normal']['mode'])) {
@@ -82,7 +81,6 @@ class PageRenderer {
 					$pageRenderer->setCharSet($GLOBALS['LANG']->charSet ? $GLOBALS['LANG']->charSet : 'utf-8');
 				}
 
-				$intFirstCBEl = '';
 				if (is_array($clipObj->clipData['normal']['el'])) {
 					$arrCBKeys = array_keys($clipObj->clipData['normal']['el']);
 					$intFirstCBEl = str_replace('tt_content|', '', $arrCBKeys[0]);
