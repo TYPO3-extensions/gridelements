@@ -282,7 +282,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 		$helper = Helper::getInstance();
 		$specificIds = $helper->getSpecificIds($row);
 
-		$parentObject->pidSelect = 'pid = ' . $specificIds['pid'];
+		$parentObject->pidSelect = 'pid = ' . $row['pid'];
 
 		if (!$parentObject->tt_contentConfig['languageMode']) {
 			$showLanguage = ' AND (sys_language_uid = -1 OR sys_language_uid=' . $parentObject->tt_contentConfig['sys_language_uid'] . ')';
@@ -297,7 +297,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 		}
 		$where .= ' AND colPos = -1 AND tx_gridelements_container IN (' . $row['uid'] . ',' . $specificIds['uid'] . ') AND tx_gridelements_columns=' . $colPos . $showHidden . $deleteClause . $showLanguage;
 
-		$queryParts = $parentObject->makeQueryArray('tt_content', $specificIds['pid'], $where);
+		$queryParts = $parentObject->makeQueryArray('tt_content', $row['pid'], $where);
 
 		// Due to the pid being "NOT USED" in makeQueryArray we have to reset pidSelect here
 		$parentObject->pidSelect = $originalPidSelect;

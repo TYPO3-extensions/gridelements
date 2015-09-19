@@ -50,25 +50,9 @@ abstract class AbstractDataHandler {
 	protected $databaseConnection;
 
 	/**
-	 * @var \TYPO3\CMS\Backend\Form\FormEngine
-	 */
-	protected $formEngine;
-
-	/**
 	 * @var \GridElementsTeam\Gridelements\Backend\LayoutSetup
 	 */
 	protected $layoutSetup;
-
-	/**
-	 * inject tce forms
-	 *
-	 * @param \TYPO3\CMS\Backend\Form\FormEngine $formEngine
-	 *
-	 * @return void
-	 */
-	public function injectTceForms(\TYPO3\CMS\Backend\Form\FormEngine $formEngine) {
-		$this->formEngine = $formEngine;
-	}
 
 	/**
 	 * inject layout setup
@@ -102,9 +86,6 @@ abstract class AbstractDataHandler {
 			}
 			$this->injectLayoutSetup(GeneralUtility::makeInstance('GridElementsTeam\\Gridelements\\Backend\\LayoutSetup')
 			                                                               ->init($pageUid));
-		}
-		if (!$this->formEngine instanceof \TYPO3\CMS\Backend\Form\FormEngine) {
-			$this->injectTceForms(GeneralUtility::makeInstance('TYPO3\\CMS\\Backend\\Form\\FormEngine'));
 		}
 	}
 
