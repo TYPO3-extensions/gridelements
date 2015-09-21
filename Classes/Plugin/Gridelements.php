@@ -46,8 +46,8 @@ class Gridelements extends ContentObjectRenderer {
 		// first we have to take care of possible flexform values containing additional information
 		// that is not available via DB relations. It will be added as "virtual" key to the existing data Array
 		// so that you can easily get the values with TypoScript
-		$this->initPiFlexForm();
-		$this->getPiFlexFormData();
+		$this->initPluginFlexForm();
+		$this->getPluginFlexFormData();
 
 		// now we have to find the children of this grid container regardless of their column
 		// so we can get them within a single DB query instead of doing a query per column
@@ -180,20 +180,20 @@ class Gridelements extends ContentObjectRenderer {
 	 * fetches values from the grid flexform and assigns them to virtual fields in the data array
 	 * @return void
 	 */
-	public function getPiFlexFormData() {
-		$piFlexForm = $this->cObj->data['pi_flexform'];
+	public function getPluginFlexFormData() {
+		$pluginFlexForm = $this->cObj->data['pi_flexform'];
 
-		if (is_array($piFlexForm) && is_array($piFlexForm['data'])) {
-			foreach ($piFlexForm['data'] as $sheet => $data) {
+		if (is_array($pluginFlexForm) && is_array($pluginFlexForm['data'])) {
+			foreach ($pluginFlexForm['data'] as $sheet => $data) {
 				foreach ((array)$data as $lang => $value) {
 					foreach ((array)$value as $key => $val) {
-						$this->cObj->data['flexform_' . $key] = $this->getFFvalue($piFlexForm, $key, $sheet);
+						$this->cObj->data['flexform_' . $key] = $this->getFlexFormValue($pluginFlexForm, $key, $sheet);
 					}
 				}
 			}
 		}
 
-		unset($piFlexForm);
+		unset($pluginFlexForm);
 	}
 
 	/**
@@ -317,7 +317,7 @@ class Gridelements extends ContentObjectRenderer {
 		unset($data['tx_gridelements_view_children']);
 		unset($data['tx_gridelements_view_columns']);
 
-		// Set parentgrid data for the first time
+		// Set parent grid data for the first time
 		$parentGridData = $this->setParentGridData($data);
 
 		// Now we can remove any parentgrid_parentgrid_ keys
@@ -436,7 +436,7 @@ class Gridelements extends ContentObjectRenderer {
 	 * @param string $field Field name to convert
 	 * @return void
 	 */
-	public function initPIflexForm($field = 'pi_flexform') {
+	public function initPluginFlexForm($field = 'pi_flexform') {
 		// Converting flexform data into array:
 		if (!is_array($this->cObj->data[$field]) && $this->cObj->data[$field]) {
 			$this->cObj->data[$field] = GeneralUtility::xml2array($this->cObj->data[$field]);
@@ -455,10 +455,10 @@ class Gridelements extends ContentObjectRenderer {
 	 * @param string $value Value pointer, eg. "vDEF"
 	 * @return string The content.
 	 */
-	public function getFFvalue($T3FlexForm_array, $fieldName, $sheet = 'sDEF', $lang = 'lDEF', $value = 'vDEF') {
+	public function getFlexFormValue($T3FlexForm_array, $fieldName, $sheet = 'sDEF', $lang = 'lDEF', $value = 'vDEF') {
 		$sheetArray = is_array($T3FlexForm_array) ? $T3FlexForm_array['data'][$sheet][$lang] : '';
 		if (is_array($sheetArray)) {
-			return $this->getFFvalueFromSheetArray($sheetArray, explode('/', $fieldName), $value);
+			return $this->getFlexFormValueFromSheetArray($sheetArray, explode('/', $fieldName), $value);
 		}
 	}
 
@@ -469,9 +469,9 @@ class Gridelements extends ContentObjectRenderer {
 	 * @param string $value Value for outermost key, typ. "vDEF" depending on language.
 	 * @return mixed The value, typ. string.
 	 * @access private
-	 * @see pi_getFFvalue()
+	 * @see pi_getFlexFormValue()
 	 */
-	public function getFFvalueFromSheetArray($sheetArray, $fieldNameArr, $value) {
+	public function getFlexFormValueFromSheetArray($sheetArray, $fieldNameArr, $value) {
 
 		$tempArr = $sheetArray;
 		foreach ($fieldNameArr as $k => $v) {

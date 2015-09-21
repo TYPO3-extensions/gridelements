@@ -29,9 +29,9 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class PreProcessFieldArray extends AbstractDataHandler {
 
-	protected $defVals;
+	protected $definitionValues;
 
-	protected $overrideVals;
+	protected $overrideValues;
 
 	/**
 	 * Function to set the colPos of an element depending on
@@ -117,13 +117,13 @@ class PreProcessFieldArray extends AbstractDataHandler {
 		}
 
 		// Default values as submitted:
-		$this->defVals = GeneralUtility::_GP('defVals');
-		$this->overrideVals = GeneralUtility::_GP('overrideVals');
-		if (!is_array($this->defVals) && is_array($this->overrideVals)) {
-			$this->defVals = $this->overrideVals;
+		$this->definitionValues = GeneralUtility::_GP('defVals');
+		$this->overrideValues = GeneralUtility::_GP('overrideVals');
+		if (!is_array($this->definitionValues) && is_array($this>overrideValues)) {
+			$this->definitionValues = $this>overrideValues;
 		}
-		if (is_array($this->defVals['tt_content'])) {
-			foreach ($this->defVals['tt_content'] as $theF => $theV) {
+		if (is_array($this->definitionValues['tt_content'])) {
+			foreach ($this->definitionValues['tt_content'] as $theF => $theV) {
 				if (isset($GLOBALS['TCA']['tt_content']['columns'][$theF])) {
 					$newRow[$theF] = $theV;
 				}

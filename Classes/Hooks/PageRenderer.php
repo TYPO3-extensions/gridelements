@@ -93,7 +93,7 @@ class PageRenderer {
 					}
 				';
 
-				$allowedCTypesAndGridTypesClassesByColPos = array();
+				$allowedContentTypesClassesByColPos = array();
 				$layoutSetup = GeneralUtility::callUserFunction('TYPO3\\CMS\\Backend\\View\\BackendLayoutView->getSelectedBackendLayout', intval(GeneralUtility::_GP('id')), $this);
 				if (is_array($layoutSetup) && !empty($layoutSetup['__config']['backend_layout.']['rows.'])) {
 					foreach ($layoutSetup['__config']['backend_layout.']['rows.'] as $rows) {
@@ -103,22 +103,22 @@ class PageRenderer {
 									$classes = '';
 									if ($col['allowed']) {
 										$allowed = explode(',', $col['allowed']);
-										foreach ($allowed as $ctypes) {
-											$ctypes = trim($ctypes);
-											if ($ctypes === '*') {
+										foreach ($allowed as $contentTypes) {
+											$contentTypes = trim($contentTypes);
+											if ($contentTypes === '*') {
 												$classes = 't3-allow-all';
 												break;
 											} else {
-												$ctypes = explode(',', $ctypes);
-												foreach ($ctypes as $ctype) {
-													$classes .= 't3-allow-' . $ctype . ' ';
+												$contentTypes = explode(',', $contentTypes);
+												foreach ($contentTypes as $contentType) {
+													$classes .= 't3-allow-' . $contentType . ' ';
 												}
 											}
 										}
 									} else {
 										$classes = 't3-allow-all';
 									}
-									$allowedCTypesClassesByColPos[$col['colPos']] .= ' ' . trim($classes);
+									$allowedContentTypesClassesByColPos[$col['colPos']] .= ' ' . trim($classes);
 								}
 							}
 						}
@@ -127,7 +127,7 @@ class PageRenderer {
 
 				// add Ext.onReady() code from file
 				$pAddExtOnReadyCode .= "
-				top.pageColumnsAllowedCTypes = " . json_encode($allowedCTypesClassesByColPos) . ";
+				top.pageColumnsAllowedCTypes = " . json_encode($allowedContentTypesClassesByColPos) . ";
 				top.pasteURL = '" . $pasteURL . "';
 				top.moveURL = '" . $moveURL . "';
 				top.copyURL = '" . $copyURL . "';
@@ -155,8 +155,8 @@ class PageRenderer {
 	protected function addCSS($parameters, &$pageRenderer) {
 		if (count($parameters['cssFiles'])) {
 			// get configuration
-			$this->confArr = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['gridelements']);
-			$filename = $this->confArr['additionalStylesheet'];
+			$this->configurationArray = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['gridelements']);
+			$filename = $this->configurationArray['additionalStylesheet'];
 			if ($filename) {
 				// evaluate filename
 				if (substr($filename, 0, 4) === 'EXT:') { // extension

@@ -33,15 +33,15 @@ class MoveRecord extends AbstractDataHandler {
 	 * Function to handle record movement to the first position of a column
 	 * @param string $table : The name of the table we are working on
 	 * @param int $uid : The uid of the record that is going to be moved
-	 * @param string $destPid : The target the record should be moved to
-	 * @param array $propArr : The array of properties for the move action
-	 * @param array $moveRec : An array of some values of the record that is going to be moved
+	 * @param string $destinationPid : The target the record should be moved to
+	 * @param array $propertyArray : The array of properties for the move action
+	 * @param array $moveRecord : An array of some values of the record that is going to be moved
 	 * @param int $resolvedPid : The calculated id of the page the record should be moved to
 	 * @param boolean $recordWasMoved : A switch to tell the parent object, if the record has been moved
 	 * @param \TYPO3\CMS\Core\DataHandling\DataHandler $parentObj
 	 * @return void
 	 */
-	public function execute_moveRecord($table, $uid, &$destPid, &$propArr, &$moveRec, $resolvedPid, &$recordWasMoved, &$parentObj) {
+	public function execute_moveRecord($table, $uid, &$destinationPid, &$propertyArray, &$moveRecord, $resolvedPid, &$recordWasMoved, &$parentObj) {
 		if ($table === 'tt_content') {
 			$targetAvailable = TRUE;
 			$record = BackendUtility::getRecordWSOL('tt_content', $uid, 'uid');
@@ -54,7 +54,7 @@ class MoveRecord extends AbstractDataHandler {
 				$originalElement = BackendUtility::getRecordWSOL('tt_content', $origUid, 'tx_gridelements_container');
 				$containerUpdateArray[$originalElement['tx_gridelements_container']] = -1;
 				if (strpos($cmd['tt_content'][$uid]['move'], 'x') !== FALSE) {
-					$targetAvailable = $this->updateTargetContainerAndResolveTargetId($cmd, $uid, $destPid, $containerUpdateArray);
+					$targetAvailable = $this->updateTargetContainerAndResolveTargetId($cmd, $uid, $destinationPid, $containerUpdateArray);
 				}
 				if ($targetAvailable === TRUE) {
 					$this->doGridContainerUpdate($containerUpdateArray);
@@ -69,23 +69,22 @@ class MoveRecord extends AbstractDataHandler {
 	 * Function to handle record movement to the first position of a column
 	 * @param string $table : The name of the table we are working on
 	 * @param int $uid : The uid of the record that is going to be moved
-	 * @param string $destPid : The resolved target the record should be moved to
-	 * @param string $origDestPid : The original target the record should be moved to
-	 * @param array $moveRec : An array of some values of the record that is going to be moved
+	 * @param string $destinationPid : The resolved target the record should be moved to
+	 * @param string $originalDestinationPid : The original target the record should be moved to
+	 * @param array $moveRecord : An array of some values of the record that is going to be moved
 	 * @param array $updateFields : An array of some values of the record that have been updated
 	 * @param \TYPO3\CMS\Core\DataHandling\DataHandler $parentObj : The parent object that triggered this hook
 	 */
-	public function execute_moveRecord_afterAnotherElementPostProcess($table, $uid, $destPid, $origDestPid, $moveRec, $updateFields, \TYPO3\CMS\Core\DataHandling\DataHandler &$parentObj) {
+	public function execute_moveRecord_afterAnotherElementPostProcess($table, $uid, $destinationPid, $originalDestinationPid, $moveRecord, $updateFields, \TYPO3\CMS\Core\DataHandling\DataHandler &$parentObj) {
 		if ($table === 'tt_content') {
 			$movedRecord = BackendUtility::getRecordWSOL('tt_content', $uid, 'uid,t3ver_oid,t3ver_move_id');
-			$targetElement = BackendUtility::getRecordWSOL('tt_content', -$origDestPid, 'uid,pid,colPos,tx_gridelements_container,tx_gridelements_columns');
+			$targetElement = BackendUtility::getRecordWSOL('tt_content', -$originalDestinationPid, 'uid,pid,colPos,tx_gridelements_container,tx_gridelements_columns');
 			$targetContainer = (int)($targetElement['t3ver_oid'] ? $targetElement['t3ver_oid'] : $targetElement['uid']);
 
 			$this->init($table, $uid, $parentObj);
 			$cmd = GeneralUtility::_GET('cmd');
 
 			$originalUid = (int)($movedRecord['_ORIG_uid'] ? $movedRecord['_ORIG_uid'] : $uid);
-			$pointerUid = (int)($movedRecord['t3ver_oid'] ? $movedRecord['t3ver_oid'] : $uid);
 			$commandUid = key($cmd['tt_content']);
 			$placeholderUid = (int)($movedRecord['t3ver_move_id'] ? $movedRecord['t3ver_move_id'] : $uid);
 
@@ -94,7 +93,7 @@ class MoveRecord extends AbstractDataHandler {
 				$target = explode('x', $cmd['tt_content'][$commandUid]['move']);
 				$column = (int)$target[1];
 				$GLOBALS['TCA']['tt_content']['ctrl']['copyAfterDuplFields'] = str_replace('colPos,', '', $GLOBALS['TCA']['tt_content']['ctrl']['copyAfterDuplFields']);
-				if ($uid === -$origDestPid || $commandUid === -$origDestPid || $placeholderUid === -$origDestPid) {
+				if ($uid === -$originalDestinationPid || $commandUid === -$originalDestinationPid || $placeholderUid === -$originalDestinationPid) {
 					$updateArray = array('colPos' => $column, 'sorting' => $sortNumber, 'tx_gridelements_container' => 0, 'tx_gridelements_columns' => 0);
 					$setPid = $targetElement['pid'];
 				} else {
@@ -116,11 +115,11 @@ class MoveRecord extends AbstractDataHandler {
 	 * move records to the top of a page or a container column
 	 * @param array $cmd
 	 * @param integer $recordUid
-	 * @param string $destPid
+	 * @param string $destinationPid
 	 * @param array $containerUpdateArray
 	 * @return boolean Will be true, if there is a target page or container
 	 */
-	public function updateTargetContainerAndResolveTargetId($cmd, $recordUid, &$destPid, &$containerUpdateArray) {
+	public function updateTargetContainerAndResolveTargetId($cmd, $recordUid, &$destinationPid, &$containerUpdateArray) {
 		$target = explode('x', $cmd['tt_content'][$recordUid]['move']);
 		$targetUid = abs((int)$target[0]);
 		if ((int)$target[0] < 0) {
@@ -133,7 +132,7 @@ class MoveRecord extends AbstractDataHandler {
 			if (!isset($targetPage['uid'])) {
 				return FALSE;
 			}
-			$destPid = -$recordUid;
+			$destinationPid = -$recordUid;
 		}
 		if ($targetUid !== $recordUid && (int)$target[0] < 0) {
 			$containerUpdateArray[$targetUid] += 1;
@@ -145,14 +144,14 @@ class MoveRecord extends AbstractDataHandler {
 	/**
 	 * create update array for split elements (tt_content)
 	 * @param int $recordUid
-	 * @param int $destPid
+	 * @param int $destinationPid
 	 * @param int $targetUid
 	 * @param array $target
 	 * @param array $containerUpdateArray
 	 * @return array UpdateArray
 	 * @deprecated Has been deprecated with Gridelements 3.1 and will be removed 2 minor versions later or with the next major version
 	 */
-	public function createUpdateArrayForSplitElements($recordUid, &$destPid, $targetUid, array $target, array &$containerUpdateArray) {
+	public function createUpdateArrayForSplitElements($recordUid, &$destinationPid, $targetUid, array $target, array &$containerUpdateArray) {
 		GeneralUtility::logDeprecatedFunction();
 		$targetElement = BackendUtility::getRecordWSOL('tt_content', $targetUid, 'pid');
 		if ($targetUid !== $recordUid && (int)$target[0] < 0) {
@@ -168,7 +167,7 @@ class MoveRecord extends AbstractDataHandler {
 			}
 		}
 
-		$destPid = -$recordUid;
+		$destinationPid = -$recordUid;
 
 		return $updateArray;
 	}

@@ -85,7 +85,7 @@ class Helper {
 	 * Gets the uid of a record depending on the current context.
 	 * If in workspace mode, the overlay uid is used (if available),
 	 * otherwise the regular uid is used.
-	 * @param array $record Overlayed record data
+	 * @param array $record Overlaid record data
 	 * @return integer
 	 */
 	public function getSpecificIds(array $record) {
