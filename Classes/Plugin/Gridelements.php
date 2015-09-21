@@ -18,7 +18,6 @@ namespace GridElementsTeam\Gridelements\Plugin;
  *  GNU General Public License for more details.
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
-use TYPO3\CMS\Core\Resource\Service\FrontendContentAdapterService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\MathUtility;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
@@ -30,6 +29,11 @@ use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
  * @subpackage tx_gridelements
  */
 class Gridelements extends ContentObjectRenderer {
+
+	/**
+	 * @var ContentObjectRenderer
+	 */
+	protected $cObj;
 
 	public $prefixId = 'Gridelements'; // Same as class name
 	public $scriptRelPath = 'Classes/Plugin/Gridelements.php'; // Path to this script relative to the extension dir.
@@ -134,11 +138,11 @@ class Gridelements extends ContentObjectRenderer {
 				}
 			}
 
-			$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery('*', 'tt_content', $where, '', 'sorting ASC');
+			$res = $this->getDatabaseConnection()->exec_SELECTquery('*', 'tt_content', $where, '', 'sorting ASC');
 
-			if (!$GLOBALS['TYPO3_DB']->sql_error()) {
+			if (!$this->getDatabaseConnection()->sql_error()) {
 				$this->cObj->data['tx_gridelements_view_children'] = array();
-				while ($child = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res)) {
+				while ($child = $this->getDatabaseConnection()->sql_fetch_assoc($res)) {
 					// Versioning preview:
 					$sorting = $child['sorting'];
 					$GLOBALS['TSFE']->sys_page->versionOL('tt_content', $child, TRUE);
@@ -150,9 +154,6 @@ class Gridelements extends ContentObjectRenderer {
 							$child = $GLOBALS['TSFE']->sys_page->getRecordOverlay('tt_content', $child, $GLOBALS['TSFE']->sys_language_content, $GLOBALS['TSFE']->sys_language_contentOL);
 						}
 						if ($child !== FALSE) {
-							if ($GLOBALS['TYPO3_CONF_VARS']['FE']['activateContentAdapter']) {
-								FrontendContentAdapterService::modifyDBRow($child, 'tt_content');
-							}
 							$this->cObj->data['tx_gridelements_view_children'][] = $child;
 							unset($child);
 						}
@@ -171,7 +172,7 @@ class Gridelements extends ContentObjectRenderer {
 
 				usort($this->cObj->data['tx_gridelements_view_children'], $compareFunction);
 
-				$GLOBALS['TYPO3_DB']->sql_free_result($res);
+				$this->getDatabaseConnection()->sql_free_result($res);
 			}
 		}
 	}
@@ -217,6 +218,7 @@ class Gridelements extends ContentObjectRenderer {
 		$GLOBALS['TSFE']->cObjectDepthCounter += $counter;
 
 		// each of the children will now be rendered separately and the output will be added to it's particular column
+		$rawColumns = array();
 		if (count($this->cObj->data['tx_gridelements_view_children'])) {
 			foreach ($this->cObj->data['tx_gridelements_view_children'] as $child) {
 				$rawColumns[$child['tx_gridelements_columns']][] = $child;
@@ -459,6 +461,8 @@ class Gridelements extends ContentObjectRenderer {
 		$sheetArray = is_array($T3FlexForm_array) ? $T3FlexForm_array['data'][$sheet][$lang] : '';
 		if (is_array($sheetArray)) {
 			return $this->getFlexFormValueFromSheetArray($sheetArray, explode('/', $fieldName), $value);
+		} else {
+			return '';
 		}
 	}
 
@@ -513,8 +517,8 @@ class Gridelements extends ContentObjectRenderer {
 			} elseif (is_array($el) && is_array($el['data']['el'])) {
 				$out[] = $this->getFlexformSectionsRecursively($el['data']['el']);
 			} else {
-				if (isset($el['vDEF'])) {
-					$out[$k] = $el['vDEF'];
+				if (isset($el[$valueKey])) {
+					$out[$k] = $el[$valueKey];
 				}
 			}
 		}

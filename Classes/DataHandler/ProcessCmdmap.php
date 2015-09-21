@@ -19,6 +19,7 @@ namespace GridElementsTeam\Gridelements\DataHandler;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 use TYPO3\CMS\Backend\Utility\BackendUtility;
+use TYPO3\CMS\Core\DataHandling\DataHandler;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -36,10 +37,10 @@ class ProcessCmdmap extends AbstractDataHandler {
 	 * @param int $id : The id of the record that is going to be copied
 	 * @param string $value : The value that has been sent with the copy command
 	 * @param boolean $commandIsProcessed : A switch to tell the parent object, if the record has been copied
-	 * @param \TYPO3\CMS\Core\DataHandling\DataHandler $parentObj : The parent object that triggered this hook
+	 * @param DataHandler $parentObj : The parent object that triggered this hook
 	 * @return    void
 	 */
-	public function execute_processCmdmap($command, $table, $id, $value, &$commandIsProcessed, \TYPO3\CMS\Core\DataHandling\DataHandler &$parentObj = null) {
+	public function execute_processCmdmap($command, $table, $id, $value, &$commandIsProcessed, DataHandler &$parentObj = null) {
 		$this->init($table, $id, $parentObj);
 		// @todo Either create a new command map type, e.g. "reference" and process it with a hook instead of using $_GET //olly
 		$DDcopy = (int)GeneralUtility::_GET('DDcopy');

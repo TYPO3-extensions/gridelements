@@ -119,8 +119,8 @@ class PreProcessFieldArray extends AbstractDataHandler {
 		// Default values as submitted:
 		$this->definitionValues = GeneralUtility::_GP('defVals');
 		$this->overrideValues = GeneralUtility::_GP('overrideVals');
-		if (!is_array($this->definitionValues) && is_array($this>overrideValues)) {
-			$this->definitionValues = $this>overrideValues;
+		if (!is_array($this->definitionValues) && is_array($this->overrideValues)) {
+			$this->definitionValues = $this->overrideValues;
 		}
 		if (is_array($this->definitionValues['tt_content'])) {
 			foreach ($this->definitionValues['tt_content'] as $theF => $theV) {

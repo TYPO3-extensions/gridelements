@@ -19,8 +19,10 @@ namespace GridElementsTeam\Gridelements\Backend;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 use TYPO3\CMS\Backend\Utility\BackendUtility;
+use TYPO3\CMS\Core\Database\DatabaseConnection;
 use TYPO3\CMS\Core\Utility\ArrayUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Lang\LanguageService;
 
 /**
  * Utilities for gridelements.
@@ -30,10 +32,29 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class LayoutSetup {
 
+	/**
+	 * @var DatabaseConnection
+	 */
+	protected $databaseConnection;
+
+	/**
+	 * @var array
+	 */
 	protected $layoutSetup = array();
 
+	/**
+	 * @var LanguageService
+	 */
+	protected $lang;
+
+	/**
+	 * @var array
+	 */
 	protected $typoScriptSetup;
 
+	/**
+	 * @var string
+	 */
 	protected $flexformConfigurationPathAndFileName = 'EXT:gridelements/Configuration/FlexForms/default_flexform_configuration.xml';
 
 	/**
@@ -43,7 +64,10 @@ class LayoutSetup {
 	 * @return \GridElementsTeam\Gridelements\Backend\LayoutSetup
 	 */
 	public function init($pageId, $typoScriptSetup = array()) {
+		$this->setDatabaseConnection($GLOBALS['TYPO3_DB']);
 		$pageId = (strpos($pageId, 'NEW') === 0) ? 0 : (int)$pageId;
+		$this->lang = GeneralUtility::makeInstance(LanguageService::class);
+		$this->lang->init($GLOBALS['BE_USER']->uc['lang']);
 		$this->loadLayoutSetup($pageId);
 		foreach ($this->layoutSetup as $key => $setup) {
 			$columns = $this->getLayoutColumns($key);
@@ -135,7 +159,7 @@ class LayoutSetup {
 	 * Caches Container-Records and their setup to avoid multiple selects of the same record during a single request
 	 * @param int $gridContainerId The ID of the current grid container
 	 * @param bool $doReturn
-	 * @return void|array
+	 * @return void | array
 	 */
 	public function cacheCurrentParent($gridContainerId = 0, $doReturn = false) {
 		if ($gridContainerId > 0) {
@@ -194,7 +218,7 @@ class LayoutSetup {
 				continue;
 			}
 
-			$selectItems[] = array($GLOBALS['LANG']->sL($item['title']), $layoutId, $item['icon'][0],);
+			$selectItems[] = array($this->lang->sL($item['title']), $layoutId, $item['icon'][0],);
 		}
 
 		return $selectItems;
@@ -214,7 +238,7 @@ class LayoutSetup {
 			foreach ($setup['config']['rows.'] as $row) {
 				if (isset($row['columns.']) && is_array($row['columns.'])) {
 					foreach ($row['columns.'] as $column) {
-						$selectItems[] = array($GLOBALS['LANG']->sL($column['name']), $column['colPos'], null, $column['allowed'] ? $column['allowed'] : '*');
+						$selectItems[] = array($this->lang->sL($column['name']), $column['colPos'], null, $column['allowed'] ? $column['allowed'] : '*');
 					}
 				}
 			}
@@ -238,7 +262,7 @@ class LayoutSetup {
 				continue;
 			}
 
-			$wizardItems[] = array('uid' => $layoutId, 'title' => $GLOBALS['LANG']->sL($item['title']), 'description' => $GLOBALS['LANG']->sL($item['description']), 'icon' => $item['icon'], 'tll' => $item['top_level_layout'],);
+			$wizardItems[] = array('uid' => $layoutId, 'title' => $this->lang->sL($item['title']), 'description' => $this->lang->sL($item['description']), 'icon' => $item['icon'], 'tll' => $item['top_level_layout'],);
 
 		}
 
@@ -327,7 +351,7 @@ class LayoutSetup {
 		$pageTSconfigId = isset($pageTSconfig['TCEFORM.']['tt_content.']['tx_gridelements_backend_layout.']['PAGE_TSCONFIG_ID']) ? $pageTSconfig['TCEFORM.']['tt_content.']['tx_gridelements_backend_layout.']['PAGE_TSCONFIG_ID'] : 0;
 
 		// Load records.
-		$result = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows('*', 'tx_gridelements_backend_layout', '(( ' . $pageTSconfigId . ' = 0 AND ' . (int)$storagePid . ' = 0 ) OR ( tx_gridelements_backend_layout.pid = ' . (int)$pageTSconfigId . ' OR tx_gridelements_backend_layout.pid = ' . (int)$storagePid . ' ) OR ( ' . $pageTSconfigId . ' = 0 AND tx_gridelements_backend_layout.pid = ' . (int)$pageId . ' )) AND tx_gridelements_backend_layout.hidden = 0 AND tx_gridelements_backend_layout.deleted = 0', '', 'sorting ASC', '', 'uid');
+		$result = $this->databaseConnection->exec_SELECTgetRows('*', 'tx_gridelements_backend_layout', '(( ' . $pageTSconfigId . ' = 0 AND ' . (int)$storagePid . ' = 0 ) OR ( tx_gridelements_backend_layout.pid = ' . (int)$pageTSconfigId . ' OR tx_gridelements_backend_layout.pid = ' . (int)$storagePid . ' ) OR ( ' . $pageTSconfigId . ' = 0 AND tx_gridelements_backend_layout.pid = ' . (int)$pageId . ' )) AND tx_gridelements_backend_layout.hidden = 0 AND tx_gridelements_backend_layout.deleted = 0', '', 'sorting ASC', '', 'uid');
 
 		$gridLayoutRecords = array();
 
@@ -370,4 +394,22 @@ class LayoutSetup {
 			$this->setLayoutSetup($gridLayoutRecords);
 		}
 	}
+
+	/**
+	 * setter for databaseConnection object
+	 * @param DatabaseConnection $databaseConnection
+	 * @return void
+	 */
+	public function setDatabaseConnection(DatabaseConnection $databaseConnection) {
+		$this->databaseConnection = $databaseConnection;
+	}
+
+	/**
+	 * getter for databaseConnection
+	 * @return DatabaseConnection databaseConnection
+	 */
+	public function getDatabaseConnection() {
+		return $this->databaseConnection;
+	}
+
 }
