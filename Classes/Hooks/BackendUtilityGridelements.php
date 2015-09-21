@@ -18,6 +18,8 @@ namespace GridElementsTeam\Gridelements\Hooks;
  *  GNU General Public License for more details.
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
+use GridElementsTeam\Gridelements\Backend\LayoutSetup;
+use TYPO3\CMS\Core\Database\DatabaseConnection;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -31,16 +33,21 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 class BackendUtilityGridelements {
 
 	/**
-	 * @var \GridElementsTeam\Gridelements\Backend\LayoutSetup
+	 * @var DatabaseConnection
+	 */
+	protected $databaseConnection;
+
+	/**
+	 * @var LayoutSetup
 	 */
 	protected $layoutSetup;
 
 	/**
 	 * inject layout setup
-	 * @param \GridElementsTeam\Gridelements\Backend\LayoutSetup $layoutSetup
+	 * @param LayoutSetup $layoutSetup
 	 * @return void
 	 */
-	public function injectLayoutSetup(\GridElementsTeam\Gridelements\Backend\LayoutSetup $layoutSetup) {
+	public function injectLayoutSetup(LayoutSetup $layoutSetup) {
 		$this->layoutSetup = $layoutSetup;
 	}
 
@@ -50,9 +57,10 @@ class BackendUtilityGridelements {
 	 * @return void
 	 */
 	public function init($pageUid) {
-		if (!$this->layoutSetup instanceof \GridElementsTeam\Gridelements\Backend\LayoutSetup) {
+		$this->setDatabaseConnection($GLOBALS['TYPO3_DB']);
+		if (!$this->layoutSetup instanceof LayoutSetup) {
 			if ($pageUid < 0) {
-				$triggerElement = $GLOBALS['TYPO3_DB']->exec_SELECTgetSingleRow('pid', 'tt_content', 'uid = ' . -$pageUid);
+				$triggerElement = $this->databaseConnection->exec_SELECTgetSingleRow('pid', 'tt_content', 'uid = ' . -$pageUid);
 				$pageUid = (int)$triggerElement['pid'];
 			}
 			$this->injectLayoutSetup(GeneralUtility::makeInstance('GridElementsTeam\\Gridelements\\Backend\\LayoutSetup')->init($pageUid));
@@ -74,6 +82,23 @@ class BackendUtilityGridelements {
 			$this->init($row['pid']);
 			$dataStructureArray = GeneralUtility::xml2array($this->layoutSetup->getFlexformConfiguration($row['tx_gridelements_backend_layout']));
 		}
+	}
+
+	/**
+	 * setter for databaseConnection object
+	 * @param DatabaseConnection $databaseConnection
+	 * @return void
+	 */
+	public function setDatabaseConnection(DatabaseConnection $databaseConnection) {
+		$this->databaseConnection = $databaseConnection;
+	}
+
+	/**
+	 * getter for databaseConnection
+	 * @return DatabaseConnection databaseConnection
+	 */
+	public function getDatabaseConnection() {
+		return $this->databaseConnection;
 	}
 
 }

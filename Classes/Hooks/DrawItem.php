@@ -18,14 +18,17 @@ namespace GridElementsTeam\Gridelements\Hooks;
  *  GNU General Public License for more details.
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
+use GridElementsTeam\Gridelements\Backend\LayoutSetup;
 use GridElementsTeam\Gridelements\Helper\Helper;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Backend\Utility\IconUtility;
 use TYPO3\CMS\Backend\View\PageLayoutView;
 use TYPO3\CMS\Backend\View\PageLayoutViewDrawItemHookInterface;
+use TYPO3\CMS\Core\Database\DatabaseConnection;
 use TYPO3\CMS\Core\Database\QueryGenerator;
+use TYPO3\CMS\Core\Database\ReferenceIndex;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Core\Versioning\VersionState;
+use TYPO3\CMS\Lang\LanguageService;
 
 /**
  * Class/Function which manipulates the rendering of item example content and replaces it with a grid of child elements.
@@ -34,6 +37,11 @@ use TYPO3\CMS\Core\Versioning\VersionState;
  * @subpackage tx_gridelements
  */
 class DrawItem implements PageLayoutViewDrawItemHookInterface {
+
+	/**
+	 * @var DatabaseConnection
+	 */
+	protected $databaseConnection;
 
 	/**
 	 * @var \TYPO3\CMS\Lang\LanguageService
@@ -51,7 +59,8 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 	protected $backPath = '';
 
 	public function __construct() {
-		$this->lang = GeneralUtility::makeInstance('TYPO3\\CMS\\Lang\\LanguageService');
+		$this->setDatabaseConnection($GLOBALS['TYPO3_DB']);
+		$this->lang = GeneralUtility::makeInstance(LanguageService::class);
 		$this->lang->init($GLOBALS['BE_USER']->uc['lang']);
 	}
 
@@ -78,7 +87,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 				case 'gridelements_pi1':
 					$drawItem = FALSE;
 					$itemContent .= $this->renderCTypeGridelements($parentObject, $row, $showHidden, $deleteClause);
-					$refIndexObj = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Database\\ReferenceIndex');
+					$refIndexObj = GeneralUtility::makeInstance(ReferenceIndex::class);
 					/* @var $refIndexObj \TYPO3\CMS\Core\Database\ReferenceIndex */
 					$refIndexObj->updateRefIndexTable('tt_content', $row['uid']);
 					break;
@@ -108,8 +117,8 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 
 		// get the layout record for the selected backend layout if any
 		$gridContainerId = $row['uid'];
-		/** @var $layoutSetup \GridElementsTeam\Gridelements\Backend\LayoutSetup */
-		$layoutSetup = GeneralUtility::makeInstance('GridElementsTeam\\Gridelements\\Backend\\LayoutSetup');
+		/** @var $layoutSetup LayoutSetup */
+		$layoutSetup = GeneralUtility::makeInstance(LayoutSetup::class);
 		if ($row['pid'] < 0) {
 			$originalRecord = BackendUtility::getRecord('tt_content', $row['t3ver_oid']);
 		} else {
@@ -233,7 +242,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 		// Due to the pid being "NOT USED" in makeQueryArray we have to reset pidSelect here
 		$parentObject->pidSelect = $originalPidSelect;
 
-		$result = $GLOBALS['TYPO3_DB']->exec_SELECT_queryArray($queryParts);
+		$result = $this->databaseConnection->exec_SELECT_queryArray($queryParts);
 		$colPosValues[] = array(0, '');
 
 		return $parentObject->getResult($result);
@@ -304,7 +313,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 		// Due to the pid being "NOT USED" in makeQueryArray we have to reset pidSelect here
 		$parentObject->pidSelect = $originalPidSelect;
 
-		$result = $GLOBALS['TYPO3_DB']->exec_SELECT_queryArray($queryParts);
+		$result = $this->databaseConnection->exec_SELECT_queryArray($queryParts);
 
 		return $parentObject->getResult($result);
 	}
@@ -323,6 +332,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 
 		$specificIds = Helper::getInstance()->getSpecificIds($row);
 
+		$newParams = '';
 		if ($colPos < 32768) {
 			if ($row{'sys_language_uid'}) {
 				$language = (int)$row['sys_language_uid'];
@@ -334,7 +344,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 			<div data-colpos="' . $colPos . '" data-language-uid="' . $row['sys_language_uid'] . '" class="t3js-sortable t3js-sortable-lang t3js-sortable-lang-' . $row['sys_language_uid'] . ' t3-page-ce-wrapper ui-sortable">
 				<div class="t3-page-ce t3js-page-ce" data-container="' . $row['uid'] . '" id="' . str_replace('.', '', uniqid('', TRUE)) . '">
 					<div class="t3js-page-new-ce t3-page-ce-wrapper-new-ce" id="colpos-' . $colPos . '-' . str_replace('.', '', uniqid('', TRUE)) . '">
-						<a href="#" onclick="' . htmlspecialchars($newParams) . '" title="' . $GLOBALS['LANG']->getLL('newContentElement', TRUE) . '" class="btn btn-default btn-sm">' . IconUtility::getSpriteIcon('actions-document-new') . ' ' . $GLOBALS['LANG']->getLL('content', TRUE) . '</a>
+						<a href="#" onclick="' . htmlspecialchars($newParams) . '" title="' . $this->lang->getLL('newContentElement', TRUE) . '" class="btn btn-default btn-sm">' . IconUtility::getSpriteIcon('actions-document-new') . ' ' . $this->lang->getLL('content', TRUE) . '</a>
 					</div>
 					<div class="t3-page-ce-dropzone-available t3js-page-ce-dropzone-available"></div>
 				</div>';
@@ -357,7 +367,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 					}
 					$gridContent[$colPos] .= '
 				<div class="t3js-page-new-ce t3-page-ce-wrapper-new-ce" id="colpos-' . $itemRow['tx_gridelements_columns'] . '-page-' . $itemRow['pid'] . '-gridcontainer-' . $itemRow['tx_gridelements_container'] . '-' . str_replace('.', '', uniqid('', TRUE)) . '">
-					<a href="#" onclick="' . htmlspecialchars($onClick) . '" title="' . $GLOBALS['LANG']->getLL('newContentElement', TRUE) . '" class="btn btn-default btn-sm">' . IconUtility::getSpriteIcon('actions-document-new') . ' ' . $GLOBALS['LANG']->getLL('content', TRUE) . '</a>
+					<a href="#" onclick="' . htmlspecialchars($onClick) . '" title="' . $this->lang->getLL('newContentElement', TRUE) . '" class="btn btn-default btn-sm">' . IconUtility::getSpriteIcon('actions-document-new') . ' ' . $this->lang->getLL('content', TRUE) . '</a>
 				</div>
 				<div class="t3-page-ce-dropzone-available t3js-page-ce-dropzone-available"></div>
 				</div>
@@ -398,7 +408,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 		if ($parentObject->tt_contentConfig['showCommands']) {
 			// Edit whole of column:
 			if ($editParams) {
-				$icons .= '<a href="#" onclick="' . htmlspecialchars(BackendUtility::editOnClick($editParams, $parentObject->backPath)) . '" title="' . $GLOBALS['LANG']->getLL('editColumn', TRUE) . '">' . IconUtility::getSpriteIcon('actions-document-open') . '</a>';
+				$icons .= '<a href="#" onclick="' . htmlspecialchars(BackendUtility::editOnClick($editParams, $parentObject->backPath)) . '" title="' . $this->lang->getLL('editColumn', TRUE) . '">' . IconUtility::getSpriteIcon('actions-document-open') . '</a>';
 			}
 			$icons .= '<a href="#" class="toggle-content toggle-up" title="' . $this->lang->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tx_gridelements_togglecontent') . '">' . IconUtility::getSpriteIcon('actions-move-to-top') . '</a>';
 			$icons .= '<a href="#" class="toggle-content toggle-down" title="' . $this->lang->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tx_gridelements_togglecontent') . '">' . IconUtility::getSpriteIcon('actions-move-to-bottom') . '</a>';
@@ -490,7 +500,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 				// render the grid cell
 				$colSpan = (int)$columnConfig['colspan'];
 				$rowSpan = (int)$columnConfig['rowspan'];
-				$grid .= '<td valign="top"' . (isset($columnConfig['colspan']) ? ' colspan="' . $colSpan . '"' : '') . (isset($columnConfig['rowspan']) ? ' rowspan="' . $rowSpan . '"' : '') . 'data-colpos="' . $columnKey . '" id="column-' . $specificIds['uid'] . 'x' . $columnKey . '" class="t3-grid-cell t3js-page-column t3-page-column t3-page-column-' . $columnKey . (!isset($columnConfig['colPos']) || $columnConfig['colPos'] === '' ? ' t3-grid-cell-unassigned' : '') . (isset($columnConfig['colspan']) && $columnConfig['colPos'] !== '' ? ' t3-grid-cell-width' . $colSpan : '') . (isset($columnConfig['rowspan']) && $columnConfig['colPos'] !== '' ? ' t3-grid-cell-height' . $rowSpan : '') . ' ' . ($layoutSetup['horizontal'] ? ' t3-grid-cell-horizontal' : '') . (count($allowedContentTypes) ? ' ' . join(' ', $allowedContentTypes) : ' t3-allow-all') . '">';
+				$grid .= '<td valign="top"' . (isset($columnConfig['colspan']) ? ' colspan="' . $colSpan . '"' : '') . (isset($columnConfig['rowspan']) ? ' rowspan="' . $rowSpan . '"' : '') . 'data-colpos="' . $columnKey . '" id="column-' . $specificIds['uid'] . 'x' . $columnKey . '" class="t3-grid-cell t3js-page-column t3-page-column t3-page-column-' . $columnKey . (!isset($columnConfig['colPos']) || $columnConfig['colPos'] === '' ? ' t3-grid-cell-unassigned' : '') . (isset($columnConfig['colspan']) && $columnConfig['colPos'] !== '' ? ' t3-grid-cell-width' . $colSpan : '') . (isset($columnConfig['rowspan']) && $columnConfig['colPos'] !== '' ? ' t3-grid-cell-height' . $rowSpan : '') . ' ' . ($layoutSetup['horizontal'] ? ' t3-grid-cell-horizontal' : '') . (isset($allowedContentTypes) && count($allowedContentTypes) ? ' ' . join(' ', $allowedContentTypes) : ' t3-allow-all') . '">';
 
 				$grid .= ($GLOBALS['BE_USER']->uc['hideColumnHeaders'] ? '' : $head[$columnKey]) . $gridContent[$columnKey];
 				$grid .= '</td>';
@@ -519,7 +529,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 			}
 			$itemList = $this->tree->getTreeList($itemList, (int)$recursive, 0, 1);
 		}
-		$itemRows = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows('*', 'tt_content', 'uid != ' . (int)$parentUid . ' AND pid IN (' . $itemList . ') AND colPos >= 0 ' . $showHidden . $deleteClause, '', 'FIND_IN_SET(pid, \'' . $itemList . '\'),colPos,sorting');
+		$itemRows = $this->databaseConnection->exec_SELECTgetRows('*', 'tt_content', 'pid IN (' . $itemList . ') AND colPos >= 0 ' . $showHidden . $deleteClause, '', 'FIND_IN_SET(pid, \'' . $itemList . '\'),colPos,sorting');
 		foreach ($itemRows as $itemRow) {
 			if ($GLOBALS['BE_USER']->workspace > 0) {
 				BackendUtility::workspaceOL('tt_content', $itemRow, $GLOBALS['BE_USER']->workspace);
@@ -539,12 +549,9 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 	 */
 	public function collectContentData($shortcutItem, &$collectedItems, &$showHidden, &$deleteClause, $parentUid) {
 		$shortcutItem = str_replace('tt_content_', '', $shortcutItem);
-		if ((int)$shortcutItem !== (int)$parentUid) {
-			$itemRow = $GLOBALS['TYPO3_DB']->exec_SELECTgetSingleRow('*', 'tt_content', 'uid=' . $shortcutItem . $showHidden . $deleteClause);
-			if ($GLOBALS['BE_USER']->workspace > 0) {
-				BackendUtility::workspaceOL('tt_content', $itemRow, $GLOBALS['BE_USER']->workspace);
-			}
-			$collectedItems[] = $itemRow;
+		$itemRow = $this->databaseConnection->exec_SELECTgetSingleRow('*', 'tt_content', 'uid=' . $shortcutItem . $showHidden . $deleteClause);
+		if ($GLOBALS['BE_USER']->workspace > 0) {
+			BackendUtility::workspaceOL('tt_content', $itemRow, $GLOBALS['BE_USER']->workspace);
 		}
 	}
 
@@ -575,4 +582,22 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 
 		return $singleElementHTML;
 	}
+
+	/**
+	 * setter for databaseConnection object
+	 * @param DatabaseConnection $databaseConnection
+	 * @return void
+	 */
+	public function setDatabaseConnection(DatabaseConnection $databaseConnection) {
+		$this->databaseConnection = $databaseConnection;
+	}
+
+	/**
+	 * getter for databaseConnection
+	 * @return DatabaseConnection databaseConnection
+	 */
+	public function getDatabaseConnection() {
+		return $this->databaseConnection;
+	}
+
 }

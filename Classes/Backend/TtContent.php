@@ -18,6 +18,8 @@ namespace GridElementsTeam\Gridelements\Backend;
  *  GNU General Public License for more details.
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
+use TYPO3\CMS\Core\Database\DatabaseConnection;
+use TYPO3\CMS\Core\Utility\ArrayUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -27,6 +29,11 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  * @subpackage tx_gridelements
  */
 class TtContent {
+
+	/**
+	 * @var DatabaseConnection
+	 */
+	protected $databaseConnection;
 
 	/**
 	 * @var \GridElementsTeam\Gridelements\Backend\LayoutSetup
@@ -48,9 +55,10 @@ class TtContent {
 	 * @return void
 	 */
 	public function init($pageUid) {
+		$this->setDatabaseConnection($GLOBALS['TYPO3_DB']);
 		if (!$this->layoutSetup instanceof LayoutSetup) {
 			if ($pageUid < 0) {
-				$triggerElement = $GLOBALS['TYPO3_DB']->exec_SELECTgetSingleRow('pid', 'tt_content', 'uid = ' . -$pageUid);
+				$triggerElement = $this->databaseConnection->exec_SELECTgetSingleRow('pid', 'tt_content', 'uid = ' . -$pageUid);
 				$pageUid = (int)$triggerElement['pid'];
 			}
 			$this->injectLayoutSetup(GeneralUtility::makeInstance(LayoutSetup::class)->init($pageUid));
@@ -139,7 +147,7 @@ class TtContent {
 	public function deleteUnallowedContainer(array &$params, $itemUidList = '') {
 		$layoutSetups = $this->layoutSetup->getLayoutSetup();
 		if ($itemUidList) {
-			$containerRecords = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows('uid,tx_gridelements_backend_layout', 'tt_content', 'uid IN (' . $itemUidList . ')', '', '', '', 'uid');
+			$containerRecords = $this->databaseConnection->exec_SELECTgetRows('uid,tx_gridelements_backend_layout', 'tt_content', 'uid IN (' . $itemUidList . ')', '', '', '', 'uid');
 
 			foreach ($params['items'] as $key => $container) {
 				$allowed = $layoutSetups[$containerRecords[$container[1]]['tx_gridelements_backend_layout']]['allowed'];
@@ -163,7 +171,7 @@ class TtContent {
 		$this->init($params['row']['pid']);
 		$layoutSelectItems = $this->layoutSetup->getLayoutSelectItems($params['row']['colPos']);
 
-		$params['items'] = GeneralUtility::keepItemsInArray($layoutSelectItems, $params['items'], true);
+		$params['items'] = ArrayUtility::keepItemsInArray($layoutSelectItems, $params['items'], true);
 	}
 
 	/**
@@ -177,7 +185,7 @@ class TtContent {
 		if (!$containerIds) {
 			return;
 		}
-		$childrenOnNextLevel = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows('uid, tx_gridelements_container', 'tt_content', 'CType=\'gridelements_pi1\' AND tx_gridelements_container IN (' . $containerIds . ')');
+		$childrenOnNextLevel = $this->databaseConnection->exec_SELECTgetRows('uid, tx_gridelements_container', 'tt_content', 'CType=\'gridelements_pi1\' AND tx_gridelements_container IN (' . $containerIds . ')');
 
 		if (count($childrenOnNextLevel) && count($possibleContainers)) {
 			$containerIds = '';
@@ -195,4 +203,22 @@ class TtContent {
 			}
 		}
 	}
+
+	/**
+	 * setter for databaseConnection object
+	 * @param DatabaseConnection $databaseConnection
+	 * @return void
+	 */
+	public function setDatabaseConnection(DatabaseConnection $databaseConnection) {
+		$this->databaseConnection = $databaseConnection;
+	}
+
+	/**
+	 * getter for databaseConnection
+	 * @return DatabaseConnection databaseConnection
+	 */
+	public function getDatabaseConnection() {
+		return $this->databaseConnection;
+	}
+
 }

@@ -20,6 +20,7 @@ namespace GridElementsTeam\Gridelements\Hooks;
  ***************************************************************/
 
 use GridElementsTeam\Gridelements\Helper\Helper;
+use TYPO3\CMS\Lang\LanguageService;
 use TYPO3\CMS\Recordlist\RecordList\RecordListHookInterface;
 
 /**
@@ -30,6 +31,17 @@ use TYPO3\CMS\Recordlist\RecordList\RecordListHookInterface;
  * @subpackage tx_gridelements
  */
 class DatabaseRecordList implements RecordListHookInterface {
+
+	/**
+	 * @var LanguageService
+	 */
+	protected $lang;
+
+	public function __construct() {
+		$this->lang = GeneralUtility::makeInstance(LanguageService::class);
+		$this->lang->init($GLOBALS['BE_USER']->uc['lang']);
+	}
+
 
 	/**
 	 * modifies Web>List clip icons (copy, cut, paste, etc.) of a displayed row
@@ -132,7 +144,7 @@ class DatabaseRecordList implements RecordListHookInterface {
 	public function contentCollapseIcon($data, $sortField, $level, &$contentCollapseIcon, &$parentObject) {
 		if ($data['_EXPAND_TABLE_'] === 'tt_content') {
 			$contentCollapseIcon = '
-				<a href="javascript:GridElementsListView.elExpandCollapse(\'' . $data['_EXPAND_ID_'] . '\',\'' . $sortField . '\', ' . $level . ')" title="' . $GLOBALS['LANG']->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang.xml:list.collapseElement', true) . '" rel="' . $data['_EXPAND_ID_'] . '">
+				<a href="javascript:GridElementsListView.elExpandCollapse(\'' . $data['_EXPAND_ID_'] . '\',\'' . $sortField . '\', ' . $level . ')" title="' . $this->lang->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang.xml:list.collapseElement', true) . '" rel="' . $data['_EXPAND_ID_'] . '">
 					<span class="t3-icon t3-icon-actions t3-icon-actions-view t3-icon-pagetree-collapse collapseIcon">&nbsp;</span>
 				</a>
 			';

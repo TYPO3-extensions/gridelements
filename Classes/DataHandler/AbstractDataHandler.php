@@ -21,6 +21,7 @@ namespace GridElementsTeam\Gridelements\DataHandler;
 use GridElementsTeam\Gridelements\Backend\LayoutSetup;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Database\DatabaseConnection;
+use TYPO3\CMS\Core\DataHandling\DataHandler;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -36,7 +37,7 @@ abstract class AbstractDataHandler {
 	protected $pageUid;
 
 	/**
-	 * @var \TYPO3\CMS\Core\DataHandling\DataHandler
+	 * @var DataHandler
 	 */
 	protected $dataHandler;
 
@@ -63,10 +64,10 @@ abstract class AbstractDataHandler {
 	 * initializes this class
 	 * @param string $table : The name of the table the data should be saved to
 	 * @param integer $pageUid : The uid of the page we are currently working on
-	 * @param \TYPO3\CMS\Core\DataHandling\DataHandler $dataHandler
+	 * @param DataHandler $dataHandler
 	 * @return void
 	 */
-	public function init($table, $pageUid, \TYPO3\CMS\Core\DataHandling\DataHandler $dataHandler) {
+	public function init($table, $pageUid, DataHandler $dataHandler) {
 		$this->setTable($table);
 		$this->setPageUid($pageUid);
 		$this->setTceMain($dataHandler);
@@ -116,16 +117,16 @@ abstract class AbstractDataHandler {
 
 	/**
 	 * setter for dataHandler object
-	 * @param \TYPO3\CMS\Core\DataHandling\DataHandler $dataHandler
+	 * @param DataHandler $dataHandler
 	 * @return void
 	 */
-	public function setTceMain(\TYPO3\CMS\Core\DataHandling\DataHandler $dataHandler) {
+	public function setTceMain(DataHandler $dataHandler) {
 		$this->dataHandler = $dataHandler;
 	}
 
 	/**
 	 * getter for dataHandler
-	 * @return \TYPO3\CMS\Core\DataHandling\DataHandler dataHandler
+	 * @return DataHandler dataHandler
 	 */
 	public function getTceMain() {
 		return $this->dataHandler;

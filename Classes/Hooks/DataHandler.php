@@ -18,6 +18,7 @@ namespace GridElementsTeam\Gridelements\Hooks;
  *  GNU General Public License for more details.
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
+use TYPO3\CMS\Core\Database\DatabaseConnection;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -27,6 +28,15 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  * @subpackage tx_gridelements
  */
 class DataHandler {
+
+	/**
+	 * @var DatabaseConnection
+	 */
+	protected $databaseConnection;
+
+	public function __construct() {
+		$this->setDatabaseConnection($GLOBALS['TYPO3_DB']);
+	}
 
 	/**
 	 * Function to set the colPos of an element depending on
@@ -71,7 +81,7 @@ class DataHandler {
 		) {
 			$positionArray = explode('x', $cmd['tt_content'][key($cmd['tt_content'])]['copy']);
 			if ($positionArray[0] < 0) {
-				$parentPage = $GLOBALS['TYPO3_DB']->exec_SELECTgetSingleRow('pid', 'tt_content', 'uid = ' . abs($positionArray[0]));
+				$parentPage = $this->databaseConnection->exec_SELECTgetSingleRow('pid', 'tt_content', 'uid = ' . abs($positionArray[0]));
 				if ($parentPage['pid']) {
 					$pid = $parentPage['pid'];
 				} else {
@@ -154,6 +164,23 @@ class DataHandler {
 			$hook = GeneralUtility::makeInstance('GridElementsTeam\\Gridelements\\DataHandler\\ProcessCmdmap');
 			$hook->execute_processCmdmap($command, $table, $id, $value, $commandIsProcessed, $parentObj);
 		}
+	}
+
+	/**
+	 * setter for databaseConnection object
+	 * @param DatabaseConnection $databaseConnection
+	 * @return void
+	 */
+	public function setDatabaseConnection(DatabaseConnection $databaseConnection) {
+		$this->databaseConnection = $databaseConnection;
+	}
+
+	/**
+	 * getter for databaseConnection
+	 * @return DatabaseConnection databaseConnection
+	 */
+	public function getDatabaseConnection() {
+		return $this->databaseConnection;
 	}
 
 }

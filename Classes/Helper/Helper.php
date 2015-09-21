@@ -18,6 +18,7 @@ namespace GridElementsTeam\Gridelements\Helper;
  *  GNU General Public License for more details.
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
+use TYPO3\CMS\Core\Database\DatabaseConnection;
 
 /**
  * Gridelements helper class
@@ -27,6 +28,11 @@ namespace GridElementsTeam\Gridelements\Helper;
  */
 
 class Helper {
+
+	/**
+	 * @var DatabaseConnection
+	 */
+	protected $databaseConnection;
 
 	/**
 	 * Local instance of the helper
@@ -43,6 +49,7 @@ class Helper {
 		if (!self::$instance instanceof Helper) {
 			self::$instance = new self();
 		}
+		self::setDatabaseConnection($GLOBALS['TYPO3_DB']);
 
 		return self::$instance;
 	}
@@ -59,7 +66,7 @@ class Helper {
 
 		if (trim($table) === 'tt_content' && $uid > 0) {
 
-			$children = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows('*', 'tt_content', 'tx_gridelements_container = ' . $uid . ' AND deleted = 0');
+			$children = $this->databaseConnection->exec_SELECTgetRows('*', 'tt_content', 'tx_gridelements_container = ' . $uid . ' AND deleted = 0');
 
 			foreach ($children as $child) {
 				if (trim($sortingField) && isset($child[$sortingField]) && $sortingField !== 'sorting') {
@@ -106,4 +113,22 @@ class Helper {
 	public function getBackendUser() {
 		return $GLOBALS['BE_USER'];
 	}
+
+	/**
+	 * setter for databaseConnection object
+	 * @param DatabaseConnection $databaseConnection
+	 * @return void
+	 */
+	public function setDatabaseConnection(DatabaseConnection $databaseConnection) {
+		$this->databaseConnection = $databaseConnection;
+	}
+
+	/**
+	 * getter for databaseConnection
+	 * @return DatabaseConnection databaseConnection
+	 */
+	public function getDatabaseConnection() {
+		return $this->databaseConnection;
+	}
+
 }
