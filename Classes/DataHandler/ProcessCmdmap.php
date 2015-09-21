@@ -61,9 +61,9 @@ class ProcessCmdmap extends AbstractDataHandler {
 			$copyAfterDuplicationFields = $GLOBALS['TCA']['tt_content']['ctrl']['copyAfterDuplFields'];
 			$GLOBALS['TCA']['tt_content']['ctrl']['copyAfterDuplFields'] .= ',tx_gridelements_container,tx_gridelements_columns';
 
-			$overrideArray = array();
-
 			if ((int)$DDcopy === 1 || (int)$reference === 1) {
+
+				$overrideArray = array();
 
 				if ((int)$reference === 1) {
 					foreach ($GLOBALS['TCA']['tt_content']['columns'] as $key => $column) {
@@ -92,6 +92,8 @@ class ProcessCmdmap extends AbstractDataHandler {
 						$overrideArray['colPos'] = -1;
 						$overrideArray['tx_gridelements_container'] = abs($valueArray[0]);
 						$overrideArray['tx_gridelements_columns'] = (int)$valueArray[1];
+					} else {
+						throw new \UnexpectedValueException('No target table identified.', 1442269491);
 					}
 					$targetRecord = BackendUtility::getRecordWSOL($targetTable, abs($valueArray[0]));
 					if ($targetRecord[$GLOBALS['TCA'][$table]['ctrl']['transOrigPointerField']]) {
@@ -134,6 +136,7 @@ class ProcessCmdmap extends AbstractDataHandler {
 					$targetTable = 'pages';
 				}
 				$originalRecord = BackendUtility::getRecordWSOL($targetTable, abs($id));
+				$overrideArray = [];
 				if ($value > 0) {
 					$overrideArray['tx_gridelements_container'] = 0;
 					$overrideArray['tx_gridelements_columns'] = 0;

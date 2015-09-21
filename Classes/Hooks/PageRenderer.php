@@ -60,6 +60,7 @@ class PageRenderer {
 
 				$clipBoardHasContent = FALSE;
 
+				$pasteURL = '';
 				if (isset($clipObj->clipData['normal']['el']) && strpos(key($clipObj->clipData['normal']['el']), 'tt_content') !== FALSE) {
 					$pasteURL = str_replace('&amp;', '&', $clipObj->pasteUrl('tt_content', 'DD_PASTE_UID', 0));
 					if (isset($clipObj->clipData['normal']['mode'])) {

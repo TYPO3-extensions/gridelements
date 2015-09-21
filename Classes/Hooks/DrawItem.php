@@ -21,12 +21,17 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 	/**
 	 * @var \TYPO3\CMS\Lang\LanguageService
 	 */
-	var $lang;
+	protected $lang;
 
 	/**
 	 * @var QueryGenerator
 	 */
 	protected $tree;
+
+	/**
+	 * @var string
+	 */
+	protected $backPath = '';
 
 	public function __construct() {
 		$this->lang = GeneralUtility::makeInstance('TYPO3\\CMS\\Lang\\LanguageService');
@@ -101,6 +106,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 			->cacheCurrentParent($gridContainerId, TRUE);
 		$layoutUid = $gridElement['tx_gridelements_backend_layout'];
 		$layout = $layoutSetup->getLayoutSetup($layoutUid);
+		$parserRows = NULL;
 		if (isset($layout['config']) && isset($layout['config']['rows.'])) {
 			$parserRows = $layout['config']['rows.'];
 		}
@@ -292,8 +298,9 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 			$showLanguage = '';
 		}
 
+		$where = '';
 		if($helper->getBackendUser()->workspace > 0 && $row['t3ver_wsid'] > 0) {
-			$where = 'AND t3ver_wsid = ' . $row['t3ver_wsid'];
+			$where .= 'AND t3ver_wsid = ' . $row['t3ver_wsid'];
 		}
 		$where .= ' AND colPos = -1 AND tx_gridelements_container IN (' . $row['uid'] . ',' . $specificIds['uid'] . ') AND tx_gridelements_columns=' . $colPos . $showHidden . $deleteClause . $showLanguage;
 
@@ -318,7 +325,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 	 *
 	 * @return void
 	 */
-	public function renderSingleGridColumn(PageLayoutView $parentObject, &$items, &$colPos, &$gridContent, $row, &$editUidList) {
+	protected function renderSingleGridColumn(PageLayoutView $parentObject, &$items, &$colPos, &$gridContent, $row, &$editUidList) {
 
 		$specificIds = Helper::getInstance()
 			->getSpecificIds($row);
@@ -344,13 +351,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 				<div class="t3-page-ce t3js-page-ce t3js-page-ce-sortable' . $statusHidden . '" data-table="tt_content" data-uid="' . $itemRow['uid'] . '" data-ctype="' . $itemRow['CType'] . '"><div class="t3-page-ce-dragitem" id="' . str_replace('.', '', uniqid('', TRUE)) . '">' . $this->renderSingleElementHTML($parentObject, $itemRow) . '</div></div>';
 					// New content element:
 					if ($parentObject->option_newWizard) {
-						$moduleUrlParameters = array(
-							'id' => $itemRow['pid'],
-							'sys_language_uid' => $itemRow['sys_language_uid'],
-							'colPos' => $itemRow['colPos'],
-							'uid_pid' => -$itemRow['uid']
-						);
-						$onClick = 'window.location.href=\'' . BackendUtility::getModuleUrl('new_content_element', $moduleUrlParameters, '') . '&returnUrl=' . rawurlencode(GeneralUtility::getIndpEnv('REQUEST_URI')) . '\';';
+						$onClick = 'window.location.href=\'db_new_content_el.php?id=' . $itemRow['pid'] . '&sys_language_uid=' . $itemRow['sys_language_uid'] . '&colPos=' . $itemRow['colPos'] . '&uid_pid=' . -$itemRow['uid'] . '&returnUrl=' . rawurlencode(GeneralUtility::getIndpEnv('REQUEST_URI')) . '\';';
 					} else {
 						$params = '&edit[tt_content][' . -$itemRow['uid'] . ']=new';
 						$onClick = BackendUtility::editOnClick($params, $this->backPath);

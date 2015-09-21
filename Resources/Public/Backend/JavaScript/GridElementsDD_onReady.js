@@ -1,7 +1,5 @@
 /* this is executed inside Ext.onReady() */
 
-alert('TEST');
-
 if(typeof GridElementsDD === "undefined"){
 	//console.error("GridElementsDD.initAll not loaded!");
 } else {
