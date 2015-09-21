@@ -1,38 +1,32 @@
 <?php
 namespace GridElementsTeam\Gridelements\DataHandler;
 
-/**
- * Class/Function which offers TCE main hook functions.
- *
- * @author         Jo Hasenau <info@cybercraft.de>
- * @package        TYPO3
- * @subpackage     tx_gridelements
- */
-use TYPO3\CMS\Backend\Utility\BackendUtility;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
-
 /***************************************************************
  *  Copyright notice
- *
  *  (c) 2013 Jo Hasenau <info@cybercraft.de>
  *  All rights reserved
- *
  *  This script is part of the TYPO3 project. The TYPO3 project is
  *  free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
- *
  *  The GNU General Public License can be found at
  *  http://www.gnu.org/copyleft/gpl.html.
- *
  *  This script is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
- *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
+use TYPO3\CMS\Backend\Utility\BackendUtility;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+
+/**
+ * Class/Function which offers TCE main hook functions.
+ * @author  Jo Hasenau <info@cybercraft.de>
+ * @package  TYPO3
+ * @subpackage tx_gridelements
+ */
 class AfterDatabaseOperations extends AbstractDataHandler {
 
 	/**
@@ -43,12 +37,10 @@ class AfterDatabaseOperations extends AbstractDataHandler {
 	 * -1 = grid element column
 	 * -2 = non used elements column
 	 * changes are applied to the field array of the parent object by reference
-	 *
-	 * @param    array $fieldArray : The array of fields and values that have been saved to the datamap
-	 * @param    string $table : The name of the table the data should be saved to
-	 * @param    integer $id : The parent uid of either the page or the container we are currently working on
-	 * @param    \TYPO3\CMS\Core\DataHandling\DataHandler $parentObj : The parent object that triggered this hook
-	 *
+	 * @param array $fieldArray : The array of fields and values that have been saved to the datamap
+	 * @param string $table : The name of the table the data should be saved to
+	 * @param integer $id : The parent uid of either the page or the container we are currently working on
+	 * @param \TYPO3\CMS\Core\DataHandling\DataHandler $parentObj : The parent object that triggered this hook
 	 * @return void
 	 */
 	public function execute_afterDatabaseOperations(&$fieldArray, $table, $id, &$parentObj) {
@@ -62,9 +54,7 @@ class AfterDatabaseOperations extends AbstractDataHandler {
 
 	/**
 	 * save cleaned up field array
-	 *
 	 * @param array $changedFieldArray
-	 *
 	 * @return array cleaned up field array
 	 */
 	public function saveCleanedUpFieldArray(array $changedFieldArray) {
@@ -76,9 +66,8 @@ class AfterDatabaseOperations extends AbstractDataHandler {
 
 	/**
 	 * Function to move elements to/from the unused elements column while changing the layout of a page or a grid element
-	 *
-	 * @param    array $fieldArray : The array of fields and values that have been saved to the datamap
-	 *                             return void
+	 * @param array $fieldArray : The array of fields and values that have been saved to the datamap
+	 * return void
 	 */
 	public function setUnusedElements(&$fieldArray) {
 		$changedGridElements = array();
@@ -228,12 +217,10 @@ class AfterDatabaseOperations extends AbstractDataHandler {
 
 	/**
 	 * gets all subpages of the current page and traverses recursivley unless backend_layout_next_level is set or unset (!= 0)
-	 *
 	 * @param $pageUid
 	 * @param $subpages
-	 *
 	 * @internal param int $id : the uid of the parent page
-	 * @return  array   $subpages: Reference to a list of all subpages
+	 * @return array $subpages : Reference to a list of all subpages
 	 */
 	public function getSubpagesRecursively($pageUid, &$subpages) {
 		$childPages = $this->databaseConnection->exec_SELECTgetRows('uid, backend_layout, backend_layout_next_level', 'pages', 'pid = ' . $pageUid);
@@ -252,13 +239,10 @@ class AfterDatabaseOperations extends AbstractDataHandler {
 
 	/**
 	 * fetches all available columns for a certain grid container based on TCA settings and layout records
-	 *
-	 * @param   string $layout : The selected backend layout of the grid container or the page
-	 * @param   string $table : The name of the table to get the layout for
-	 * @param   int $id : the uid of the parent container - being the page id for the table "pages"
-	 *
-	 * @return  string     $tcaColumns: The columns available for the selected layout as CSV list
-	 *
+	 * @param string $layout : The selected backend layout of the grid container or the page
+	 * @param string $table : The name of the table to get the layout for
+	 * @param int $id : the uid of the parent container - being the page id for the table "pages"
+	 * @return string $tcaColumns : The columns available for the selected layout as CSV list
 	 */
 	public function getAvailableColumns($layout = '', $table = '', $id = 0) {
 		$tcaColumns = array();

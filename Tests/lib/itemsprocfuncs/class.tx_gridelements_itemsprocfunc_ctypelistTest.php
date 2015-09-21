@@ -2,24 +2,19 @@
 
 /***************************************************************
  *  Copyright notice
- *
  *  (c) 2013 Stefan Froemken <froemken@gmail.com>
  *  All rights reserved
- *
  *  This script is part of the TYPO3 project. The TYPO3 project is
  *  free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
- *
  *  The GNU General Public License can be found at
  *  http://www.gnu.org/copyleft/gpl.html.
- *
  *  This script is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
- *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 class tx_gridelements_itemsprocfunc_ctypelistTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
@@ -41,7 +36,6 @@ class tx_gridelements_itemsprocfunc_ctypelistTest extends \TYPO3\CMS\Extbase\Tes
 
 	/**
 	 * test items proc func
-	 *
 	 * @test
 	 */
 	public function testItemsProcFunc() {
@@ -59,34 +53,15 @@ class tx_gridelements_itemsprocfunc_ctypelistTest extends \TYPO3\CMS\Extbase\Tes
 		$params['items'][2][1] = '2';
 		$params['items'][2][2] = '';
 		$colPosList = $this->getMock('GridElementsTeam\\Gridelements\\Backend\\ItemsProcFuncs\\CTypeList', array('checkForAllowedCTypes'));
-		$colPosList
-				->expects($this->any())
-				->method('checkForAllowedCTypes')
-				->with(
-						$this->equalTo($params['items']),
-						$this->equalTo(12),
-						$this->equalTo(2),
-						$this->equalTo(23),
-						$this->equalTo(34)
-				);
+		$colPosList->expects($this->any())->method('checkForAllowedCTypes')->with($this->equalTo($params['items']), $this->equalTo(12), $this->equalTo(2), $this->equalTo(23), $this->equalTo(34));
 		$colPosList->itemsProcFunc($params);
 
 		$params['row']['pid'] = -12;
 		$t3libDb = $this->getMock('TYPO3\\CMS\\Core\\Database\\DatabaseConnection', array('exec_SELECTgetSingleRow'));
-		$t3libDb
-				->expects($this->once())
-				->method('exec_SELECTgetSingleRow')
-				->with(
-						$this->equalTo('pid, CType, colPos, tx_gridelements_container, tx_gridelements_columns'),
-						$this->equalTo('tt_content'),
-						$this->equalTo('uid=12')
-				)
-				->will($this->returnValue(NULL));
+		$t3libDb->expects($this->once())->method('exec_SELECTgetSingleRow')->with($this->equalTo('pid, CType, colPos, tx_gridelements_container, tx_gridelements_columns'), $this->equalTo('tt_content'), $this->equalTo('uid=12'))->will($this->returnValue(null));
 		$GLOBALS['TYPO3_DB'] = $t3libDb;
 		$colPosList = $this->getMock('GridElementsTeam\\Gridelements\\Backend\\ItemsProcFuncs\\CTypeList', array('checkForAllowedCTypes'));
-		$colPosList
-				->expects($this->never())
-				->method('checkForAllowedCTypes');
+		$colPosList->expects($this->never())->method('checkForAllowedCTypes');
 		$colPosList->itemsProcFunc($params);
 
 		$params['row']['pid'] = -12;
@@ -95,33 +70,15 @@ class tx_gridelements_itemsprocfunc_ctypelistTest extends \TYPO3\CMS\Extbase\Tes
 		$returnValue['tx_gridelements_container'] = 45;
 		$returnValue['tx_gridelements_columns'] = 67;
 		$t3libDb = $this->getMock('TYPO3\\CMS\\Core\\Database\\DatabaseConnection', array('exec_SELECTgetSingleRow'));
-		$t3libDb
-				->expects($this->once())
-				->method('exec_SELECTgetSingleRow')
-				->with(
-						$this->equalTo('pid, CType, colPos, tx_gridelements_container, tx_gridelements_columns'),
-						$this->equalTo('tt_content'),
-						$this->equalTo('uid=12')
-				)
-				->will($this->returnValue($returnValue));
+		$t3libDb->expects($this->once())->method('exec_SELECTgetSingleRow')->with($this->equalTo('pid, CType, colPos, tx_gridelements_container, tx_gridelements_columns'), $this->equalTo('tt_content'), $this->equalTo('uid=12'))->will($this->returnValue($returnValue));
 		$GLOBALS['TYPO3_DB'] = $t3libDb;
 		$colPosList = $this->getMock('GridElementsTeam\\Gridelements\\Backend\\ItemsProcFuncs\\CTypeList', array('checkForAllowedCTypes'));
-		$colPosList
-				->expects($this->once())
-				->method('checkForAllowedCTypes')
-				->with(
-						$this->equalTo($params['items']),
-						$this->equalTo(123),
-						$this->equalTo(20),
-						$this->equalTo(45),
-						$this->equalTo(67)
-				);
+		$colPosList->expects($this->once())->method('checkForAllowedCTypes')->with($this->equalTo($params['items']), $this->equalTo(123), $this->equalTo(20), $this->equalTo(45), $this->equalTo(67));
 		$colPosList->itemsProcFunc($params);
 	}
 
 	/**
 	 * test check for allowed CTypesitems proc func
-	 *
 	 * @test
 	 */
 	public function testCheckForAllowedCTypes() {
@@ -132,11 +89,7 @@ class tx_gridelements_itemsprocfunc_ctypelistTest extends \TYPO3\CMS\Extbase\Tes
 		$pageColumn = 1;
 		$gridContainerId = 2;
 		$gridColumn = 3;
-		$cTypeList
-				->expects($this->once())
-				->method('getSelectedBackendLayout')
-				->with($this->equalTo(12))
-				->will($this->returnValue(array()));
+		$cTypeList->expects($this->once())->method('getSelectedBackendLayout')->with($this->equalTo(12))->will($this->returnValue(array()));
 		$cTypeList->checkForAllowedCTypes($items, $pid, $pageColumn, $gridContainerId, $gridColumn);
 		$this->assertEquals(array(), $items);
 
@@ -154,10 +107,7 @@ class tx_gridelements_itemsprocfunc_ctypelistTest extends \TYPO3\CMS\Extbase\Tes
 		$gridContainerId = 2;
 		$gridColumn = 3;
 		$layoutSetup = $this->getMock('GridElementsTeam\\Gridelements\\Backend\\LayoutSetup', array('getLayoutSetup'));
-		$layoutSetup
-				->expects($this->once())
-				->method('getLayoutSetup')
-				->will($this->returnValue(array()));
+		$layoutSetup->expects($this->once())->method('getLayoutSetup')->will($this->returnValue(array()));
 		$cTypeList->injectLayoutSetup($layoutSetup);
 		$testItems = $items;
 		$cTypeList->checkForAllowedCTypes($testItems, $pid, $pageColumn, $gridContainerId, $gridColumn);
@@ -169,10 +119,7 @@ class tx_gridelements_itemsprocfunc_ctypelistTest extends \TYPO3\CMS\Extbase\Tes
 		$gridColumn = 3;
 		$returnValue['columns'][3] = '1,2';
 		$layoutSetup = $this->getMock('GridElementsTeam\\Gridelements\\Backend\\LayoutSetup', array('getLayoutSetup'));
-		$layoutSetup
-				->expects($this->once())
-				->method('getLayoutSetup')
-				->will($this->returnValue($returnValue));
+		$layoutSetup->expects($this->once())->method('getLayoutSetup')->will($this->returnValue($returnValue));
 		$cTypeList->injectLayoutSetup($layoutSetup);
 		$expectedItems = $testItems = $items;
 		unset($expectedItems[1]);
@@ -185,10 +132,7 @@ class tx_gridelements_itemsprocfunc_ctypelistTest extends \TYPO3\CMS\Extbase\Tes
 		$gridColumn = 3;
 		$returnValue['columns'][3] = '1,*';
 		$layoutSetup = $this->getMock('GridElementsTeam\\Gridelements\\Backend\\LayoutSetup', array('getLayoutSetup'));
-		$layoutSetup
-				->expects($this->once())
-				->method('getLayoutSetup')
-				->will($this->returnValue($returnValue));
+		$layoutSetup->expects($this->once())->method('getLayoutSetup')->will($this->returnValue($returnValue));
 		$cTypeList->injectLayoutSetup($layoutSetup);
 		$expectedItems = $testItems = $items;
 		$cTypeList->checkForAllowedCTypes($testItems, $pid, $pageColumn, $gridContainerId, $gridColumn);

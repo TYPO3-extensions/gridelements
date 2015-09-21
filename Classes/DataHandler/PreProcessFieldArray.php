@@ -1,38 +1,32 @@
 <?php
 namespace GridElementsTeam\Gridelements\DataHandler;
 
-/**
- * Class/Function which offers TCE main hook functions.
- *
- * @author         Jo Hasenau <info@cybercraft.de>
- * @package        TYPO3
- * @subpackage     tx_gridelements
- */
-use TYPO3\CMS\Backend\Utility\BackendUtility;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
-
 /***************************************************************
  *  Copyright notice
- *
  *  (c) 2013 Jo Hasenau <info@cybercraft.de>
  *  All rights reserved
- *
  *  This script is part of the TYPO3 project. The TYPO3 project is
  *  free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
- *
  *  The GNU General Public License can be found at
  *  http://www.gnu.org/copyleft/gpl.html.
- *
  *  This script is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
- *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
+use TYPO3\CMS\Backend\Utility\BackendUtility;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+
+/**
+ * Class/Function which offers TCE main hook functions.
+ * @author Jo Hasenau <info@cybercraft.de>
+ * @package TYPO3
+ * @subpackage tx_gridelements
+ */
 class PreProcessFieldArray extends AbstractDataHandler {
 
 	protected $defVals;
@@ -47,12 +41,10 @@ class PreProcessFieldArray extends AbstractDataHandler {
 	 * -1 = grid element column
 	 * -2 = non used elements column
 	 * changes are applied to the field array of the parent object by reference
-	 *
-	 * @param    array $fieldArray : The array of fields and values that have been saved to the datamap
-	 * @param    string $table : The name of the table the data should be saved to
-	 * @param    integer $id : The parent uid of either the page or the container we are currently working on
-	 * @param    \TYPO3\CMS\Core\DataHandling\DataHandler $parentObj : The parent object that triggered this hook
-	 *
+	 * @param array $fieldArray : The array of fields and values that have been saved to the datamap
+	 * @param string $table : The name of the table the data should be saved to
+	 * @param integer $id : The parent uid of either the page or the container we are currently working on
+	 * @param \TYPO3\CMS\Core\DataHandling\DataHandler $parentObj : The parent object that triggered this hook
 	 * @return void
 	 */
 	public function execute_preProcessFieldArray(&$fieldArray, $table, $id, &$parentObj) {
@@ -66,9 +58,7 @@ class PreProcessFieldArray extends AbstractDataHandler {
 
 	/**
 	 * process field array for table tt_content
-	 *
 	 * @param array $fieldArray
-	 *
 	 * @return void
 	 */
 	public function processFieldArrayForTtContent(array &$fieldArray) {
@@ -86,10 +76,8 @@ class PreProcessFieldArray extends AbstractDataHandler {
 
 	/**
 	 * set default field values for new records
-	 *
 	 * @param array $fieldArray
 	 * @param int $pid
-	 *
 	 * @return void
 	 */
 
@@ -165,9 +153,7 @@ class PreProcessFieldArray extends AbstractDataHandler {
 
 	/**
 	 * checks for default flexform values for new records and sets them accordingly
-	 *
 	 * @param array $fieldArray
-	 *
 	 * @return void
 	 */
 
@@ -182,9 +168,7 @@ class PreProcessFieldArray extends AbstractDataHandler {
 
 	/**
 	 * extracts the default data out of a given XML data structure
-	 *
 	 * @param string $dataStructure
-	 *
 	 * @return string $defaultData
 	 */
 
@@ -214,24 +198,23 @@ class PreProcessFieldArray extends AbstractDataHandler {
 			}
 			if (count($sheetArray) > 0) {
 				$flexformTools = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Configuration\\FlexForm\\FlexFormTools');
-				$returnXML = $flexformTools->flexArray2Xml($sheetArray, TRUE);
+				$returnXML = $flexformTools->flexArray2Xml($sheetArray, true);
 			}
 		}
+
 		return $returnXML;
 	}
 
 	/**
 	 * set initial entries to field array
-	 *
 	 * @param array $fieldArray
 	 * @param integer $pid
-	 *
 	 * @return void
 	 */
 	public function setFieldEntries(array &$fieldArray, $pid) {
 		if ($pid > 0) {
 			$this->setFieldEntriesForTargets($fieldArray, $pid);
-		} else if ((int)$fieldArray['tx_gridelements_container'] > 0 && strpos(key($this->getTceMain()->datamap['tt_content']), 'NEW') !== FALSE) {
+		} else if ((int)$fieldArray['tx_gridelements_container'] > 0 && strpos(key($this->getTceMain()->datamap['tt_content']), 'NEW') !== false) {
 			$containerUpdateArray[(int)$fieldArray['tx_gridelements_container']] = 1;
 			$this->doGridContainerUpdate($containerUpdateArray);
 		}
@@ -240,14 +223,12 @@ class PreProcessFieldArray extends AbstractDataHandler {
 
 	/**
 	 * set initial entries to field array
-	 *
 	 * @param array $fieldArray
 	 * @param integer $pid
-	 *
 	 * @return void
 	 */
 	public function setFieldEntriesForTargets(array &$fieldArray, $pid) {
-		if (count($fieldArray) && strpos($fieldArray['pid'], 'x') !== FALSE) {
+		if (count($fieldArray) && strpos($fieldArray['pid'], 'x') !== false) {
 			$target = explode('x', $fieldArray['pid']);
 			$fieldArray['pid'] = $pid;
 			$targetUid = $target[0] === '-NEW' || $target[0] === 'NEW' ? 'NEW' : abs((int)$target[0]);
@@ -259,11 +240,9 @@ class PreProcessFieldArray extends AbstractDataHandler {
 
 	/**
 	 * set entries to column targets
-	 *
 	 * @param array $fieldArray
 	 * @param integer $targetUid
 	 * @param array $target
-	 *
 	 * @return void
 	 */
 	public function setFieldEntriesForColumnTargets(array &$fieldArray, $targetUid, array $target) {
@@ -284,9 +263,7 @@ class PreProcessFieldArray extends AbstractDataHandler {
 
 	/**
 	 * set entries to simple targets
-	 *
 	 * @param array $fieldArray
-	 *
 	 * @return void
 	 */
 	public function setFieldEntriesForSimpleTargets(array &$fieldArray) {
@@ -307,9 +284,7 @@ class PreProcessFieldArray extends AbstractDataHandler {
 
 	/**
 	 * set/override entries to gridelements container
-	 *
 	 * @param array $fieldArray
-	 *
 	 * @return void
 	 */
 	public function setFieldEntriesForGridContainers(array &$fieldArray) {
@@ -333,10 +308,8 @@ class PreProcessFieldArray extends AbstractDataHandler {
 	 * Function to recursively determine the colPos of the root container
 	 * so that an element that has been removed from any container
 	 * will still remain in the same major page column
-	 *
-	 * @param    integer $contentId : The uid of the current content element
-	 * @param    integer $colPos : The current column of this content element
-	 *
+	 * @param integer $contentId : The uid of the current content element
+	 * @param integer $colPos : The current column of this content element
 	 * @return integer $colPos: The new column of this content element
 	 */
 	public function checkForRootColumn($contentId, $colPos = 0) {
@@ -346,6 +319,7 @@ class PreProcessFieldArray extends AbstractDataHandler {
 		} else {
 			$colPos = (int)$parent['colPos'];
 		}
+
 		return $colPos;
 	}
 

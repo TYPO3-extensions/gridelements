@@ -1,52 +1,36 @@
 <?php
 namespace GridElementsTeam\Gridelements\DataHandler;
 
-/**
- * Class/Function which offers TCE main hook functions.
- *
- * @author         Jo Hasenau <info@cybercraft.de>
- * @package        TYPO3
- * @subpackage     tx_gridelements
- */
-use TYPO3\CMS\Backend\Utility\BackendUtility;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
-
 /***************************************************************
  *  Copyright notice
- *
  *  (c) 2013 Jo Hasenau <info@cybercraft.de>
- *  (c) 2013 Stefan Froemken <froemken@gmail.com>
  *  All rights reserved
- *
  *  This script is part of the TYPO3 project. The TYPO3 project is
  *  free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
- *
  *  The GNU General Public License can be found at
  *  http://www.gnu.org/copyleft/gpl.html.
- *
  *  This script is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
- *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
+use TYPO3\CMS\Backend\Utility\BackendUtility;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Class/Function which offers TCE main hook functions.
- *
- * @author         Jo Hasenau <info@cybercraft.de>
- * @package        TYPO3
- * @subpackage     tx_gridelements
+ * @author Jo Hasenau <info@cybercraft.de>
+ * @package TYPO3
+ * @subpackage tx_gridelements
  */
 class MoveRecord extends AbstractDataHandler {
 
 	/**
 	 * Function to handle record movement to the first position of a column
-	 *
 	 * @param string $table : The name of the table we are working on
 	 * @param int $uid : The uid of the record that is going to be moved
 	 * @param string $destPid : The target the record should be moved to
@@ -55,7 +39,6 @@ class MoveRecord extends AbstractDataHandler {
 	 * @param int $resolvedPid : The calculated id of the page the record should be moved to
 	 * @param boolean $recordWasMoved : A switch to tell the parent object, if the record has been moved
 	 * @param \TYPO3\CMS\Core\DataHandling\DataHandler $parentObj
-	 *
 	 * @return void
 	 */
 	public function execute_moveRecord($table, $uid, &$destPid, &$propArr, &$moveRec, $resolvedPid, &$recordWasMoved, &$parentObj) {
@@ -84,56 +67,6 @@ class MoveRecord extends AbstractDataHandler {
 
 	/**
 	 * Function to handle record movement to the first position of a column
-	 *
-	 * @param string $table : The name of the table we are working on
-	 * @param int $uid : The uid of the record that is going to be moved
-	 * @param string $destPid : The resolved target the record should be moved to
-	 * @param array $moveRec : An array of some values of the record that is going to be moved
-	 * @param array $updateFields : An array of some values of the record that have been updated
-	 * @param \TYPO3\CMS\Core\DataHandling\DataHandler $parentObj : The parent object that triggered this hook
-	 *
-	 */
-	public function execute_moveRecord_firstElementPostProcess($table, $uid, $destPid, $moveRec, $updateFields, \TYPO3\CMS\Core\DataHandling\DataHandler &$parentObj) {
-		if ($table === 'tt_content') {
-			$cmd = GeneralUtility::_GET('cmd');
-			$commandUid = key($cmd['tt_content']);
-			if($commandUid !== $uid) {
-				return;
-			}
-			$movedRecord = BackendUtility::getRecordWSOL('tt_content', $uid, 'uid,t3ver_oid,t3ver_move_id,l18n_parent');
-			$this->init($table, $uid, $parentObj);
-			$originalUid = (int)($movedRecord['_ORIG_uid'] ? $movedRecord['_ORIG_uid'] : $uid);
-
-			$target = explode('x', $cmd['tt_content'][$commandUid]['move']);
-			$column = (int)$target[1];
-			$GLOBALS['TCA']['tt_content']['ctrl']['copyAfterDuplFields'] = str_replace('colPos,', '', $GLOBALS['TCA']['tt_content']['ctrl']['copyAfterDuplFields']);
-			$updateArray = array(
-					'colPos' => $column,
-					'sorting' => $updateFields['sorting'],
-					'tx_gridelements_container' => 0,
-					'tx_gridelements_columns' => 0,
-			);
-
-			$where = '';
-			if (isset($GLOBALS['TCA'][$table]['ctrl']['versioningWS']) && $GLOBALS['TCA'][$table]['ctrl']['versioningWS']) {
-				$where = ' AND t3ver_oid=0';
-			}
-			$l10nRecords = BackendUtility::getRecordsByField($table, $GLOBALS['TCA'][$table]['ctrl']['transOrigPointerField'], $uid, $where);
-			if (is_array($l10nRecords)) {
-				foreach ($l10nRecords as $record) {
-					$this->getTceMain()->updateDB('tt_content', $record['uid'], $updateArray);
-				}
-			}
-			if ($originalUid !== $uid) {
-				$this->getTceMain()->updateDB('tt_content', $originalUid, $updateArray);
-			}
-			$this->getTceMain()->updateDB('tt_content', $uid, $updateArray);
-		}
-	}
-
-	/**
-	 * Function to handle record movement to the first position of a column
-	 *
 	 * @param string $table : The name of the table we are working on
 	 * @param int $uid : The uid of the record that is going to be moved
 	 * @param string $destPid : The resolved target the record should be moved to
@@ -141,7 +74,6 @@ class MoveRecord extends AbstractDataHandler {
 	 * @param array $moveRec : An array of some values of the record that is going to be moved
 	 * @param array $updateFields : An array of some values of the record that have been updated
 	 * @param \TYPO3\CMS\Core\DataHandling\DataHandler $parentObj : The parent object that triggered this hook
-	 *
 	 */
 	public function execute_moveRecord_afterAnotherElementPostProcess($table, $uid, $destPid, $origDestPid, $moveRec, $updateFields, \TYPO3\CMS\Core\DataHandling\DataHandler &$parentObj) {
 		if ($table === 'tt_content') {
@@ -163,31 +95,17 @@ class MoveRecord extends AbstractDataHandler {
 				$column = (int)$target[1];
 				$GLOBALS['TCA']['tt_content']['ctrl']['copyAfterDuplFields'] = str_replace('colPos,', '', $GLOBALS['TCA']['tt_content']['ctrl']['copyAfterDuplFields']);
 				if ($uid === -$origDestPid || $commandUid === -$origDestPid || $placeholderUid === -$origDestPid) {
-					$updateArray = array(
-							'colPos' => $column,
-							'sorting' => $updateFields['sorting'],
-							'tx_gridelements_container' => 0,
-							'tx_gridelements_columns' => 0
-					);
+					$updateArray = array('colPos' => $column, 'sorting' => $sortNumber, 'tx_gridelements_container' => 0, 'tx_gridelements_columns' => 0);
 					$setPid = $targetElement['pid'];
 				} else {
 					$GLOBALS['TCA']['tt_content']['ctrl']['copyAfterDuplFields'] = str_replace('colPos,', '', $GLOBALS['TCA']['tt_content']['ctrl']['copyAfterDuplFields']);
-					$updateArray = array(
-							'colPos' => -1,
-							'sorting' => $updateFields['sorting'],
-							'tx_gridelements_container' => $targetContainer,
-							'tx_gridelements_columns' => $column
-					);
+					$updateArray = array('colPos' => -1, 'sorting' => $sortNumber, 'tx_gridelements_container' => $targetContainer, 'tx_gridelements_columns' => $column);
 				}
 			} else {
-				$updateArray = array(
-						'colPos' => $targetElement['colPos'],
-						'tx_gridelements_container' => $targetElement['tx_gridelements_container'],
-						'tx_gridelements_columns' => $targetElement['tx_gridelements_columns']
-				);
+				$updateArray = array('colPos' => $targetElement['colPos'], 'tx_gridelements_container' => $targetElement['tx_gridelements_container'], 'tx_gridelements_columns' => $targetElement['tx_gridelements_columns']);
 			}
 			$this->getTceMain()->updateDB('tt_content', $originalUid, $updateArray);
-			if($setPid) {
+			if ($setPid) {
 				$updateArray['pid'] = $setPid;
 			}
 			$this->getTceMain()->updateDB('tt_content', $uid, $updateArray);
@@ -196,7 +114,6 @@ class MoveRecord extends AbstractDataHandler {
 
 	/**
 	 * move records to the top of a page or a container column
-	 *
 	 * @param array $cmd
 	 * @param integer $recordUid
 	 * @param string $destPid
@@ -221,20 +138,19 @@ class MoveRecord extends AbstractDataHandler {
 		if ($targetUid !== $recordUid && (int)$target[0] < 0) {
 			$containerUpdateArray[$targetUid] += 1;
 		}
+
 		return TRUE;
 	}
 
 	/**
 	 * create update array for split elements (tt_content)
-	 *
 	 * @param int $recordUid
-	 * @param         $destPid
+	 * @param int $destPid
 	 * @param int $targetUid
 	 * @param array $target
 	 * @param array $containerUpdateArray
-	 *
 	 * @return array UpdateArray
-	 * @deprecated     Has been deprecated with Gridelements 3.1 and will be removed 2 minor versions later or with the next major version
+	 * @deprecated Has been deprecated with Gridelements 3.1 and will be removed 2 minor versions later or with the next major version
 	 */
 	public function createUpdateArrayForSplitElements($recordUid, &$destPid, $targetUid, array $target, array &$containerUpdateArray) {
 		GeneralUtility::logDeprecatedFunction();
@@ -243,21 +159,10 @@ class MoveRecord extends AbstractDataHandler {
 			$containerUpdateArray[$targetUid] += 1;
 			$column = (int)$target[1];
 			$sortNumberArray = $this->dataHandler->getSortNumber('tt_content', $recordUid, $targetElement['pid']);
-			$updateArray = array(
-					'colPos' => -1,
-					'sorting' => $sortNumberArray['sortNumber'],
-					'tx_gridelements_container' => $targetUid,
-					'tx_gridelements_columns' => $column,
-					'pid' => $targetElement['pid']
-			);
+			$updateArray = array('colPos' => -1, 'sorting' => $sortNumberArray['sortNumber'], 'tx_gridelements_container' => $targetUid, 'tx_gridelements_columns' => $column, 'pid' => $targetElement['pid']);
 		} else {
 			$sortNumber = $this->dataHandler->getSortNumber('tt_content', $recordUid, $targetElement['pid']);
-			$updateArray = array(
-					'colPos' => (int)$target[1],
-					'sorting' => $sortNumber,
-					'tx_gridelements_container' => 0,
-					'tx_gridelements_columns' => 0
-			);
+			$updateArray = array('colPos' => (int)$target[1], 'sorting' => $sortNumber, 'tx_gridelements_container' => 0, 'tx_gridelements_columns' => 0);
 			if ($targetUid !== $recordUid) {
 				$updateArray['pid'] = (int)$target[0];
 			}
@@ -270,11 +175,9 @@ class MoveRecord extends AbstractDataHandler {
 
 	/**
 	 * create update array for split elements (tt_content)
-	 *
 	 * @param array $originalElement
-	 *
 	 * @return array UpdateArray
-	 * @deprecated	 Has been deprecated with Gridelements 3.1 and will be removed 2 minor versions later or with the next major version
+	 * @deprecated Has been deprecated with Gridelements 3.1 and will be removed 2 minor versions later or with the next major version
 	 */
 	public function createUpdateArrayForContainerMove(array $originalElement) {
 		GeneralUtility::logDeprecatedFunction();
@@ -282,12 +185,7 @@ class MoveRecord extends AbstractDataHandler {
 			$this->getTceMain()->moveChildren = TRUE;
 		}
 
-		$updateArray = array(
-			'colPos'                    => 0,
-			'sorting'                   => 0,
-			'tx_gridelements_container' => 0,
-			'tx_gridelements_columns'   => 0
-		);
+		$updateArray = array('colPos' => 0, 'sorting' => 0, 'tx_gridelements_container' => 0, 'tx_gridelements_columns' => 0);
 
 		return $updateArray;
 	}

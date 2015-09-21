@@ -5,7 +5,6 @@ use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 
 /**
  * Class PreHeaderRenderHook
- *
  * @package GridElementsTeam\Gridelements\Hooks
  */
 class PreHeaderRenderHook {

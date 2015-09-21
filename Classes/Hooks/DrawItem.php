@@ -1,6 +1,23 @@
 <?php
 namespace GridElementsTeam\Gridelements\Hooks;
 
+/***************************************************************
+ *  Copyright notice
+ *  (c) 2013 Jo Hasenau <info@cybercraft.de>
+ *  All rights reserved
+ *  This script is part of the TYPO3 project. The TYPO3 project is
+ *  free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *  The GNU General Public License can be found at
+ *  http://www.gnu.org/copyleft/gpl.html.
+ *  This script is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *  This copyright notice MUST APPEAR in all copies of the script!
+ ***************************************************************/
 use GridElementsTeam\Gridelements\Helper\Helper;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Backend\Utility\IconUtility;
@@ -12,10 +29,9 @@ use TYPO3\CMS\Core\Versioning\VersionState;
 
 /**
  * Class/Function which manipulates the rendering of item example content and replaces it with a grid of child elements.
- *
- * @author         Jo Hasenau <info@cybercraft.de>
- * @package        TYPO3
- * @subpackage     tx_gridelements
+ * @author Jo Hasenau <info@cybercraft.de>
+ * @package TYPO3
+ * @subpackage tx_gridelements
  */
 class DrawItem implements PageLayoutViewDrawItemHookInterface {
 
@@ -42,14 +58,12 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 	/**
 	 * Processes the item to be rendered before the actual example content gets rendered
 	 * Deactivates the original example content output
-	 *
 	 * @param PageLayoutView $parentObject : The parent object that triggered this hook
 	 * @param boolean $drawItem : A switch to tell the parent object, if the item still must be drawn
 	 * @param string $headerContent : The content of the item header
 	 * @param string $itemContent : The content of the item itself
 	 * @param array $row : The current data row for this item
-	 *
-	 * @return    void
+	 * @return void
 	 */
 	public function preProcess(PageLayoutView &$parentObject, &$drawItem, &$headerContent, &$itemContent, array &$row) {
 		if ($row['CType']) {
@@ -79,13 +93,11 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 
 	/**
 	 * renders the HTML output for elements of the CType gridelements_pi1
-	 *
 	 * @param PageLayoutView $parentObject : The parent object that triggered this hook
 	 * @param array $row : The current data row for this item
 	 * @param string $showHidden : query String containing enable fields
 	 * @param string $deleteClause : query String to check for deleted items
-	 *
-	 * @return string           $itemContent: The HTML output for elements of the CType gridelements_pi1
+	 * @return string $itemContent: The HTML output for elements of the CType gridelements_pi1
 	 */
 	public function renderCTypeGridelements(PageLayoutView $parentObject, &$row, &$showHidden, &$deleteClause) {
 		$head = array();
@@ -103,8 +115,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 		} else {
 			$originalRecord = $row;
 		}
-		$gridElement = $layoutSetup->init($originalRecord['pid'])
-				->cacheCurrentParent($gridContainerId, TRUE);
+		$gridElement = $layoutSetup->init($originalRecord['pid'])->cacheCurrentParent($gridContainerId, TRUE);
 		$layoutUid = $gridElement['tx_gridelements_backend_layout'];
 		$layout = $layoutSetup->getLayoutSetup($layoutUid);
 		$parserRows = NULL;
@@ -137,18 +148,17 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 			$itemContent .= '<tr><td valign="top" class="t3-grid-cell t3-page-column t3-page-column-0">' . $gridContent[0] . '</td></tr>';
 			$itemContent .= '</table></div>';
 		}
+
 		return $itemContent;
 	}
 
 	/**
 	 * renders the HTML output for elements of the CType shortcut
-	 *
 	 * @param PageLayoutView $parentObject : The parent object that triggered this hook
 	 * @param array $row : The current data row for this item
 	 * @param string $showHidden : query String containing enable fields
 	 * @param string $deleteClause : query String to check for deleted items
-	 *
-	 * @return string           $shortcutContent: The HTML output for elements of the CType shortcut
+	 * @return string $shortcutContent: The HTML output for elements of the CType shortcut
 	 */
 	public function renderCTypeShortcut(PageLayoutView $parentObject, &$row, &$showHidden, &$deleteClause) {
 		$shortcutContent = '';
@@ -176,15 +186,14 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 				}
 			}
 		}
+
 		return $shortcutContent;
 	}
 
 	/**
 	 * Sets column positions based on a selected gridelement layout
-	 *
 	 * @param array $parserRows : The parsed rows of the gridelement layout
 	 * @param array $colPosValues : The column positions that have been found for that layout
-	 *
 	 * @return void
 	 */
 	public function setMultipleColPosValues($parserRows, &$colPosValues) {
@@ -194,15 +203,9 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 					foreach ($parserRow['columns.'] as $parserColumns) {
 						$name = $this->lang->sL($parserColumns['name'], TRUE);
 						if ($parserColumns['colPos'] !== '') {
-							$colPosValues[(int)$parserColumns['colPos']] = array(
-									'name' => $name,
-									'allowed' => $parserColumns['allowed']
-							);
+							$colPosValues[(int)$parserColumns['colPos']] = array('name' => $name, 'allowed' => $parserColumns['allowed']);
 						} else {
-							$colPosValues[32768] = array(
-									'name' => $this->lang->getLL('notAssigned'),
-									'allowed' => ''
-							);
+							$colPosValues[32768] = array('name' => $this->lang->getLL('notAssigned'), 'allowed' => '');
 						}
 					}
 				}
@@ -212,20 +215,17 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 
 	/**
 	 * Directly returns the items for a single column if the rendering mode is set to single columns only
-	 *
 	 * @param PageLayoutView $parentObject : The parent object that triggered this hook
 	 * @param array $colPosValues : The column positions that have been found for that layout
 	 * @param array $row : The current data row for the container item
 	 * @param string $showHidden : query String containing enable fields
 	 * @param string $deleteClause : query String to check for deleted items
-	 *
 	 * @return array collected items for this column
 	 */
 	public function setSingleColPosItems(PageLayoutView $parentObject, &$colPosValues, &$row, $showHidden, $deleteClause) {
 		// Due to the pid being "NOT USED" in makeQueryArray we have to set pidSelect here
 		$originalPidSelect = $parentObject->pidSelect;
-		$specificIds = Helper::getInstance()
-				->getSpecificIds($row);
+		$specificIds = Helper::getInstance()->getSpecificIds($row);
 		$parentObject->pidSelect = 'pid = ' . $specificIds['pid'];
 
 		$queryParts = $parentObject->makeQueryArray('tt_content', $row['pid'], 'AND colPos = -1 AND tx_gridelements_container IN (' . $row['uid'] . ',' . $specificIds['uid'] . ') ' . $showHidden . $deleteClause . $parentObject->showLanguage);
@@ -234,16 +234,13 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 		$parentObject->pidSelect = $originalPidSelect;
 
 		$result = $GLOBALS['TYPO3_DB']->exec_SELECT_queryArray($queryParts);
-		$colPosValues[] = array(
-				0,
-				''
-		);
+		$colPosValues[] = array(0, '');
+
 		return $parentObject->getResult($result);
 	}
 
 	/**
 	 * renders the columns of a grid layout
-	 *
 	 * @param PageLayoutView $parentObject : The parent object that triggered this hook
 	 * @param array $colPosValues : The column positions we want to get the content for
 	 * @param array $gridContent : The rendered content data of the grid columns
@@ -253,7 +250,6 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 	 * @param array $head : An array of headers for each of the columns
 	 * @param string $showHidden : query String containing enable fields
 	 * @param string $deleteClause : query String to check for deleted items
-	 *
 	 * @return void
 	 */
 	public function renderGridColumns(PageLayoutView $parentObject, &$colPosValues, &$gridContent, &$row, &$editUidList, &$singleColumn, &$head, $showHidden, $deleteClause) {
@@ -274,14 +270,12 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 
 	/**
 	 * Collects tt_content data from a single tt_content element
-	 *
 	 * @param PageLayoutView $parentObject : The paren object that triggered this hook
 	 * @param int $colPos : The column position to collect the items for
 	 * @param array $row : The current data row for the container item
 	 * @param string $showHidden : query String containing enable fields
 	 * @param string $deleteClause : query String to check for deleted items
-	 *
-	 * @return array            collected items for the given column
+	 * @return array collected items for the given column
 	 */
 	public function collectItemsForColumn(PageLayoutView $parentObject, &$colPos, &$row, &$showHidden, &$deleteClause) {
 		// Due to the pid being "NOT USED" in makeQueryArray we have to set pidSelect here
@@ -300,7 +294,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 		}
 
 		$where = '';
-		if($helper->getBackendUser()->workspace > 0 && $row['t3ver_wsid'] > 0) {
+		if ($helper->getBackendUser()->workspace > 0 && $row['t3ver_wsid'] > 0) {
 			$where .= 'AND t3ver_wsid = ' . $row['t3ver_wsid'];
 		}
 		$where .= ' AND colPos = -1 AND tx_gridelements_container IN (' . $row['uid'] . ',' . $specificIds['uid'] . ') AND tx_gridelements_columns=' . $colPos . $showHidden . $deleteClause . $showLanguage;
@@ -311,25 +305,23 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 		$parentObject->pidSelect = $originalPidSelect;
 
 		$result = $GLOBALS['TYPO3_DB']->exec_SELECT_queryArray($queryParts);
+
 		return $parentObject->getResult($result);
 	}
 
 	/**
 	 * renders a single column of a grid layout and sets the edit uid list
-	 *
 	 * @param PageLayoutView $parentObject : The parent object that triggered this hook
 	 * @param array $items : The content data of the column to be rendered
 	 * @param int $colPos : The column position we want to get the content for
 	 * @param array $gridContent : The rendered content data of the grid column
-	 * @param                $row
+	 * @param $row
 	 * @param array $editUidList : determines if we will get edit icons or not
-	 *
 	 * @return void
 	 */
 	protected function renderSingleGridColumn(PageLayoutView $parentObject, &$items, &$colPos, &$gridContent, $row, &$editUidList) {
 
-		$specificIds = Helper::getInstance()
-				->getSpecificIds($row);
+		$specificIds = Helper::getInstance()->getSpecificIds($row);
 
 		if ($colPos < 32768) {
 			if ($row{'sys_language_uid'}) {
@@ -364,8 +356,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 						$onClick = BackendUtility::editOnClick($params, $parentObject->backPath);
 					}
 					$gridContent[$colPos] .= '
-				<div class="t3js-page-new-ce t3-page-ce-wrapper-new-ce" id="colpos-' . $itemRow['tx_gridelements_columns'] . '-page-' . $itemRow['pid'] . '-gridcontainer-' . $itemRow['tx_gridelements_container'] .
-						'-' . str_replace('.', '', uniqid('', TRUE)) . '">
+				<div class="t3js-page-new-ce t3-page-ce-wrapper-new-ce" id="colpos-' . $itemRow['tx_gridelements_columns'] . '-page-' . $itemRow['pid'] . '-gridcontainer-' . $itemRow['tx_gridelements_container'] . '-' . str_replace('.', '', uniqid('', TRUE)) . '">
 					<a href="#" onclick="' . htmlspecialchars($onClick) . '" title="' . $GLOBALS['LANG']->getLL('newContentElement', TRUE) . '" class="btn btn-default btn-sm">' . IconUtility::getSpriteIcon('actions-document-new') . ' ' . $GLOBALS['LANG']->getLL('content', TRUE) . '</a>
 				</div>
 				<div class="t3-page-ce-dropzone-available t3js-page-ce-dropzone-available"></div>
@@ -381,13 +372,11 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 
 	/**
 	 * Sets the headers for a grid before content and headers are put together
-	 *
 	 * @param PageLayoutView $parentObject : The parent object that triggered this hook
 	 * @param array $head : The collected item data rows
 	 * @param int $colPos : The column position we want to get a header for
 	 * @param string $name : The name of the header
 	 * @param array $editUidList : determines if we will get edit icons or not
-	 *
 	 * @internal param array $row : The current data row for the container item
 	 * @return void
 	 */
@@ -397,11 +386,9 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 
 	/**
 	 * Draw header for a content element column:
-	 *
 	 * @param string $colName Column name
 	 * @param string $editParams Edit params (Syntax: &edit[...] for alt_doc.php)
 	 * @param PageLayoutView $parentObject
-	 *
 	 * @return string HTML table
 	 */
 	function tt_content_drawColHeader($colName, $editParams, &$parentObject) {
@@ -425,36 +412,24 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 					' . $icons . '
 					<div class="t3-page-column-header-label">' . htmlspecialchars($colName) . '</div>
 				</div>';
+
 		return $out;
 	}
 
 	/**
 	 * Renders the grid layout table after the HTML content for the single elements has been rendered
-	 *
 	 * @param array $layoutSetup : The setup of the layout that is selected for the grid we are going to render
 	 * @param array $row : The current data row for the container item
 	 * @param array $head : The data for the column headers of the grid we are going to render
 	 * @param array $gridContent : The content data of the grid we are going to render
-	 *
 	 * @return string
 	 */
 	public function renderGridLayoutTable($layoutSetup, $row, $head, $gridContent) {
-		$specificIds = Helper::getInstance()
-				->getSpecificIds($row);
+		$specificIds = Helper::getInstance()->getSpecificIds($row);
 
 		$grid = '<div class="t3-grid-container t3-grid-element-container' . ($layoutSetup['frame'] ? ' t3-grid-container-framed t3-grid-container-' . $layoutSetup['frame'] : '') . ($layoutSetup['top_level_layout'] ? ' t3-grid-tl-container' : '') . '">';
 		if ($layoutSetup['frame'] || $GLOBALS['BE_USER']->uc['showGridInformation'] === 1) {
-			$grid .= '<h4 class="t3-grid-container-title-' . (int)$layoutSetup['frame'] . '">' .
-				BackendUtility::wrapInHelp(
-					'tx_gridelements_backend_layouts',
-					'title',
-					$this->lang->sL($layoutSetup['title']),
-					array(
-						'title' => $this->lang->sL($layoutSetup['title']),
-						'description' => $this->lang->sL($layoutSetup['description'])
-					)
-				)
-				. '</h4>';
+			$grid .= '<h4 class="t3-grid-container-title-' . (int)$layoutSetup['frame'] . '">' . BackendUtility::wrapInHelp('tx_gridelements_backend_layouts', 'title', $this->lang->sL($layoutSetup['title']), array('title' => $this->lang->sL($layoutSetup['title']), 'description' => $this->lang->sL($layoutSetup['description']))) . '</h4>';
 		}
 		$grid .= '<table border="0" cellspacing="0" cellpadding="0" width="100%" height="100%" class="t3-page-columns t3-grid-table">';
 		// add colgroups
@@ -515,15 +490,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 				// render the grid cell
 				$colSpan = (int)$columnConfig['colspan'];
 				$rowSpan = (int)$columnConfig['rowspan'];
-				$grid .= '<td valign="top"' .
-					(isset($columnConfig['colspan']) ? ' colspan="' . $colSpan . '"' : '') .
-					(isset($columnConfig['rowspan']) ? ' rowspan="' . $rowSpan . '"' : '') .
-					'data-colpos="' . $columnKey . '" id="column-' . $specificIds['uid'] . 'x' . $columnKey . '" class="t3-grid-cell t3js-page-column t3-page-column t3-page-column-' . $columnKey .
-					(!isset($columnConfig['colPos']) || $columnConfig['colPos'] === '' ? ' t3-grid-cell-unassigned' : '') .
-					(isset($columnConfig['colspan']) && $columnConfig['colPos'] !== '' ? ' t3-grid-cell-width' . $colSpan : '') .
-					(isset($columnConfig['rowspan']) && $columnConfig['colPos'] !== '' ? ' t3-grid-cell-height' . $rowSpan : '') . ' ' .
-					($layoutSetup['horizontal'] ? ' t3-grid-cell-horizontal' : '') .
-					(count($allowedCTypes) ? ' ' . join(' ', $allowedCTypes) : ' t3-allow-all') . '">';
+				$grid .= '<td valign="top"' . (isset($columnConfig['colspan']) ? ' colspan="' . $colSpan . '"' : '') . (isset($columnConfig['rowspan']) ? ' rowspan="' . $rowSpan . '"' : '') . 'data-colpos="' . $columnKey . '" id="column-' . $specificIds['uid'] . 'x' . $columnKey . '" class="t3-grid-cell t3js-page-column t3-page-column t3-page-column-' . $columnKey . (!isset($columnConfig['colPos']) || $columnConfig['colPos'] === '' ? ' t3-grid-cell-unassigned' : '') . (isset($columnConfig['colspan']) && $columnConfig['colPos'] !== '' ? ' t3-grid-cell-width' . $colSpan : '') . (isset($columnConfig['rowspan']) && $columnConfig['colPos'] !== '' ? ' t3-grid-cell-height' . $rowSpan : '') . ' ' . ($layoutSetup['horizontal'] ? ' t3-grid-cell-horizontal' : '') . (count($allowedCTypes) ? ' ' . join(' ', $allowedCTypes) : ' t3-allow-all') . '">';
 
 				$grid .= ($GLOBALS['BE_USER']->uc['hideColumnHeaders'] ? '' : $head[$columnKey]) . $gridContent[$columnKey];
 				$grid .= '</td>';
@@ -531,19 +498,17 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 			$grid .= '</tr>';
 		}
 		$grid .= '</table></div>';
+
 		return $grid;
 	}
 
 	/**
 	 * Collects tt_content data from a single page or a page tree starting at a given page
-	 *
 	 * @param string $shortcutItem : The single page to be used as the tree root
 	 * @param array $collectedItems : The collected item data rows ordered by parent position, column position and sorting
 	 * @param int $recursive : The number of levels for the recursion
 	 * @param string $showHidden : query String containing enable fields
 	 * @param string $deleteClause : query String to check for deleted items
-	 * @param int $parentUid : uid of the referencing tt_content record
-	 *
 	 * @return void
 	 */
 	public function collectContentDataFromPages($shortcutItem, &$collectedItems, $recursive = 0, &$showHidden, &$deleteClause, $parentUid) {
@@ -570,7 +535,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 	 * @param array $collectedItems : The collected item data row
 	 * @param string $showHidden : query String containing enable fields
 	 * @param string $deleteClause : query String to check for deleted items
-	 * @param int $parentUid : uid of the referencing tt_content record
+	 * @return void
 	 */
 	public function collectContentData($shortcutItem, &$collectedItems, &$showHidden, &$deleteClause, $parentUid) {
 		$shortcutItem = str_replace('tt_content_', '', $shortcutItem);
@@ -585,10 +550,8 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 
 	/**
 	 * Renders the HTML code for a single tt_content element
-	 *
 	 * @param PageLayoutView $parentObject : The parent object that triggered this hook
 	 * @param array $itemRow : The data row to be rendered as HTML
-	 *
 	 * @return string
 	 */
 	public function renderSingleElementHTML(PageLayoutView $parentObject, $itemRow) {
@@ -609,6 +572,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 		if (!empty($footerContent)) {
 			$singleElementHTML .= '<div class="t3-page-ce-footer">' . $footerContent . '</div>';
 		}
+
 		return $singleElementHTML;
 	}
 }

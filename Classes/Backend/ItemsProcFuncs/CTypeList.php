@@ -1,15 +1,30 @@
 <?php
 namespace GridElementsTeam\Gridelements\Backend\ItemsProcFuncs;
-
+/***************************************************************
+ *  Copyright notice
+ *  (c) 2013 Jo Hasenau <info@cybercraft.de>
+ *  All rights reserved
+ *  This script is part of the TYPO3 project. The TYPO3 project is
+ *  free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *  The GNU General Public License can be found at
+ *  http://www.gnu.org/copyleft/gpl.html.
+ *  This script is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *  This copyright notice MUST APPEAR in all copies of the script!
+ ***************************************************************/
 use GridElementsTeam\Gridelements\Backend\LayoutSetup;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Class/Function which manipulates the item-array for table/field tt_content CType.
- *
- * @author         Jo Hasenau <info@cybercraft.de>
- * @package        TYPO3
- * @subpackage     tx_gridelements
+ * @author Jo Hasenau <info@cybercraft.de>
+ * @package TYPO3
+ * @subpackage tx_gridelements
  */
 class CTypeList extends AbstractItemsProcFunc {
 
@@ -20,31 +35,27 @@ class CTypeList extends AbstractItemsProcFunc {
 
 	/**
 	 * injects layout setup
-	 *
 	 * @param \GridElementsTeam\Gridelements\Backend\LayoutSetup $layoutSetup
 	 */
-	public function injectLayoutSetup(\GridElementsTeam\Gridelements\Backend\LayoutSetup $layoutSetup) {
+	public function injectLayoutSetup(LayoutSetup $layoutSetup) {
 		$this->layoutSetup = $layoutSetup;
 	}
 
 	/**
 	 * initializes this class
-	 *
 	 * @param int $pageUid
 	 */
 	public function init($pageUid) {
+		parent::init();
 		if (!$this->layoutSetup instanceof LayoutSetup) {
-			$this->layoutSetup = GeneralUtility::makeInstance('GridElementsTeam\\Gridelements\\Backend\\LayoutSetup')
-					->init($pageUid);
+			$this->layoutSetup = GeneralUtility::makeInstance('GridElementsTeam\\Gridelements\\Backend\\LayoutSetup')->init($pageUid);
 		}
 	}
 
 	/**
 	 * ItemProcFunc for CType items
-	 *
-	 * @param    array $params : The array of parameters that is used to render the item list
-	 *
-	 * @return    void
+	 * @param array $params : The array of parameters that is used to render the item list
+	 * @return void
 	 */
 	public function itemsProcFunc(&$params) {
 		if ((int)$params['row']['pid'] > 0) {
@@ -52,7 +63,7 @@ class CTypeList extends AbstractItemsProcFunc {
 		} else {
 			// negative uid_pid values indicate that the element has been inserted after an existing element
 			// so there is no pid to get the backendLayout for and we have to get that first
-			$existingElement = $GLOBALS['TYPO3_DB']->exec_SELECTgetSingleRow('pid, CType, colPos, tx_gridelements_container, tx_gridelements_columns', 'tt_content', 'uid=' . -((int)$params['row']['pid']));
+			$existingElement = $this->databaseConnection->exec_SELECTgetSingleRow('pid, CType, colPos, tx_gridelements_container, tx_gridelements_columns', 'tt_content', 'uid=' . -((int)$params['row']['pid']));
 			if ((int)$existingElement['pid'] > 0) {
 				$this->checkForAllowedCTypes($params['items'], $existingElement['pid'], $existingElement['colPos'], $existingElement['tx_gridelements_container'], $existingElement['tx_gridelements_columns']);
 			}
@@ -61,14 +72,12 @@ class CTypeList extends AbstractItemsProcFunc {
 
 	/**
 	 * Checks if a CType is allowed in this particular page or grid column - only this one column defines the allowed CTypes regardless of any parent column
-	 *
-	 * @param    array $items : The items of the current CType list
-	 * @param    integer $pid : The id of the page we are currhently working on
-	 * @param    integer $pageColumn : The page column the element is a child of
-	 * @param    integer $gridContainerId : The ID of the current container
-	 * @param    integer $gridColumn : The grid column the element is a child of
-	 *
-	 * @return    array|null    $backendLayout: An array containing the data of the selected backend layout as well as a parsed version of the layout configuration
+	 * @param array $items : The items of the current CType list
+	 * @param integer $pid : The id of the page we are currhently working on
+	 * @param integer $pageColumn : The page column the element is a child of
+	 * @param integer $gridContainerId : The ID of the current container
+	 * @param integer $gridColumn : The grid column the element is a child of
+	 * @return array|null $backendLayout: An array containing the data of the selected backend layout as well as a parsed version of the layout configuration
 	 */
 	public function checkForAllowedCTypes(&$items, $pid, $pageColumn, $gridContainerId, $gridColumn) {
 		if ((int)$pageColumn >= 0 || (int)$pageColumn === -2) {
@@ -77,7 +86,7 @@ class CTypeList extends AbstractItemsProcFunc {
 		} else {
 			$this->init($pid);
 			$column = $gridColumn ? $gridColumn : 0;
-			$gridElement = $this->layoutSetup->cacheCurrentParent($gridContainerId, TRUE);
+			$gridElement = $this->layoutSetup->cacheCurrentParent($gridContainerId, true);
 			$backendLayout = $this->layoutSetup->getLayoutSetup($gridElement['tx_gridelements_backend_layout']);
 		}
 		if (isset($backendLayout)) {

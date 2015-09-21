@@ -3,18 +3,14 @@ namespace GridElementsTeam\Gridelements\Wizard;
 
 $GLOBALS['LANG']->includeLLFile('EXT:lang/locallang_wizards.xml');
 
+use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Backend\Utility\IconUtility;
 use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
-use TYPO3\CMS\Core\TypoScript\Parser\TypoScriptParser;
-use TYPO3\CMS\Backend\Template\DocumentTemplate;
-use TYPO3\CMS\Backend\Utility\BackendUtility;
 
 /**
  * Script Class for grid wizard
- *
  * @author T3UXW09 Team1 <modernbe@cybercraft.de>
  */
 class BackendLayout {
@@ -26,7 +22,6 @@ class BackendLayout {
 
 	/**
 	 * Document template object
-	 *
 	 * @var \TYPO3\CMS\Backend\Template\DocumentTemplate
 	 */
 	public $doc;
@@ -48,7 +43,6 @@ class BackendLayout {
 
 	/**
 	 * Initialises the Class
-	 *
 	 * @return void
 	 * @throws \InvalidArgumentException
 	 */
@@ -83,21 +77,8 @@ class BackendLayout {
 					parent.opener.TBE_EDITOR.fieldChanged("backend_layout","' . $uid . '","config","data[backend_layout][' . $uid . '][config]");
 				}
 			}
-			', FALSE);
-		$languageLabels = array(
-			'save' => $lang->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_labelSave', TRUE),
-			'title' => $lang->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_windowTitle', TRUE),
-			'editCell' => $lang->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_editCell', TRUE),
-			'mergeCell' => $lang->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_mergeCell', TRUE),
-			'splitCell' => $lang->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_splitCell', TRUE),
-			'name' => $lang->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_name', TRUE),
-			'column' => $lang->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_column', TRUE),
-			'notSet' => $lang->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_notSet', TRUE),
-			'nameHelp' => $lang->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_nameHelp', TRUE),
-			'columnHelp' => $lang->sL('LLL:EXT:lang/locallang_wizards.xml:grid_columnHelp', 1),
-			'allowedElementTypes' => $lang->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:allowedElementTypes', 1),
-			'allowedElementTypesHelp' => $lang->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:allowedElementTypesHelp', 1),
-		);
+			', false);
+		$languageLabels = array('save' => $lang->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_labelSave', true), 'title' => $lang->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_windowTitle', true), 'editCell' => $lang->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_editCell', true), 'mergeCell' => $lang->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_mergeCell', true), 'splitCell' => $lang->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_splitCell', true), 'name' => $lang->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_name', true), 'column' => $lang->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_column', true), 'notSet' => $lang->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_notSet', true), 'nameHelp' => $lang->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_nameHelp', true), 'columnHelp' => $lang->sL('LLL:EXT:lang/locallang_wizards.xml:grid_columnHelp', 1), 'allowedElementTypes' => $lang->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:allowedElementTypes', 1), 'allowedElementTypesHelp' => $lang->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:allowedElementTypesHelp', 1),);
 		$pageRenderer->addInlineLanguageLabelArray($languageLabels);
 		// add gridelement wizard options information
 		$ctypeLabels = array();
@@ -122,17 +103,7 @@ class BackendLayout {
 		// select record
 		$record = $this->getDatabaseConnection()->exec_SELECTgetRows($this->P['field'], $this->P['table'], 'uid=' . (int)$this->P['uid']);
 		if (trim($record[0][$this->P['field']]) === '') {
-			$rows = array(
-					array(
-							array(
-									'colspan' => 1,
-									'rowspan' => 1,
-									'spanned' => FALSE,
-									'name' => '',
-									'allowed' => ''
-							)
-					)
-			);
+			$rows = array(array(array('colspan' => 1, 'rowspan' => 1, 'spanned' => false, 'name' => '', 'allowed' => '')));
 			$colCount = 1;
 			$rowCount = 1;
 		} else {
@@ -197,12 +168,7 @@ class BackendLayout {
 							}
 						}
 					} else {
-						$cellData = array(
-								'colspan' => 1,
-								'rowspan' => 1,
-								'spanned' => 1,
-								'allowed' => '*'
-						);
+						$cellData = array('colspan' => 1, 'rowspan' => 1, 'spanned' => 1, 'allowed' => '*');
 					}
 					$cells[] = $cellData;
 				}
@@ -227,15 +193,14 @@ class BackendLayout {
 
 	/**
 	 * Main Method, rendering either colorpicker or frameset depending on ->showPicker
-	 *
 	 * @return void
 	 */
 	public function main() {
 		$lang = $this->getLanguageService();
 		$resourcePath = ExtensionManagementUtility::extRelPath('backend') . 'Resources/Public/Images/BackendLayoutWizard/';
-		$content = '<a href="#" title="' . $lang->sL('LLL:EXT:lang/locallang_core.xlf:rm.saveDoc', TRUE) . '" onclick="storeData(t3Grid.export2LayoutRecord());return true;">' . IconUtility::getSpriteIcon('actions-document-save') . '</a>';
-		$content .= '<a href="#" title="' . $lang->sL('LLL:EXT:lang/locallang_core.xlf:rm.saveCloseDoc', TRUE) . '" onclick="storeData(t3Grid.export2LayoutRecord());window.close();return true;">' . IconUtility::getSpriteIcon('actions-document-save-close') . '</a>';
-		$content .= '<a href="#" title="' . $lang->sL('LLL:EXT:lang/locallang_core.xlf:rm.closeDoc', TRUE) . '" onclick="window.close();return true;">' . IconUtility::getSpriteIcon('actions-document-close') . '</a>';
+		$content = '<a href="#" title="' . $lang->sL('LLL:EXT:lang/locallang_core.xlf:rm.saveDoc', true) . '" onclick="storeData(t3Grid.export2LayoutRecord());return true;">' . IconUtility::getSpriteIcon('actions-document-save') . '</a>';
+		$content .= '<a href="#" title="' . $lang->sL('LLL:EXT:lang/locallang_core.xlf:rm.saveCloseDoc', true) . '" onclick="storeData(t3Grid.export2LayoutRecord());window.close();return true;">' . IconUtility::getSpriteIcon('actions-document-save-close') . '</a>';
+		$content .= '<a href="#" title="' . $lang->sL('LLL:EXT:lang/locallang_core.xlf:rm.closeDoc', true) . '" onclick="window.close();return true;">' . IconUtility::getSpriteIcon('actions-document-close') . '</a>';
 		$content .= $this->doc->spacer(10);
 		$content .= '
 		<table border="0" width="90%" height="90%" id="outer_container">
@@ -270,7 +235,6 @@ class BackendLayout {
 
 	/**
 	 * Returns the sourcecode to the browser
-	 *
 	 * @return void
 	 */
 	public function printContent() {
@@ -280,7 +244,6 @@ class BackendLayout {
 
 	/**
 	 * Returns LanguageService
-	 *
 	 * @return \TYPO3\CMS\Lang\LanguageService
 	 */
 	protected function getLanguageService() {
@@ -289,7 +252,6 @@ class BackendLayout {
 
 	/**
 	 * Returns the database connection
-	 *
 	 * @return \TYPO3\CMS\Core\Database\DatabaseConnection
 	 */
 	protected function getDatabaseConnection() {
