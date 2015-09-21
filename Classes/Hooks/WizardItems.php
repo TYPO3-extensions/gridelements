@@ -18,8 +18,14 @@ namespace GridElementsTeam\Gridelements\Hooks;
  *  GNU General Public License for more details.
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
+
+use GridElementsTeam\Gridelements\Backend\LayoutSetup;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
+use TYPO3\CMS\Backend\Wizard\NewContentElementWizardHookInterface;
+use TYPO3\CMS\Core\Database\DatabaseConnection;
+use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Lang\LanguageService;
 
 /**
  * Class/Function which manipulates the rendering of items within the new content element wizard
@@ -27,18 +33,18 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  * @package TYPO3
  * @subpackage tx_gridelements
  */
-class WizardItems implements \TYPO3\CMS\Backend\Wizard\NewContentElementWizardHookInterface {
+class WizardItems implements NewContentElementWizardHookInterface {
 
 	/**
-	 * @var \GridElementsTeam\Gridelements\Backend\LayoutSetup
+	 * @var LayoutSetup
 	 */
 	protected $layoutSetup;
 
 	/**
 	 * inject layout setup
-	 * @param \GridElementsTeam\Gridelements\Backend\LayoutSetup $layoutSetup
+	 * @param LayoutSetup $layoutSetup
 	 */
-	public function injectLayoutSetup(\GridElementsTeam\Gridelements\Backend\LayoutSetup $layoutSetup) {
+	public function injectLayoutSetup(LayoutSetup $layoutSetup) {
 		$this->layoutSetup = $layoutSetup;
 	}
 
@@ -47,9 +53,9 @@ class WizardItems implements \TYPO3\CMS\Backend\Wizard\NewContentElementWizardHo
 	 * @param int $pageUid
 	 */
 	public function init($pageUid) {
-		if (!$this->layoutSetup instanceof \GridElementsTeam\Gridelements\Backend\LayoutSetup) {
+		if (!$this->layoutSetup instanceof LayoutSetup) {
 			if ($pageUid < 0) {
-				$triggerElement = $GLOBALS['TYPO3_DB']->exec_SELECTgetSingleRow('pid', 'tt_content', 'uid = ' . -$pageUid);
+				$triggerElement = $this->getDatabase()->exec_SELECTgetSingleRow('pid', 'tt_content', 'uid = ' . -$pageUid);
 				$pageUid = (int)$triggerElement['pid'];
 			}
 			$this->layoutSetup = GeneralUtility::makeInstance('GridElementsTeam\\Gridelements\\Backend\\LayoutSetup')->init($pageUid);
@@ -183,7 +189,7 @@ class WizardItems implements \TYPO3\CMS\Backend\Wizard\NewContentElementWizardHo
 			$wizardItems['gridelements'] = array();
 
 			// set header label
-			$wizardItems['gridelements']['header'] = $GLOBALS['LANG']->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tx_gridelements_backend_layout_wizard_label');
+			$wizardItems['gridelements']['header'] = $this->getLanguageService()->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tx_gridelements_backend_layout_wizard_label');
 
 			// traverse the gridelements and create wizard item for each gridelement
 			foreach ($gridItems as $key => $item) {
@@ -192,7 +198,7 @@ class WizardItems implements \TYPO3\CMS\Backend\Wizard\NewContentElementWizardHo
 				if ($item['icon'][0]) {
 					$wizardItems['gridelements_' . $itemIdentifier]['icon'] = $item['icon'][0];
 				} else {
-					$wizardItems['gridelements_' . $itemIdentifier]['icon'] = \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath('gridelements') . 'Resources/Public/Backend/Images/new_content_el.gif';
+					$wizardItems['gridelements_' . $itemIdentifier]['icon'] = ExtensionManagementUtility::extRelPath('gridelements') . 'Resources/Public/Backend/Images/new_content_el.gif';
 				}
 				/*
 				if($container != 0) {
@@ -228,4 +234,17 @@ class WizardItems implements \TYPO3\CMS\Backend\Wizard\NewContentElementWizardHo
 		}
 	}
 
+	/**
+	 * @return LanguageService
+	 */
+	protected function getLanguageService() {
+		return $GLOBALS['LANG'];
+	}
+
+	/**
+	 * @return DatabaseConnection
+	 */
+	protected function getDatabase() {
+		return $GLOBALS['TYPO3_DB'];
+	}
 }

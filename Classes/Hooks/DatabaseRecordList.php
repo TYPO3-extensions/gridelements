@@ -20,6 +20,8 @@ namespace GridElementsTeam\Gridelements\Hooks;
  ***************************************************************/
 
 use GridElementsTeam\Gridelements\Helper\Helper;
+use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Lang\LanguageService;
 use TYPO3\CMS\Recordlist\RecordList\RecordListHookInterface;
 
@@ -39,7 +41,7 @@ class DatabaseRecordList implements RecordListHookInterface {
 
 	public function __construct() {
 		$this->lang = GeneralUtility::makeInstance(LanguageService::class);
-		$this->lang->init($GLOBALS['BE_USER']->uc['lang']);
+		$this->lang->init($this->getBackendUser()->uc['lang']);
 	}
 
 
@@ -117,10 +119,9 @@ class DatabaseRecordList implements RecordListHookInterface {
 	 * @param array $row
 	 * @param int $level
 	 * @param array $theData
-	 * @param object $parentObject
 	 * @return void
 	 */
-	public function checkChildren($table, $row, $level, &$theData, &$parentObject) {
+	public function checkChildren($table, $row, $level, &$theData) {
 		if ($table === 'tt_content' && $row['CType'] === 'gridelements_pi1') {
 			$elementChildren = Helper::getInstance()->getChildren($table, $row['uid']);
 			if (count($elementChildren) > 0) {
@@ -138,10 +139,9 @@ class DatabaseRecordList implements RecordListHookInterface {
 	 * @param string $sortField
 	 * @param int $level
 	 * @param string $contentCollapseIcon
-	 * @param object $parentObject
 	 * @return void
 	 */
-	public function contentCollapseIcon($data, $sortField, $level, &$contentCollapseIcon, &$parentObject) {
+	public function contentCollapseIcon($data, $sortField, $level, &$contentCollapseIcon) {
 		if ($data['_EXPAND_TABLE_'] === 'tt_content') {
 			$contentCollapseIcon = '
 				<a href="javascript:GridElementsListView.elExpandCollapse(\'' . $data['_EXPAND_ID_'] . '\',\'' . $sortField . '\', ' . $level . ')" title="' . $this->lang->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang.xml:list.collapseElement', true) . '" rel="' . $data['_EXPAND_ID_'] . '">
@@ -149,6 +149,13 @@ class DatabaseRecordList implements RecordListHookInterface {
 				</a>
 			';
 		}
+	}
+
+	/**
+	 * @return BackendUserAuthentication
+	 */
+	protected function getBackendUser() {
+		return $GLOBALS['BE_USER'];
 	}
 
 }

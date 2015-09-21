@@ -159,17 +159,18 @@ class LayoutSetup {
 	 * Caches Container-Records and their setup to avoid multiple selects of the same record during a single request
 	 * @param int $gridContainerId The ID of the current grid container
 	 * @param bool $doReturn
-	 * @return void | array
+	 * @return NULL | array
 	 */
 	public function cacheCurrentParent($gridContainerId = 0, $doReturn = false) {
 		if ($gridContainerId > 0) {
-			if (!$GLOBALS['tx_gridelements']['parentElement'][$gridContainerId]) {
+			if (empty($GLOBALS['tx_gridelements']['parentElement'][$gridContainerId])) {
 				$GLOBALS['tx_gridelements']['parentElement'][$gridContainerId] = BackendUtility::getRecordWSOL('tt_content', $gridContainerId);
 			}
 		}
-		if ($doReturn === true) {
+		if ($doReturn) {
 			return $GLOBALS['tx_gridelements']['parentElement'][$gridContainerId];
 		};
+		return NULL;
 	}
 
 	/**

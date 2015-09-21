@@ -35,13 +35,9 @@ class AbstractDatabaseRecordList {
 	 * @param array $queryParts : The array containing the parts to build the query from
 	 * @param DatabaseRecordList $parent : The parent object that triggered this hook
 	 * @param string $table : The name of the table we are currently working on
-	 * @param int $pageId : The uid of the page we are currently working on
-	 * @param string $addWhere : A string to be added to the WHERE clause
-	 * @param string $fieldList : A list of fields to be considered during the query
-	 * @param array $params : An array of parameters
 	 * @return void
 	 */
-	public function makeQueryArray_post(&$queryParts, &$parent, $table, $pageId, &$addWhere, &$fieldList, &$params) {
+	public function makeQueryArray_post(&$queryParts, &$parent, $table) {
 		if ($table === 'tt_content' && $parent instanceof \GridElementsTeam\Gridelements\Xclass\DatabaseRecordList) {
 			$queryParts['ORDERBY'] = $this->addValueToList($queryParts['ORDERBY'], 'colPos');
 			$queryParts['WHERE'] .= ' AND colPos != -1';

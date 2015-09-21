@@ -17,7 +17,7 @@
   background-color: #c8d9c3;
   text-align: center;
   position: relative;
-  margin: 0px 0px 0px 0px;
+  margin: 0 0 0 0;
   line-height: 25px;
   height: 25px;
   border: 1px dotted #73ab61;
@@ -78,7 +78,7 @@
 }
 
 #new-element-drag-in-wizard .nav-tabs {
-  margin: 0px;
+  margin: 0;
   text-align: right;
 }
 
@@ -97,7 +97,7 @@
 }
 
 #new-element-drag-in-wizard .tab-content {
-  margin: 0px 1px 0px 0px;
+  margin: 0 1px 0 0;
   clear: both;
 }
 
@@ -106,7 +106,7 @@
 }
 
 #new-element-drag-in-wizard .nav-tabs {
-  margin: 0px;
+  margin: 0;
   text-align: right;
 }
 
@@ -125,7 +125,7 @@
 }
 
 #new-element-drag-in-wizard .tab-content {
-  margin: 0px 1px 0px 0px;
+  margin: 0 1px 0 0;
   clear: both;
 }
 
@@ -134,31 +134,31 @@
 }
 
 #x-dd-draggablecontainer.dragging-active .typo3-dyntabmenu-divs:hover {
-  min-height: 0px;
+  min-height: 0;
 }
 
 #x-dd-draggablecontainer .typo3-dyntabmenu-divs .c-tablayer {
   display: block;
   width: 100%;
-  margin: 0px 12px 0px 2px;
+  margin: 0 12px 0 2px;
 }
 
 #x-dd-draggablecontainer .typo3-dyntabmenu-divs .x-dd-new-element-link {
   display: inline-block;
   vertical-align: top;
-  margin:  0px;
-  padding: 7px 0px 2px 5px;
+  margin:  0;
+  padding: 7px 0 2px 5px;
 }
 
 #x-dd-draggablecontainer .typo3-dyntabmenu-divs a {
   display: inline-block;
   vertical-align: top;
-  margin:  1px 0px 0px 0px;
-  padding: 2px 0px 2px 3px;
+  margin:  1px 0 0 0;
+  padding: 2px 0 2px 3px;
 }
 
 #x-dd-draggablecontainer .typo3-dyntabmenu-divs a img {
-  margin: 0px;
+  margin: 0;
 }
 
 #x-dd-draggablecontainer .typo3-dyntabmenu-divs a.x-dd-draggableitem img {
@@ -171,15 +171,15 @@
 }
 .x-dd-draggableiteminfo {
   width: 90%;
-  margin: 0px;
+  margin: 0;
 }
 .x-dd-draggableiteminfo > div {
   width: 90%;
-  margin: 0px;
+  margin: 0;
   display: inline-block;
 }
 .x-dd-draggableiteminfo > div > div {
-  padding: 0px 5px 10px 0px;
+  padding: 0 5px 10px 0;
   display: inline-block;
   width: 70%;
   max-width: 500px;
@@ -191,14 +191,14 @@
   height: 1px;
 }
 .x-dd-draggableiteminfoimg {
-  margin: 0px 0px 10px 10px;
+  margin: 0 0 10px 10px;
   width: auto;
   height: 68px;
   display: block;
   float: left;
 }
 .x-dd-draggableiteminfotext {
-  margin: 0px 0px 10px 10px;
+  margin: 0 0 10px 10px;
 }
 
 .t3-dd-spacer {

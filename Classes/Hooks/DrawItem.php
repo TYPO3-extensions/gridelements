@@ -237,7 +237,8 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 		$specificIds = Helper::getInstance()->getSpecificIds($row);
 		$parentObject->pidSelect = 'pid = ' . $specificIds['pid'];
 
-		$queryParts = $parentObject->makeQueryArray('tt_content', $specificIds['pid'], 'AND colPos = -1 AND tx_gridelements_container IN (' . $row['uid'] . ',' . $specificIds['uid'] . ') ' . $showHidden . $deleteClause . $parentObject->showLanguage);
+		// @todo $parentObject->showLanguage was appended in this where clause, but this property does not exist anymore
+		$queryParts = $parentObject->makeQueryArray('tt_content', $specificIds['pid'], 'AND colPos = -1 AND tx_gridelements_container IN (' . $row['uid'] . ',' . $specificIds['uid'] . ') ' . $showHidden . $deleteClause);
 
 		// Due to the pid being "NOT USED" in makeQueryArray we have to reset pidSelect here
 		$parentObject->pidSelect = $originalPidSelect;
@@ -334,7 +335,8 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 
 		$newParams = '';
 		if ($colPos < 32768) {
-			$newParams = $parentObject->newContentElementOnClick($parentObject->id, '-1' . '&tx_gridelements_container=' . $specificIds['uid'] . '&tx_gridelements_columns=' . $colPos, $parentObject->lP);
+			// @todo last param was $parentObject->lP, but this property is gone
+			$newParams = $parentObject->newContentElementOnClick($parentObject->id, '-1' . '&tx_gridelements_container=' . $specificIds['uid'] . '&tx_gridelements_columns=' . $colPos, 0);
 		}
 
 		$gridContent[$colPos] .= '
@@ -385,7 +387,8 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 	 * @return void
 	 */
 	public function setColumnHeader(PageLayoutView $parentObject, &$head, &$colPos, &$name, &$editUidList) {
-		$head[$colPos] = $this->tt_content_drawColHeader($name, ($parentObject->doEdit && $editUidList[$colPos]) ? '&edit[tt_content][' . $editUidList[$colPos] . ']=edit' . $parentObject->pageTitleParamForAltDoc : '', $parentObject);
+		// @todo $parentObject->pageTitleParamForAltDoc was appended to =edit but this property is gone
+		$head[$colPos] = $this->tt_content_drawColHeader($name, ($parentObject->doEdit && $editUidList[$colPos]) ? '&edit[tt_content][' . $editUidList[$colPos] . ']=edit' : '', $parentObject);
 	}
 
 	/**
@@ -395,14 +398,14 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 	 * @param PageLayoutView $parentObject
 	 * @return string HTML table
 	 */
-	function tt_content_drawColHeader($colName, $editParams, &$parentObject) {
+	function tt_content_drawColHeader($colName, $editParams, PageLayoutView $parentObject) {
 
 		$icons = '';
 		// Create command links:
 		if ($parentObject->tt_contentConfig['showCommands']) {
 			// Edit whole of column:
 			if ($editParams) {
-				$icons .= '<a href="#" onclick="' . htmlspecialchars(BackendUtility::editOnClick($editParams, $parentObject->backPath)) . '" title="' . $this->lang->getLL('editColumn', TRUE) . '">' . IconUtility::getSpriteIcon('actions-document-open') . '</a>';
+				$icons .= '<a href="#" onclick="' . htmlspecialchars(BackendUtility::editOnClick($editParams)) . '" title="' . $this->lang->getLL('editColumn', TRUE) . '">' . IconUtility::getSpriteIcon('actions-document-open') . '</a>';
 			}
 			$icons .= '<a href="#" class="toggle-content toggle-up" title="' . $this->lang->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tx_gridelements_togglecontent') . '">' . IconUtility::getSpriteIcon('actions-move-to-top') . '</a>';
 			$icons .= '<a href="#" class="toggle-content toggle-down" title="' . $this->lang->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tx_gridelements_togglecontent') . '">' . IconUtility::getSpriteIcon('actions-move-to-bottom') . '</a>';
@@ -543,9 +546,9 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 	 * @return string
 	 */
 	public function renderSingleElementHTML(PageLayoutView $parentObject, $itemRow) {
-		$singleElementHTML = $parentObject->tt_content_drawHeader($itemRow, $parentObject->tt_contentConfig['showInfo'] ? 15 : 5, $parentObject->defLangBinding && $parentObject->lP > 0, TRUE, TRUE);
-		$isRTE = $parentObject->RTE && $parentObject->isRTEforField('tt_content', $itemRow, 'bodytext');
-		$singleElementHTML .= '<div ' . (!empty($itemRow['_ORIG_uid']) ? ' class="ver-element"' : '') . '><div class="t3-page-ce-body-inner t3-page-ce-body-inner-' . $itemRow['CType'] . '">' . $parentObject->tt_content_drawItem($itemRow, $isRTE) . '</div></div>';
+		// @todo $parentObject->lP is gone, defLangBinding is proably not enough for the third param to act correctly
+		$singleElementHTML = $parentObject->tt_content_drawHeader($itemRow, $parentObject->tt_contentConfig['showInfo'] ? 15 : 5, $parentObject->defLangBinding, TRUE, TRUE);
+		$singleElementHTML .= '<div ' . (!empty($itemRow['_ORIG_uid']) ? ' class="ver-element"' : '') . '><div class="t3-page-ce-body-inner t3-page-ce-body-inner-' . $itemRow['CType'] . '">' . $parentObject->tt_content_drawItem($itemRow) . '</div></div>';
 		$footerContent = '';
 		// Get processed values:
 		$info = array();
