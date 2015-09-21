@@ -1,36 +1,28 @@
 <?php
+
 /***************************************************************
  *  Copyright notice
- *
  *  (c) 2013 Stefan Froemken <froemken@gmail.com>
  *  All rights reserved
- *
  *  This script is part of the TYPO3 project. The TYPO3 project is
  *  free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
- *
  *  The GNU General Public License can be found at
  *  http://www.gnu.org/copyleft/gpl.html.
- *
  *  This script is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
- *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
-
 class tx_gridelements_ttContentTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 
 	/**
 	 * @var \TYPO3\CMS\Core\Database\DatabaseConnection
 	 */
 	var $tempT3libDb;
-
-
-
 
 
 	public function setUp() {
@@ -42,12 +34,8 @@ class tx_gridelements_ttContentTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTe
 	}
 
 
-
-
-
 	/**
 	 * test columns items proc func
-	 *
 	 * @test
 	 */
 	public function testColumnsItemsProcFunc() {
@@ -61,23 +49,10 @@ class tx_gridelements_ttContentTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTe
 		$this->assertEquals($expectedParams, $params);
 
 		$t3libDb = $this->getMock('TYPO3\\CMS\\Core\\Database\\DatabaseConnection', array('exec_SELECTgetSingleRow'));
-		$t3libDb
-			->expects($this->once())
-			->method('exec_SELECTgetSingleRow')
-			->with(
-				$this->equalTo('*'),
-				$this->equalTo('tt_content'),
-				$this->equalTo('uid=123 AND tt_content.deleted=0')
-			)->will(
-				$this->returnValue(array('tx_gridelements_backend_layout' => '2'))
-			);
+		$t3libDb->expects($this->once())->method('exec_SELECTgetSingleRow')->with($this->equalTo('*'), $this->equalTo('tt_content'), $this->equalTo('uid=123 AND tt_content.deleted=0'))->will($this->returnValue(array('tx_gridelements_backend_layout' => '2')));
 		$GLOBALS['TYPO3_DB'] = $t3libDb;
 		$layoutSetup = $this->getMock('GridElementsTeam\\Gridelements\\Backend\\LayoutSetup', array('getLayoutColumnsSelectItems'));
-		$layoutSetup
-			->expects($this->once())
-			->method('getLayoutColumnsSelectItems')
-			->with($this->equalTo('2'))
-			->will($this->returnValue('Hello world'));
+		$layoutSetup->expects($this->once())->method('getLayoutColumnsSelectItems')->with($this->equalTo('2'))->will($this->returnValue('Hello world'));
 		$ttContent->injectLayoutSetup($layoutSetup);
 		$params['row']['tx_gridelements_container'] = '123';
 		$expectedParams = $params;
@@ -86,15 +61,7 @@ class tx_gridelements_ttContentTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTe
 		$this->assertEquals($expectedParams, $params);
 
 		$t3libDb = $this->getMock('t3lib_db', array('exec_SELECTgetSingleRow'));
-		$t3libDb
-			->method('exec_SELECTgetSingleRow')
-			->with(
-				$this->equalTo('*'),
-				$this->equalTo('tt_content'),
-				$this->equalTo('uid=123 AND tt_content.deleted=0')
-			)->will(
-				$this->returnValue(array('tx_gridelements_backend_layout' => '2'))
-			);
+		$t3libDb->method('exec_SELECTgetSingleRow')->with($this->equalTo('*'), $this->equalTo('tt_content'), $this->equalTo('uid=123 AND tt_content.deleted=0'))->will($this->returnValue(array('tx_gridelements_backend_layout' => '2')));
 		$GLOBALS['TYPO3_DB'] = $t3libDb;
 		$returnValue[0][0] = 'left';
 		$returnValue[0][1] = '1';
@@ -109,11 +76,7 @@ class tx_gridelements_ttContentTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTe
 		$returnValue[2][2] = '';
 		$returnValue[2][3] = 'image,gridelements,form';
 		$layoutSetup = $this->getMock('GridElementsTeam\\Gridelements\\Backend\\LayoutSetup', array('getLayoutColumnsSelectItems'));
-		$layoutSetup
-			->expects($this->once())
-			->method('getLayoutColumnsSelectItems')
-			->with($this->equalTo('2'))
-			->will($this->returnValue($returnValue));
+		$layoutSetup->expects($this->once())->method('getLayoutColumnsSelectItems')->with($this->equalTo('2'))->will($this->returnValue($returnValue));
 		$ttContent->injectLayoutSetup($layoutSetup);
 		$params = array();
 		$params['row']['tx_gridelements_container'] = '123';
@@ -133,7 +96,6 @@ class tx_gridelements_ttContentTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTe
 
 	/**
 	 * test container items proc func
-	 *
 	 * @test
 	 */
 	public function testContainerItemsProcFunc() {
@@ -144,8 +106,6 @@ class tx_gridelements_ttContentTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTe
 		$params = array();
 		$ttContent->containerItemsProcFunc($params);
 		$this->assertEquals(array(), $params);
-
-
 
 
 		/*$params['row']['CType'] = 'gridelements_pi1';
@@ -195,7 +155,6 @@ class tx_gridelements_ttContentTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTe
 
 	/**
 	 * test layout items proc func
-	 *
 	 * @test
 	 */
 	public function testLayoutItemsProcFunc() {
@@ -206,11 +165,7 @@ class tx_gridelements_ttContentTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTe
 		$returnValue['0']['2'] = '';
 
 		$layoutSetup = $this->getMock('\GridElementsTeam\Gridelements\Backend\LayoutSetup', array('getLayoutSelectItems'));
-		$layoutSetup
-			->expects($this->once())
-			->method('getLayoutSelectItems')
-			->with($this->equalTo(2))
-			->will($this->returnValue($returnValue));
+		$layoutSetup->expects($this->once())->method('getLayoutSelectItems')->with($this->equalTo(2))->will($this->returnValue($returnValue));
 		$ttContent->injectLayoutSetup($layoutSetup);
 		$params['items'] = array();
 		$params['row']['pid'] = 10;
@@ -228,11 +183,7 @@ class tx_gridelements_ttContentTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTe
 		$returnValue['0']['2'] = '';
 
 		$layoutSetup = $this->getMock('\GridElementsTeam\Gridelements\Backend\LayoutSetup', array('getLayoutSelectItems'));
-		$layoutSetup
-			->expects($this->once())
-			->method('getLayoutSelectItems')
-			->with($this->equalTo(2))
-			->will($this->returnValue($returnValue));
+		$layoutSetup->expects($this->once())->method('getLayoutSelectItems')->with($this->equalTo(2))->will($this->returnValue($returnValue));
 		$ttContent->injectLayoutSetup($layoutSetup);
 		$params['items']['0']['0'] = 'Hello world';
 		$params['items']['0']['1'] = 123;

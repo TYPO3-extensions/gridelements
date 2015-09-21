@@ -1,47 +1,54 @@
 <?php
 namespace GridElementsTeam\Gridelements\View;
 
-// load models and views
+/***************************************************************
+ *  Copyright notice
+ *  (c) 2011 Dirk Hoffmann <dirk-hoffmann@telekom.de>
+ *  All rights reserved
+ *  This script is part of the TYPO3 project. The TYPO3 project is
+ *  free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *  The GNU General Public License can be found at
+ *  http://www.gnu.org/copyleft/gpl.html.
+ *  This script is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *  This copyright notice MUST APPEAR in all copies of the script!
+ ***************************************************************/
 use GridElementsTeam\Gridelements\Helper\Helper;
+use GridElementsTeam\Gridelements\Xclass\DatabaseRecordList;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Http\AjaxRequestHandler;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use GridElementsTeam\Gridelements\Xclass\DatabaseRecordList;
 
 /**
  * AJAX request disatcher for record list
- *
- * @author      Dirk Hoffmann <dirk-hoffmann@telekom.de>
- * @package     TYPO3
- * @subpackage  tx_gridelements
+ * @author Dirk Hoffmann <dirk-hoffmann@telekom.de>
+ * @package TYPO3
+ * @subpackage tx_gridelements
  */
 class AjaxRecordList {
 
 	/**
 	 * The content for the ajax output
-	 *
 	 * @var    string
 	 */
 	protected $content;
 
 	/**
 	 * Hold all valid params
-	 *
 	 * @var    array
 	 */
-	protected $validParams = array(
-		'cmd',
-		'table',
-		// table name
-		'uid',
-		// uid of the record
-		'level'
-		// the current level
+	protected $validParams = array('cmd', 'table', // table name
+		'uid', // uid of the record
+		'level'// the current level
 	);
 
 	/**
 	 * Hold values of valid GP params
-	 *
 	 * @var    array
 	 */
 	protected $paramValues = array();
@@ -53,10 +60,8 @@ class AjaxRecordList {
 
 	/**
 	 * Initialize method
-	 *
-	 * @param    array              $params  not used yet
-	 * @param    AjaxRequestHandler $ajaxObj the parent ajax object
-	 *
+	 * @param array $params not used yet
+	 * @param AjaxRequestHandler $ajaxObj the parent ajax object
 	 * @return void
 	 */
 	public function init($params, AjaxRequestHandler &$ajaxObj) {
@@ -64,7 +69,7 @@ class AjaxRecordList {
 		// fill local params because that's not done in typo3/ajax.php yet ($params is always empty)
 		foreach ($this->validParams as $validParam) {
 			$gpValue = GeneralUtility::_GP($validParam);
-			if ($gpValue !== NULL) {
+			if ($gpValue !== null) {
 				$this->paramValues[$validParam] = $gpValue;
 			}
 		}
@@ -77,10 +82,8 @@ class AjaxRecordList {
 
 	/**
 	 * Creates the content depending on the 'cmd' parameter and fills $ajaxObj
-	 *
-	 * @param    AjaxRequestHandler $ajaxObj
-	 *
-	 * @return    void
+	 * @param AjaxRequestHandler $ajaxObj
+	 * @return void
 	 **/
 	protected function dispatch(AjaxRequestHandler &$ajaxObj) {
 		if (!is_string($this->paramValues['cmd'])) {
@@ -96,10 +99,8 @@ class AjaxRecordList {
 
 	/**
 	 * get list rows
-	 *
-	 * @param    AjaxRequestHandler $ajaxObj the parent ajax object
-	 *
-	 * @return    void
+	 * @param AjaxRequestHandler $ajaxObj the parent ajax object
+	 * @return void
 	 */
 	public function getListRows(AjaxRequestHandler &$ajaxObj) {
 		$uid = (int)$this->getParamValue('uid');
@@ -110,8 +111,7 @@ class AjaxRecordList {
 			$level = (int)$this->getParamValue('level');
 			$this->initializeTemplateContainer();
 
-			$elementChildren = Helper::getInstance()
-			                       ->getChildren($table, $uid, GeneralUtility::_GP('sortField'), (int)GeneralUtility::_GP('sortRev'));
+			$elementChildren = Helper::getInstance()->getChildren($table, $uid, GeneralUtility::_GP('sortField'), (int)GeneralUtility::_GP('sortRev'));
 
 			$row = BackendUtility::getRecord($table, $uid);
 			$recordList = $this->getRecordList($table, $uid, $row);
@@ -131,15 +131,13 @@ class AjaxRecordList {
 
 	/**
 	 * initialize and return localRecordList
-	 *
 	 * @param string $table
-	 * @param int    $uid
-	 * @param array  $row
-	 *
-	 * @return    DatabaseRecordList
+	 * @param int $uid
+	 * @param array $row
+	 * @return DatabaseRecordList
 	 */
 	private function getRecordList($table, $uid, $row) {
-		$dblist = NULL;
+		$dblist = null;
 
 		$permsClause = $GLOBALS['BE_USER']->getPagePermsClause(1);
 
@@ -174,11 +172,7 @@ class AjaxRecordList {
 			$dblist->thumbs = $GLOBALS['BE_USER']->uc['thumbnailsByDefault'];
 
 			$modName = 'web_list';
-			$MOD_MENU = array(
-				'bigControlPanel' => '',
-				'clipBoard'       => '',
-				'localization'    => ''
-			);
+			$MOD_MENU = array('bigControlPanel' => '', 'clipBoard' => '', 'localization' => '');
 			// Loading module configuration:
 			$modTSconfig = BackendUtility::getModTSconfig($uid, 'mod.' . $modName);
 
@@ -252,8 +246,7 @@ class AjaxRecordList {
 	/**
 	 * Initializes an anonymous template container.
 	 * The created container can be compared to alt_doc.php in backend-only disposal.
-	 *
-	 * @return    void
+	 * @return void
 	 */
 	public function initializeTemplateContainer() {
 		$GLOBALS['SOBE'] = new \stdClass();
@@ -262,10 +255,8 @@ class AjaxRecordList {
 
 	/**
 	 * Returns the param with given key
-	 *
-	 * @param    string $param
-	 *
-	 * @return    mixed
+	 * @param string $param
+	 * @return mixed
 	 */
 	public function getParamValue($param) {
 		return $this->paramValues[$param];

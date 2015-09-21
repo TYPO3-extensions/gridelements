@@ -1,27 +1,22 @@
 <?php
+
 /***************************************************************
  *  Copyright notice
- *
  *  (c) 2013 Stefan Froemken <froemken@gmail.com>
  *  All rights reserved
- *
  *  This script is part of the TYPO3 project. The TYPO3 project is
  *  free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
- *
  *  The GNU General Public License can be found at
  *  http://www.gnu.org/copyleft/gpl.html.
- *
  *  This script is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
- *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
-
 class tx_gridelements_wizarditemshookTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 
 	/**
@@ -35,9 +30,6 @@ class tx_gridelements_wizarditemshookTest extends \TYPO3\CMS\Extbase\Tests\Unit\
 	protected $lang;
 
 
-
-
-
 	public function setUp() {
 		$this->tempT3libDb = $GLOBALS['TYPO3_DB'];
 		$this->lang = $GLOBALS['LANG'];
@@ -47,9 +39,6 @@ class tx_gridelements_wizarditemshookTest extends \TYPO3\CMS\Extbase\Tests\Unit\
 		$GLOBALS['TYPO3_DB'] = $this->tempT3libDb;
 		$GLOBALS['LANG'] = $this->lang;
 	}
-
-
-
 
 
 	/**
@@ -104,11 +93,7 @@ class tx_gridelements_wizarditemshookTest extends \TYPO3\CMS\Extbase\Tests\Unit\
 	public function testAddGridItemsToWizard() {
 		$itemsHook = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('GridElementsTeam\\Gridelements\\Hooks\\WizardItems');
 		$language = $this->getMock('language', array('sL'));
-		$language
-			->expects($this->once())
-			->method('sL')
-			->with($this->equalTo('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tx_gridelements_backend_layout_wizard_label'))
-			->will($this->returnValue('Rasterelemente'));
+		$language->expects($this->once())->method('sL')->with($this->equalTo('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tx_gridelements_backend_layout_wizard_label'))->will($this->returnValue('Rasterelemente'));
 		$GLOBALS['LANG'] = $language;
 
 		$newGridItem[0]['title'] = 'News';
@@ -135,11 +120,7 @@ class tx_gridelements_wizarditemshookTest extends \TYPO3\CMS\Extbase\Tests\Unit\
 		$this->assertEquals($expectedItems, $tempWizardItems);
 
 		$language = $this->getMock('language', array('sL'));
-		$language
-			->expects($this->once())
-			->method('sL')
-			->with($this->equalTo('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tx_gridelements_backend_layout_wizard_label'))
-			->will($this->returnValue('Rasterelemente'));
+		$language->expects($this->once())->method('sL')->with($this->equalTo('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tx_gridelements_backend_layout_wizard_label'))->will($this->returnValue('Rasterelemente'));
 		$GLOBALS['LANG'] = $language;
 		$newGridItem[0]['tll'] = '1';
 		$wizardItems['gridelements_grid_1']['params'] = '&defVals[tt_content][CType]=gridelements_pi1&defVals[tt_content][tx_gridelements_backend_layout]=1&isTopLevelLayout';
@@ -150,7 +131,6 @@ class tx_gridelements_wizarditemshookTest extends \TYPO3\CMS\Extbase\Tests\Unit\
 
 	/**
 	 * test init wizard items
-	 *
 	 * @test
 	 */
 	public function testAddGridValuesToWizardItems() {

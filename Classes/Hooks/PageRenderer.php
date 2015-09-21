@@ -3,24 +3,19 @@ namespace GridElementsTeam\Gridelements\Hooks;
 
 /***************************************************************
  *  Copyright notice
- *
  *  (c) 2013 Jo Hasenau <info@cybercraft.de>, Tobias Ferger <tobi@tt36.de>
  *  All rights reserved
- *
  *  This script is part of the TYPO3 project. The TYPO3 project is
  *  free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
- *
  *  The GNU General Public License can be found at
  *  http://www.gnu.org/copyleft/gpl.html.
- *
  *  This script is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
- *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 use TYPO3\CMS\Backend\Utility\IconUtility;
@@ -30,20 +25,17 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Class/Function which adds the necessary ExtJS and pure JS stuff for the grid elements.
- *
- * @author         Jo Hasenau <info@cybercraft.de>, Tobias Ferger <tobi@tt36.de>
- * @package        TYPO3
- * @subpackage     tx_gridelements
+ * @author Jo Hasenau <info@cybercraft.de>, Tobias Ferger <tobi@tt36.de>
+ * @package TYPO3
+ * @subpackage tx_gridelements
  */
 class PageRenderer {
 
 	/**
 	 * wrapper function called by hook (\TYPO3\CMS\Core\Page\PageRenderer->render-preProcess)
-	 *
-	 * @param    array                             $parameters   : An array of available parameters
-	 * @param    \TYPO3\CMS\Core\Page\PageRenderer $pageRenderer : The parent object that triggered this hook
-	 *
-	 * @return    void
+	 * @param array $parameters : An array of available parameters
+	 * @param \TYPO3\CMS\Core\Page\PageRenderer $pageRenderer : The parent object that triggered this hook
+	 * @return void
 	 */
 	public function addJSCSS($parameters, &$pageRenderer) {
 		$pageRenderer->loadRequireJsModule('TYPO3/CMS/Gridelements/GridElementsDragDrop');
@@ -58,10 +50,10 @@ class PageRenderer {
 				$clipObj = GeneralUtility::makeInstance('TYPO3\\CMS\\Backend\\Clipboard\\Clipboard'); // Start clipboard
 				$clipObj->initializeClipboard();
 
-				$clipBoardHasContent = FALSE;
+				$clipBoardHasContent = false;
 
 				$pasteURL = '';
-				if (isset($clipObj->clipData['normal']['el']) && strpos(key($clipObj->clipData['normal']['el']), 'tt_content') !== FALSE) {
+				if (isset($clipObj->clipData['normal']['el']) && strpos(key($clipObj->clipData['normal']['el']), 'tt_content') !== false) {
 					$pasteURL = str_replace('&amp;', '&', $clipObj->pasteUrl('tt_content', 'DD_PASTE_UID', 0));
 					if (isset($clipObj->clipData['normal']['mode'])) {
 						$clipBoardHasContent = 'copy';
@@ -115,7 +107,7 @@ class PageRenderer {
 												break;
 											} else {
 												$ctypes = explode(',', $ctypes);
-												foreach($ctypes as $ctype) {
+												foreach ($ctypes as $ctype) {
 													$classes .= 't3-allow-' . $ctype . ' ';
 												}
 											}
@@ -123,7 +115,7 @@ class PageRenderer {
 									} else {
 										$classes = 't3-allow-all';
 									}
-									$allowedCTypesClassesByColPos[$col['colPos']] .=  ' ' . trim($classes);
+									$allowedCTypesClassesByColPos[$col['colPos']] .= ' ' . trim($classes);
 								}
 							}
 						}
@@ -146,20 +138,16 @@ class PageRenderer {
 				top.backPath = '" . $GLOBALS['BACK_PATH'] . "'";
 
 				$pageRenderer->addJsInlineCode(// add some more JS here
-					'gridelementsExtOnReady',
-					$pAddExtOnReadyCode
-				);
+					'gridelementsExtOnReady', $pAddExtOnReadyCode);
 			}
 		}
 	}
 
 	/**
 	 * method that adds CSS files within the page renderer
-	 *
-	 * @param    array                             $parameters   : An array of available parameters while adding CSS to the page renderer
-	 * @param    \TYPO3\CMS\Core\Page\PageRenderer $pageRenderer : The parent object that triggered this hook
-	 *
-	 * @return    void
+	 * @param array $parameters : An array of available parameters while adding CSS to the page renderer
+	 * @param \TYPO3\CMS\Core\Page\PageRenderer $pageRenderer : The parent object that triggered this hook
+	 * @return void
 	 */
 	protected function addCSS($parameters, &$pageRenderer) {
 		if (count($parameters['cssFiles'])) {

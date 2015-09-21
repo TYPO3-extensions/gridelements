@@ -3,24 +3,19 @@ namespace GridElementsTeam\Gridelements\Backend;
 
 /***************************************************************
  *  Copyright notice
- *
  *  (c) 2013 Arno Dudek <webmaster@adgrafik.at>
  *  All rights reserved
- *
  *  This script is part of the TYPO3 project. The TYPO3 project is
  *  free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
- *
  *  The GNU General Public License can be found at
  *  http://www.gnu.org/copyleft/gpl.html.
- *
  *  This script is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
- *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 use TYPO3\CMS\Backend\Utility\BackendUtility;
@@ -29,10 +24,9 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Utilities for gridelements.
- *
- * @author         Arno Dudek <webmaster@adgrafik.at>
- * @package        TYPO3
- * @subpackage     tx_gridelements
+ * @author Arno Dudek <webmaster@adgrafik.at>
+ * @package TYPO3
+ * @subpackage tx_gridelements
  */
 class LayoutSetup {
 
@@ -44,10 +38,8 @@ class LayoutSetup {
 
 	/**
 	 * Load page TSconfig
-	 *
-	 * @param integer $pageId          : The current page ID
-	 * @param array   $typoScriptSetup : The PlugIn configuration
-	 *
+	 * @param integer $pageId : The current page ID
+	 * @param array $typoScriptSetup : The PlugIn configuration
 	 * @return \GridElementsTeam\Gridelements\Backend\LayoutSetup
 	 */
 	public function init($pageId, $typoScriptSetup = array()) {
@@ -61,12 +53,12 @@ class LayoutSetup {
 			}
 		}
 		$this->setTypoScriptSetup($typoScriptSetup);
+
 		return $this;
 	}
 
 	/**
 	 * setter for layout setup
-	 *
 	 * @param array $layoutSetup
 	 */
 	public function setLayoutSetup($layoutSetup) {
@@ -75,7 +67,6 @@ class LayoutSetup {
 
 	/**
 	 * setter for typoscript setup
-	 *
 	 * @param array $typoScriptSetup
 	 */
 	public function setTypoScriptSetup($typoScriptSetup) {
@@ -84,9 +75,7 @@ class LayoutSetup {
 
 	/**
 	 * Returns the grid layout setup.
-	 *
 	 * @param string $layoutId : If set only requested layout setup, else all layout setups will be returned.
-	 *
 	 * @return array
 	 */
 	public function getLayoutSetup($layoutId = '') {
@@ -101,9 +90,7 @@ class LayoutSetup {
 	/**
 	 * fetches the setup for each of the columns
 	 * assigns a default setup if there is none available
-	 *
 	 * @param string $layoutId : The selected backend layout of the grid container
-	 *
 	 * @return array $setup: The adjusted TypoScript setup for the container or a default setup
 	 * @author Jo Hasenau <info@cybercraft.de>
 	 */
@@ -129,9 +116,7 @@ class LayoutSetup {
 
 	/**
 	 * Sets the flexformConfigurationPathAndFileName
-	 *
 	 * @param string $flexformConfigurationPathAndFileName
-	 *
 	 * @return void
 	 */
 	public function setFlexformConfigurationPathAndFileName($flexformConfigurationPathAndFileName) {
@@ -140,7 +125,6 @@ class LayoutSetup {
 
 	/**
 	 * Returns the flexformConfigurationPathAndFileName
-	 *
 	 * @return string $flexformConfigurationPathAndFileName
 	 */
 	public function getFlexformConfigurationPathAndFileName() {
@@ -149,28 +133,24 @@ class LayoutSetup {
 
 	/**
 	 * Caches Container-Records and their setup to avoid multiple selects of the same record during a single request
-	 *
-	 * @param int  $gridContainerId The ID of the current grid container
+	 * @param int $gridContainerId The ID of the current grid container
 	 * @param bool $doReturn
-	 *
 	 * @return void|array
 	 */
-	public function cacheCurrentParent($gridContainerId = 0, $doReturn = FALSE) {
+	public function cacheCurrentParent($gridContainerId = 0, $doReturn = false) {
 		if ($gridContainerId > 0) {
 			if (!$GLOBALS['tx_gridelements']['parentElement'][$gridContainerId]) {
 				$GLOBALS['tx_gridelements']['parentElement'][$gridContainerId] = BackendUtility::getRecordWSOL('tt_content', $gridContainerId);
 			}
 		}
-		if ($doReturn === TRUE) {
+		if ($doReturn === true) {
 			return $GLOBALS['tx_gridelements']['parentElement'][$gridContainerId];
 		};
 	}
 
 	/**
 	 * fetches all available columns for a certain grid container
-	 *
 	 * @param string $layoutId : The selected backend layout of the grid container
-	 *
 	 * @return array $availableColumns: first key is 'CSV' The columns available for the selected layout as CSV list and the allowed elements for each of the columns
 	 */
 	public function getLayoutColumns($layoutId) {
@@ -198,14 +178,13 @@ class LayoutSetup {
 				}
 			}
 		}
+
 		return $availableColumns;
 	}
 
 	/**
 	 * Returns the item array for form field selection.
-	 *
 	 * @param integer $colPos : The selected content column position.
-	 *
 	 * @return array
 	 */
 	public function getLayoutSelectItems($colPos) {
@@ -215,20 +194,15 @@ class LayoutSetup {
 				continue;
 			}
 
-			$selectItems[] = array(
-				$GLOBALS['LANG']->sL($item['title']),
-				$layoutId,
-				$item['icon'][0],
-			);
+			$selectItems[] = array($GLOBALS['LANG']->sL($item['title']), $layoutId, $item['icon'][0],);
 		}
+
 		return $selectItems;
 	}
 
 	/**
 	 * Returns the item array for form field selection.
-	 *
 	 * @param string $layoutId : The selected layout ID of the grid container
-	 *
 	 * @return array
 	 * @author Jo Hasenau <info@cybercraft.de>
 	 */
@@ -240,25 +214,19 @@ class LayoutSetup {
 			foreach ($setup['config']['rows.'] as $row) {
 				if (isset($row['columns.']) && is_array($row['columns.'])) {
 					foreach ($row['columns.'] as $column) {
-						$selectItems[] = array(
-							$GLOBALS['LANG']->sL($column['name']),
-							$column['colPos'],
-							NULL,
-							$column['allowed'] ? $column['allowed'] : '*'
-						);
+						$selectItems[] = array($GLOBALS['LANG']->sL($column['name']), $column['colPos'], null, $column['allowed'] ? $column['allowed'] : '*');
 					}
 				}
 			}
 		}
+
 		return $selectItems;
 	}
 
 	/**
 	 * Returns the item array for form field selection.
-	 *
-	 * @param int   $colPos
+	 * @param int $colPos
 	 * @param array $excludeLayouts
-	 *
 	 * @return  array
 	 */
 	public function getLayoutWizardItems($colPos, $excludeLayouts = array()) {
@@ -270,13 +238,7 @@ class LayoutSetup {
 				continue;
 			}
 
-			$wizardItems[] = array(
-				'uid'         => $layoutId,
-				'title'       => $GLOBALS['LANG']->sL($item['title']),
-				'description' => $GLOBALS['LANG']->sL($item['description']),
-				'icon'        => $item['icon'],
-				'tll'         => $item['top_level_layout'],
-			);
+			$wizardItems[] = array('uid' => $layoutId, 'title' => $GLOBALS['LANG']->sL($item['title']), 'description' => $GLOBALS['LANG']->sL($item['description']), 'icon' => $item['icon'], 'tll' => $item['top_level_layout'],);
 
 		}
 
@@ -285,9 +247,7 @@ class LayoutSetup {
 
 	/**
 	 * Returns the FlexForm configuration of a grid layout.
-	 *
 	 * @param string $layoutId : The current layout ID of the grid container
-	 *
 	 * @return string
 	 */
 	public function getFlexformConfiguration($layoutId) {
@@ -308,9 +268,7 @@ class LayoutSetup {
 
 	/**
 	 * Returns the page TSconfig merged with the grid layout records.
-	 *
 	 * @param integer $pageId : The uid of the page we are currently working on
-	 *
 	 * @return void
 	 */
 	protected function loadLayoutSetup($pageId) {
@@ -369,15 +327,7 @@ class LayoutSetup {
 		$pageTSconfigId = isset($pageTSconfig['TCEFORM.']['tt_content.']['tx_gridelements_backend_layout.']['PAGE_TSCONFIG_ID']) ? $pageTSconfig['TCEFORM.']['tt_content.']['tx_gridelements_backend_layout.']['PAGE_TSCONFIG_ID'] : 0;
 
 		// Load records.
-		$result = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows(
-			'*',
-			'tx_gridelements_backend_layout',
-			'(( ' . $pageTSconfigId . ' = 0 AND ' . (int)$storagePid . ' = 0 ) OR ( tx_gridelements_backend_layout.pid = ' . (int)$pageTSconfigId . ' OR tx_gridelements_backend_layout.pid = ' . (int)$storagePid . ' ) OR ( ' . $pageTSconfigId . ' = 0 AND tx_gridelements_backend_layout.pid = ' . (int)$pageId . ' )) AND tx_gridelements_backend_layout.hidden = 0 AND tx_gridelements_backend_layout.deleted = 0',
-			'',
-			'sorting ASC',
-			'',
-			'uid'
-		);
+		$result = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows('*', 'tx_gridelements_backend_layout', '(( ' . $pageTSconfigId . ' = 0 AND ' . (int)$storagePid . ' = 0 ) OR ( tx_gridelements_backend_layout.pid = ' . (int)$pageTSconfigId . ' OR tx_gridelements_backend_layout.pid = ' . (int)$storagePid . ' ) OR ( ' . $pageTSconfigId . ' = 0 AND tx_gridelements_backend_layout.pid = ' . (int)$pageId . ' )) AND tx_gridelements_backend_layout.hidden = 0 AND tx_gridelements_backend_layout.deleted = 0', '', 'sorting ASC', '', 'uid');
 
 		$gridLayoutRecords = array();
 
@@ -412,11 +362,11 @@ class LayoutSetup {
 
 		}
 
-		if ($overruleRecords === TRUE) {
-			ArrayUtility::mergeRecursiveWithOverrule($gridLayoutConfig, $gridLayoutRecords, TRUE);
+		if ($overruleRecords === true) {
+			ArrayUtility::mergeRecursiveWithOverrule($gridLayoutConfig, $gridLayoutRecords, true);
 			$this->setLayoutSetup($gridLayoutConfig);
 		} else {
-			ArrayUtility::mergeRecursiveWithOverrule($gridLayoutRecords, $gridLayoutConfig, TRUE);
+			ArrayUtility::mergeRecursiveWithOverrule($gridLayoutRecords, $gridLayoutConfig, true);
 			$this->setLayoutSetup($gridLayoutRecords);
 		}
 	}
