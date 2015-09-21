@@ -4,6 +4,8 @@ namespace GridElementsTeam\Gridelements\Wizard;
 $GLOBALS['LANG']->includeLLFile('EXT:lang/locallang_wizards.xml');
 
 use TYPO3\CMS\Backend\Utility\IconUtility;
+use TYPO3\CMS\Core\Page\PageRenderer;
+use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\TypoScript\Parser\TypoScriptParser;
@@ -67,8 +69,9 @@ class BackendLayout {
 		$this->md5ID = $this->P['md5ID'];
 		$uid = (int)$this->P['uid'];
 		// Initialize document object:
-		$this->doc = GeneralUtility::makeInstance(DocumentTemplate::class);
+		$this->doc = GeneralUtility::makeInstance('TYPO3\\CMS\\Backend\\Template\\DocumentTemplate');
 		$this->doc->backPath = $GLOBALS['BACK_PATH'];
+		/** @var PageRenderer $pageRenderer */
 		$pageRenderer = $this->doc->getPageRenderer();
 		$pageRenderer->loadExtJS();
 		$pageRenderer->addJsFile($GLOBALS['BACK_PATH'] . ExtensionManagementUtility::extRelPath('gridelements') . 'Resources/Public/Backend/JavaScript/grideditor.js');
@@ -134,7 +137,7 @@ class BackendLayout {
 			$rowCount = 1;
 		} else {
 			// load TS parser
-			$parser = GeneralUtility::makeInstance(TypoScriptParser::class);
+			$parser = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\TypoScript\\Parser\\TypoScriptParser');
 			$parser->parse($record[0][$this->P['field']]);
 			$data = $parser->setup['backend_layout.'];
 			$rows = array();

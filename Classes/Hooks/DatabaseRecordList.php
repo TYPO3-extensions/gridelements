@@ -25,7 +25,7 @@ namespace GridElementsTeam\Gridelements\Hooks;
  ***************************************************************/
 
 use GridElementsTeam\Gridelements\Helper\Helper;
-use GridElementsTeam\Gridelements\Xclass\RecordListHookInterface;
+use TYPO3\CMS\Recordlist\RecordList\RecordListHookInterface;
 
 /**
  * Class/Function which offers TCE main hook functions.

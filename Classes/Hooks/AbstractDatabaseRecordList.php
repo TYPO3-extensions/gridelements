@@ -24,6 +24,7 @@ namespace GridElementsTeam\Gridelements\Hooks;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Recordlist\RecordList\DatabaseRecordList;
 
 /**
  * Class/Function which manipulates the query parts while fetching tt_content records within the list module.
@@ -39,7 +40,7 @@ class AbstractDatabaseRecordList {
 	 * ItemProcFunc for columns items
 	 *
 	 * @param array       $queryParts : The array containing the parts to build the query from
-	 * @param \recordList $parent     : The parent object that triggered this hook
+	 * @param DatabaseRecordList $parent     : The parent object that triggered this hook
 	 * @param string      $table      : The name of the table we are currently working on
 	 * @param int         $pageId     : The uid of the page we are currently working on
 	 * @param string      $addWhere   : A string to be added to the WHERE clause
@@ -49,7 +50,7 @@ class AbstractDatabaseRecordList {
 	 * @return    void
 	 */
 	public function makeQueryArray_post(&$queryParts, &$parent, $table, $pageId, &$addWhere, &$fieldList, &$params) {
-		if ($table === 'tt_content' && get_class($parent) === 'GridElementsTeam\Gridelements\Xclass\DatabaseRecordList') {
+		if ($table === 'tt_content' && $parent instanceof \GridElementsTeam\Gridelements\Xclass\DatabaseRecordList) {
 			$queryParts['ORDERBY'] = $this->addValueToList($queryParts['ORDERBY'], 'colPos');
 			if (!$parent->searchString) {
 				$queryParts['WHERE'] .= ' AND colPos != -1';

@@ -70,7 +70,7 @@ class WizardItems implements \TYPO3\CMS\Backend\Wizard\NewContentElementWizardHo
 	 * and inserts necessary default values for items created within a grid
 	 *
 	 * @param    array              $wizardItems  : The array containing the current status of the wizard item list before rendering
-	 * @param    \db_new_content_el $parentObject : The parent object that triggered this hook
+	 * @param    \TYPO3\CMS\Backend\Controller\ContentElement\NewContentElementController $parentObject : The parent object that triggered this hook
 	 *
 	 * @return void
 	 */
@@ -155,7 +155,7 @@ class WizardItems implements \TYPO3\CMS\Backend\Wizard\NewContentElementWizardHo
 	 * retrieve layouts to exclude from pagetsconfig
 	 *
 	 * @param integer               $container
-	 * @param    \db_new_content_el $parentObject : The parent object that triggered this hook
+	 * @param \TYPO3\CMS\Backend\Controller\ContentElement\NewContentElementController $parentObject : The parent object that triggered this hook
 	 *
 	 * @return array
 	 */
@@ -163,7 +163,7 @@ class WizardItems implements \TYPO3\CMS\Backend\Wizard\NewContentElementWizardHo
 		$excludeLayouts = 0;
 		$excludeArray = array();
 
-		$pageID = $parentObject->pageinfo['uid'];
+		$pageID = $parentObject->id;
 
 		$TSconfig = BackendUtility::getPagesTSconfig($pageID);
 
