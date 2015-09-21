@@ -18,6 +18,7 @@ namespace GridElementsTeam\Gridelements\Backend;
  *  GNU General Public License for more details.
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
+
 use TYPO3\CMS\Backend\ClickMenu\ClickMenu;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Lang\LanguageService;
@@ -39,11 +40,9 @@ class CmOptions {
 	 * Main method
 	 * @param ClickMenu $backRef
 	 * @param array $menuItems
-	 * @param string $table
-	 * @param integer $uid
 	 * @return array
 	 */
-	public function main(ClickMenu &$backRef, array $menuItems, $table, $uid) {
+	public function main(ClickMenu $backRef, array $menuItems) {
 
 		$this->lang = GeneralUtility::makeInstance(LanguageService::class);
 		$this->lang->init($GLOBALS['BE_USER']->uc['lang']);

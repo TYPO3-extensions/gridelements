@@ -18,6 +18,7 @@ namespace GridElementsTeam\Gridelements\Hooks;
  *  GNU General Public License for more details.
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
+
 use GridElementsTeam\Gridelements\Backend\LayoutSetup;
 use TYPO3\CMS\Core\Database\DatabaseConnection;
 use TYPO3\CMS\Core\Utility\GeneralUtility;

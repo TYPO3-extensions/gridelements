@@ -19,6 +19,7 @@ namespace GridElementsTeam\Gridelements\DataHandler;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 use TYPO3\CMS\Backend\Utility\BackendUtility;
+use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -86,7 +87,7 @@ class PreProcessFieldArray extends AbstractDataHandler {
 		$newRow = array(); // Used to store default values as found here:
 
 		// Default values as set in userTS:
-		$TCAdefaultOverride = $GLOBALS['BE_USER']->getTSConfigProp('TCAdefaults');
+		$TCAdefaultOverride = $this->getBackendUser()->getTSConfigProp('TCAdefaults');
 		if (is_array($TCAdefaultOverride['tt_content.'])) {
 			foreach ($TCAdefaultOverride['tt_content.'] as $theF => $theV) {
 				if (isset($GLOBALS['TCA']['tt_content']['columns'][$theF])) {
@@ -309,13 +310,12 @@ class PreProcessFieldArray extends AbstractDataHandler {
 	 * so that an element that has been removed from any container
 	 * will still remain in the same major page column
 	 * @param integer $contentId : The uid of the current content element
-	 * @param integer $colPos : The current column of this content element
 	 * @return integer $colPos: The new column of this content element
 	 */
-	public function checkForRootColumn($contentId, $colPos = 0) {
+	public function checkForRootColumn($contentId) {
 		$parent = $this->databaseConnection->exec_SELECTgetSingleRow('t1.colPos, t1.tx_gridelements_container', 'tt_content AS t1, tt_content AS t2', 't1.uid=t2.tx_gridelements_container AND t2.uid=' . (int)$contentId);
-		if (count($parent) > 0 && $parent['tx_gridelements_container'] > 0) {
-			$colPos = $this->checkForRootColumn($parent['tx_gridelements_container'], $parent['colPos']);
+		if (!empty($parent) && $parent['tx_gridelements_container'] > 0) {
+			$colPos = $this->checkForRootColumn($parent['tx_gridelements_container']);
 		} else {
 			$colPos = (int)$parent['colPos'];
 		}
@@ -323,4 +323,10 @@ class PreProcessFieldArray extends AbstractDataHandler {
 		return $colPos;
 	}
 
+	/**
+	 * @return BackendUserAuthentication
+	 */
+	protected function getBackendUser() {
+		return $GLOBALS['BE_USER'];
+	}
 }

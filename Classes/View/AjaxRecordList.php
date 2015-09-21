@@ -21,6 +21,7 @@ namespace GridElementsTeam\Gridelements\View;
 use GridElementsTeam\Gridelements\Helper\Helper;
 use GridElementsTeam\Gridelements\Xclass\DatabaseRecordList;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
+use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Http\AjaxRequestHandler;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -64,7 +65,7 @@ class AjaxRecordList {
 	 * @param AjaxRequestHandler $ajaxObj the parent ajax object
 	 * @return void
 	 */
-	public function init($params, AjaxRequestHandler &$ajaxObj) {
+	public function init($params, AjaxRequestHandler $ajaxObj) {
 
 		// fill local params because that's not done in typo3/ajax.php yet ($params is always empty)
 		foreach ($this->validParams as $validParam) {
@@ -120,7 +121,8 @@ class AjaxRecordList {
 			if ($recordList instanceof DatabaseRecordList) {
 				$level++;
 				foreach ($elementChildren as $elementChild) {
-					$listRows[] = $recordList->renderListRow('tt_content', $elementChild, 0, $GLOBALS['TCA'][$table]['ctrl']['label'], $GLOBALS['TCA'][$table]['ctrl']['thumbnail'], 1, $level);
+					// @todo broken, $elementChild is NOT an object, but an array
+					//$listRows[] = $recordList->renderListRow($elementChild->getTable(), BackendUtility::getRecord($elementChild->getTable(), $elementChild->getId()), 0, $GLOBALS['TCA'][$table]['ctrl']['label'], $GLOBALS['TCA'][$table]['ctrl']['thumbnail'], 1, $level);
 				}
 			}
 
@@ -138,8 +140,9 @@ class AjaxRecordList {
 	 */
 	private function getRecordList($table, $uid, $row) {
 		$dataBaseList = null;
+		$beUser = $this->getBackendUser();
 
-		$permsClause = $GLOBALS['BE_USER']->getPagePermsClause(1);
+		$permsClause = $beUser->getPagePermsClause(1);
 
 		// todo
 		// GPvars:
@@ -168,8 +171,8 @@ class AjaxRecordList {
 			// Initialize the dataBaseList object:
 			/** @var $dataBaseList DatabaseRecordList */
 			$dataBaseList = GeneralUtility::makeInstance('TYPO3\\CMS\\Recordlist\\RecordList\\DatabaseRecordList');
-			$dataBaseList->calcPerms = $GLOBALS['BE_USER']->calcPerms($pageInfo);
-			$dataBaseList->thumbs = $GLOBALS['BE_USER']->uc['thumbnailsByDefault'];
+			$dataBaseList->calcPerms = $beUser->calcPerms($pageInfo);
+			$dataBaseList->thumbs = $beUser->uc['thumbnailsByDefault'];
 
 			$modName = 'web_list';
 			$MOD_MENU = array('bigControlPanel' => '', 'clipBoard' => '', 'localization' => '');
@@ -189,7 +192,6 @@ class AjaxRecordList {
 			$dataBaseList->hideTranslations = $modTSconfig['properties']['hideTranslations'];
 			$dataBaseList->tableTSconfigOverTCA = $modTSconfig['properties']['table.'];
 			$dataBaseList->clickTitleMode = $modTSconfig['properties']['clickTitleMode'];
-			$dataBaseList->alternateBgColors = $modTSconfig['properties']['alternateBgColors'] ? 1 : 0;
 			$dataBaseList->allowedNewTables = GeneralUtility::trimExplode(',', $modTSconfig['properties']['allowedNewTables'], 1);
 			$dataBaseList->deniedNewTables = GeneralUtility::trimExplode(',', $modTSconfig['properties']['deniedNewTables'], 1);
 			$dataBaseList->newWizards = $modTSconfig['properties']['newWizards'] ? 1 : 0;
@@ -222,7 +224,7 @@ class AjaxRecordList {
 
 			// This flag will prevent the clipboard panel in being shown.
 			// It is set, if the clickmenu-layer is active AND the extended view is not enabled.
-			$dataBaseList->dontShowClipControlPanels = $GLOBALS['CLIENT']['FORMSTYLE'] && !$MOD_SETTINGS['bigControlPanel'] && $dataBaseList->clipObj->current == 'normal' && !$GLOBALS['BE_USER']->uc['disableCMlayers'] && !$modTSconfig['properties']['showClipControlPanelsDespiteOfCMlayers'];
+			$dataBaseList->dontShowClipControlPanels = $GLOBALS['CLIENT']['FORMSTYLE'] && !$MOD_SETTINGS['bigControlPanel'] && $dataBaseList->clipObj->current == 'normal' && !$beUser->uc['disableCMlayers'] && !$modTSconfig['properties']['showClipControlPanelsDespiteOfCMlayers'];
 
 			// If there is access to the page, then render the list contents and set up the document template object:
 			// todo: there is no browsing in child records
@@ -260,5 +262,12 @@ class AjaxRecordList {
 	 */
 	public function getParamValue($param) {
 		return $this->paramValues[$param];
+	}
+
+	/**
+	 * @return BackendUserAuthentication
+	 */
+	protected function getBackendUser() {
+		return $GLOBALS['BE_USER'];
 	}
 }

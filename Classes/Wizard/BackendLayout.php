@@ -1,8 +1,6 @@
 <?php
 namespace GridElementsTeam\Gridelements\Wizard;
 
-$GLOBALS['LANG']->includeLLFile('EXT:lang/locallang_wizards.xml');
-
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Backend\Utility\IconUtility;
 use TYPO3\CMS\Core\Page\PageRenderer;
@@ -42,16 +40,29 @@ class BackendLayout {
 	public $fieldName;
 
 	/**
+	 * @var string
+	 */
+	protected $md5ID = '';
+
+	/**
+	 * Constructor
+	 */
+	public function __construct() {
+		$this->getLanguageService()->includeLLFile('EXT:lang/locallang_wizards.xml');
+		$this->init();
+	}
+
+	/**
 	 * Initialises the Class
 	 * @return void
 	 * @throws \InvalidArgumentException
 	 */
-	public function init() {
+	protected function init() {
 		$lang = $this->getLanguageService();
 		$lang->includeLLFile('EXT:lang/locallang_wizards.xlf');
 
 		// Setting GET vars (used in frameset script):
-		$this->P = GeneralUtility::_GP('P', 1);
+		$this->P = GeneralUtility::_GP('P');
 
 		//data[layouts][2][config]
 		$this->formName = $this->P['formName'];
@@ -64,9 +75,8 @@ class BackendLayout {
 		$uid = (int)$this->P['uid'];
 		// Initialize document object:
 		$this->doc = GeneralUtility::makeInstance('TYPO3\\CMS\\Backend\\Template\\DocumentTemplate');
-		$this->doc->backPath = $GLOBALS['BACK_PATH'];
-		/** @var PageRenderer $pageRenderer */
-		$pageRenderer = $this->doc->getPageRenderer();
+
+		$pageRenderer = GeneralUtility::makeInstance(PageRenderer::class);
 		$pageRenderer->loadExtJS();
 		$pageRenderer->addJsFile($GLOBALS['BACK_PATH'] . ExtensionManagementUtility::extRelPath('gridelements') . 'Resources/Public/Backend/JavaScript/grideditor.js');
 		$pageRenderer->addInlineSetting('ContextHelp', 'moduleUrl', BackendUtility::getModuleUrl('help_cshmanual'));
@@ -86,7 +96,7 @@ class BackendLayout {
 		foreach ($GLOBALS['TCA']['tt_content']['columns']['CType']['config']['items'] as $item) {
 			$itemKey = $item[1];
 			if (substr($itemKey, 0, 2) !== '--') {
-				$ctypeLabels[$itemKey] = $GLOBALS['LANG']->sL($item[0], 1);
+				$ctypeLabels[$itemKey] = $this->getLanguageService()->sL($item[0], TRUE);
 				if (strstr($item[2], '/typo3')) {
 					$ctypeIcons[$itemKey] = '../../../' . $item[2];
 				} else {
@@ -178,7 +188,7 @@ class BackendLayout {
 				}
 			}
 		}
-		$pageRenderer->enableExtJSQuickTips();
+
 		$pageRenderer->addExtOnReadyCode('
 			t3Grid = new TYPO3.Backend.t3Grid({
 				data: ' . json_encode($rows, JSON_HEX_QUOT | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS) . ',
@@ -231,16 +241,9 @@ class BackendLayout {
 		</table>
 		';
 		$this->content = $content;
-	}
 
-	/**
-	 * Returns the sourcecode to the browser
-	 * @return void
-	 */
-	public function printContent() {
 		echo $this->doc->render('Grid wizard', $this->content);
 	}
-
 
 	/**
 	 * Returns LanguageService

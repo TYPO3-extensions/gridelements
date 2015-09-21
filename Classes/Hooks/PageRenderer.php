@@ -18,11 +18,8 @@ namespace GridElementsTeam\Gridelements\Hooks;
  *  GNU General Public License for more details.
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
-use TYPO3\CMS\Backend\Utility\BackendUtility;
+
 use TYPO3\CMS\Backend\Utility\IconUtility;
-use TYPO3\CMS\Backend\View\PageLayoutView;
-use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
-use TYPO3\CMS\Core\FormProtection\FormProtectionFactory;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -44,25 +41,16 @@ class PageRenderer {
 		$pageRenderer->loadRequireJsModule('TYPO3/CMS/Gridelements/GridElementsDragDrop');
 		$pageRenderer->loadRequireJsModule('TYPO3/CMS/Gridelements/GridElementsDragInWizard');
 
-		$formprotection = FormProtectionFactory::get();
-
-		if (count($parameters['jsFiles'])) {
+		if (!empty($parameters['jsFiles'])) {
 
 			if (method_exists($GLOBALS['SOBE']->doc, 'issueCommand')) {
 				/** @var \TYPO3\CMS\Backend\Clipboard\Clipboard $clipObj */
 				$clipObj = GeneralUtility::makeInstance('TYPO3\\CMS\\Backend\\Clipboard\\Clipboard'); // Start clipboard
 				$clipObj->initializeClipboard();
 
-				$clipBoardHasContent = false;
-
 				$pasteURL = '';
 				if (isset($clipObj->clipData['normal']['el']) && strpos(key($clipObj->clipData['normal']['el']), 'tt_content') !== false) {
 					$pasteURL = str_replace('&amp;', '&', $clipObj->pasteUrl('tt_content', 'DD_PASTE_UID', 0));
-					if (isset($clipObj->clipData['normal']['mode'])) {
-						$clipBoardHasContent = 'copy';
-					} else {
-						$clipBoardHasContent = 'move';
-					}
 				}
 
 				$moveParams = '&cmd[tt_content][DD_DRAG_UID][move]=DD_DROP_UID';
@@ -75,11 +63,6 @@ class PageRenderer {
 
 				if (!$pageRenderer->getCharSet()) {
 					$pageRenderer->setCharSet($GLOBALS['LANG']->charSet ? $GLOBALS['LANG']->charSet : 'utf-8');
-				}
-
-				if (is_array($clipObj->clipData['normal']['el'])) {
-					$arrCBKeys = array_keys($clipObj->clipData['normal']['el']);
-					$intFirstCBEl = str_replace('tt_content|', '', $arrCBKeys[0]);
 				}
 
 				// pull locallang_db.xml to JS side - only the tx_gridelements_js-prefixed keys
@@ -155,8 +138,8 @@ class PageRenderer {
 	protected function addCSS($parameters, &$pageRenderer) {
 		if (count($parameters['cssFiles'])) {
 			// get configuration
-			$this->configurationArray = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['gridelements']);
-			$filename = $this->configurationArray['additionalStylesheet'];
+			$configurationArray = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['gridelements']);
+			$filename = $configurationArray['additionalStylesheet'];
 			if ($filename) {
 				// evaluate filename
 				if (substr($filename, 0, 4) === 'EXT:') { // extension

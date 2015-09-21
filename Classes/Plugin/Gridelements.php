@@ -79,7 +79,7 @@ class Gridelements extends ContentObjectRenderer {
 		// within just one SELECT query
 		$sortColumns = explode(',', $csvColumns);
 
-		$this->renderChildrenIntoParentColumns($typoScriptSetup, $sortColumns, $availableColumns);
+		$this->renderChildrenIntoParentColumns($typoScriptSetup, $sortColumns);
 		unset($children);
 		unset($sortColumns);
 

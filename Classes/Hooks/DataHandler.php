@@ -18,6 +18,7 @@ namespace GridElementsTeam\Gridelements\Hooks;
  *  GNU General Public License for more details.
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
+
 use TYPO3\CMS\Core\Database\DatabaseConnection;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -122,7 +123,7 @@ class DataHandler {
 	 * @param boolean $recordWasMoved : A switch to tell the parent object, if the record has been moved
 	 * @param \TYPO3\CMS\Core\DataHandling\DataHandler $parentObj : The parent object that triggered this hook
 	 */
-	public function moveRecord($table, $uid, &$destinationPid, &$propArr, &$moveRec, $resolvedPid, &$recordWasMoved, \TYPO3\CMS\Core\DataHandling\DataHandler &$parentObj) {
+	public function moveRecord($table, $uid, &$destinationPid, &$propArr, &$moveRec, $resolvedPid, &$recordWasMoved, \TYPO3\CMS\Core\DataHandling\DataHandler $parentObj) {
 		/** @var $hook \GridElementsTeam\Gridelements\DataHandler\MoveRecord */
 		if (!$parentObj->isImporting) {
 			$hook = GeneralUtility::makeInstance('GridElementsTeam\\Gridelements\\DataHandler\\MoveRecord');
