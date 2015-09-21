@@ -93,7 +93,7 @@ class WizardItems implements \TYPO3\CMS\Backend\Wizard\NewContentElementWizardHo
 	}
 
 	/**
-	 * remove unneccessary headers from wizard items
+	 * remove unnecessary headers from wizard items
 	 * @param array $wizardItems
 	 * @return void
 	 */
@@ -133,7 +133,7 @@ class WizardItems implements \TYPO3\CMS\Backend\Wizard\NewContentElementWizardHo
 	}
 
 	/**
-	 * retrieve layouts to exclude from pagetsconfig
+	 * retrieve layouts to exclude from pageTSconfig
 	 * @param integer $container
 	 * @param \TYPO3\CMS\Backend\Controller\ContentElement\NewContentElementController $parentObject : The parent object that triggered this hook
 	 * @return array

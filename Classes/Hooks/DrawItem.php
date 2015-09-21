@@ -374,7 +374,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 	 * @return void
 	 */
 	public function setColumnHeader(PageLayoutView $parentObject, &$head, &$colPos, &$name, &$editUidList) {
-		$head[$colPos] = $this->tt_content_drawColHeader($name, ($parentObject->doEdit && $editUidList[$colPos]) ? '&blubbedit[tt_content][' . $editUidList[$colPos] . ']=edit' . $parentObject->pageTitleParamForAltDoc : '', $parentObject);
+		$head[$colPos] = $this->tt_content_drawColHeader($name, ($parentObject->doEdit && $editUidList[$colPos]) ? '&edit[tt_content][' . $editUidList[$colPos] . ']=edit' . $parentObject->pageTitleParamForAltDoc : '', $parentObject);
 	}
 
 	/**
@@ -457,19 +457,19 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 				$columnKey = $columnConfig['colPos'] !== '' ? (int)$columnConfig['colPos'] : 32768;
 				// allowed CTypes
 				if (!empty($columnConfig['allowed'])) {
-					$allowedCTypes = array_flip(GeneralUtility::trimExplode(',', $columnConfig['allowed']));
-					if (!isset($allowedCTypes['*'])) {
-						foreach ($allowedCTypes as $key => &$ctype) {
+					$allowedContentTypes = array_flip(GeneralUtility::trimExplode(',', $columnConfig['allowed']));
+					if (!isset($allowedContentTypes['*'])) {
+						foreach ($allowedContentTypes as $key => &$ctype) {
 							$ctype = 't3-allow-' . $key;
 						}
 					} else {
-						unset($allowedCTypes);
+						unset($allowedContentTypes);
 					}
 				}
 				// render the grid cell
 				$colSpan = (int)$columnConfig['colspan'];
 				$rowSpan = (int)$columnConfig['rowspan'];
-				$grid .= '<td valign="top"' . (isset($columnConfig['colspan']) ? ' colspan="' . $colSpan . '"' : '') . (isset($columnConfig['rowspan']) ? ' rowspan="' . $rowSpan . '"' : '') . 'data-colpos="' . $columnKey . '" id="column-' . $specificIds['uid'] . 'x' . $columnKey . '" class="t3-grid-cell t3js-page-column t3-page-column t3-page-column-' . $columnKey . (!isset($columnConfig['colPos']) || $columnConfig['colPos'] === '' ? ' t3-grid-cell-unassigned' : '') . (isset($columnConfig['colspan']) && $columnConfig['colPos'] !== '' ? ' t3-grid-cell-width' . $colSpan : '') . (isset($columnConfig['rowspan']) && $columnConfig['colPos'] !== '' ? ' t3-grid-cell-height' . $rowSpan : '') . ' ' . ($layoutSetup['horizontal'] ? ' t3-grid-cell-horizontal' : '') . (count($allowedCTypes) ? ' ' . join(' ', $allowedCTypes) : ' t3-allow-all') . '">';
+				$grid .= '<td valign="top"' . (isset($columnConfig['colspan']) ? ' colspan="' . $colSpan . '"' : '') . (isset($columnConfig['rowspan']) ? ' rowspan="' . $rowSpan . '"' : '') . 'data-colpos="' . $columnKey . '" id="column-' . $specificIds['uid'] . 'x' . $columnKey . '" class="t3-grid-cell t3js-page-column t3-page-column t3-page-column-' . $columnKey . (!isset($columnConfig['colPos']) || $columnConfig['colPos'] === '' ? ' t3-grid-cell-unassigned' : '') . (isset($columnConfig['colspan']) && $columnConfig['colPos'] !== '' ? ' t3-grid-cell-width' . $colSpan : '') . (isset($columnConfig['rowspan']) && $columnConfig['colPos'] !== '' ? ' t3-grid-cell-height' . $rowSpan : '') . ' ' . ($layoutSetup['horizontal'] ? ' t3-grid-cell-horizontal' : '') . (count($allowedContentTypes) ? ' ' . join(' ', $allowedContentTypes) : ' t3-allow-all') . '">';
 
 				$grid .= ($GLOBALS['BE_USER']->uc['hideColumnHeaders'] ? '' : $head[$columnKey]) . $gridContent[$columnKey];
 				$grid .= '</td>';

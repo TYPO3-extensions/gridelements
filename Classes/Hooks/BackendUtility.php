@@ -62,17 +62,17 @@ class BackendUtility {
 	/**
 	 * Overwrites the data structure of a given tt_content::pi_flexform by
 	 * by the one matching the gridelements layout.
-	 * @param array $dataStructArray The incoming data structure. This might be the default one.
+	 * @param array $dataStructureArray The incoming data structure. This might be the default one.
 	 * @param array $conf
 	 * @param array $row
 	 * @param string $table
 	 * @param string $fieldName
 	 * @return void
 	 */
-	public function getFlexFormDS_postProcessDS(&$dataStructArray, $conf, $row, $table, $fieldName) {
+	public function getFlexFormDS_postProcessDS(&$dataStructureArray, $conf, $row, $table, $fieldName) {
 		if ($table === 'tt_content' && $fieldName === 'pi_flexform' && $row['CType'] === 'gridelements_pi1' && $row['tx_gridelements_backend_layout']) {
 			$this->init($row['pid']);
-			$dataStructArray = GeneralUtility::xml2array($this->layoutSetup->getFlexformConfiguration($row['tx_gridelements_backend_layout']));
+			$dataStructureArray = GeneralUtility::xml2array($this->layoutSetup->getFlexformConfiguration($row['tx_gridelements_backend_layout']));
 		}
 	}
 

@@ -25,7 +25,7 @@ use TYPO3\CMS\Core\Http\AjaxRequestHandler;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
- * AJAX request disatcher for record list
+ * AJAX request dispatcher for record list
  * @author Dirk Hoffmann <dirk-hoffmann@telekom.de>
  * @package TYPO3
  * @subpackage tx_gridelements
@@ -137,7 +137,7 @@ class AjaxRecordList {
 	 * @return DatabaseRecordList
 	 */
 	private function getRecordList($table, $uid, $row) {
-		$dblist = null;
+		$dataBaseList = null;
 
 		$permsClause = $GLOBALS['BE_USER']->getPagePermsClause(1);
 
@@ -156,8 +156,8 @@ class AjaxRecordList {
 		$cmd_table = GeneralUtility::_GP('cmd_table');
 
 		// Loading current page record and checking access:
-		$pageinfo = BackendUtility::readPageAccess($row['pid'], $permsClause);
-		$access = is_array($pageinfo) ? 1 : 0;
+		$pageInfo = BackendUtility::readPageAccess($row['pid'], $permsClause);
+		$access = is_array($pageInfo) ? 1 : 0;
 
 		if ($access) {
 			// TODO: Menu settings: Apply predefined values for hidden checkboxes
@@ -165,11 +165,11 @@ class AjaxRecordList {
 			// Set predefined value for Clipboard:
 			// Set predefined value for LocalizationView:
 
-			// Initialize the dblist object:
-			/** @var $dblist DatabaseRecordList */
-			$dblist = GeneralUtility::makeInstance('TYPO3\\CMS\\Recordlist\\RecordList\\DatabaseRecordList');
-			$dblist->calcPerms = $GLOBALS['BE_USER']->calcPerms($pageinfo);
-			$dblist->thumbs = $GLOBALS['BE_USER']->uc['thumbnailsByDefault'];
+			// Initialize the dataBaseList object:
+			/** @var $dataBaseList DatabaseRecordList */
+			$dataBaseList = GeneralUtility::makeInstance('TYPO3\\CMS\\Recordlist\\RecordList\\DatabaseRecordList');
+			$dataBaseList->calcPerms = $GLOBALS['BE_USER']->calcPerms($pageInfo);
+			$dataBaseList->thumbs = $GLOBALS['BE_USER']->uc['thumbnailsByDefault'];
 
 			$modName = 'web_list';
 			$MOD_MENU = array('bigControlPanel' => '', 'clipBoard' => '', 'localization' => '');
@@ -179,29 +179,29 @@ class AjaxRecordList {
 			// todo: bring GP settings from outer list to the ajax request
 			$MOD_SETTINGS = BackendUtility::getModuleData($MOD_MENU, GeneralUtility::_GP('SET'), $modName);
 
-			$dblist->allFields = ($MOD_SETTINGS['bigControlPanel'] || $table) ? 1 : 0;
-			$dblist->localizationView = $MOD_SETTINGS['localization'];
-			$dblist->showClipboard = 1;
+			$dataBaseList->allFields = ($MOD_SETTINGS['bigControlPanel'] || $table) ? 1 : 0;
+			$dataBaseList->localizationView = $MOD_SETTINGS['localization'];
+			$dataBaseList->showClipboard = 1;
 
-			$dblist->disableSingleTableView = $modTSconfig['properties']['disableSingleTableView'];
-			$dblist->listOnlyInSingleTableMode = $modTSconfig['properties']['listOnlyInSingleTableView'];
-			$dblist->hideTables = $modTSconfig['properties']['hideTables'];
-			$dblist->hideTranslations = $modTSconfig['properties']['hideTranslations'];
-			$dblist->tableTSconfigOverTCA = $modTSconfig['properties']['table.'];
-			$dblist->clickTitleMode = $modTSconfig['properties']['clickTitleMode'];
-			$dblist->alternateBgColors = $modTSconfig['properties']['alternateBgColors'] ? 1 : 0;
-			$dblist->allowedNewTables = GeneralUtility::trimExplode(',', $modTSconfig['properties']['allowedNewTables'], 1);
-			$dblist->deniedNewTables = GeneralUtility::trimExplode(',', $modTSconfig['properties']['deniedNewTables'], 1);
-			$dblist->newWizards = $modTSconfig['properties']['newWizards'] ? 1 : 0;
+			$dataBaseList->disableSingleTableView = $modTSconfig['properties']['disableSingleTableView'];
+			$dataBaseList->listOnlyInSingleTableMode = $modTSconfig['properties']['listOnlyInSingleTableView'];
+			$dataBaseList->hideTables = $modTSconfig['properties']['hideTables'];
+			$dataBaseList->hideTranslations = $modTSconfig['properties']['hideTranslations'];
+			$dataBaseList->tableTSconfigOverTCA = $modTSconfig['properties']['table.'];
+			$dataBaseList->clickTitleMode = $modTSconfig['properties']['clickTitleMode'];
+			$dataBaseList->alternateBgColors = $modTSconfig['properties']['alternateBgColors'] ? 1 : 0;
+			$dataBaseList->allowedNewTables = GeneralUtility::trimExplode(',', $modTSconfig['properties']['allowedNewTables'], 1);
+			$dataBaseList->deniedNewTables = GeneralUtility::trimExplode(',', $modTSconfig['properties']['deniedNewTables'], 1);
+			$dataBaseList->newWizards = $modTSconfig['properties']['newWizards'] ? 1 : 0;
 
-			$dblist->pageRow = $pageinfo;
-			$dblist->counter++;
-			$dblist->MOD_MENU = $MOD_MENU;
-			$dblist->modTSconfig = $modTSconfig;
+			$dataBaseList->pageRow = $pageInfo;
+			$dataBaseList->counter++;
+			$dataBaseList->MOD_MENU = $MOD_MENU;
+			$dataBaseList->modTSconfig = $modTSconfig;
 
 			// Clipboard is initialized:
-			$dblist->clipObj = GeneralUtility::makeInstance('TYPO3\\CMS\\Backend\\Clipboard\\Clipboard'); // Start clipboard
-			$dblist->clipObj->initializeClipboard(); // Initialize - reads the clipboard content from the user session
+			$dataBaseList->clipObj = GeneralUtility::makeInstance('TYPO3\\CMS\\Backend\\Clipboard\\Clipboard'); // Start clipboard
+			$dataBaseList->clipObj->initializeClipboard(); // Initialize - reads the clipboard content from the user session
 
 			// todo
 			// Clipboard actions are handled:
@@ -209,20 +209,20 @@ class AjaxRecordList {
 			if ($this->cmd == 'setCB') {
 				// CBH is all the fields selected for the clipboard, CBC is the checkbox fields which were checked. By merging we get a full array of checked/unchecked elements
 				// This is set to the 'el' array of the CB after being parsed so only the table in question is registered.
-				$CB['el'] = $dblist->clipObj->cleanUpCBC(array_merge((array)GeneralUtility::_POST('CBH'), (array)GeneralUtility::_POST('CBC')), $cmd_table);
+				$CB['el'] = $dataBaseList->clipObj->cleanUpCBC(array_merge((array)GeneralUtility::_POST('CBH'), (array)GeneralUtility::_POST('CBC')), $cmd_table);
 			}
 			if (!$MOD_SETTINGS['clipBoard']) {
 				$CB['setP'] = 'normal';
 			}
 
 			// If the clipboard is NOT shown, set the pad to 'normal'.
-			$dblist->clipObj->setCmd($CB); // Execute commands.
-			$dblist->clipObj->cleanCurrent(); // Clean up pad
-			$dblist->clipObj->endClipboard(); // Save the clipboard content
+			$dataBaseList->clipObj->setCmd($CB); // Execute commands.
+			$dataBaseList->clipObj->cleanCurrent(); // Clean up pad
+			$dataBaseList->clipObj->endClipboard(); // Save the clipboard content
 
 			// This flag will prevent the clipboard panel in being shown.
 			// It is set, if the clickmenu-layer is active AND the extended view is not enabled.
-			$dblist->dontShowClipControlPanels = $GLOBALS['CLIENT']['FORMSTYLE'] && !$MOD_SETTINGS['bigControlPanel'] && $dblist->clipObj->current == 'normal' && !$GLOBALS['BE_USER']->uc['disableCMlayers'] && !$modTSconfig['properties']['showClipControlPanelsDespiteOfCMlayers'];
+			$dataBaseList->dontShowClipControlPanels = $GLOBALS['CLIENT']['FORMSTYLE'] && !$MOD_SETTINGS['bigControlPanel'] && $dataBaseList->clipObj->current == 'normal' && !$GLOBALS['BE_USER']->uc['disableCMlayers'] && !$modTSconfig['properties']['showClipControlPanelsDespiteOfCMlayers'];
 
 			// If there is access to the page, then render the list contents and set up the document template object:
 			// todo: there is no browsing in child records
@@ -232,15 +232,15 @@ class AjaxRecordList {
 			$search_levels = '';
 			$showLimit = 10;
 
-			//$dblist->start($this->id,$this->table,$this->pointer,$this->search_field,$this->search_levels,$this->showLimit);
-			$dblist->start($row['pid'], $table, $pointer, $search_field, $search_levels, $showLimit);
-			$dblist->setDispFields();
+			//$dataBaseList->start($this->id,$this->table,$this->pointer,$this->search_field,$this->search_levels,$this->showLimit);
+			$dataBaseList->start($row['pid'], $table, $pointer, $search_field, $search_levels, $showLimit);
+			$dataBaseList->setDispFields();
 
 			// Render the list of tables:
-			$dblist->generateList();
+			$dataBaseList->generateList();
 		}
 
-		return $dblist;
+		return $dataBaseList;
 	}
 
 	/**

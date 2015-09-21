@@ -216,7 +216,7 @@ class AfterDatabaseOperations extends AbstractDataHandler {
 	}
 
 	/**
-	 * gets all subpages of the current page and traverses recursivley unless backend_layout_next_level is set or unset (!= 0)
+	 * gets all subpages of the current page and traverses recursively unless backend_layout_next_level is set or unset (!= 0)
 	 * @param $pageUid
 	 * @param $subpages
 	 * @internal param int $id : the uid of the parent page
