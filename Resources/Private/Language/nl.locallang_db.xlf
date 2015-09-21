@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+	<file source-language="en" target-language="nl" datatype="plaintext" original="messages" date="2015-09-21T18:41:55Z">
+		<header>
+			<type>database</type>
+			<description>Language labels for database tables/fields belonging to extension 'gridelements'</description>
+			<generator>LFEditor</generator>
+		</header>
+		<body>
+		<trans-unit id="allowedElementTypes" approved="yes">
+			<source>Allowed CE</source>
+			<target>Toegestane content elementen</target>
+		</trans-unit>
+		<trans-unit id="allowedElementTypesHelp" approved="yes">
+			<source>Select the content element types that may be created or moved here.</source>
+			<target>Selecteer de content element types die hier aangemaakt of naar toe verplaatst mogen worden.</target>
+		</trans-unit>
+		<trans-unit id="dragAndDropHideNewElementWizardInfoOverlay" approved="yes">
+			<source>Hide info overlays for the new content element drag in wizard.</source>
+			<target>Verberg informatie overlays voor de nieuwe 'content element drag in wizard'.</target>
+		</trans-unit>
+		<trans-unit id="gridElements" approved="yes">
+			<source>Grid Elements</source>
+			<target>Grid elementen</target>
+		</trans-unit>
+		<trans-unit id="hideColumnHeaders" approved="yes">
+			<source>Hide column headers.</source>
+			<target>Verberg kolom titels</target>
+		</trans-unit>
+		<trans-unit id="list.collapseElement" approved="yes">
+			<source>Collapse /expand element</source>
+			<target>Samenvouwen / uitvouwen element</target>
+		</trans-unit>
+		<trans-unit id="list.columnName" approved="yes">
+			<source>Column:</source>
+			<target>Kolom:</target>
+		</trans-unit>
+		<trans-unit id="tt_content.CType_pi1" approved="yes">
+			<source>Grid Element</source>
+			<target>Grid element</target>
+		</trans-unit>
+		<trans-unit id="tt_content.tx_gridelements_backend_layout" approved="yes">
+			<source>Grid Layout</source>
+			<target>Grid Layout</target>
+		</trans-unit>
+		<trans-unit id="tt_content.tx_gridelements_backend_layout.I.horizontal" approved="yes">
+			<source>Dynamic Columns (horizontal)</source>
+			<target>Dynamische kolommen (horizontaal)</target>
+		</trans-unit>
+		<trans-unit id="tt_content.tx_gridelements_backend_layout.I.none" approved="yes">
+			<source>None</source>
+			<target>Geen</target>
+		</trans-unit>
+		<trans-unit id="tt_content.tx_gridelements_backend_layout.I.vertical" approved="yes">
+			<source>Dynamic Rows (vertical)</source>
+			<target>Dynamische rijen (vertikaal)</target>
+		</trans-unit>
+		<trans-unit id="tt_content.tx_gridelements_children" approved="yes">
+			<source>Content elements</source>
+			<target>Content elementen</target>
+		</trans-unit>
+		<trans-unit id="tt_content.tx_gridelements_columns" approved="yes">
+			<source>Grid Container Columns</source>
+			<target>Grid container kolommen</target>
+		</trans-unit>
+		<trans-unit id="tt_content.tx_gridelements_container" approved="yes">
+			<source>Grid Container</source>
+			<target>Grid container</target>
+		</trans-unit>
+		<trans-unit id="tx_gridelements_backend_layout" approved="yes">
+			<source>CE Backend Layout</source>
+			<target>CE Backend Layout</target>
+		</trans-unit>
+		<trans-unit id="tx_gridelements_backend_layout.alias" approved="yes">
+			<source>Alias</source>
+			<target>Alias</target>
+		</trans-unit>
+		<trans-unit id="tx_gridelements_backend_layout.ce_configuration" approved="yes">
+			<source>Content Element Configuration</source>
+			<target>Content element configuratie</target>
+		</trans-unit>
+		<trans-unit id="tx_gridelements_backend_layout.config" approved="yes">
+			<source>Grid Configuration</source>
+			<target>Grid configuratie</target>
+		</trans-unit>
+		<trans-unit id="tx_gridelements_backend_layout.description" approved="yes">
+			<source>Description</source>
+			<target>Omschrijving</target>
+		</trans-unit>
+		<trans-unit id="tx_gridelements_backend_layout.div.configuration" approved="yes">
+			<source>Configuration</source>
+			<target>Configuratie</target>
+		</trans-unit>
+		<trans-unit id="tx_gridelements_backend_layout.frame" approved="yes">
+			<source>Frame</source>
+			<target>Kader</target>
+		</trans-unit>
+		<trans-unit id="tx_gridelements_backend_layout.frame.I.-1" approved="yes">
+			<source>Neutral</source>
+			<target>Neutraal</target>
+		</trans-unit>
+		<trans-unit id="tx_gridelements_backend_layout.frame.I.0" approved="yes">
+			<source>-</source>
+			<target>-</target>
+		</trans-unit>
+		<trans-unit id="tx_gridelements_backend_layout.frame.I.1" approved="yes">
+			<source>Red</source>
+			<target>Rood</target>
+		</trans-unit>
+		<trans-unit id="tx_gridelements_backend_layout.frame.I.2" approved="yes">
+			<source>Green</source>
+			<target>Groen</target>
+		</trans-unit>
+		<trans-unit id="tx_gridelements_backend_layout.frame.I.3" approved="yes">
+			<source>Blue</source>
+			<target>Blauw</target>
+		</trans-unit>
+		<trans-unit id="tx_gridelements_backend_layout.icon" approved="yes">
+			<source>Icon</source>
+			<target>Icoon</target>
+		</trans-unit>
+		<trans-unit id="tx_gridelements_backend_layout.palette.appearance" approved="yes">
+			<source>Appearance</source>
+			<target>Weergave</target>
+		</trans-unit>
+		<trans-unit id="tx_gridelements_backend_layout.pi_flexform_ds" approved="yes">
+			<source>Flexform Configuration</source>
+			<target>Flexform configuratie</target>
+		</trans-unit>
+		<trans-unit id="tx_gridelements_backend_layout.pi_flexform_ds_file" approved="yes">
+			<source>Flexform Configuration File (overrides direct input)</source>
+			<target>Flexform configuratie bestand (overschrijft directe input)</target>
+		</trans-unit>
+		<trans-unit id="tx_gridelements_backend_layout.title" approved="yes">
+			<source>Title</source>
+			<target>Titel</target>
+		</trans-unit>
+		<trans-unit id="tx_gridelements_backend_layout.top_level_layout" approved="yes">
+			<source>Top Level Layout</source>
+			<target>Top Level Layout</target>
+		</trans-unit>
+		<trans-unit id="tx_gridelements_backend_layout_wizard_label" approved="yes">
+			<source>Grid Elements</source>
+			<target>Grid elementen</target>
+		</trans-unit>
+		<trans-unit id="tx_gridelements_clickmenu_pastereference" approved="yes">
+			<source>Paste reference after</source>
+			<target>Plak referentie na</target>
+		</trans-unit>
+		<trans-unit id="tx_gridelements_js.allowedElementTypes" approved="yes">
+			<source>Allowed CE</source>
+			<target>Toegestane CE</target>
+		</trans-unit>
+		<trans-unit id="tx_gridelements_js.copyfrompage" approved="yes">
+			<source>Copy content from another page to this place</source>
+			<target>[NL] Copy content from another page to this place</target>
+		</trans-unit>
+		<trans-unit id="tx_gridelements_js.drophere" approved="yes">
+			<source>Drop Here</source>
+			<target>Sleep hier</target>
+		</trans-unit>
+		<trans-unit id="tx_gridelements_js.missingcontenttemplate" approved="yes">
+			<source>Missing Content Template</source>
+			<target>Ontbrekend content sjabloon</target>
+		</trans-unit>
+		<trans-unit id="tx_gridelements_js.newcontentelementheader" approved="yes">
+			<source>New</source>
+			<target>Nieuw</target>
+		</trans-unit>
+		<trans-unit id="tx_gridelements_js.pastecopy" approved="yes">
+			<source>Paste copy at this place</source>
+			<target>Plak kopie in</target>
+		</trans-unit>
+		<trans-unit id="tx_gridelements_js.pasteref" approved="yes">
+			<source>Paste reference at this place</source>
+			<target>Plak referentie in</target>
+		</trans-unit>
+		</body>
+	</file>
+</xliff>
