@@ -32,7 +32,7 @@ class Helper {
 	/**
 	 * @var DatabaseConnection
 	 */
-	protected $databaseConnection;
+	protected static $databaseConnection;
 
 	/**
 	 * Local instance of the helper
@@ -66,7 +66,7 @@ class Helper {
 
 		if (trim($table) === 'tt_content' && $uid > 0) {
 
-			$children = $this->databaseConnection->exec_SELECTgetRows('*', 'tt_content', 'tx_gridelements_container = ' . $uid . ' AND deleted = 0');
+			$children = self::getDatabaseConnection()->exec_SELECTgetRows('*', 'tt_content', 'tx_gridelements_container = ' . $uid . ' AND deleted = 0');
 
 			foreach ($children as $child) {
 				if (trim($sortingField) && isset($child[$sortingField]) && $sortingField !== 'sorting') {
@@ -99,7 +99,7 @@ class Helper {
 		$specificIds = array();
 		$specificIds['uid'] = (int)$record['uid'];
 
-		if ($this->getBackendUser()->workspace > 0 && !empty($record['t3ver_oid'])) {
+		if (self::getBackendUser()->workspace > 0 && !empty($record['t3ver_oid'])) {
 			$specificIds['uid'] = (int)$record['t3ver_oid'];
 		}
 
@@ -120,7 +120,7 @@ class Helper {
 	 * @return void
 	 */
 	public function setDatabaseConnection(DatabaseConnection $databaseConnection) {
-		$this->databaseConnection = $databaseConnection;
+		self::$databaseConnection = $databaseConnection;
 	}
 
 	/**
@@ -128,7 +128,7 @@ class Helper {
 	 * @return DatabaseConnection databaseConnection
 	 */
 	public function getDatabaseConnection() {
-		return $this->databaseConnection;
+		return self::$databaseConnection;
 	}
 
 }
