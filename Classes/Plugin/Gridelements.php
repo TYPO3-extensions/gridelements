@@ -18,6 +18,8 @@ namespace GridElementsTeam\Gridelements\Plugin;
  *  GNU General Public License for more details.
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
+
+use TYPO3\CMS\Core\Database\DatabaseConnection;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\MathUtility;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
@@ -35,6 +37,11 @@ class Gridelements extends ContentObjectRenderer {
 	 */
 	protected $cObj;
 
+	/**
+	 * @var DatabaseConnection
+	 */
+	protected $databaseConnection;
+
 	public $prefixId = 'Gridelements'; // Same as class name
 	public $scriptRelPath = 'Classes/Plugin/Gridelements.php'; // Path to this script relative to the extension dir.
 	public $extKey = 'gridelements'; // The extension key.
@@ -46,6 +53,8 @@ class Gridelements extends ContentObjectRenderer {
 	 * @return string The content that is displayed on the website
 	 */
 	public function main($content = '', $conf = array()) {
+
+		$this->setDatabaseConnection($GLOBALS['TYPO3_DB']);
 
 		// first we have to take care of possible flexform values containing additional information
 		// that is not available via DB relations. It will be added as "virtual" key to the existing data Array
@@ -525,4 +534,22 @@ class Gridelements extends ContentObjectRenderer {
 
 		return $out;
 	}
+
+	/**
+	 * setter for databaseConnection object
+	 * @param DatabaseConnection $databaseConnection
+	 * @return void
+	 */
+	public function setDatabaseConnection(DatabaseConnection $databaseConnection) {
+		$this->databaseConnection = $databaseConnection;
+	}
+
+	/**
+	 * getter for databaseConnection
+	 * @return DatabaseConnection databaseConnection
+	 */
+	public function getDatabaseConnection() {
+		return $this->databaseConnection;
+	}
+
 }
