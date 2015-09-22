@@ -1,8 +1,7 @@
 <?php
 namespace GridElementsTeam\Gridelements\Wizard;
 
-$GLOBALS['LANG']->includeLLFile('EXT:lang/locallang_wizards.xml');
-
+use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Backend\Utility\IconUtility;
 use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
@@ -10,7 +9,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Script Class for grid wizard
- *
  * @author T3UXW09 Team1 <modernbe@cybercraft.de>
  */
 class BackendLayout {
@@ -22,7 +20,6 @@ class BackendLayout {
 
 	/**
 	 * Document template object
-	 *
 	 * @var \TYPO3\CMS\Backend\Template\DocumentTemplate
 	 */
 	public $doc;
@@ -33,16 +30,39 @@ class BackendLayout {
 	public $content;
 
 	/**
+	 * @var string
+	 */
+	public $formName;
+
+	/**
+	 * @var string
+	 */
+	public $fieldName;
+
+	/**
+	 * @var string
+	 */
+	protected $md5ID = '';
+
+	/**
+	 * Constructor
+	 */
+	public function __construct() {
+		$this->getLanguageService()->includeLLFile('EXT:lang/locallang_wizards.xml');
+		$this->init();
+	}
+
+	/**
 	 * Initialises the Class
-	 *
 	 * @return void
 	 * @throws \InvalidArgumentException
 	 */
-	public function init() {
-		$GLOBALS['LANG']->includeLLFile('EXT:lang/locallang_wizards.xlf');
+	protected function init() {
+		$lang = $this->getLanguageService();
+		$lang->includeLLFile('EXT:lang/locallang_wizards.xlf');
 
 		// Setting GET vars (used in frameset script):
-		$this->P = GeneralUtility::_GP('P', 1);
+		$this->P = GeneralUtility::_GP('P');
 
 		//data[layouts][2][config]
 		$this->formName = $this->P['formName'];
@@ -55,10 +75,11 @@ class BackendLayout {
 		$uid = (int)$this->P['uid'];
 		// Initialize document object:
 		$this->doc = GeneralUtility::makeInstance('TYPO3\\CMS\\Backend\\Template\\DocumentTemplate');
-		$this->doc->backPath = $GLOBALS['BACK_PATH'];
-		/** @var PageRenderer $pageRenderer */
-		$pageRenderer = $this->doc->getPageRenderer();
+
+		$pageRenderer = GeneralUtility::makeInstance(PageRenderer::class);
+		$pageRenderer->loadExtJS();
 		$pageRenderer->addJsFile($GLOBALS['BACK_PATH'] . ExtensionManagementUtility::extRelPath('gridelements') . 'Resources/Public/Backend/JavaScript/grideditor.js');
+		$pageRenderer->addInlineSetting('ContextHelp', 'moduleUrl', BackendUtility::getModuleUrl('help_cshmanual'));
 		$pageRenderer->addJsInlineCode('storeData', '
 			function storeData(data) {
 				if (parent.opener && parent.opener.document && parent.opener.document.' . $this->formName . ' && parent.opener.document.' . $this->formName . '[' . GeneralUtility::quoteJSvalue($this->fieldName) . ']) {
@@ -66,21 +87,8 @@ class BackendLayout {
 					parent.opener.TBE_EDITOR.fieldChanged("backend_layout","' . $uid . '","config","data[backend_layout][' . $uid . '][config]");
 				}
 			}
-			', FALSE);
-		$languageLabels = array(
-			'save'                    => $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_labelSave', TRUE),
-			'title'                   => $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_windowTitle', TRUE),
-			'editCell'                => $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_editCell', TRUE),
-			'mergeCell'               => $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_mergeCell', TRUE),
-			'splitCell'               => $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_splitCell', TRUE),
-			'name'                    => $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_name', TRUE),
-			'column'                  => $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_column', TRUE),
-			'notSet'                  => $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_notSet', TRUE),
-			'nameHelp'                => $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_nameHelp', TRUE),
-			'columnHelp'              => $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_wizards.xml:grid_columnHelp', 1),
-			'allowedElementTypes'     => $GLOBALS['LANG']->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:allowedElementTypes', 1),
-			'allowedElementTypesHelp' => $GLOBALS['LANG']->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:allowedElementTypesHelp', 1),
-		);
+			', false);
+		$languageLabels = array('save' => $lang->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_labelSave', true), 'title' => $lang->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_windowTitle', true), 'editCell' => $lang->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_editCell', true), 'mergeCell' => $lang->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_mergeCell', true), 'splitCell' => $lang->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_splitCell', true), 'name' => $lang->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_name', true), 'column' => $lang->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_column', true), 'notSet' => $lang->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_notSet', true), 'nameHelp' => $lang->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_nameHelp', true), 'columnHelp' => $lang->sL('LLL:EXT:lang/locallang_wizards.xml:grid_columnHelp', 1), 'allowedElementTypes' => $lang->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:allowedElementTypes', 1), 'allowedElementTypesHelp' => $lang->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:allowedElementTypesHelp', 1),);
 		$pageRenderer->addInlineLanguageLabelArray($languageLabels);
 		// add gridelement wizard options information
 		$ctypeLabels = array();
@@ -88,7 +96,7 @@ class BackendLayout {
 		foreach ($GLOBALS['TCA']['tt_content']['columns']['CType']['config']['items'] as $item) {
 			$itemKey = $item[1];
 			if (substr($itemKey, 0, 2) !== '--') {
-				$ctypeLabels[$itemKey] = $GLOBALS['LANG']->sL($item[0], 1);
+				$ctypeLabels[$itemKey] = $this->getLanguageService()->sL($item[0], TRUE);
 				if (strstr($item[2], '/typo3')) {
 					$ctypeIcons[$itemKey] = '../../../' . $item[2];
 				} else {
@@ -103,19 +111,9 @@ class BackendLayout {
 		');
 
 		// select record
-		$record = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows($this->P['field'], $this->P['table'], 'uid=' . (int)$this->P['uid']);
+		$record = $this->getDatabaseConnection()->exec_SELECTgetRows($this->P['field'], $this->P['table'], 'uid=' . (int)$this->P['uid']);
 		if (trim($record[0][$this->P['field']]) === '') {
-			$rows = array(
-				array(
-					array(
-						'colspan' => 1,
-						'rowspan' => 1,
-						'spanned' => FALSE,
-						'name'    => '',
-						'allowed' => ''
-					)
-				)
-			);
+			$rows = array(array(array('colspan' => 1, 'rowspan' => 1, 'spanned' => false, 'name' => '', 'allowed' => '')));
 			$colCount = 1;
 			$rowCount = 1;
 		} else {
@@ -177,12 +175,7 @@ class BackendLayout {
 							}
 						}
 					} else {
-						$cellData = array(
-							'colspan' => 1,
-							'rowspan' => 1,
-							'spanned' => 1,
-							'allowed' => '*'
-						);
+						$cellData = array('colspan' => 1, 'rowspan' => 1, 'spanned' => 1, 'allowed' => '*');
 					}
 					$cells[] = $cellData;
 				}
@@ -192,7 +185,7 @@ class BackendLayout {
 				}
 			}
 		}
-		$pageRenderer->enableExtJSQuickTips();
+
 		$pageRenderer->addExtOnReadyCode('
 			t3Grid = new TYPO3.Backend.t3Grid({
 				data: ' . json_encode($rows, JSON_HEX_QUOT | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS) . ',
@@ -207,14 +200,14 @@ class BackendLayout {
 
 	/**
 	 * Main Method, rendering either colorpicker or frameset depending on ->showPicker
-	 *
 	 * @return void
 	 */
 	public function main() {
-		$resourcePath = ExtensionManagementUtility::extRelPath('cms') . 'layout/';
-		$content = '<a href="#" title="' . $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.xlf:rm.saveDoc', TRUE) . '" onclick="storeData(t3Grid.export2LayoutRecord());return true;">' . IconUtility::getSpriteIcon('actions-document-save') . '</a>';
-		$content .= '<a href="#" title="' . $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.xlf:rm.saveCloseDoc', TRUE) . '" onclick="storeData(t3Grid.export2LayoutRecord());window.close();return true;">' . IconUtility::getSpriteIcon('actions-document-save-close') . '</a>';
-		$content .= '<a href="#" title="' . $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.xlf:rm.closeDoc', TRUE) . '" onclick="window.close();return true;">' . IconUtility::getSpriteIcon('actions-document-close') . '</a>';
+		$lang = $this->getLanguageService();
+		$resourcePath = ExtensionManagementUtility::extRelPath('backend') . 'Resources/Public/Images/BackendLayoutWizard/';
+		$content = '<a href="#" title="' . $lang->sL('LLL:EXT:lang/locallang_core.xlf:rm.saveDoc', true) . '" onclick="storeData(t3Grid.export2LayoutRecord());return true;">' . IconUtility::getSpriteIcon('actions-document-save') . '</a>';
+		$content .= '<a href="#" title="' . $lang->sL('LLL:EXT:lang/locallang_core.xlf:rm.saveCloseDoc', true) . '" onclick="storeData(t3Grid.export2LayoutRecord());window.close();return true;">' . IconUtility::getSpriteIcon('actions-document-save-close') . '</a>';
+		$content .= '<a href="#" title="' . $lang->sL('LLL:EXT:lang/locallang_core.xlf:rm.closeDoc', true) . '" onclick="window.close();return true;">' . IconUtility::getSpriteIcon('actions-document-close') . '</a>';
 		$content .= $this->doc->spacer(10);
 		$content .= '
 		<table border="0" width="90%" height="90%" id="outer_container">
@@ -224,36 +217,45 @@ class BackendLayout {
 					</div>
 				</td>
 				<td width="20" valign="center">
-					<a class="addCol" href="#" title="' . $GLOBALS['LANG']->getLL('grid_addColumn') . '" onclick="t3Grid.addColumn(); t3Grid.drawTable(\'editor\');">
-						<img src="' . $resourcePath . 'res/t3grid-tableright.png" border="0" />
+					<a class="addCol" href="#" title="' . $lang->getLL('grid_addColumn') . '" onclick="t3Grid.addColumn(); t3Grid.drawTable(\'editor\');">
+						<img src="' . $resourcePath . 't3grid-tableright.png" border="0" />
 					</a><br />
-					<a class="removeCol" href="#" title="' . $GLOBALS['LANG']->getLL('grid_removeColumn') . '" onclick="t3Grid.removeColumn(); t3Grid.drawTable(\'editor\');">
-						<img src="' . $resourcePath . 'res/t3grid-tableleft.png" border="0" />
+					<a class="removeCol" href="#" title="' . $lang->getLL('grid_removeColumn') . '" onclick="t3Grid.removeColumn(); t3Grid.drawTable(\'editor\');">
+						<img src="' . $resourcePath . 't3grid-tableleft.png" border="0" />
 					</a>
 				</td>
 			</tr>
 			<tr>
 				<td colspan="2" height="20" align="center">
-					<a class="addCol" href="#" title="' . $GLOBALS['LANG']->getLL('grid_addRow') . '" onclick="t3Grid.addRow(); t3Grid.drawTable(\'editor\');">
-						<img src="' . $resourcePath . 'res/t3grid-tabledown.png" border="0" />
+					<a class="addCol" href="#" title="' . $lang->getLL('grid_addRow') . '" onclick="t3Grid.addRow(); t3Grid.drawTable(\'editor\');">
+						<img src="' . $resourcePath . 't3grid-tabledown.png" border="0" />
 					</a>
-					<a class="removeCol" href="#" title="' . $GLOBALS['LANG']->getLL('grid_removeRow') . '" onclick="t3Grid.removeRow(); t3Grid.drawTable(\'editor\');">
-						<img src="' . $resourcePath . 'res/t3grid-tableup.png" border="0" />
+					<a class="removeCol" href="#" title="' . $lang->getLL('grid_removeRow') . '" onclick="t3Grid.removeRow(); t3Grid.drawTable(\'editor\');">
+						<img src="' . $resourcePath . 't3grid-tableup.png" border="0" />
 					</a>
 				</td>
 			</tr>
 		</table>
 		';
 		$this->content = $content;
+
+		echo $this->doc->render('Grid wizard', $this->content);
 	}
 
 	/**
-	 * Returns the sourcecode to the browser
-	 *
-	 * @return void
+	 * Returns LanguageService
+	 * @return \TYPO3\CMS\Lang\LanguageService
 	 */
-	public function printContent() {
-		echo $this->doc->render('Grid wizard', $this->content);
+	protected function getLanguageService() {
+		return $GLOBALS['LANG'];
+	}
+
+	/**
+	 * Returns the database connection
+	 * @return \TYPO3\CMS\Core\Database\DatabaseConnection
+	 */
+	protected function getDatabaseConnection() {
+		return $GLOBALS['TYPO3_DB'];
 	}
 
 }

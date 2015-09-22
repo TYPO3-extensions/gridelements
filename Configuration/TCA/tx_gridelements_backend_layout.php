@@ -211,9 +211,7 @@ return array(
 					--palette--;' . $l10n . ':tx_gridelements_backend_layout.palette.appearance;appearance,
 					--div--;' . $l10n . ':tx_gridelements_backend_layout.div.configuration, top_level_layout, alias, config,
 					--palette--;' . $l10n . ':tx_gridelements_backend_layout.ce_configuration;flexform,
-					--div--;LLL:EXT:cms/locallang_ttc.xml:tabs.access,--palette--;LLL:EXT:cms/locallang_ttc.xml:palette.visibility;visibility'
-		),
-	),
+					--div--;LLL:EXT:cms/locallang_ttc.xml:tabs.access,--palette--;LLL:EXT:cms/locallang_ttc.xml:palette.visibility;visibility'),),
 
 
 );

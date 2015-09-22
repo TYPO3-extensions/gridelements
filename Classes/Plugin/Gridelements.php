@@ -1,47 +1,46 @@
 <?php
 namespace GridElementsTeam\Gridelements\Plugin;
 
-	/***************************************************************
-	 *  Copyright notice
-	 *
-	 *  (c) 2011 Jo Hasenau <info@cybercraft.de>
-	 *  All rights reserved
-	 *
-	 *  This script is part of the TYPO3 project. The TYPO3 project is
-	 *  free software; you can redistribute it and/or modify
-	 *  it under the terms of the GNU General Public License as published by
-	 *  the Free Software Foundation; either version 2 of the License, or
-	 *  (at your option) any later version.
-	 *
-	 *  The GNU General Public License can be found at
-	 *  http://www.gnu.org/copyleft/gpl.html.
-	 *
-	 *  This script is distributed in the hope that it will be useful,
-	 *  but WITHOUT ANY WARRANTY; without even the implied warranty of
-	 *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	 *  GNU General Public License for more details.
-	 *
-	 *  This copyright notice MUST APPEAR in all copies of the script!
-	 ***************************************************************/
-/**
- * [CLASS/FUNCTION INDEX of SCRIPT]
- *
- * Hint: use extdeveval to insert/update function index above.
- */
-use TYPO3\CMS\Core\Resource\Service\FrontendContentAdapterService;
-use TYPO3\CMS\Core\Utility\DebugUtility;
+/***************************************************************
+ *  Copyright notice
+ *  (c) 2011 Jo Hasenau <info@cybercraft.de>
+ *  All rights reserved
+ *  This script is part of the TYPO3 project. The TYPO3 project is
+ *  free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *  The GNU General Public License can be found at
+ *  http://www.gnu.org/copyleft/gpl.html.
+ *  This script is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *  This copyright notice MUST APPEAR in all copies of the script!
+ ***************************************************************/
+
+use TYPO3\CMS\Core\Database\DatabaseConnection;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\MathUtility;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 
 /**
  * Plugin 'Grid Element' for the 'gridelements' extension.
- *
- * @author        Jo Hasenau <info@cybercraft.de>
- * @package       TYPO3
- * @subpackage    tx_gridelements
+ * @author Jo Hasenau <info@cybercraft.de>
+ * @package TYPO3
+ * @subpackage tx_gridelements
  */
 class Gridelements extends ContentObjectRenderer {
+
+	/**
+	 * @var ContentObjectRenderer
+	 */
+	protected $cObj;
+
+	/**
+	 * @var DatabaseConnection
+	 */
+	protected $databaseConnection;
 
 	public $prefixId = 'Gridelements'; // Same as class name
 	public $scriptRelPath = 'Classes/Plugin/Gridelements.php'; // Path to this script relative to the extension dir.
@@ -49,19 +48,19 @@ class Gridelements extends ContentObjectRenderer {
 
 	/**
 	 * The main method of the PlugIn
-	 *
-	 * @param    string $content : The PlugIn content
-	 * @param    array  $conf    : The PlugIn configuration
-	 *
-	 * @return    string The content that is displayed on the website
+	 * @param string $content : The PlugIn content
+	 * @param array $conf : The PlugIn configuration
+	 * @return string The content that is displayed on the website
 	 */
 	public function main($content = '', $conf = array()) {
+
+		$this->setDatabaseConnection($GLOBALS['TYPO3_DB']);
 
 		// first we have to take care of possible flexform values containing additional information
 		// that is not available via DB relations. It will be added as "virtual" key to the existing data Array
 		// so that you can easily get the values with TypoScript
-		$this->initPiFlexForm();
-		$this->getPiFlexFormData();
+		$this->initPluginFlexForm();
+		$this->getPluginFlexFormData();
 
 		// now we have to find the children of this grid container regardless of their column
 		// so we can get them within a single DB query instead of doing a query per column
@@ -89,7 +88,7 @@ class Gridelements extends ContentObjectRenderer {
 		// within just one SELECT query
 		$sortColumns = explode(',', $csvColumns);
 
-		$this->renderChildrenIntoParentColumns($typoScriptSetup, $sortColumns, $availableColumns);
+		$this->renderChildrenIntoParentColumns($typoScriptSetup, $sortColumns);
 		unset($children);
 		unset($sortColumns);
 
@@ -113,11 +112,9 @@ class Gridelements extends ContentObjectRenderer {
 
 	/**
 	 * fetches all available children for a certain grid container
-	 *
-	 * @param   int  $element    : The uid of the grid container
+	 * @param int $element : The uid of the grid container
 	 * @param string $csvColumns : A list of available column IDs
-	 *
-	 * @return  array   $children: The child elements of this grid container
+	 * @return array $children: The child elements of this grid container
 	 */
 	public function getChildren($element = 0, $csvColumns = '') {
 
@@ -150,11 +147,11 @@ class Gridelements extends ContentObjectRenderer {
 				}
 			}
 
-			$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery('*', 'tt_content', $where, '', 'sorting ASC');
+			$res = $this->getDatabaseConnection()->exec_SELECTquery('*', 'tt_content', $where, '', 'sorting ASC');
 
-			if (!$GLOBALS['TYPO3_DB']->sql_error()) {
+			if (!$this->getDatabaseConnection()->sql_error()) {
 				$this->cObj->data['tx_gridelements_view_children'] = array();
-				while ($child = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res)) {
+				while ($child = $this->getDatabaseConnection()->sql_fetch_assoc($res)) {
 					// Versioning preview:
 					$sorting = $child['sorting'];
 					$GLOBALS['TSFE']->sys_page->versionOL('tt_content', $child, TRUE);
@@ -166,9 +163,6 @@ class Gridelements extends ContentObjectRenderer {
 							$child = $GLOBALS['TSFE']->sys_page->getRecordOverlay('tt_content', $child, $GLOBALS['TSFE']->sys_language_content, $GLOBALS['TSFE']->sys_language_contentOL);
 						}
 						if ($child !== FALSE) {
-							if ($GLOBALS['TYPO3_CONF_VARS']['FE']['activateContentAdapter']) {
-								FrontendContentAdapterService::modifyDBRow($child, 'tt_content');
-							}
 							$this->cObj->data['tx_gridelements_view_children'][] = $child;
 							unset($child);
 						}
@@ -187,38 +181,36 @@ class Gridelements extends ContentObjectRenderer {
 
 				usort($this->cObj->data['tx_gridelements_view_children'], $compareFunction);
 
-				$GLOBALS['TYPO3_DB']->sql_free_result($res);
+				$this->getDatabaseConnection()->sql_free_result($res);
 			}
 		}
 	}
 
 	/**
 	 * fetches values from the grid flexform and assigns them to virtual fields in the data array
-	 *
 	 * @return void
 	 */
-	public function getPiFlexFormData() {
-		$piFlexForm = $this->cObj->data['pi_flexform'];
+	public function getPluginFlexFormData() {
+		$pluginFlexForm = $this->cObj->data['pi_flexform'];
 
-		if (is_array($piFlexForm) && is_array($piFlexForm['data'])) {
-			foreach ($piFlexForm['data'] as $sheet => $data) {
-				foreach ($data as $lang => $value) {
-					foreach ($value as $key => $val) {
-						$this->cObj->data['flexform_' . $key] = $this->getFFvalue($piFlexForm, $key, $sheet);
+		if (is_array($pluginFlexForm) && is_array($pluginFlexForm['data'])) {
+			foreach ($pluginFlexForm['data'] as $sheet => $data) {
+				foreach ((array)$data as $lang => $value) {
+					foreach ((array)$value as $key => $val) {
+						$this->cObj->data['flexform_' . $key] = $this->getFlexFormValue($pluginFlexForm, $key, $sheet);
 					}
 				}
 			}
 		}
 
-		unset($piFlexForm);
+		unset($pluginFlexForm);
 	}
 
 	/**
 	 * renders the children of the grid container and
 	 * puts them into their respective columns
-	 *
-	 * @param array   $typoScriptSetup
-	 * @param   array $sortColumns : An Array of column positions within the grid container in the order they got in the grid setup
+	 * @param array $typoScriptSetup
+	 * @param array $sortColumns : An Array of column positions within the grid container in the order they got in the grid setup
 	 */
 	public function renderChildrenIntoParentColumns($typoScriptSetup = array(), $sortColumns = array()) {
 
@@ -235,6 +227,7 @@ class Gridelements extends ContentObjectRenderer {
 		$GLOBALS['TSFE']->cObjectDepthCounter += $counter;
 
 		// each of the children will now be rendered separately and the output will be added to it's particular column
+		$rawColumns = array();
 		if (count($this->cObj->data['tx_gridelements_view_children'])) {
 			foreach ($this->cObj->data['tx_gridelements_view_children'] as $child) {
 				$rawColumns[$child['tx_gridelements_columns']][] = $child;
@@ -268,10 +261,7 @@ class Gridelements extends ContentObjectRenderer {
 	}
 
 	/**
-	 *
-	 *
 	 * @param array $sortColumns
-	 *
 	 * @return array
 	 */
 	public function getUsedColumns($sortColumns = array()) {
@@ -290,8 +280,6 @@ class Gridelements extends ContentObjectRenderer {
 	}
 
 	/**
-	 *
-	 *
 	 * @return array
 	 */
 	public function copyCurrentParentGrid() {
@@ -306,7 +294,6 @@ class Gridelements extends ContentObjectRenderer {
 
 	/**
 	 * @param $data
-	 *
 	 * @return array
 	 */
 	public function resetCurrentParentGrid($data = array()) {
@@ -320,10 +307,7 @@ class Gridelements extends ContentObjectRenderer {
 	}
 
 	/**
-	 *
-	 *
 	 * @param $data
-	 *
 	 * @return array
 	 */
 	public function getParentGridData($data = array()) {
@@ -344,7 +328,7 @@ class Gridelements extends ContentObjectRenderer {
 		unset($data['tx_gridelements_view_children']);
 		unset($data['tx_gridelements_view_columns']);
 
-		// Set parentgrid data for the first time
+		// Set parent grid data for the first time
 		$parentGridData = $this->setParentGridData($data);
 
 		// Now we can remove any parentgrid_parentgrid_ keys
@@ -363,10 +347,7 @@ class Gridelements extends ContentObjectRenderer {
 	}
 
 	/**
-	 *
-	 *
 	 * @param array $data
-	 *
 	 * @return array
 	 */
 	public function setParentGridData($data = array()) {
@@ -383,14 +364,12 @@ class Gridelements extends ContentObjectRenderer {
 
 	/**
 	 * renders the columns of the grid container and returns the actual content
-	 *
-	 * @param       $columns
+	 * @param $columns
 	 * @param array $child
 	 * @param array $parentGridData
 	 * @param array $parentRecordNumbers
 	 * @param array $typoScriptSetup
-	 *
-	 * @return  void
+	 * @return void
 	 */
 	public function renderChildIntoParentColumn($columns, &$child, &$parentGridData, &$parentRecordNumbers, $typoScriptSetup = array()) {
 
@@ -428,11 +407,8 @@ class Gridelements extends ContentObjectRenderer {
 
 	/**
 	 * renders the columns of the grid container and returns the actual content
-	 *
-	 * @param   array $setup : The adjusted setup of the grid container
-	 *
-	 * @return  array   $content: The raw HTML output of the grid container before stdWrap functions will be applied to it
-	 *
+	 * @param array $setup : The adjusted setup of the grid container
+	 * @return array $content: The raw HTML output of the grid container before stdWrap functions will be applied to it
 	 */
 	public function renderColumnsIntoParentGrid($setup = array()) {
 
@@ -460,7 +436,7 @@ class Gridelements extends ContentObjectRenderer {
 
 	/**
 	 * renders a recursive pidList to reference content from a list of pages
-	 *
+
 	 */
 	public function user_getTreeList() {
 		$GLOBALS['TSFE']->register['pidInList'] = trim(($this->cObj->data['uid'] . ',' . ($GLOBALS['TSFE']->register['tt_content_shortcut_recursive'] ? $this->cObj->getTreeList($this->cObj->data['uid'], $GLOBALS['TSFE']->register['tt_content_shortcut_recursive']) : '')), ',');
@@ -468,12 +444,10 @@ class Gridelements extends ContentObjectRenderer {
 
 	/**
 	 * Converts $this->cObj->data['pi_flexform'] from XML string to flexForm array.
-	 *
-	 * @param    string $field Field name to convert
-	 *
-	 * @return    void
+	 * @param string $field Field name to convert
+	 * @return void
 	 */
-	public function initPIflexForm($field = 'pi_flexform') {
+	public function initPluginFlexForm($field = 'pi_flexform') {
 		// Converting flexform data into array:
 		if (!is_array($this->cObj->data[$field]) && $this->cObj->data[$field]) {
 			$this->cObj->data[$field] = GeneralUtility::xml2array($this->cObj->data[$field]);
@@ -485,34 +459,32 @@ class Gridelements extends ContentObjectRenderer {
 
 	/**
 	 * Return value from somewhere inside a FlexForm structure
-	 *
-	 * @param    array  $T3FlexForm_array FlexForm data
-	 * @param    string $fieldName        Field name to extract. Can be given like "test/el/2/test/el/field_templateObject" where each part will dig a level deeper in the FlexForm data.
-	 * @param    string $sheet            Sheet pointer, eg. "sDEF"
-	 * @param    string $lang             Language pointer, eg. "lDEF"
-	 * @param    string $value            Value pointer, eg. "vDEF"
-	 *
-	 * @return    string        The content.
+	 * @param array $T3FlexForm_array FlexForm data
+	 * @param string $fieldName Field name to extract. Can be given like "test/el/2/test/el/field_templateObject" where each part will dig a level deeper in the FlexForm data.
+	 * @param string $sheet Sheet pointer, eg. "sDEF"
+	 * @param string $lang Language pointer, eg. "lDEF"
+	 * @param string $value Value pointer, eg. "vDEF"
+	 * @return string The content.
 	 */
-	public function getFFvalue($T3FlexForm_array, $fieldName, $sheet = 'sDEF', $lang = 'lDEF', $value = 'vDEF') {
+	public function getFlexFormValue($T3FlexForm_array, $fieldName, $sheet = 'sDEF', $lang = 'lDEF', $value = 'vDEF') {
 		$sheetArray = is_array($T3FlexForm_array) ? $T3FlexForm_array['data'][$sheet][$lang] : '';
 		if (is_array($sheetArray)) {
-			return $this->getFFvalueFromSheetArray($sheetArray, explode('/', $fieldName), $value);
+			return $this->getFlexFormValueFromSheetArray($sheetArray, explode('/', $fieldName), $value);
+		} else {
+			return '';
 		}
 	}
 
 	/**
 	 * Returns part of $sheetArray pointed to by the keys in $fieldNameArray
-	 *
-	 * @param    array  $sheetArray   Multidimensional array, typically FlexForm contents
-	 * @param    array  $fieldNameArr Array where each value points to a key in the FlexForms content - the input array will have the value returned pointed to by these keys. All integer keys will not take their integer counterparts, but rather traverse the current position in the array an return element number X (whether this is right behavior is not settled yet...)
-	 * @param    string $value        Value for outermost key, typ. "vDEF" depending on language.
-	 *
-	 * @return    mixed        The value, typ. string.
+	 * @param array $sheetArray Multidimensional array, typically FlexForm contents
+	 * @param array $fieldNameArr Array where each value points to a key in the FlexForms content - the input array will have the value returned pointed to by these keys. All integer keys will not take their integer counterparts, but rather traverse the current position in the array an return element number X (whether this is right behavior is not settled yet...)
+	 * @param string $value Value for outermost key, typ. "vDEF" depending on language.
+	 * @return mixed The value, typ. string.
 	 * @access private
-	 * @see    pi_getFFvalue()
+	 * @see pi_getFlexFormValue()
 	 */
-	public function getFFvalueFromSheetArray($sheetArray, $fieldNameArr, $value) {
+	public function getFlexFormValueFromSheetArray($sheetArray, $fieldNameArr, $value) {
 
 		$tempArr = $sheetArray;
 		foreach ($fieldNameArr as $k => $v) {
@@ -537,13 +509,13 @@ class Gridelements extends ContentObjectRenderer {
 		} else {
 			$out = $tempArr[$value];
 		}
+
 		return $out;
 	}
 
 	/**
-	 * @param        $dataArr
+	 * @param $dataArr
 	 * @param string $valueKey
-	 *
 	 * @return array
 	 */
 	protected function getFlexformSectionsRecursively($dataArr, $valueKey = 'vDEF') {
@@ -554,11 +526,30 @@ class Gridelements extends ContentObjectRenderer {
 			} elseif (is_array($el) && is_array($el['data']['el'])) {
 				$out[] = $this->getFlexformSectionsRecursively($el['data']['el']);
 			} else {
-				if (isset($el['vDEF'])) {
-					$out[$k] = $el['vDEF'];
+				if (isset($el[$valueKey])) {
+					$out[$k] = $el[$valueKey];
 				}
 			}
 		}
+
 		return $out;
 	}
+
+	/**
+	 * setter for databaseConnection object
+	 * @param DatabaseConnection $databaseConnection
+	 * @return void
+	 */
+	public function setDatabaseConnection(DatabaseConnection $databaseConnection) {
+		$this->databaseConnection = $databaseConnection;
+	}
+
+	/**
+	 * getter for databaseConnection
+	 * @return DatabaseConnection databaseConnection
+	 */
+	public function getDatabaseConnection() {
+		return $this->databaseConnection;
+	}
+
 }

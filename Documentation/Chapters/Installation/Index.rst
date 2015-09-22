@@ -1,4 +1,4 @@
-.. include:: Images.txt
+﻿.. include:: Images.txt
 
 .. ==================================================
 .. FOR YOUR INFORMATION
@@ -45,7 +45,6 @@ modify some of the database tables, you should give your OK, so the
 necessary fields will be available.
 
 |img-5|
-
 
 **Important Note** : The colPos field of the tt\_content table will be
 changed from unsigned int(3) to smallint(6) to enable the usage of
@@ -97,9 +96,9 @@ page, that you want to use as the container for your backend layouts
   (i.e. to create a tab container or a twitter bootstrap row), you can
   activate the checkbox.
 
-- Now you can either manually enter the :ref:`TypoScript <TypoScript>`
-  setup for your layout, or have it created
-  with the :ref:`Grid Wizard <GridWizard>`. Go to the
+- Now you can either manually enter the `TypoScript
+  <#1.6.TypoScript|outline>`_ setup for your layout, or have it created
+  with the `Grid Wizard <#1.5.Grid%20Wizard|outline>`_ . Go to the
   appropriate chapters to find out how to do so.
 
   |img-7|
@@ -107,8 +106,8 @@ page, that you want to use as the container for your backend layouts
 - If necessary you can fill in a flexform datastructure to provide
   additional settings within your grid element. Values of these
   flexforms will be available within the data set of the Grid Element
-  during frontend output later on. Go to the :ref:`Flexform
-  <Flexform>` chapter to find out how to do that.
+  during frontend output later on. Go to the `flexform
+  <#1.7.Flexform|outline>`_ chapter to find out how to do that.
 
 Now save the record and create some more layouts if you like.
 
@@ -173,6 +172,6 @@ container as a serialized chain of child elements. So each of the
 children will be put into a div container, that will again be put into
 a div container of the column it has been taken from, that will
 finally be put into a div container of the parent Grid Element. If you
-want to provide more sophisticated stuff, go to the
-:ref:`TypoScript <TypoScript>` section of this manual and see what is
+want to provide more sophisticated stuff, go to the `TypoScript
+<#1.6.TypoScript|outline>`_ section of this manual and see what is
 possible.

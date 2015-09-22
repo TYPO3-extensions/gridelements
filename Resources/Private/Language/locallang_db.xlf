@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+	<file source-language="en" datatype="plaintext" original="messages" date="2015-09-21T18:41:55Z">
+		<header>
+			<type>database</type>
+			<description>Language labels for database tables/fields belonging to extension 'gridelements'</description>
+			<generator>LFEditor</generator>
+		</header>
+		<body>
+		<trans-unit id="allowedElementTypes">
+			<source>Allowed CE</source>
+		</trans-unit>
+		<trans-unit id="allowedElementTypesHelp">
+			<source>Select the content element types that may be created or moved here.</source>
+		</trans-unit>
+		<trans-unit id="dragAndDropHideNewElementWizardInfoOverlay">
+			<source>Hide info overlays for the new content element drag in wizard.</source>
+		</trans-unit>
+		<trans-unit id="gridElements">
+			<source>Grid Elements</source>
+		</trans-unit>
+		<trans-unit id="hideColumnHeaders">
+			<source>Hide column headers.</source>
+		</trans-unit>
+		<trans-unit id="hideContentPreview">
+			<source>Hide content element preview.</source>
+		</trans-unit>
+		<trans-unit id="list.collapseElement">
+			<source>Collapse /expand element</source>
+		</trans-unit>
+		<trans-unit id="list.columnName">
+			<source>Column:</source>
+		</trans-unit>
+		<trans-unit id="showGridInformation">
+			<source>Show grid layout information.</source>
+		</trans-unit>
+		<trans-unit id="tt_content.CType_pi1">
+			<source>Grid Element</source>
+		</trans-unit>
+		<trans-unit id="tt_content.tx_gridelements_backend_layout">
+			<source>Grid Layout</source>
+		</trans-unit>
+		<trans-unit id="tt_content.tx_gridelements_backend_layout.I.horizontal">
+			<source>Dynamic Columns (horizontal)</source>
+		</trans-unit>
+		<trans-unit id="tt_content.tx_gridelements_backend_layout.I.none">
+			<source>None</source>
+		</trans-unit>
+		<trans-unit id="tt_content.tx_gridelements_backend_layout.I.vertical">
+			<source>Dynamic Rows (vertical)</source>
+		</trans-unit>
+		<trans-unit id="tt_content.tx_gridelements_children">
+			<source>Content elements</source>
+		</trans-unit>
+		<trans-unit id="tt_content.tx_gridelements_columns">
+			<source>Grid Container Columns</source>
+		</trans-unit>
+		<trans-unit id="tt_content.tx_gridelements_container">
+			<source>Grid Container</source>
+		</trans-unit>
+		<trans-unit id="tx_gridelements_backend_layout">
+			<source>CE Backend Layout</source>
+		</trans-unit>
+		<trans-unit id="tx_gridelements_backend_layout.alias">
+			<source>Alias</source>
+		</trans-unit>
+		<trans-unit id="tx_gridelements_backend_layout.ce_configuration">
+			<source>Content Element Configuration</source>
+		</trans-unit>
+		<trans-unit id="tx_gridelements_backend_layout.config">
+			<source>Grid Configuration</source>
+		</trans-unit>
+		<trans-unit id="tx_gridelements_backend_layout.description">
+			<source>Description</source>
+		</trans-unit>
+		<trans-unit id="tx_gridelements_backend_layout.div.configuration">
+			<source>Configuration</source>
+		</trans-unit>
+		<trans-unit id="tx_gridelements_backend_layout.frame">
+			<source>Frame</source>
+		</trans-unit>
+		<trans-unit id="tx_gridelements_backend_layout.frame.I.-1">
+			<source>Neutral</source>
+		</trans-unit>
+		<trans-unit id="tx_gridelements_backend_layout.frame.I.0">
+			<source>-</source>
+		</trans-unit>
+		<trans-unit id="tx_gridelements_backend_layout.frame.I.1">
+			<source>Red</source>
+		</trans-unit>
+		<trans-unit id="tx_gridelements_backend_layout.frame.I.2">
+			<source>Green</source>
+		</trans-unit>
+		<trans-unit id="tx_gridelements_backend_layout.frame.I.3">
+			<source>Blue</source>
+		</trans-unit>
+		<trans-unit id="tx_gridelements_backend_layout.horizontal">
+			<source>Group children</source>
+		</trans-unit>
+		<trans-unit id="tx_gridelements_backend_layout.horizontal.I.0">
+			<source>Side by side</source>
+		</trans-unit>
+		<trans-unit id="tx_gridelements_backend_layout.icon">
+			<source>Icon</source>
+		</trans-unit>
+		<trans-unit id="tx_gridelements_backend_layout.palette.appearance">
+			<source>Appearance</source>
+		</trans-unit>
+		<trans-unit id="tx_gridelements_backend_layout.pi_flexform_ds">
+			<source>Flexform Configuration</source>
+		</trans-unit>
+		<trans-unit id="tx_gridelements_backend_layout.pi_flexform_ds_file">
+			<source>Flexform Configuration File (overrides direct input)</source>
+		</trans-unit>
+		<trans-unit id="tx_gridelements_backend_layout.title">
+			<source>Title</source>
+		</trans-unit>
+		<trans-unit id="tx_gridelements_backend_layout.top_level_layout">
+			<source>Top Level Layout</source>
+		</trans-unit>
+		<trans-unit id="tx_gridelements_backend_layout_wizard_label">
+			<source>Grid Elements</source>
+		</trans-unit>
+		<trans-unit id="tx_gridelements_clickmenu_pastereference">
+			<source>Paste reference after</source>
+		</trans-unit>
+		<trans-unit id="tx_gridelements_js.allowedElementTypes">
+			<source>Allowed CE</source>
+		</trans-unit>
+		<trans-unit id="tx_gridelements_js.copyfrompage">
+			<source>Copy content from another page to this place</source>
+		</trans-unit>
+		<trans-unit id="tx_gridelements_js.drophere">
+			<source>Drop Here</source>
+		</trans-unit>
+		<trans-unit id="tx_gridelements_js.missingcontenttemplate">
+			<source>Missing Content Template</source>
+		</trans-unit>
+		<trans-unit id="tx_gridelements_js.newcontentelementheader">
+			<source>New</source>
+		</trans-unit>
+		<trans-unit id="tx_gridelements_js.pastecopy">
+			<source>Paste copy at this place</source>
+		</trans-unit>
+		<trans-unit id="tx_gridelements_js.pasteref">
+			<source>Paste reference at this place</source>
+		</trans-unit>
+		<trans-unit id="tx_gridelements_togglecontent">
+			<source>Toggle Content</source>
+		</trans-unit>
+		</body>
+	</file>
+</xliff>
