@@ -18,8 +18,10 @@ namespace GridElementsTeam\Gridelements\DataHandler;
  *  GNU General Public License for more details.
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
+
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
+use TYPO3\CMS\Core\Configuration\FlexForm\FlexFormTools;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -198,7 +200,7 @@ class PreProcessFieldArray extends AbstractDataHandler {
 				};
 			}
 			if (count($sheetArray) > 0) {
-				$flexformTools = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Configuration\\FlexForm\\FlexFormTools');
+				$flexformTools = GeneralUtility::makeInstance(FlexFormTools::class);
 				$returnXML = $flexformTools->flexArray2Xml($sheetArray, true);
 			}
 		}

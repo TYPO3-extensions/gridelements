@@ -22,5 +22,5 @@
 /**
  * Grid wizard
  */
-$backendLayoutWizardController = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('GridElementsTeam\\Gridelements\\Wizard\\BackendLayout');
+$backendLayoutWizardController = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\GridElementsTeam\Gridelements\Wizard\BackendLayout::class);
 $backendLayoutWizardController->main();

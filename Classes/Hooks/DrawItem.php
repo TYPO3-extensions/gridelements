@@ -18,6 +18,7 @@ namespace GridElementsTeam\Gridelements\Hooks;
  *  GNU General Public License for more details.
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
+
 use GridElementsTeam\Gridelements\Backend\LayoutSetup;
 use GridElementsTeam\Gridelements\Helper\Helper;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
@@ -524,7 +525,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 		$itemList = str_replace('pages_', '', $shortcutItem);
 		if ($recursive) {
 			if (!$this->tree instanceof QueryGenerator) {
-				$this->tree = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Database\\QueryGenerator');
+				$this->tree = GeneralUtility::makeInstance(QueryGenerator::class);
 			}
 			$itemList = $this->tree->getTreeList($itemList, (int)$recursive, 0, 1);
 		}
