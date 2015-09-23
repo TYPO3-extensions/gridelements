@@ -58,7 +58,7 @@ class WizardItems implements NewContentElementWizardHookInterface {
 				$triggerElement = $this->getDatabase()->exec_SELECTgetSingleRow('pid', 'tt_content', 'uid = ' . -$pageUid);
 				$pageUid = (int)$triggerElement['pid'];
 			}
-			$this->layoutSetup = GeneralUtility::makeInstance('GridElementsTeam\\Gridelements\\Backend\\LayoutSetup')->init($pageUid);
+			$this->layoutSetup = GeneralUtility::makeInstance(LayoutSetup::class)->init($pageUid);
 		}
 	}
 

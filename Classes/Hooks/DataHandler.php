@@ -19,6 +19,10 @@ namespace GridElementsTeam\Gridelements\Hooks;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use GridElementsTeam\Gridelements\DataHandler\AfterDatabaseOperations;
+use GridElementsTeam\Gridelements\DataHandler\MoveRecord;
+use GridElementsTeam\Gridelements\DataHandler\PreProcessFieldArray;
+use GridElementsTeam\Gridelements\DataHandler\ProcessCmdmap;
 use TYPO3\CMS\Core\Database\DatabaseConnection;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -55,8 +59,8 @@ class DataHandler {
 	 */
 	public function processDatamap_preProcessFieldArray(&$fieldArray, $table, $id, \TYPO3\CMS\Core\DataHandling\DataHandler $parentObj) {
 		if (($table === 'tt_content' || $table === 'pages') && !$parentObj->isImporting) {
-			/** @var $hook \GridElementsTeam\Gridelements\DataHandler\PreProcessFieldArray */
-			$hook = GeneralUtility::makeInstance('GridElementsTeam\\Gridelements\\DataHandler\\PreProcessFieldArray');
+			/** @var $hook PreProcessFieldArray */
+			$hook = GeneralUtility::makeInstance(PreProcessFieldArray::class);
 			$hook->execute_preProcessFieldArray($fieldArray, $table, $id, $parentObj);
 		}
 	}
@@ -106,8 +110,8 @@ class DataHandler {
 	 */
 	public function processDatamap_afterDatabaseOperations(&$status, &$table, &$id, &$fieldArray, \TYPO3\CMS\Core\DataHandling\DataHandler $parentObj) {
 		if (($table === 'tt_content' || $table === 'pages') && $status === 'update' && !$parentObj->isImporting) {
-			/** @var $hook \GridElementsTeam\Gridelements\DataHandler\AfterDatabaseOperations */
-			$hook = GeneralUtility::makeInstance('GridElementsTeam\\Gridelements\\DataHandler\\AfterDatabaseOperations');
+			/** @var $hook AfterDatabaseOperations */
+			$hook = GeneralUtility::makeInstance(AfterDatabaseOperations::class);
 			$hook->execute_afterDatabaseOperations($fieldArray, $table, $id, $parentObj);
 		}
 	}
@@ -124,9 +128,9 @@ class DataHandler {
 	 * @param \TYPO3\CMS\Core\DataHandling\DataHandler $parentObj : The parent object that triggered this hook
 	 */
 	public function moveRecord($table, $uid, &$destinationPid, &$propArr, &$moveRec, $resolvedPid, &$recordWasMoved, \TYPO3\CMS\Core\DataHandling\DataHandler $parentObj) {
-		/** @var $hook \GridElementsTeam\Gridelements\DataHandler\MoveRecord */
+		/** @var $hook MoveRecord */
 		if (!$parentObj->isImporting) {
-			$hook = GeneralUtility::makeInstance('GridElementsTeam\\Gridelements\\DataHandler\\MoveRecord');
+			$hook = GeneralUtility::makeInstance(MoveRecord::class);
 			$hook->execute_moveRecord($table, $uid, $destinationPid, $propArr, $moveRec, $resolvedPid, $recordWasMoved, $parentObj);
 		}
 	}
@@ -142,9 +146,9 @@ class DataHandler {
 	 * @param \TYPO3\CMS\Core\DataHandling\DataHandler $parentObj : The parent object that triggered this hook
 	 */
 	public function moveRecord_afterAnotherElementPostProcess($table, $uid, $destinationPid, $originalDestinationPid, $moveRec, $updateFields, \TYPO3\CMS\Core\DataHandling\DataHandler &$parentObj) {
-		/** @var $hook \GridElementsTeam\Gridelements\DataHandler\MoveRecord */
+		/** @var $hook MoveRecord */
 		if (!$parentObj->isImporting) {
-			$hook = GeneralUtility::makeInstance('GridElementsTeam\\Gridelements\\DataHandler\\MoveRecord');
+			$hook = GeneralUtility::makeInstance(MoveRecord::class);
 			$hook->execute_moveRecord_afterAnotherElementPostProcess($table, $uid, $destinationPid, $originalDestinationPid, $moveRec, $updateFields, $parentObj);
 		}
 	}
@@ -160,9 +164,9 @@ class DataHandler {
 	 * @return void
 	 */
 	public function processCmdmap($command, $table, $id, $value, &$commandIsProcessed, \TYPO3\CMS\Core\DataHandling\DataHandler &$parentObj) {
-		/** @var $hook \GridElementsTeam\Gridelements\DataHandler\ProcessCmdmap */
+		/** @var $hook ProcessCmdmap */
 		if (!$parentObj->isImporting) {
-			$hook = GeneralUtility::makeInstance('GridElementsTeam\\Gridelements\\DataHandler\\ProcessCmdmap');
+			$hook = GeneralUtility::makeInstance(ProcessCmdmap::class);
 			$hook->execute_processCmdmap($command, $table, $id, $value, $commandIsProcessed, $parentObj);
 		}
 	}

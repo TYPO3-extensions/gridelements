@@ -18,8 +18,11 @@ namespace GridElementsTeam\Gridelements\View;
  *  GNU General Public License for more details.
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
+
 use GridElementsTeam\Gridelements\Helper\Helper;
 use GridElementsTeam\Gridelements\Xclass\DatabaseRecordList;
+use TYPO3\CMS\Backend\Clipboard\Clipboard;
+use TYPO3\CMS\Backend\Template\DocumentTemplate;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Http\AjaxRequestHandler;
@@ -170,7 +173,7 @@ class AjaxRecordList {
 
 			// Initialize the dataBaseList object:
 			/** @var $dataBaseList DatabaseRecordList */
-			$dataBaseList = GeneralUtility::makeInstance('TYPO3\\CMS\\Recordlist\\RecordList\\DatabaseRecordList');
+			$dataBaseList = GeneralUtility::makeInstance(DatabaseRecordList::class);
 			$dataBaseList->calcPerms = $beUser->calcPerms($pageInfo);
 			$dataBaseList->thumbs = $beUser->uc['thumbnailsByDefault'];
 
@@ -202,7 +205,7 @@ class AjaxRecordList {
 			$dataBaseList->modTSconfig = $modTSconfig;
 
 			// Clipboard is initialized:
-			$dataBaseList->clipObj = GeneralUtility::makeInstance('TYPO3\\CMS\\Backend\\Clipboard\\Clipboard'); // Start clipboard
+			$dataBaseList->clipObj = GeneralUtility::makeInstance(Clipboard::class); // Start clipboard
 			$dataBaseList->clipObj->initializeClipboard(); // Initialize - reads the clipboard content from the user session
 
 			// todo
@@ -252,7 +255,7 @@ class AjaxRecordList {
 	 */
 	public function initializeTemplateContainer() {
 		$GLOBALS['SOBE'] = new \stdClass();
-		$GLOBALS['SOBE']->doc = GeneralUtility::makeInstance('TYPO3\\CMS\\Backend\\Template\\DocumentTemplate');
+		$GLOBALS['SOBE']->doc = GeneralUtility::makeInstance(DocumentTemplate::class);
 	}
 
 	/**

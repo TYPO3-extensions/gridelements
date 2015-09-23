@@ -18,6 +18,8 @@ namespace GridElementsTeam\Gridelements\Plugin;
  *  GNU General Public License for more details.
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
+
+use GridElementsTeam\Gridelements\Backend\LayoutSetup;
 use TYPO3\CMS\Core\Database\DatabaseConnection;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\MathUtility;
@@ -64,8 +66,8 @@ class Gridelements extends ContentObjectRenderer {
 		}
 		$layout = $this->cObj->data['tx_gridelements_backend_layout'];
 
-		/** @var \GridElementsTeam\Gridelements\Backend\LayoutSetup $layoutSetup */
-		$layoutSetup = GeneralUtility::makeInstance('GridElementsTeam\\Gridelements\\Backend\\LayoutSetup');
+		/** @var LayoutSetup $layoutSetup */
+		$layoutSetup = GeneralUtility::makeInstance(LayoutSetup::class);
 		$layoutSetup->init($this->cObj->data['pid'], $conf);
 
 		$availableColumns = $layoutSetup->getLayoutColumns($layout);
