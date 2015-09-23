@@ -27,7 +27,7 @@ define(['jquery', 'TYPO3/CMS/Gridelements/GridElementsDragDrop', 'jquery-ui/sort
 	 * initializes Drag+Drop for all content elements on the page
 	 */
 	DragInWizard.initialize = function() {
-		if($('#ext-backend-Modules-Layout-index-php').length && $('.t3js-page-new-ce a').first().attr('onclick')) {
+		if($('#typo3-index-php').length && $('.t3js-page-new-ce a').first().attr('onclick')) {
 			DragInWizard.getWizardUrl();
 			DragInWizard.createToggleIcon();
 		}
@@ -38,17 +38,20 @@ define(['jquery', 'TYPO3/CMS/Gridelements/GridElementsDragDrop', 'jquery-ui/sort
 	 */
 	DragInWizard.getWizardUrl = function() {
 		var originalWizardUrl = $('.t3js-page-new-ce a').first().attr('onclick').split('\\u0026', 4);
-		DragInWizard.wizardUrl = '\/typo3\/mod.php?M=new_content_element&' + originalWizardUrl[1] + '&' + originalWizardUrl[2];
+		DragInWizard.wizardUrl = '\/typo3\/index.php?route=%2Frecord%2Fcontent%2Fnew&' + originalWizardUrl[1] + '&' + originalWizardUrl[2];
 	};
 
 	/**
 	 * create a new icon to make toggling the drag in wizard possible
 	 */
 	DragInWizard.createToggleIcon = function() {
-		var lastIcon = $('.typo3-docheader-buttons .left .buttongroup .t3-icon').last().parent();
-		var newIcon = lastIcon.clone().insertAfter(lastIcon);
+		var lastIcon = $('.typo3-docheader-buttons .left .buttongroup .icon').last().parent();
+		var addNewIcon = $('.t3-page-ce-wrapper-new-ce a').first();
+		var newIcon = addNewIcon.clone().attr('class', '').insertAfter(lastIcon);
+		newIcon.contents().filter(function(){
+			return (this.nodeType == 3);
+		}).remove();
 		newIcon.removeAttr('onclick').attr('title', 'Toggle Drag In Wizard');
-		newIcon.find('span').removeAttr('class').addClass('t3-icon fa fa-plus-square');
 		newIcon.click(function() {
 			top.dragInWizardActive = top.dragInWizardActive === true ? false : true;
 			DragInWizard.toggleWizard();

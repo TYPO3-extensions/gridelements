@@ -67,7 +67,7 @@
   box-shadow: 0 1px 24px rgba(0, 0, 0, 0.50);
 }
 
-#ext-backend-Modules-Layout-index-php .t3-grid-container-title-0 {
+#typo3-index-php .t3-grid-container-title-0 {
   font-size: 12px;
   font-weight: normal;
   color: #999999;
@@ -75,14 +75,14 @@
   margin: 0;
 }
 
-#ext-backend-Modules-Layout-index-php .t3-grid-container-1 {
+#typo3-index-php .t3-grid-container-1 {
   border-style: solid;
   border-width: 1px;
   border-color: #B48062;
   margin: 5px -11px -11px -11px;
 }
 
-#ext-backend-Modules-Layout-index-php .t3-grid-container-title-1 {
+#typo3-index-php .t3-grid-container-title-1 {
   font-size: 12px;
   font-weight: normal;
   color: #5A4031;
@@ -91,14 +91,14 @@
   margin: 0;
 }
 
-#ext-backend-Modules-Layout-index-php .t3-grid-container-2 {
+#typo3-index-php .t3-grid-container-2 {
   border-style: solid;
   border-width: 1px 1px 1px 1px;
   border-color: #BABD5A;
   margin: 2px 0 0 0;
 }
 
-#ext-backend-Modules-Layout-index-php .t3-grid-container-title-2 {
+#typo3-index-php .t3-grid-container-title-2 {
   font-size: 12px;
   font-weight: normal;
   color: #5D5F2D;
@@ -107,14 +107,14 @@
   margin: 0;
 }
 
-#ext-backend-Modules-Layout-index-php .t3-grid-container-3 {
+#typo3-index-php .t3-grid-container-3 {
   border-style: solid;
   border-width: 1px 1px 1px 1px;
   border-color: #427BAB;
   margin: 2px 0 0 0;
 }
 
-#ext-backend-Modules-Layout-index-php .t3-grid-container-title-3 {
+#typo3-index-php .t3-grid-container-title-3 {
   font-size: 12px;
   font-weight: normal;
   color: #213E56;
