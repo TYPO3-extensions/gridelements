@@ -257,7 +257,7 @@ GridElementsDD = function() {
 					}
 
 					// Ajax timeout should match the server timeout
-					Ext.Ajax.timeout = 60000;
+					Ext.Ajax.timeout = 600000;
 
 					// if the user pressed the CTRL-key while dropping, the action has to be a copy
 					// otherwise it's just a move
@@ -579,7 +579,7 @@ GridElementsDD = function() {
 				top.targetUID = colPosUidPid;
 
 				// Ajax timeout should match the server timeout
-				Ext.Ajax.timeout = 60000;
+				Ext.Ajax.timeout = 600000;
 
 				var
 					actionURL = '',
