@@ -502,10 +502,14 @@ class Gridelements extends ContentObjectRenderer {
 				$tempArr = $tempArr[$v];
 			}
 		}
-		if (is_array($tempArr['el'])) {
-			$out = $this->getFlexformSectionsRecursively($tempArr['el'], $value);
+		if (is_array($tempArr)) {
+			if (is_array($tempArr['el'])) {
+				$out = $this->getFlexformSectionsRecursively($tempArr['el'], $value);
+			} else {
+				$out = $tempArr[$value];
+			}
 		} else {
-			$out = $tempArr[$value];
+			$out = $tempArr;
 		}
 
 		return $out;
