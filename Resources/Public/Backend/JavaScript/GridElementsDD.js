@@ -223,6 +223,8 @@ GridElementsDD = function() {
 			// called when dnd completes successfully
 			onDragDrop: function(evtObj, targetElId) {
 
+				Ext.get(this.el.dom.id).select('.x-dd-showdroptarget').removeClass('x-dd-showdroptarget');
+
 				// reset invalidDrop
 				this.invalidDrop = false;
 
