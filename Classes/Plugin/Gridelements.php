@@ -202,9 +202,9 @@ class Gridelements extends ContentObjectRenderer {
 
 		if (is_array($piFlexForm) && is_array($piFlexForm['data'])) {
 			foreach ($piFlexForm['data'] as $sheet => $data) {
-				if(is_array($data)) {
+				if (is_array($data)) {
 					foreach ($data as $lang => $value) {
-						if(is_array($value)) {
+						if (is_array($value)) {
 							foreach ($value as $key => $val) {
 								$this->cObj->data['flexform_' . $key] = $this->getFFvalue($piFlexForm, $key, $sheet);
 							}
@@ -536,7 +536,7 @@ class Gridelements extends ContentObjectRenderer {
 				$tempArr = $tempArr[$v];
 			}
 		}
-		if(is_array($tempArr)) {
+		if (is_array($tempArr)) {
 			if (is_array($tempArr['el'])) {
 				$out = $this->getFlexformSectionsRecursively($tempArr['el'], $value);
 			} else {

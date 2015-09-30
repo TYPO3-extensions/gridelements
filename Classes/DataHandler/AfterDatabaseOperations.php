@@ -90,7 +90,7 @@ class AfterDatabaseOperations extends AbstractDataHandler {
 			$childElementsInUnavailableColumns = array();
 			$childElementsInAvailableColumns = array();
 			$availableColumns = $this->getAvailableColumns($fieldArray['tx_gridelements_backend_layout'], 'tt_content', $this->getPageUid());
-			if(!empty($availableColumns) || $availableColumns === '0') {
+			if (!empty($availableColumns) || $availableColumns === '0') {
 				$childElementsInUnavailableColumns = array_keys($this->databaseConnection->exec_SELECTgetRows('uid', 'tt_content', 'tx_gridelements_container = ' . $this->getPageUid() . '
 					AND tx_gridelements_columns NOT IN (' . $availableColumns . ')', '', '', '', 'uid'));
 				if (count($childElementsInUnavailableColumns) > 0) {

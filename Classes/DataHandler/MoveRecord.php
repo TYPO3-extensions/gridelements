@@ -73,7 +73,7 @@ class MoveRecord extends AbstractDataHandler {
 				if (strpos($cmd['tt_content'][$uid]['move'], 'x') !== FALSE) {
 					$targetAvailable = $this->updateTargetContainerAndResolveTargetId($cmd, $uid, $destPid, $containerUpdateArray);
 				}
-				if($targetAvailable === TRUE) {
+				if ($targetAvailable === TRUE) {
 					$this->doGridContainerUpdate($containerUpdateArray);
 				} else {
 					$recordWasMoved = TRUE;
@@ -120,7 +120,7 @@ class MoveRecord extends AbstractDataHandler {
 					$sortNumber = 0;
 				}
 				$GLOBALS['TCA']['tt_content']['ctrl']['copyAfterDuplFields'] = str_replace('colPos,', '', $GLOBALS['TCA']['tt_content']['ctrl']['copyAfterDuplFields']);
-				if($uid === -$origDestPid || $commandUid === -$origDestPid || $placeholderUid === -$origDestPid) {
+				if ($uid === -$origDestPid || $commandUid === -$origDestPid || $placeholderUid === -$origDestPid) {
 					$updateArray = array(
 						'colPos' => $column,
 						'sorting' => $sortNumber,
@@ -149,7 +149,7 @@ class MoveRecord extends AbstractDataHandler {
 			}
 			// $updateArray['bodytext'] = serialize($cmd) . ' originalUid: ' . $originalUid . ' pointerUid: ' . $pointerUid . ' commandUid: ' . $commandUid . ' placeholderUid: ' . $placeholderUid;
 			$this->getTceMain()->updateDB('tt_content', $originalUid, $updateArray);
-			if($setPid) {
+			if ($setPid) {
 				$updateArray['pid'] = $setPid;
 			}
 			$this->getTceMain()->updateDB('tt_content', $uid, $updateArray);
@@ -168,14 +168,14 @@ class MoveRecord extends AbstractDataHandler {
 	public function updateTargetContainerAndResolveTargetId($cmd, $recordUid, &$destPid, &$containerUpdateArray) {
 		$target = explode('x', $cmd['tt_content'][$recordUid]['move']);
 		$targetUid = abs((int)$target[0]);
-		if((int)$target[0] < 0) {
+		if ((int)$target[0] < 0) {
 			$targetContainer = BackendUtility::getRecord('tt_content', $targetUid, 'uid');
-			if(!isset($targetContainer['uid'])) {
+			if (!isset($targetContainer['uid'])) {
 				return FALSE;
 			}
 		} else {
 			$targetPage = BackendUtility::getRecord('pages', $targetUid, 'uid');
-			if(!isset($targetPage['uid'])) {
+			if (!isset($targetPage['uid'])) {
 				return FALSE;
 			}
 		}

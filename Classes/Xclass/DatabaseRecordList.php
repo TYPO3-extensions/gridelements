@@ -304,9 +304,9 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
 				$cc = 0;
 
 				$lastColPos='';
-				foreach($accRows as $key => $row)	{
+				foreach ($accRows as $key => $row)	{
 					// initialize labels and other stuff by dummy rendering the first row
-					if($cc == 0) {
+					if ($cc == 0) {
 						$this->renderListRow($table, $row, $cc, $titleCol, $thumbsCol);
 					}
 					// Render item row if counter < limit
@@ -703,7 +703,7 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
 		// "Move" wizard link for pages/tt_content elements:
 		if (($table == 'tt_content' && $permsEdit || $table=='pages') && $level == 0) {
 			$cells['move'] = '<a href="#" onclick="' . htmlspecialchars(('return jumpExt(\'' . $this->backPath . 'move_el.php?table=' . $table . '&uid=' . $row['uid'] . '\');')) . '" title="' . $GLOBALS['LANG']->getLL(('move_' . ($table == 'tt_content' ? 'record' : 'page')), TRUE) . '">' . ($table == 'tt_content' ? IconUtility::getSpriteIcon('actions-document-move') : IconUtility::getSpriteIcon('actions-page-move')) . '</a>';
-		} elseif(!$this->table || $level > 0) {
+		} elseif (!$this->table || $level > 0) {
 			$cells['move'] = $this->spaceIcon;
 		}
 		// If the extended control panel is enabled OR if we are seeing a single table:
@@ -749,7 +749,7 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
 				if ($permsEdit && $GLOBALS['TCA'][$table]['ctrl']['sortby'] && !$this->sortField && !$this->searchLevels) {
 					if (isset($this->currentTable['prev'][$row['uid']]) && $this->showMoveUp === TRUE)	{
 						// Up
-						if($this->lastMoveDownParams) {
+						if ($this->lastMoveDownParams) {
 							$params= $this->lastMoveDownParams;
 						} else {
 							$params = '&cmd[' . $table . '][' . $row['uid'] . '][move]=' . $this->currentTable['prev'][$row['uid']];
@@ -1098,7 +1098,7 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
 			if (is_array($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['typo3/class.db_list_extra.inc']['actions'])) {
 				foreach ($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['typo3/class.db_list_extra.inc']['actions'] as $classData) {
 					$hookObject = \TYPO3\CMS\Core\Utility\GeneralUtility::getUserObj($classData);
-					if(is_object($hookObject) && method_exists($hookObject, 'checkChildren')) {
+					if (is_object($hookObject) && method_exists($hookObject, 'checkChildren')) {
 						$hookObject->checkChildren($table, $row, $level, $theData, $this);
 					}
 				}
@@ -1146,7 +1146,7 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
 				if (is_array($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['typo3/class.db_list_extra.inc']['actions'])) {
 					foreach ($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['typo3/class.db_list_extra.inc']['actions'] as $classData) {
 						$hookObject = GeneralUtility::getUserObj($classData);
-						if(is_object($hookObject) && method_exists($hookObject, 'contentCollapseIcon')) {
+						if (is_object($hookObject) && method_exists($hookObject, 'contentCollapseIcon')) {
 							$hookObject->contentCollapseIcon($data, $sortField, $level, $contentCollapseIcon, $this);
 						}
 					}

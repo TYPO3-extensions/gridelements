@@ -221,10 +221,10 @@ class WizardItems implements \TYPO3\CMS\Backend\Wizard\NewContentElementWizardHo
 					$wizardItems['gridelements_grid_' . $item['uid']]['icon'] = \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath('gridelements') . 'Resources/Public/Backend/Images/new_content_el.gif';
 				}
 				/*
-				if($container != 0) {
+				if ($container != 0) {
 					$wizardItems['gridelements_grid_' . $item['uid']]['tx_gridelements_container'] = $container;
 				}
-				if($column != 0) {
+				if ($column != 0) {
 					$wizardItems['gridelements_grid_' . $item['uid']]['tx_gridelements_columns'] = $column;
 				}
 				*/

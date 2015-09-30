@@ -218,7 +218,7 @@ abstract class AbstractDataHandler {
 	public function checkAndUpdateTranslatedChildren($containerUpdateArray = array()) {
 		if (is_array($containerUpdateArray) && count($containerUpdateArray > 0)) {
 			foreach ($containerUpdateArray as $containerUid => $newElement) {
-				if((int)$containerUid > 0) {
+				if ((int)$containerUid > 0) {
 					$translatedContainers = $this->databaseConnection->exec_SELECTgetRows('uid,sys_language_uid', 'tt_content', 'l18n_parent = ' . (int)$containerUid . \TYPO3\CMS\Backend\Utility\BackendUtility::deleteClause('tt_content'));
 					if (count($translatedContainers) > 0) {
 						foreach ($translatedContainers as $languageArray) {

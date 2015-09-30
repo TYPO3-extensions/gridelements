@@ -45,10 +45,10 @@ GridElementsDD = function() {
 				top.isDragging = true;
 
 				// cache dragger
-				if(!this.el) {
+				if (!this.el) {
 					this.el = Ext.get(this.getEl());
 				}
-				if(!this.scrollBody) {
+				if (!this.scrollBody) {
 					this.scrollBody = Ext.get('typo3-docbody');
 				}
 
@@ -57,7 +57,7 @@ GridElementsDD = function() {
 
 				// is this a new or an existing element?
 				var dragEl = Ext.get(this.el);
-				if(dragEl.select('span.ce-icons-left a span').elements.length > 0) {
+				if (dragEl.select('span.ce-icons-left a span').elements.length > 0) {
 					top.elementUID = dragEl.select('span.ce-icons-left a span').elements[0].getAttribute('title').split(' ')[0].replace('id=', '').match(/^(\d)+/g);
 
 					var currentSpacer = document.createElement('div');
@@ -72,7 +72,7 @@ GridElementsDD = function() {
 				top.isTopLevelOnly = (dragEl.select('div.t3-gridTLContainer').elements.length ? true : false);
 
 				// get CType
-				if(dragEl.select('div.t3-page-ce-body div[class^=t3-ctype-]').elements.length){
+				if (dragEl.select('div.t3-page-ce-body div[class^=t3-ctype-]').elements.length){
 					// existing ce
 					top.elementCType = dragEl.select('div.t3-page-ce-body div[class^=t3-ctype-]').elements[0].className.substr(9).replace(/ t3-gridTLContainer/g, '');
 				}else{
@@ -94,7 +94,7 @@ GridElementsDD = function() {
 				// add dragging class
 				this.el.addClass('x-dd-dragging');
 
-				if(this.isDraggable) {
+				if (this.isDraggable) {
 					// cache current content within dragger
 					this.draggerContent = this.el.dom.innerHTML;
 
@@ -134,7 +134,7 @@ GridElementsDD = function() {
 					 */
 
 					// template node found? use default one
-					if(this.draggerTemplate) {
+					if (this.draggerTemplate) {
 						this.el.dom.innerHTML = this.draggerTemplate;
 					}else{
 						this.el.dom.innerHTML = defaultTemplate;
@@ -154,15 +154,15 @@ GridElementsDD = function() {
 
 					var showDropTarget = false;
 
-					if(top.elId !== elementNow.id){
+					if (top.elId !== elementNow.id){
 
 						var elNow = Ext.get(elementNow);
 						var parentGridContainer = elNow.findParent('div.t3-gridContainer', 7);
 
-						if(elNow.select('.x-dd-droptargetarea').elements[0]){
-							if(elNow.findParent('td.t3-allow-all', 5) || elNow.findParent('td.t3-allow-'+top.elementCType, 5)){
-								if(top.isTopLevelOnly && parentGridContainer){
-									if(elNow.findParent('td.t3-gridTL', 5)){
+						if (elNow.select('.x-dd-droptargetarea').elements[0]){
+							if (elNow.findParent('td.t3-allow-all', 5) || elNow.findParent('td.t3-allow-'+top.elementCType, 5)){
+								if (top.isTopLevelOnly && parentGridContainer){
+									if (elNow.findParent('td.t3-gridTL', 5)){
 										showDropTarget = true;
 									}
 								}else{
@@ -173,7 +173,7 @@ GridElementsDD = function() {
 
 					}
 
-					if(showDropTarget){
+					if (showDropTarget){
 						Ext.get(elementNow).select('.x-dd-droptargetarea').addClass('x-dd-showdroptarget');
 					}else{
 						Ext.get(elementNow).select('.x-dd-droptargetarea').removeClass('x-dd-showdroptarget');
@@ -184,7 +184,7 @@ GridElementsDD = function() {
 			// called when the drag element is dragged over the a drop target with the same ddgroup
 			onDragEnter: function(evtObj, targetElId) {
 				// colorize the drag target if the drag node's parent is not the same as the drop target
-				if(
+				if (
 					targetElId !== this.getEl().id
 					&&
 					(
@@ -226,7 +226,7 @@ GridElementsDD = function() {
 				// reset invalidDrop
 				this.invalidDrop = false;
 
-				if(
+				if (
 					// move node only if the drag element is not the same as the drop target
 				Ext.get(targetElId).hasClass('x-dd-showdroptarget')
 				&&
@@ -247,9 +247,9 @@ GridElementsDD = function() {
 					// when it is "id=12345" the position is after element 12345
 					// otherwise the position is on top of column x of the current page
 					var targetTitle = Ext.get(targetElId).getAttribute('title');
-					if(targetTitle.substr(0,7) === 'column-') {
+					if (targetTitle.substr(0,7) === 'column-') {
 						top.targetUID = targetTitle.substr(7);
-					} else if(targetTitle.substr(0,3) === 'id=') {
+					} else if (targetTitle.substr(0,3) === 'id=') {
 						top.targetUID = targetTitle.substr(3).split(' ')[0];
 						columnInsert = false;
 					} else {
@@ -265,7 +265,7 @@ GridElementsDD = function() {
 						actionURL = '',
 						ctrlPressed = false;
 
-					if(evtObj.ctrlKey) {
+					if (evtObj.ctrlKey) {
 						actionURL = top.copyURL.replace(/DD_DRAG_UID/g, top.elementUID);
 						ctrlPressed = true;
 					} else {
@@ -283,7 +283,7 @@ GridElementsDD = function() {
 					GridElementsDD.doCmdAction(actionURL, ctrlPressed);
 
 					// add after Ext.get(targetElId)
-					if(columnInsert) {
+					if (columnInsert) {
 						this.el.insertAfter(Ext.get(targetElId).parent());
 					} else {
 						this.el.insertAfter(Ext.get(targetElId).parent().parent());
@@ -307,12 +307,12 @@ GridElementsDD = function() {
 			endDrag: function() {
 				// Remove tmp spacer div from grid layout
 				var ddSpacer = Ext.select('.t3-dd-spacer');
-				if(ddSpacer.elements.length){
+				if (ddSpacer.elements.length){
 					ddSpacer.first().remove();
 				}
 
 				// invoke animation only if invalidDrop is true
-				if(this.invalidDrop === true) {
+				if (this.invalidDrop === true) {
 
 					// define animation
 					var animCfgObj = {
@@ -325,7 +325,7 @@ GridElementsDD = function() {
 							this.el.dom.style.left = '';
 							this.el.dom.style.top = '';
 
-							if(this.isDraggable) {
+							if (this.isDraggable) {
 								// replace content with original draggerContent
 								this.el.dom.innerHTML = this.draggerContent;
 							}
@@ -368,7 +368,7 @@ GridElementsDD = function() {
 		this.invalidDrop = false;
 
 		// move node only if the drag element's parent is not the same as the drop target
-		if(this.el.dom.parentNode.id !== targetElId && Ext.get(targetElId).hasClass('x-dd-showdroptarget')) {
+		if (this.el.dom.parentNode.id !== targetElId && Ext.get(targetElId).hasClass('x-dd-showdroptarget')) {
 
 			// clone template element
 			var newContentEl = Ext.get(this.el).dom.cloneNode(true);
@@ -408,11 +408,11 @@ GridElementsDD = function() {
 			// look for x-dd-droptargetgroup-XYZ class
 			for(var i in currentClasses) {
 
-				if(!currentClasses.hasOwnProperty(i)) {
+				if (!currentClasses.hasOwnProperty(i)) {
 					continue;
 				}
 
-				if(/x-dd-droptargetgroup-/.test(currentClasses[i]) === true) {
+				if (/x-dd-droptargetgroup-/.test(currentClasses[i]) === true) {
 					matchingClass = currentClasses[i].split('-')[3];
 
 					// get all possible droptargets
@@ -441,9 +441,9 @@ GridElementsDD = function() {
 			// set title
 			var targetTitle = Ext.get(targetElId).getAttribute('title');
 
-			if(targetTitle.substr(0,7) === 'column-') {
+			if (targetTitle.substr(0,7) === 'column-') {
 				top.targetUID = targetTitle.substr(7);
-			} else if(targetTitle.substr(0,3) === 'id=') {
+			} else if (targetTitle.substr(0,3) === 'id=') {
 				top.targetUID = targetTitle.substr(3);
 			} else {
 				top.targetUID = targetTitle.replace(/DD_DROP_PID/g, 'NEW');
@@ -456,9 +456,9 @@ GridElementsDD = function() {
 
 			var languageLink = Ext.get(targetElId).parent().parent().select('.t3-page-ce-wrapper-new-ce a').elements[0];
 			var languageUid = 0;
-			if(typeof languageLink !== 'undefined') {
+			if (typeof languageLink !== 'undefined') {
 				languageLink = languageLink.getAttribute('onclick').split('&sys_language_uid=');
-				if(languageLink[1] !== 'undefined') {
+				if (languageLink[1] !== 'undefined') {
 					languageUid = languageLink[1].split('&')[0];
 				}
 				Ext.Ajax.request({
@@ -473,7 +473,7 @@ GridElementsDD = function() {
 					},
 					method: 'GET',
 					success: function( result, request ) {
-						if(GridElementsDD.baseConf.doReloadsAfterDrops) {
+						if (GridElementsDD.baseConf.doReloadsAfterDrops) {
 							// reload page to verify/show updates
 							locationSplit = self.location.href.split('#');
 							self.location.href = locationSplit[0] + '#ce' + top.targetUID;
@@ -484,7 +484,7 @@ GridElementsDD = function() {
 						}
 					},
 					failure: function( result, request ) {
-						if(GridElementsDD.baseConf.doReloadsAfterDrops) {
+						if (GridElementsDD.baseConf.doReloadsAfterDrops) {
 							// reload page to verify/show updates
 							locationSplit = self.location.href.split('#');
 							self.location.href = locationSplit[0] + '#ce' + top.targetUID;
@@ -508,7 +508,7 @@ GridElementsDD = function() {
 					},
 					method: 'GET',
 					success: function( result, request ) {
-						if(GridElementsDD.baseConf.doReloadsAfterDrops) {
+						if (GridElementsDD.baseConf.doReloadsAfterDrops) {
 							// reload page to verify/show updates
 							locationSplit = self.location.href.split('#');
 							self.location.href = locationSplit[0] + '#ce' + top.targetUID;
@@ -519,7 +519,7 @@ GridElementsDD = function() {
 						}
 					},
 					failure: function( result, request ) {
-						if(GridElementsDD.baseConf.doReloadsAfterDrops) {
+						if (GridElementsDD.baseConf.doReloadsAfterDrops) {
 							// reload page to verify/show updates
 							locationSplit = self.location.href.split('#');
 							self.location.href = locationSplit[0] + '#ce' + top.targetUID;
@@ -567,7 +567,7 @@ GridElementsDD = function() {
 			this.defaultTemplate = '<div class="x-dd-defaulttpl">' + TYPO3.l10n.localize('tx_gridelements_js.missingcontenttemplate') + '</div>';
 
 			// check, if this.baseConf.pageRenderTime has been str_replaced by onReady script
-			if(this.baseConf.pageRenderTime === 'insert_server_time_here') {
+			if (this.baseConf.pageRenderTime === 'insert_server_time_here') {
 				this.baseConf.pageRenderTime = null;
 			}
 
@@ -611,12 +611,12 @@ GridElementsDD = function() {
 				// look for x-dd-droptargetgroup class in all currentClasses and make element draggable using the found targets
 				for(var i in currentClasses) {
 
-					if(!currentClasses.hasOwnProperty(i)) {
+					if (!currentClasses.hasOwnProperty(i)) {
 						continue;
 					}
 
 					// find x-dd-droptargetgroup-XYZ class
-					if(/x-dd-droptargetgroup-/.test(currentClasses[i]) === true) {
+					if (/x-dd-droptargetgroup-/.test(currentClasses[i]) === true) {
 						matchingClass = currentClasses[i].split('-')[3];
 
 						// add Ext.dd.DD class to element with matching IDs
@@ -628,7 +628,7 @@ GridElementsDD = function() {
 
 						// restrict drag handle to h4 within
 						var handleEl = Ext.get(extElNow.select('h4').elements[0]);
-						if(handleEl) {
+						if (handleEl) {
 							dragElementNow.setHandleElId(handleEl.id);
 						}
 
@@ -656,12 +656,12 @@ GridElementsDD = function() {
 				// look for x-dd-droptargetgroup-XYZ class
 				for(var i in currentClasses) {
 
-					if(!currentClasses.hasOwnProperty(i)) {
+					if (!currentClasses.hasOwnProperty(i)) {
 						continue;
 					}
 
-					//if(currentClasses[i] === 'x-dd-droptargetgroup-all' || /x-dd-droptargetgroup-/.test(currentClasses[i]) === true) {
-					if(/x-dd-droptargetgroup-/.test(currentClasses[i]) === true) {
+					//if (currentClasses[i] === 'x-dd-droptargetgroup-all' || /x-dd-droptargetgroup-/.test(currentClasses[i]) === true) {
+					if (/x-dd-droptargetgroup-/.test(currentClasses[i]) === true) {
 						matchingClass = currentClasses[i].split('-')[3];
 
 						// get all possible droptargets
@@ -704,7 +704,7 @@ GridElementsDD = function() {
 			Ext.each(arrNewicons, function(){
 				var parent = typeof this.parent === 'function' ? this.parent() : null;
 				newFromPageIconConf.rel = '';
-				if(parent){
+				if (parent){
 					var
 						onclickAttr = parent.dom.getAttribute('onclick'),
 						uidPidMatch = onclickAttr.match(/uid_pid=([-\d]+)/),
@@ -716,9 +716,9 @@ GridElementsDD = function() {
 					container = containerMatch !== null && typeof containerMatch !== 'undefined' ? containerMatch[1] : '';
 					containerColPos = containerColPosMatch !== null && typeof containerColPosMatch !== 'undefined' ? containerColPosMatch[1] : '';
 
-					if(container > 0) {
+					if (container > 0) {
 						newFromPageIconConf.rel = - container + 'x' + containerColPos;
-					} else if(container === '' && uidPid > 0) {
+					} else if (container === '' && uidPid > 0) {
 						newFromPageIconConf.rel = uidPid + 'x' + colPos;
 					} else {
 						newFromPageIconConf.rel = uidPid;
@@ -742,7 +742,7 @@ GridElementsDD = function() {
 			Ext.Ajax.request({
 				url: actionURL,
 				success: function( result, request ) {
-					if(GridElementsDD.baseConf.doReloadsAfterDrops) {
+					if (GridElementsDD.baseConf.doReloadsAfterDrops) {
 						// reload page to verify/show updates
 						locationSplit = self.location.href.split('#');
 						self.location.href = locationSplit[0] + '#ce' + top.targetUID;
@@ -753,7 +753,7 @@ GridElementsDD = function() {
 					}
 				},
 				failure: function( result, request ) {
-					if(GridElementsDD.baseConf.doReloadsAfterDrops) {
+					if (GridElementsDD.baseConf.doReloadsAfterDrops) {
 						// reload page to verify/show updates
 						locationSplit = self.location.href.split('#');
 						self.location.href = locationSplit[0] + '#ce' + top.targetUID;
@@ -791,12 +791,12 @@ GridElementsDD = function() {
 
 			// look for x-dd-usetpl-XYZ class
 			for(var i in currentClasses) {
-				if(!currentClasses.hasOwnProperty(i)) {
+				if (!currentClasses.hasOwnProperty(i)) {
 					continue;
 				}
 
 				// find useTpl in x-dd-usetpl-XYZ class if dragBehaviorDraggables.useTpl was not found yet
-				if(/x-dd-usetpl-/.test(currentClasses[i]) === true) {
+				if (/x-dd-usetpl-/.test(currentClasses[i]) === true) {
 					dragBehaviorDraggables.useTpl = currentClasses[i].split('-')[3];
 
 					// break after first one
@@ -806,17 +806,17 @@ GridElementsDD = function() {
 
 			// look for x-dd-droptargetgroup-XYZ class
 			for(var h in currentClasses) {
-				if(!currentClasses.hasOwnProperty(h)) {
+				if (!currentClasses.hasOwnProperty(h)) {
 					continue;
 				}
 
 				// find x-dd-droptargetgroup-XYZ class
-				if(/x-dd-droptargetgroup-/.test(currentClasses[h]) === true) {
+				if (/x-dd-droptargetgroup-/.test(currentClasses[h]) === true) {
 					// get XYZ class part from x-dd-droptargetgroup-XYZ
 					matchingClass = currentClasses[h].split('-')[3];
 
 					// use matchingClass for dragBehaviorDraggables.useTpl if not found before
-					if(dragBehaviorDraggables.useTpl === null) {
+					if (dragBehaviorDraggables.useTpl === null) {
 						dragBehaviorDraggables.useTpl = matchingClass;
 					}
 
@@ -843,7 +843,7 @@ GridElementsDD = function() {
 		handleClipboardItem: function(clipboardItemUid, params) {
 
 			// set top vars so they're instantly available in reloaded frames
-			if(params.search(/setCopyMode.+/) !== -1) {
+			if (params.search(/setCopyMode.+/) !== -1) {
 				top.DDclipboardfilled = (top.DDclipboardfilled === "copy" && top.DDclipboardElId === clipboardItemUid) ? "" : "copy";
 			} else {
 				top.DDclipboardfilled = (top.DDclipboardfilled === "move" && top.DDclipboardElId === clipboardItemUid) ? "" : "move";
@@ -853,7 +853,7 @@ GridElementsDD = function() {
 
 			// remove and re-add insert icons
 			GridElementsDD.removePasteAndRefIcons();
-			if(top.DDclipboardfilled) {
+			if (top.DDclipboardfilled) {
 				GridElementsDD.addPasteAndRefIcons(clipboardItemUid);
 			}
 
@@ -877,7 +877,7 @@ GridElementsDD = function() {
 		addPasteAndRefIcons: function(clipboardItemUid) {
 			// console.log('addPasteAndRefIcons reached');
 			// add paste icons to column headers
-			if(clipboardItemUid.substr(0,5) !== '_FILE') {
+			if (clipboardItemUid.substr(0,5) !== '_FILE') {
 				colHeader = Ext.select('.t3-page-ce-wrapper-new-ce, .t3-page-ce-new-ce').elements;
 				Ext.each(colHeader, function(currentColHeader) {
 					var lastColHeaderLink = Ext.get(currentColHeader).select('a:last').elements[0];
@@ -897,7 +897,7 @@ GridElementsDD = function() {
 						},
 						pasteCopyIcon = Ext.DomHelper.insertAfter(lastColHeaderLink, pasteCopyIconConf, true);
 
-					if(top.DDclipboardfilled === 'move'){
+					if (top.DDclipboardfilled === 'move'){
 
 						// bind click event
 						pasteCopyIcon.on('click', function(){
@@ -907,7 +907,7 @@ GridElementsDD = function() {
 							return false;
 						});
 
-					} else if(top.DDclipboardfilled === 'copy'){
+					} else if (top.DDclipboardfilled === 'copy'){
 
 						// bind click event
 						pasteCopyIcon.on('click', function(){
@@ -951,7 +951,7 @@ GridElementsDD = function() {
 			Ext.Ajax.request({
 				url: actionURL,
 				success: function(result, request) {
-					if(GridElementsDD.baseConf.doReloadsAfterDrops) {
+					if (GridElementsDD.baseConf.doReloadsAfterDrops) {
 						// reload page to verify/show updates
 						locationSplit = self.location.href.split('#');
 						self.location.href = locationSplit[0] + '#ce' + top.targetUID;
@@ -962,7 +962,7 @@ GridElementsDD = function() {
 					}
 				},
 				failure: function(result, request) {
-					if(GridElementsDD.baseConf.doReloadsAfterDrops) {
+					if (GridElementsDD.baseConf.doReloadsAfterDrops) {
 						// reload page to verify/show updates
 						locationSplit = self.location.href.split('#');
 						self.location.href = locationSplit[0] + '#ce' + top.targetUID;
@@ -976,7 +976,7 @@ GridElementsDD = function() {
 		},
 
 		getPasteLinkForItem: function(itemUID, isReference) {
-			if(typeof isReference === 'undefined') {
+			if (typeof isReference === 'undefined') {
 				isReference = 0;
 			}
 

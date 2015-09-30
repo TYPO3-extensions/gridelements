@@ -137,7 +137,7 @@ class ProcessCmdmap extends AbstractDataHandler {
 				if ($value > 0) {
 					$overrideArray['tx_gridelements_container'] = 0;
 					$overrideArray['tx_gridelements_columns'] = 0;
-					if($originalRecord['colPos'] === -1) {
+					if ($originalRecord['colPos'] === -1) {
 						$overrideArray['colPos'] = 0;
 					}
 					$overrideArray['sorting'] = 0;

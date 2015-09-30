@@ -133,7 +133,7 @@ class PageRenderer {
 												break;
 											} else {
 												$ctypes = explode(',', $ctypes);
-												foreach($ctypes as $ctype) {
+												foreach ($ctypes as $ctype) {
 													$classes .= 't3-allow-' . $ctype . ' ';
 												}
 											}

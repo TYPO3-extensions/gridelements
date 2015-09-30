@@ -92,7 +92,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 		$gridContainerId = $row['uid'];
 		/** @var $layoutSetup \GridElementsTeam\Gridelements\Backend\LayoutSetup */
 		$layoutSetup = GeneralUtility::makeInstance('GridElementsTeam\\Gridelements\\Backend\\LayoutSetup');
-		if($row['pid'] < 0) {
+		if ($row['pid'] < 0) {
 			$originalRecord = BackendUtility::getRecord('tt_content', $row['t3ver_oid']);
 		} else {
 			$originalRecord = $row;
@@ -292,7 +292,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 			$showLanguage = '';
 		}
 
-		if($helper->getBackendUser()->workspace > 0 && $row['t3ver_wsid'] > 0) {
+		if ($helper->getBackendUser()->workspace > 0 && $row['t3ver_wsid'] > 0) {
 			$where = 'AND t3ver_wsid = ' . $row['t3ver_wsid'];
 		}
 		$where .= ' AND colPos = -1 AND tx_gridelements_container IN (' . $row['uid'] . ',' . $specificIds['uid'] . ') AND tx_gridelements_columns=' . $colPos . $showHidden . $deleteClause . $showLanguage;
@@ -324,7 +324,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 			->getSpecificIds($row);
 
 		if ($colPos < 32768) {
-			if($row{'sys_language_uid'}) {
+			if ($row{'sys_language_uid'}) {
 				$language = (int)$row['sys_language_uid'];
 			}
 			$newParams = $parentObject->newContentElementOnClick($parentObject->id, '-1' . '&tx_gridelements_container=' . $specificIds['uid'] . '&tx_gridelements_columns=' . $colPos, $language);

@@ -458,7 +458,7 @@ TYPO3.Backend.t3Grid = Ext.extend(Ext.Component, {
 		var allowedCTypeOptions = [];
 
 		var selectedCTypes = [];
-		if(selectedCTypesCSV){
+		if (selectedCTypesCSV){
 			var selectedCTypes = selectedCTypesCSV.split(',');
 		}
 
@@ -486,7 +486,7 @@ TYPO3.Backend.t3Grid = Ext.extend(Ext.Component, {
 
 		var options = selectElement.getEl().select('option').elements;
 		Ext.each(options, function(option){
-			if(Ext.get(option).dom.selected ){
+			if (Ext.get(option).dom.selected ){
 				selectedOptions.push(Ext.get(option).getAttribute('value'));
 			}
 		});
@@ -505,7 +505,7 @@ TYPO3.Backend.t3Grid = Ext.extend(Ext.Component, {
 	inArray: function(needle, haystack) {
 		var length = haystack.length;
 		for(var i = 0; i < length; i++) {
-			if(haystack[i] === needle) return true;
+			if (haystack[i] === needle) return true;
 		}
 		return false;
 	},

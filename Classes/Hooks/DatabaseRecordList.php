@@ -50,7 +50,7 @@ class DatabaseRecordList implements RecordListHookInterface {
 	public function makeClip($table, $row, $cells, &$parentObject) {
 
 		/*if ($table == 'tt_content' && get_class($parentObject) == 'localRecordList') {
-			if((int)$row['colPos'] < 0)) {
+			if ((int)$row['colPos'] < 0)) {
 				$cells['pasteInto'] = $parentObject->spaceIcon;
 				$cells['pasteAfter'] = $parentObject->spaceIcon;
 			}
@@ -74,7 +74,7 @@ class DatabaseRecordList implements RecordListHookInterface {
 	 */
 	public function makeControl($table, $row, $cells, &$parentObject) {
 		/*if ($table == 'tt_content' && get_class($parentObject) == 'localRecordList') {
-			if((int)$row['colPos'] < 0) {
+			if ((int)$row['colPos'] < 0) {
 				$cells['move'] = $parentObject->spaceIcon;
 				$cells['new'] = $parentObject->spaceIcon;
 				$cells['moveUp'] = $parentObject->spaceIcon;
