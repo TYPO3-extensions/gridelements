@@ -325,9 +325,9 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 
 		if ($colPos < 32768) {
 			if($row{'sys_language_uid'}) {
-				$language = '&sys_language_uid=' . (int)$row['sys_language_uid'];
+				$language = (int)$row['sys_language_uid'];
 			}
-			$newParams = $parentObject->newContentElementOnClick($parentObject->id, '-1' . '&tx_gridelements_container=' . $specificIds['uid'] . '&tx_gridelements_columns=' . $colPos . $language, $parentObject->lP);
+			$newParams = $parentObject->newContentElementOnClick($parentObject->id, '-1' . '&tx_gridelements_container=' . $specificIds['uid'] . '&tx_gridelements_columns=' . $colPos, $language);
 		}
 
 		$gridContent[$colPos] .= '
