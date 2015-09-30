@@ -52,9 +52,9 @@ class ProcessCmdmap extends AbstractDataHandler {
 			$copyAfterDuplicationFields = $GLOBALS['TCA']['tt_content']['ctrl']['copyAfterDuplFields'];
 			$GLOBALS['TCA']['tt_content']['ctrl']['copyAfterDuplFields'] .= ',tx_gridelements_container,tx_gridelements_columns';
 
-			if ((int)$DDcopy === 1 || (int)$reference === 1) {
+			$overrideArray = array();
 
-				$overrideArray = array();
+			if ((int)$DDcopy === 1 || (int)$reference === 1) {
 
 				if ((int)$reference === 1) {
 					foreach ($GLOBALS['TCA']['tt_content']['columns'] as $key => $column) {
