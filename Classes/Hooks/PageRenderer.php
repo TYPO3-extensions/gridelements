@@ -19,6 +19,7 @@ namespace GridElementsTeam\Gridelements\Hooks;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use TYPO3\CMS\Backend\Clipboard\Clipboard;
 use TYPO3\CMS\Backend\Utility\IconUtility;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -44,8 +45,8 @@ class PageRenderer {
 		if (!empty($parameters['jsFiles'])) {
 
 			if (method_exists($GLOBALS['SOBE']->doc, 'issueCommand')) {
-				/** @var \TYPO3\CMS\Backend\Clipboard\Clipboard $clipObj */
-				$clipObj = GeneralUtility::makeInstance('TYPO3\\CMS\\Backend\\Clipboard\\Clipboard'); // Start clipboard
+				/** @var Clipboard $clipObj */
+				$clipObj = GeneralUtility::makeInstance(Clipboard::class); // Start clipboard
 				$clipObj->initializeClipboard();
 
 				$pasteURL = '';

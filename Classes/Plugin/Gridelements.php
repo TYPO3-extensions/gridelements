@@ -18,6 +18,9 @@ namespace GridElementsTeam\Gridelements\Plugin;
  *  GNU General Public License for more details.
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
+
+use GridElementsTeam\Gridelements\Backend\LayoutSetup;
+use TYPO3\CMS\Core\Database\DatabaseConnection;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\MathUtility;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
@@ -63,8 +66,8 @@ class Gridelements extends ContentObjectRenderer {
 		}
 		$layout = $this->cObj->data['tx_gridelements_backend_layout'];
 
-		/** @var \GridElementsTeam\Gridelements\Backend\LayoutSetup $layoutSetup */
-		$layoutSetup = GeneralUtility::makeInstance('GridElementsTeam\\Gridelements\\Backend\\LayoutSetup');
+		/** @var LayoutSetup $layoutSetup */
+		$layoutSetup = GeneralUtility::makeInstance(LayoutSetup::class);
 		$layoutSetup->init($this->cObj->data['pid'], $conf);
 
 		$availableColumns = $layoutSetup->getLayoutColumns($layout);
@@ -186,9 +189,13 @@ class Gridelements extends ContentObjectRenderer {
 
 		if (is_array($pluginFlexForm) && is_array($pluginFlexForm['data'])) {
 			foreach ($pluginFlexForm['data'] as $sheet => $data) {
-				foreach ((array)$data as $lang => $value) {
-					foreach ((array)$value as $key => $val) {
-						$this->cObj->data['flexform_' . $key] = $this->getFlexFormValue($pluginFlexForm, $key, $sheet);
+				if(is_array($data)) {
+					foreach ((array)$data as $lang => $value) {
+						if (is_array($value)) {
+							foreach ((array)$value as $key => $val) {
+								$this->cObj->data['flexform_' . $key] = $this->getFlexFormValue($pluginFlexForm, $key, $sheet);
+							}
+						}
 					}
 				}
 			}
@@ -525,4 +532,12 @@ class Gridelements extends ContentObjectRenderer {
 
 		return $out;
 	}
+
+	/**
+	 * @return DatabaseConnection
+	 */
+	protected function getDatabaseConnection() {
+		return $GLOBALS['TYPO3_DB'];
+	}
+
 }

@@ -18,6 +18,7 @@ namespace GridElementsTeam\Gridelements\Hooks;
  *  GNU General Public License for more details.
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
+
 use GridElementsTeam\Gridelements\Backend\LayoutSetup;
 use GridElementsTeam\Gridelements\Helper\Helper;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
@@ -335,8 +336,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 
 		$newParams = '';
 		if ($colPos < 32768) {
-			// @todo last param was $parentObject->lP, but this property is gone
-			$newParams = $parentObject->newContentElementOnClick($parentObject->id, '-1' . '&tx_gridelements_container=' . $specificIds['uid'] . '&tx_gridelements_columns=' . $colPos, 0);
+			$newParams = $parentObject->newContentElementOnClick($parentObject->id, '-1' . '&tx_gridelements_container=' . $specificIds['uid'] . '&tx_gridelements_columns=' . $colPos, $row['sys_language_uid']);
 		}
 
 		$gridContent[$colPos] .= '
@@ -356,10 +356,10 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 				<div class="t3-page-ce t3js-page-ce t3js-page-ce-sortable' . $statusHidden . '" data-table="tt_content" data-uid="' . $itemRow['uid'] . '" data-ctype="' . $itemRow['CType'] . '"><div class="t3-page-ce-dragitem" id="' . str_replace('.', '', uniqid('', TRUE)) . '">' . $this->renderSingleElementHTML($parentObject, $itemRow) . '</div></div>';
 					// New content element:
 					if ($parentObject->option_newWizard) {
-						$onClick = 'window.location.href=\'db_new_content_el.php?id=' . $itemRow['pid'] . '&sys_language_uid=' . $itemRow['sys_language_uid'] . '&colPos=' . $itemRow['colPos'] . '&uid_pid=' . -$itemRow['uid'] . '&returnUrl=' . rawurlencode(GeneralUtility::getIndpEnv('REQUEST_URI')) . '\';';
+						$onClick = 'window.location.href=' . GeneralUtility::quoteJSvalue(BackendUtility::getModuleUrl('new_content_element') . '&id=' . $itemRow['pid'] . '&colPos=-1&sys_language_uid=' . $itemRow['sys_language_uid'] . '&uid_pid=-' . $itemRow['uid'] . '&returnUrl=' . rawurlencode(GeneralUtility::getIndpEnv('REQUEST_URI'))) . ';';
 					} else {
-						$params = '&edit[tt_content][' . -$itemRow['uid'] . ']=new';
-						$onClick = BackendUtility::editOnClick($params, $this->backPath);
+						$onClick = BackendUtility::editOnClick('&edit[tt_content][' . $itemRow['uid'] . ']=new&defVals[tt_content][colPos]='
+							. $colPos . '&defVals[tt_content][sys_language_uid]=' . $itemRow['sys_language_uid']);
 					}
 					$gridContent[$colPos] .= '
 				<div class="t3js-page-new-ce t3-page-ce-wrapper-new-ce" id="colpos-' . $itemRow['tx_gridelements_columns'] . '-page-' . $itemRow['pid'] . '-gridcontainer-' . $itemRow['tx_gridelements_container'] . '-' . str_replace('.', '', uniqid('', TRUE)) . '">
@@ -508,7 +508,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 		$itemList = str_replace('pages_', '', $shortcutItem);
 		if ($recursive) {
 			if (!$this->tree instanceof QueryGenerator) {
-				$this->tree = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Database\\QueryGenerator');
+				$this->tree = GeneralUtility::makeInstance(QueryGenerator::class);
 			}
 			$itemList = $this->tree->getTreeList($itemList, (int)$recursive, 0, 1);
 		}

@@ -18,8 +18,10 @@ namespace GridElementsTeam\Gridelements\Backend;
  *  GNU General Public License for more details.
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
+
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Database\DatabaseConnection;
+use TYPO3\CMS\Core\TypoScript\Parser\TypoScriptParser;
 use TYPO3\CMS\Core\Utility\ArrayUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Lang\LanguageService;
@@ -376,7 +378,7 @@ class LayoutSetup {
 
 			// parse config
 			if ($item['config']) {
-				$parser = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\TypoScript\\Parser\\TypoScriptParser');
+				$parser = GeneralUtility::makeInstance(TypoScriptParser::class);
 				$parser->parse($parser->checkIncludeLines($item['config']));
 				if (isset($parser->setup['backend_layout.'])) {
 					$item['config'] = $parser->setup['backend_layout.'];

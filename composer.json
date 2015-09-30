@@ -10,13 +10,13 @@
   "keywords": ["TYPO3 CMS", "Grids", "Gridelements"],
   "homepage": "https://git.typo3.org/TYPO3CMS/Extensions/gridelements.git",
   "license": "GPL-2.0+",
-  "version": "4.1.1-dev",
+  "version": "4.0.0-dev",
   "support": {
     "issues": "https://forge.typo3.org/"
   },
   "extra": {
     "branch-alias": {
-      "dev-master": "4.1.1-dev"
+      "dev-master": "4.0.0-dev"
     }
   }
 }

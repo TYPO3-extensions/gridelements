@@ -64,7 +64,7 @@ class BackendUtility {
 				$triggerElement = $this->databaseConnection->exec_SELECTgetSingleRow('pid', 'tt_content', 'uid = ' . -$pageUid);
 				$pageUid = (int)$triggerElement['pid'];
 			}
-			$this->injectLayoutSetup(GeneralUtility::makeInstance('GridElementsTeam\\Gridelements\\Backend\\LayoutSetup')->init($pageUid));
+			$this->injectLayoutSetup(GeneralUtility::makeInstance(LayoutSetup::class)->init($pageUid));
 		}
 	}
 
