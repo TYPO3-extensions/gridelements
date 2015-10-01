@@ -258,14 +258,17 @@ class LayoutSetup {
 	 *
 	 * @param int   $colPos
 	 * @param array $excludeLayouts
+	 * @param array $allowedGridTypes
 	 *
 	 * @return  array
 	 */
-	public function getLayoutWizardItems($colPos, $excludeLayouts = array()) {
+	public function getLayoutWizardItems($colPos, $excludeLayouts = array(), $allowedGridTypes = array()) {
 		$wizardItems = array();
 		$excludeLayouts = array_flip(explode(',', $excludeLayouts));
 		foreach ($this->layoutSetup as $layoutId => $item) {
-
+			if (count($allowedGridTypes) && !in_array($layoutId, $allowedGridTypes)) {
+				continue;
+			}
 			if (((int)$colPos === -1 && $item['top_level_layout']) || isset($excludeLayouts[$item['uid']])) {
 				continue;
 			}

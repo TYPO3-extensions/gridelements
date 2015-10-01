@@ -80,6 +80,8 @@ class BackendLayout {
 			'columnHelp'              => $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_wizards.xml:grid_columnHelp', 1),
 			'allowedElementTypes'     => $GLOBALS['LANG']->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:allowedElementTypes', 1),
 			'allowedElementTypesHelp' => $GLOBALS['LANG']->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:allowedElementTypesHelp', 1),
+			'allowedGridElementTypes'     => $GLOBALS['LANG']->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:allowedGridElementTypes', 1),
+			'allowedGridElementTypesHelp' => $GLOBALS['LANG']->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:allowedGridElementTypesHelp', 1),
 		);
 		$pageRenderer->addInlineLanguageLabelArray($languageLabels);
 		// add gridelement wizard options information
@@ -174,6 +176,9 @@ class BackendLayout {
 							}
 							if (isset($column['allowed'])) {
 								$cellData['allowed'] = $column['allowed'];
+							}
+							if (isset($column['allowedGridTypes'])) {
+								$cellData['allowedGridTypes'] = $column['allowedGridTypes'];
 							}
 						}
 					} else {

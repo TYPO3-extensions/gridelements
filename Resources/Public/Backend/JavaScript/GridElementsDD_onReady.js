@@ -100,14 +100,24 @@ if (typeof GridElementsDD === "undefined"){
 					if (parentColumn){
 						var currentClasses = Ext.get(parentColumn).dom.className.split(' ');
 						var allowedCTypes = new Array;
+						var allowedGridTypes = new Array;
 						for (var i = 0; i < currentClasses.length; i++) {
 							var currentClass = currentClasses[i];
 							if (currentClass.substr(0, 9) === 't3-allow-'){
 								allowedCTypes.push(currentClass.substr(9));
+							} else if (currentClass.substr(0, 11) === 't3-gridtype-'){
+								allowedGridTypes.push(currentClass.substr(11));
 							}
 						}
 						if (allowedCTypes[0] !== 'all'){
-							onClick = onClick.replace('db_new_content_el.php?', 'db_new_content_el.php?tx_gridelements_allowed=' + allowedCTypes.join(',') + '&');
+							var allowedParameter = 'tx_gridelements_allowed=' + allowedCTypes.join(',') + '&',
+								gridTypeParameter = '';
+
+							if (allowedGridTypes.length) {
+								gridTypeParameter = 'tx_gridelements_allowed_grid_types=' + allowedGridTypes.join(',') + '&';
+							}
+
+							onClick = onClick.replace('db_new_content_el.php?', 'db_new_content_el.php?' + allowedParameter + gridTypeParameter);
 							newCeWrapperLinkNew.set({onclick: onClick});
 						}
 					}
@@ -263,7 +273,7 @@ if (typeof GridElementsDD === "undefined"){
                         if (!top.skipDraggableDetails) {
                             descText = descText.replace('<br>', '').replace('<BR>', '');
                             Ext.get(row).select('td a, div a').set({title: '', rel: headerText + '|' + descText}).addClass('x-dd-draggableitem x-dd-droptargetgroup-els x-dd-usetpl-useradd');
-                        }else{
+                        } else {
                             descText = descText.replace('<br>', ' - ').replace('<BR>', ' - ');
                             Ext.get(row).select('td a, div a').set({title: headerText + descText}).addClass('x-dd-draggableitem x-dd-droptargetgroup-els x-dd-usetpl-useradd');
                         }

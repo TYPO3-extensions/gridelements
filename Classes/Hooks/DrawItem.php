@@ -68,7 +68,8 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 					break;
 			}
 		}
-		$headerContent = '<div id="ce' . $row['uid'] . '" class="t3-ctype-' . $row['CType'] . '">' . $headerContent . '</div>';
+		$gridType = $row['tx_gridelements_backend_layout'] ? ' t3-gridtype-' . $row['tx_gridelements_backend_layout'] : '';
+		$headerContent = '<div id="ce' . $row['uid'] . '" class="t3-ctype-' . $row['CType'] . $gridType . '">' . $headerContent . '</div>';
 	}
 
 	/**
@@ -469,11 +470,25 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 				if (!empty($columnConfig['allowed'])) {
 					$allowedCTypes = array_flip(GeneralUtility::trimExplode(',', $columnConfig['allowed']));
 					if (!isset($allowedCTypes['*'])) {
-						foreach ($allowedCTypes as $key => &$ctype) {
-							$ctype = 't3-allow-' . $key;
+						foreach ($allowedCTypes as $ctype => &$ctypeClass) {
+							$ctypeClass = 't3-allow-' . $ctype;
 						}
 					} else {
 						unset($allowedCTypes);
+					}
+				}
+				if (!empty($columnConfig['allowedGridTypes'])) {
+					$allowedGridTypes = array_flip(GeneralUtility::trimExplode(',', $columnConfig['allowedGridTypes']));
+					if (!isset($allowedGridTypes['*'])) {
+						foreach ($allowedGridTypes as $gridType => &$gridTypeClass) {
+							$gridTypeClass = 't3-allow-gridtype-' . $gridType;
+						}
+						$allowedCTypes['gridelements_pi1'] = 't3-allow-gridelements_pi1';
+					} else {
+						if(isset($allowedCTypes)) {
+							$allowedCTypes['gridelements_pi1'] = 't3-allow-gridelements_pi1';
+						}
+						unset($allowedGridTypes);
 					}
 				}
 				// render the grid cell
@@ -487,7 +502,8 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 					(isset($columnConfig['colspan']) && $columnConfig['colPos'] !== '' ? ' t3-gridCell-width' . $colSpan : '') .
 					(isset($columnConfig['rowspan']) && $columnConfig['colPos'] !== '' ? ' t3-gridCell-height' . $rowSpan : '') . ' ' .
 					($layoutSetup['horizontal'] ? ' t3-gridCell-horizontal' : '') .
-					(count($allowedCTypes) ? ' ' . join(' ', $allowedCTypes) : ' t3-allow-all') . '">';
+					(count($allowedCTypes) ? ' ' . join(' ', $allowedCTypes) : ' t3-allow-all') .
+					(count($allowedGridTypes) ? ' ' . join(' ', $allowedGridTypes) : '') . '">';
 
 				$grid .= ($GLOBALS['BE_USER']->uc['hideColumnHeaders'] ? '' : $head[$columnKey]) . $gridContent[$columnKey];
 				$grid .= '</td>';

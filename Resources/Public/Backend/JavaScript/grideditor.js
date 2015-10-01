@@ -210,8 +210,10 @@ TYPO3.Backend.t3Grid = Ext.extend(Ext.Component, {
 				cellHtml += '<div class="cell_data">' + TYPO3.l10n.localize('name') + ': ' + (cell.name ? Ext.util.Format.htmlEncode(cell.name) : TYPO3.l10n.localize('notSet'))
 					+ '<br />' + TYPO3.l10n.localize('column') + ': '
 					+ (cell.column === undefined ? TYPO3.lang.notSet : parseInt(cell.column, 10))
-					+ '<br />' + TYPO3.lang.allowedElementTypes + ': '
-					+ (cell.allowed ? Ext.util.Format.htmlEncode(cell.allowed) : '*') + '</div>';
+				+ '<br />' + TYPO3.lang.allowedElementTypes + ': '
+				+ (cell.allowed ? Ext.util.Format.htmlEncode(cell.allowed) : '*')
+				+ '<br />' + TYPO3.lang.allowedGridElementTypes + ': '
+				+ (cell.allowedGridTypes ? Ext.util.Format.htmlEncode(cell.allowedGridTypes) : '*') + '</div>';
 
 				// create cells
 				var child = {
@@ -266,6 +268,22 @@ TYPO3.Backend.t3Grid = Ext.extend(Ext.Component, {
 		var cell = this.getCell(col, row);
 		if (!cell) return false;
 		cell.allowed = newAllowed;
+		return true;
+	},
+
+	/**
+	 * Sets the allowed Grid Types of a certain grid element.
+	 *
+	 * @param newAllowed string
+	 * @param col integer
+	 * @param row integer
+	 *
+	 * @return boolean
+	 */
+	setAllowedGridTypes: function(newAllowedGridTypes, col, row) {
+		var cell = this.getCell(col, row);
+		if (!cell) return false;
+		cell.allowedGridTypes = newAllowedGridTypes;
 		return true;
 	},
 
@@ -391,9 +409,9 @@ TYPO3.Backend.t3Grid = Ext.extend(Ext.Component, {
 			var fieldAllowed = new Ext.Component({
 				renderTo: Ext.getBody(),
 				name: 'selectAllowed',
-				fieldLabel: TYPO3.lang['tx_gridelements_js.allowedElementTypes'],
+				fieldLabel: TYPO3.lang.allowedElementTypes,
 				tabIndex: 2,
-				style: 'width:260px;height:200px;',
+				style: 'width:260px;height:100px;',
 				autoEl: {
 					tag:'select',
 					cls:'x-font-select',
@@ -410,10 +428,26 @@ TYPO3.Backend.t3Grid = Ext.extend(Ext.Component, {
 				}
 			});
 
+			var fieldAllowedGridTypes = new Ext.form.TextField({
+				fieldLabel: TYPO3.lang.allowedGridElementTypes,
+				name: 'allowedGridTypes',
+				width: 270,
+				value: cell.allowedGridTypes,
+				tabIndex: 1,
+				listeners: {
+					render: function(c) {
+						Ext.QuickTips.register({
+							target: c,
+							text: TYPO3.lang.allowedGridElementTypesHelp
+						});
+					}
+				}
+			});
+
 			win = new Ext.Window({
 				layout: 'fit',
 				title: TYPO3.l10n.localize('title'),
-				width: 400,
+				width: 500,
 				modal: true,
 				closable: true,
 				resizable: false,
@@ -426,7 +460,7 @@ TYPO3.Backend.t3Grid = Ext.extend(Ext.Component, {
 						labelWidth: 100,
 						border: false,
 
-						items: [fieldName, fieldColumn, fieldAllowed]
+						items: [fieldName, fieldColumn, fieldAllowed, fieldAllowedGridTypes]
 					}
 				],
 
@@ -434,13 +468,14 @@ TYPO3.Backend.t3Grid = Ext.extend(Ext.Component, {
 					{
 						iconCls:'save',
 						text: TYPO3.l10n.localize('save'),
-						handler: function(fieldName, fieldColumn, fieldAllowed, col, row) {
+						handler: function(fieldName, fieldColumn, fieldAllowed, fieldAllowedGridTypes, col, row) {
 							t3Grid.setName(fieldName.getValue(), col, row);
 							t3Grid.setAllowed(t3Grid.getSelectedOptions(fieldAllowed), col, row);
+							t3Grid.setAllowedGridTypes(fieldAllowedGridTypes.getValue(), col, row);
 							t3Grid.setColumn(fieldColumn.getValue(), col, row);
 							win.close();
 							t3Grid.drawTable();
-						}.createDelegate(this, [fieldName, fieldColumn, fieldAllowed, col, row])
+						}.createDelegate(this, [fieldName, fieldColumn, fieldAllowed, fieldAllowedGridTypes, col, row])
 					}
 				]
 			});
@@ -459,7 +494,7 @@ TYPO3.Backend.t3Grid = Ext.extend(Ext.Component, {
 
 		var selectedCTypes = [];
 		if (selectedCTypesCSV){
-			var selectedCTypes = selectedCTypesCSV.split(',');
+			selectedCTypes = selectedCTypesCSV.split(',');
 		}
 
 		for (var i = 0; i < TYPO3.Backend.availableCTypes.length; i++) {
@@ -490,7 +525,6 @@ TYPO3.Backend.t3Grid = Ext.extend(Ext.Component, {
 				selectedOptions.push(Ext.get(option).getAttribute('value'));
 			}
 		});
-
 		return selectedOptions.join(',');
 	},
 
@@ -706,9 +740,9 @@ TYPO3.Backend.t3Grid = Ext.extend(Ext.Component, {
 					if (cell.rowspan > 1) result += "\t\t\t\t\trowspan = " + cell.rowspan + "\n";
 					if (typeof(cell.column) === 'number') result += "\t\t\t\t\tcolPos = " + cell.column + "\n";
 					if (cell.allowed) result += "\t\t\t\t\tallowed = " + cell.allowed + "\n";
+					if (cell.allowedGridTypes) result += "\t\t\t\t\tallowedGridTypes = " + cell.allowedGridTypes + "\n";
 					result += "\t\t\t\t}\n";
 				}
-
 			}
 			result += "\t\t\t}\n";
 			result += "\t\t}\n";

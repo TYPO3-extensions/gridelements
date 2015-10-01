@@ -84,16 +84,19 @@ class WizardItems implements \TYPO3\CMS\Backend\Wizard\NewContentElementWizardHo
 			$allowed_GP = GeneralUtility::_GP('tx_gridelements_allowed');
 			if (!empty($allowed_GP)) {
 				$allowed = array_flip(explode(',', $allowed_GP));
+				if(!empty(GeneralUtility::_GP('tx_gridelements_allowed_grid_types'))) {
+					$allowed['gridelements_pi1'] = 1;
+				}
 				$this->removeDisallowedWizardItems($allowed, $wizardItems);
 			} else {
 				$allowed = NULL;
 			}
 
 			if (empty($allowed) || isset($allowed['gridelements_pi1'])) {
-
+				$allowedGridTypes = GeneralUtility::trimExplode(',', GeneralUtility::_GP('tx_gridelements_allowed_grid_types'), TRUE);
 				$excludeLayouts = $this->getExcludeLayouts($container, $parentObject);
 
-				$gridItems = $this->layoutSetup->getLayoutWizardItems($parentObject->colPos, $excludeLayouts);
+				$gridItems = $this->layoutSetup->getLayoutWizardItems($parentObject->colPos, $excludeLayouts, $allowedGridTypes);
 				$this->addGridItemsToWizard($gridItems, $wizardItems);
 			}
 

@@ -41,6 +41,8 @@ GridElementsDD = function() {
 				top.targetUID = null;
 				// memorize current id
 				top.elId = this.id;
+				top.elementCType = '';
+				top.elementGridType = '';
 				// set isDragging for other scripts
 				top.isDragging = true;
 
@@ -72,13 +74,18 @@ GridElementsDD = function() {
 				top.isTopLevelOnly = (dragEl.select('div.t3-gridTLContainer').elements.length ? true : false);
 
 				// get CType
+				var draggableClassName = '';
 				if (dragEl.select('div.t3-page-ce-body div[class^=t3-ctype-]').elements.length){
 					// existing ce
-					top.elementCType = dragEl.select('div.t3-page-ce-body div[class^=t3-ctype-]').elements[0].className.substr(9).replace(/ t3-gridTLContainer/g, '');
-				}else{
+					draggableClassName = dragEl.select('div.t3-page-ce-body div[class^=t3-ctype-]').elements[0].className;
+				} else {
 					// new ce
-					top.elementCType = dragEl.select('div[class^=t3-ctype-]').elements[0].className.substr(9).replace(/ t3-gridTLContainer/g, '');
+					draggableClassName = dragEl.select('div[class^=t3-ctype-]').elements[0].className;
 					Ext.select('#x-dd-draggablecontainer').addClass('dragging-active');
+				}
+				top.elementCType = draggableClassName.split(' ')[0].substr(9);
+				if (draggableClassName.split(' ')[1]) {
+					top.elementGridType = draggableClassName.split(' ')[1].substr(12);
 				}
 
 				// always cache the original XY Coordinates of the element
@@ -160,7 +167,9 @@ GridElementsDD = function() {
 						var parentGridContainer = elNow.findParent('div.t3-gridContainer', 7);
 
 						if (elNow.select('.x-dd-droptargetarea').elements[0]){
-							if (elNow.findParent('td.t3-allow-all', 5) || elNow.findParent('td.t3-allow-'+top.elementCType, 5)){
+							if (elNow.findParent('td.t3-allow-all', 5)
+								|| elNow.findParent('td.t3-allow-'+top.elementCType, 5) && top.elementGridType === ''
+								|| elNow.findParent('td.t3-allow-gridelements_pi1', 5) && elNow.findParent('td.t3-allow-gridtype-'+top.elementGridType, 5)){
 								if (top.isTopLevelOnly && parentGridContainer){
 									if (elNow.findParent('td.t3-gridTL', 5)){
 										showDropTarget = true;
@@ -777,8 +786,9 @@ GridElementsDD = function() {
 				elementNowMargins = extElNow.getMargins(),
 				elementNowValign = extElNow.getStyles('vertical-align')['vertical-align'],
 				elementNowCType = (extElNow.getAttribute('onclick').match(/tt_content%5D%5BCType%5D%3D\w+/) ? 't3-ctype-' + extElNow.getAttribute('onclick').match(/tt_content%5D%5BCType%5D%3D\w+/)[0].substr(27) : ''),
+				elementNowGridType = (extElNow.getAttribute('onclick').match(/tt_content%5D%5Btx_gridelements_backend_layout%5D%3D\w+/) ? ' t3-gridtype-' + extElNow.getAttribute('onclick').match(/tt_content%5D%5Btx_gridelements_backend_layout%5D%3D\w+/)[0].substr(52) : ''),
 				elementNowTopLevelLayout = (extElNow.getAttribute('onclick').match(/isTopLevelLayout/) ? ' t3-gridTLContainer' : ''),
-				elementNowClassContainer = '<div class="' + elementNowCType + elementNowTopLevelLayout + '" style="display:none"></div>',
+				elementNowClassContainer = '<div class="' + elementNowCType + elementNowGridType + elementNowTopLevelLayout + '" style="display:none"></div>',
 				currentEl = Ext.DomHelper.insertHtml('afterEnd', elementNow, '<div title="' + elementNowTitle + '" class="x-dd-droptargetgroup" style="position: relative; display: inline-block; z-index: 99; width: ' + elementNowWidth + 'px; height: ' + elementNowHeight + 'px; margin-left: -' + (elementNowWidth + elementNowMargins.right) + 'px; margin-top: -' + elementNowMargins.top + 'px; vertical-align: ' + elementNowValign + '">' + elementNowClassContainer + '</div>'),
 				currentClasses = Ext.get(extElNow).dom.className.split(' '),
 				matchingClass = '';

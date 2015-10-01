@@ -116,7 +116,7 @@ class PageRenderer {
 					}
 				';
 
-				$allowedCTypesClassesByColPos = array();
+				$allowedCTypesAndGridTypesClassesByColPos = array();
 				$layoutSetup = GeneralUtility::callUserFunction('TYPO3\\CMS\\Backend\\View\\BackendLayoutView->getSelectedBackendLayout', intval(GeneralUtility::_GP('id')), $this);
 				if (is_array($layoutSetup) && !empty($layoutSetup['__config']['backend_layout.']['rows.'])) {
 					foreach ($layoutSetup['__config']['backend_layout.']['rows.'] as $rows) {
@@ -141,7 +141,24 @@ class PageRenderer {
 									} else {
 										$classes = 't3-allow-all';
 									}
-									$allowedCTypesClassesByColPos[] = $col['colPos'] . ':' . trim($classes);
+									if ($col['allowedGridTypes']) {
+										$allowedGridTypes = explode(',', $col['allowedGridTypes']);
+										$classes .= 't3-allow-gridelements_pi1 ';
+										foreach ($allowedGridTypes as $gridTypes) {
+											$gridTypes = trim($gridTypes);
+											if ($gridTypes !== '*') {
+												$gridTypes = explode(',', $gridTypes);
+												foreach ($gridTypes as $gridType) {
+													$classes .= 't3-allow-gridtype-' . $gridType . ' ';
+												}
+											}
+										}
+									} else {
+										if($classes !== 't3-allow-all') {
+											$classes .= 't3-allow-gridelements_pi1 ';
+										}
+									}
+									$allowedCTypesAndGridTypesClassesByColPos[] = $col['colPos'] . ':' . trim($classes);
 								}
 							}
 						}
@@ -151,7 +168,7 @@ class PageRenderer {
 				// add Ext.onReady() code from file
 				$pageRenderer->addExtOnReadyCode(// add some more JS here
 				             $pRaddExtOnReadyCode . "
-						top.pageColumnsAllowedCTypes = '" . join('|', $allowedCTypesClassesByColPos) . "';
+						top.pageColumnsAllowedCTypes = '" . join('|', $allowedCTypesAndGridTypesClassesByColPos) . "';
 						top.pasteURL = '" . $pasteURL . "';
 						top.moveURL = '" . $moveURL . "';
 						top.copyURL = '" . $copyURL . "';
