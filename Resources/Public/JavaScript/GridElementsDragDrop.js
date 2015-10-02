@@ -177,11 +177,11 @@ define(['jquery', 'jquery-ui/sortable', 'jquery-ui/droppable'], function($) {
 			if (typeof targetFound === 'undefined') {
 				// the actual page is needed
 				targetPid = $('[data-page]').first().data('page');
-				container = parseInt($droppableElement.closest(DragDrop.contentIdentifier).data('container'));
 			} else {
 				// the negative value of the content element after where it should be moved
 				targetPid = 0 - parseInt(targetFound);
 			}
+			container = parseInt($droppableElement.closest(DragDrop.contentIdentifier).data('container'));
 			var colPos = 0;
 			if (container > 0 && gridColumn !== false && gridColumn !== '') {
 				colPos = -1;
@@ -217,6 +217,7 @@ define(['jquery', 'jquery-ui/sortable', 'jquery-ui/droppable'], function($) {
 					});
 				});
 			} else if(evt.originalEvent.ctrlKey) {
+				alert('newColumn: ' + newColumn + ' targetFound: ' + targetFound + ' targetPid: ' + newColumn + ' colPos: ' + colPos + ' container: ' + container);
 				parameters['cmd']['tt_content'][contentElementUid] = {
 					copy: {
 						action: 'paste',
