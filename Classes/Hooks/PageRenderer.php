@@ -54,11 +54,6 @@ class PageRenderer {
 					$pasteURL = str_replace('&amp;', '&', $clipObj->pasteUrl('tt_content', 'DD_PASTE_UID', 0));
 				}
 
-				$moveParams = '&cmd[tt_content][DD_DRAG_UID][move]=DD_DROP_UID';
-				$moveURL = str_replace('&amp;', '&', htmlspecialchars($GLOBALS['SOBE']->doc->issueCommand($moveParams, 1)));
-				$copyParams = '&cmd[tt_content][DD_DRAG_UID][copy]=DD_DROP_UID&DDcopy=1';
-				$copyURL = str_replace('&amp;', '&', htmlspecialchars($GLOBALS['SOBE']->doc->issueCommand($copyParams, 1)));
-
 				// add JavaScript library
 				// $pageRenderer->addJsFile($GLOBALS['BACK_PATH'] . ExtensionManagementUtility::extRelPath('gridelements') . 'Resources/Public/Backend/JavaScript/dbNewContentElWizardFixDTM.js', $type = 'text/javascript', $compress = TRUE, $forceOnTop = FALSE, $allWrap = '');
 
@@ -112,10 +107,6 @@ class PageRenderer {
 				// add Ext.onReady() code from file
 				$pAddExtOnReadyCode .= "
 				top.pageColumnsAllowedCTypes = " . json_encode($allowedContentTypesClassesByColPos) . ";
-				top.pasteURL = '" . $pasteURL . "';
-				top.moveURL = '" . $moveURL . "';
-				top.copyURL = '" . $copyURL . "';
-				top.pasteTpl = '" . str_replace('&redirect=1', '', str_replace('DDcopy=1', 'DDcopy=1&reference=DD_REFYN', $copyURL)) . "';
 				top.skipDraggableDetails = " . ($GLOBALS['BE_USER']->uc['dragAndDropHideNewElementWizardInfoOverlay'] ? 'true;' : 'false;') . ";
 				top.geSprites = {
 				copyfrompage: '" . IconUtility::getSpriteIconClasses('extensions-gridelements-copyfrompage') . "',

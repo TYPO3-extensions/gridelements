@@ -66,41 +66,6 @@ class DataHandler {
 	}
 
 	/**
-	 * Function to set the colPos of an element depending on
-	 * whether it is a child of a parent container or not
-	 * will set colPos according to availability of the current grid column of an element
-	 * 0 = no column at all
-	 * -1 = grid element column
-	 * -2 = non used elements column
-	 * changes are applied to the field array of the parent object by reference
-	 * @param $status
-	 * @param string $table : The name of the table the data should be saved to
-	 * @param int $id : The uid of the page we are currently working on
-	 * @param array $fieldArray : The array of fields and values that have been saved to the datamap
-	 * @param \TYPO3\CMS\Core\DataHandling\DataHandler $parentObj : The parent object that triggered this hook
-	 * @return void
-	 */
-	public function processDatamap_postProcessFieldArray($status, $table, $id, array &$fieldArray, \TYPO3\CMS\Core\DataHandling\DataHandler $parentObj) {
-		$cmd = GeneralUtility::_GET('cmd');
-		if (count($cmd) && key($cmd) === 'tt_content' && $status === 'new' && strpos($cmd['tt_content'][key($cmd['tt_content'])]['copy'], 'x') !== FALSE && !$parentObj->isImporting
-		) {
-			$positionArray = explode('x', $cmd['tt_content'][key($cmd['tt_content'])]['copy']);
-			if ($positionArray[0] < 0) {
-				$parentPage = $this->databaseConnection->exec_SELECTgetSingleRow('pid', 'tt_content', 'uid = ' . abs($positionArray[0]));
-				if ($parentPage['pid']) {
-					$pid = $parentPage['pid'];
-				} else {
-					$pid = 0;
-				}
-			} else {
-				$pid = (int)$positionArray[0];
-			}
-			$sortNumber = $parentObj->getSortNumber('tt_content', 0, abs($pid));
-			$fieldArray['sorting'] = $sortNumber;
-		}
-	}
-
-	/**
 	 * @param string $status
 	 * @param string $table : The name of the table the data should be saved to
 	 * @param int $id : The uid of the page we are currently working on
@@ -150,24 +115,6 @@ class DataHandler {
 		if (!$parentObj->isImporting) {
 			$hook = GeneralUtility::makeInstance(MoveRecord::class);
 			$hook->execute_moveRecord_afterAnotherElementPostProcess($table, $uid, $destinationPid, $originalDestinationPid, $moveRec, $updateFields, $parentObj);
-		}
-	}
-
-	/**
-	 * Function to process the drag & drop copy action
-	 * @param string $command : The command to be handled by the command map
-	 * @param string $table : The name of the table we are working on
-	 * @param int $id : The id of the record that is going to be copied
-	 * @param string $value : The value that has been sent with the copy command
-	 * @param boolean $commandIsProcessed : A switch to tell the parent object, if the record has been copied
-	 * @param \TYPO3\CMS\Core\DataHandling\DataHandler $parentObj : The parent object that triggered this hook
-	 * @return void
-	 */
-	public function processCmdmap($command, $table, $id, $value, &$commandIsProcessed, \TYPO3\CMS\Core\DataHandling\DataHandler &$parentObj) {
-		/** @var $hook ProcessCmdmap */
-		if (!$parentObj->isImporting) {
-			$hook = GeneralUtility::makeInstance(ProcessCmdmap::class);
-			$hook->execute_processCmdmap($command, $table, $id, $value, $commandIsProcessed, $parentObj);
 		}
 	}
 
