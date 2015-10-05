@@ -40,6 +40,11 @@ use TYPO3\CMS\Lang\LanguageService;
 class DrawItem implements PageLayoutViewDrawItemHookInterface {
 
 	/**
+	 * @var Helper
+	 */
+	protected $helper;
+
+	/**
 	 * @var DatabaseConnection
 	 */
 	protected $databaseConnection;
@@ -62,7 +67,8 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 	public function __construct() {
 		$this->setDatabaseConnection($GLOBALS['TYPO3_DB']);
 		$this->lang = GeneralUtility::makeInstance(LanguageService::class);
-		$this->lang->init($GLOBALS['BE_USER']->uc['lang']);
+		$this->helper = Helper::getInstance();
+		$this->lang->init($this->helper->getBackendUser()->uc['lang']);
 	}
 
 	/**
@@ -80,7 +86,8 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 			$showHidden = $parentObject->tt_contentConfig['showHidden'] ? '' : BackendUtility::BEenableFields('tt_content');
 			$deleteClause = BackendUtility::deleteClause('tt_content');
 
-			if ($GLOBALS['BE_USER']->uc['hideContentPreview']) {
+			if ($this->helper->getBackendUser()->uc['hideContentPreview']) {
+				$itemContent = '';
 				$drawItem = FALSE;
 			}
 
@@ -98,6 +105,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 					break;
 			}
 		}
+
 		$headerContent = '<div id="ce' . $row['uid'] . '" class="t3-ctype-identifier " data-ctype="' . $row['CType'] . '">' . $headerContent . '</div>';
 	}
 
@@ -235,7 +243,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 	public function setSingleColPosItems(PageLayoutView $parentObject, &$colPosValues, &$row, $showHidden, $deleteClause) {
 		// Due to the pid being "NOT USED" in makeQueryArray we have to set pidSelect here
 		$originalPidSelect = $parentObject->pidSelect;
-		$specificIds = Helper::getInstance()->getSpecificIds($row);
+		$specificIds = $this->helper->getSpecificIds($row);
 		$parentObject->pidSelect = 'pid = ' . $specificIds['pid'];
 
 		// @todo $parentObject->showLanguage was appended in this where clause, but this property does not exist anymore
@@ -291,8 +299,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 	public function collectItemsForColumn(PageLayoutView $parentObject, &$colPos, &$row, &$showHidden, &$deleteClause) {
 		// Due to the pid being "NOT USED" in makeQueryArray we have to set pidSelect here
 		$originalPidSelect = $parentObject->pidSelect;
-		$helper = Helper::getInstance();
-		$specificIds = $helper->getSpecificIds($row);
+		$specificIds = $this->helper->getSpecificIds($row);
 
 		$parentObject->pidSelect = 'pid = ' . $row['pid'];
 
@@ -305,7 +312,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 		}
 
 		$where = '';
-		if ($helper->getBackendUser()->workspace > 0 && $row['t3ver_wsid'] > 0) {
+		if ($this->helper->getBackendUser()->workspace > 0 && $row['t3ver_wsid'] > 0) {
 			$where .= 'AND t3ver_wsid = ' . $row['t3ver_wsid'];
 		}
 		$where .= ' AND colPos = -1 AND tx_gridelements_container IN (' . $row['uid'] . ',' . $specificIds['uid'] . ') AND tx_gridelements_columns=' . $colPos . $showHidden . $deleteClause . $showLanguage;
@@ -332,7 +339,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 	 */
 	protected function renderSingleGridColumn(PageLayoutView $parentObject, &$items, &$colPos, $values, &$gridContent, $row, &$editUidList) {
 
-		$specificIds = Helper::getInstance()->getSpecificIds($row);
+		$specificIds = $this->helper->getSpecificIds($row);
 
 		$newParams = '';
 		if ($colPos < 32768) {
@@ -435,10 +442,10 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 	 * @return string
 	 */
 	public function renderGridLayoutTable($layoutSetup, $row, $head, $gridContent) {
-		$specificIds = Helper::getInstance()->getSpecificIds($row);
+		$specificIds = $this->helper->getSpecificIds($row);
 
 		$grid = '<div class="t3-grid-container t3-grid-element-container' . ($layoutSetup['frame'] ? ' t3-grid-container-framed t3-grid-container-' . $layoutSetup['frame'] : '') . ($layoutSetup['top_level_layout'] ? ' t3-grid-tl-container' : '') . '">';
-		if ($layoutSetup['frame'] || $GLOBALS['BE_USER']->uc['showGridInformation'] === 1) {
+		if ($layoutSetup['frame'] || $this->helper->getBackendUser()->uc['showGridInformation'] === 1) {
 			$grid .= '<h4 class="t3-grid-container-title-' . (int)$layoutSetup['frame'] . '">' . BackendUtility::wrapInHelp('tx_gridelements_backend_layouts', 'title', $this->lang->sL($layoutSetup['title']), array('title' => $this->lang->sL($layoutSetup['title']), 'description' => $this->lang->sL($layoutSetup['description']))) . '</h4>';
 		}
 		$grid .= '<table border="0" cellspacing="0" cellpadding="0" width="100%" height="100%" class="t3-page-columns t3-grid-table">';
@@ -502,7 +509,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 				$rowSpan = (int)$columnConfig['rowspan'];
 				$grid .= '<td valign="top"' . (isset($columnConfig['colspan']) ? ' colspan="' . $colSpan . '"' : '') . (isset($columnConfig['rowspan']) ? ' rowspan="' . $rowSpan . '"' : '') . 'data-colpos="' . $columnKey . '" id="column-' . $specificIds['uid'] . 'x' . $columnKey . '" class="t3-grid-cell t3js-page-column t3-page-column t3-page-column-' . $columnKey . (!isset($columnConfig['colPos']) || $columnConfig['colPos'] === '' ? ' t3-grid-cell-unassigned' : '') . (isset($columnConfig['colspan']) && $columnConfig['colPos'] !== '' ? ' t3-grid-cell-width' . $colSpan : '') . (isset($columnConfig['rowspan']) && $columnConfig['colPos'] !== '' ? ' t3-grid-cell-height' . $rowSpan : '') . ' ' . ($layoutSetup['horizontal'] ? ' t3-grid-cell-horizontal' : '') . (isset($allowedContentTypes) && count($allowedContentTypes) ? ' ' . join(' ', $allowedContentTypes) : ' t3-allow-all') . '">';
 
-				$grid .= ($GLOBALS['BE_USER']->uc['hideColumnHeaders'] ? '' : $head[$columnKey]) . $gridContent[$columnKey];
+				$grid .= ($this->helper->getBackendUser()->uc['hideColumnHeaders'] ? '' : $head[$columnKey]) . $gridContent[$columnKey];
 				$grid .= '</td>';
 			}
 			$grid .= '</tr>';
@@ -531,8 +538,8 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 		}
 		$itemRows = $this->databaseConnection->exec_SELECTgetRows('*', 'tt_content', 'pid IN (' . $itemList . ') AND colPos >= 0 ' . $showHidden . $deleteClause, '', 'FIND_IN_SET(pid, \'' . $itemList . '\'),colPos,sorting');
 		foreach ($itemRows as $itemRow) {
-			if ($GLOBALS['BE_USER']->workspace > 0) {
-				BackendUtility::workspaceOL('tt_content', $itemRow, $GLOBALS['BE_USER']->workspace);
+			if ($this->helper->getBackendUser()->workspace > 0) {
+				BackendUtility::workspaceOL('tt_content', $itemRow, $this->helper->getBackendUser()->workspace);
 			}
 			$itemRow['tx_gridelements_reference_container'] = $itemRow['pid'];
 			$collectedItems[] = $itemRow;
@@ -550,8 +557,8 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 	public function collectContentData($shortcutItem, &$collectedItems, &$showHidden, &$deleteClause, $parentUid) {
 		$shortcutItem = str_replace('tt_content_', '', $shortcutItem);
 		$itemRow = $this->databaseConnection->exec_SELECTgetSingleRow('*', 'tt_content', 'uid=' . $shortcutItem . $showHidden . $deleteClause);
-		if ($GLOBALS['BE_USER']->workspace > 0) {
-			BackendUtility::workspaceOL('tt_content', $itemRow, $GLOBALS['BE_USER']->workspace);
+		if ($this->helper->getBackendUser()->workspace > 0) {
+			BackendUtility::workspaceOL('tt_content', $itemRow, $this->helper->getBackendUser()->workspace);
 		}
 	}
 
