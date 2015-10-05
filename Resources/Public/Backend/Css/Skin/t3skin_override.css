@@ -123,6 +123,75 @@
   margin: 0;
 }
 
+#new-element-drag-in-wizard {
+	position: fixed;
+	height: auto;
+	top: -1px;
+	right: -1px;
+	max-width: 90%;
+	z-index: 20000;
+	float: right;
+	/* setting overflow makes items disappear when dragging
+	   * solution:  when dragging starts, put the element right after body in DOM
+	   */
+}
+
+#new-element-drag-in-wizard .nav-tabs {
+	margin: 0;
+	text-align: right;
+}
+
+#new-element-drag-in-wizard .nav-tabs li {
+	display: inline-block;
+	float: none;
+}
+
+#new-element-drag-in-wizard .nav-tabs a {
+	padding: 6px 12px;
+	font-weight: normal;
+}
+
+#new-element-drag-in-wizard .nav-tabs a img {
+	display: none;
+}
+
+#new-element-drag-in-wizard .tab-content {
+	margin: 0 1px 0 0;
+	clear: both;
+}
+
+#new-element-drag-in-wizard .tab-content:hover {
+	min-height: 122px;
+}
+
+#new-element-drag-in-wizard .nav-tabs {
+	margin: 0;
+	text-align: right;
+}
+
+#new-element-drag-in-wizard .nav-tabs li {
+	display: inline-block;
+	float: none;
+}
+
+#new-element-drag-in-wizard .nav-tabs a {
+	padding: 6px 12px;
+	font-weight: normal;
+}
+
+#new-element-drag-in-wizard .nav-tabs a img {
+	display: none;
+}
+
+#new-element-drag-in-wizard .tab-content {
+	margin: 0 1px 0 0;
+	clear: both;
+}
+
+#new-element-drag-in-wizard .tab-content:hover {
+	min-height: 122px;
+}
+
 #new-element-drag-in-wizard .media {
   display: inline-block;
   margin-top: 0;
@@ -133,9 +202,13 @@
 }
 
 #new-element-drag-in-wizard .media-body {
-  display: none;
+	width: auto;
+	display: none;
 }
 
+#new-element-drag-in-wizard .panel-body {
+	padding: 5px 10px;
+}
 #typo3-index-php .exampleContent > .reference {
 	position: relative;
 	margin-top: 7px;

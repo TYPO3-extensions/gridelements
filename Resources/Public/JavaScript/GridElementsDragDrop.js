@@ -37,9 +37,6 @@ define(['jquery', 'jquery-ui/sortable', 'jquery-ui/droppable'], function($) {
 	 * initializes Drag+Drop for all content elements on the page
 	 */
 	DragDrop.initialize = function() {
-		$('table.t3js-page-columns > tbody > tr > td').each(function() {
-			$(this).addClass(top.pageColumnsAllowedCTypes[$(this).data('colpos')]);
-		});
 		$(this.contentIdentifier).draggable({
 			handle: this.dragHeaderIdentifier,
 			scope: 'tt_content',

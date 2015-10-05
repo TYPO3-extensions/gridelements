@@ -39,6 +39,7 @@ class PageRenderer {
 	 * @return void
 	 */
 	public function addJSCSS($parameters, &$pageRenderer) {
+		$pageRenderer->loadRequireJsModule('TYPO3/CMS/Gridelements/GridElementsOnReady');
 		$pageRenderer->loadRequireJsModule('TYPO3/CMS/Gridelements/GridElementsDragDrop');
 		$pageRenderer->loadRequireJsModule('TYPO3/CMS/Gridelements/GridElementsDragInWizard');
 
