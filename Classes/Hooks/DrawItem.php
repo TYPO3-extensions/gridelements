@@ -273,7 +273,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 				$items = array();
 			}
 			// if there are any items, we can create the HTML for them just like in the original TCEform
-			$this->renderSingleGridColumn($parentObject, $items, $colPos, $gridContent, $row, $editUidList);
+			$this->renderSingleGridColumn($parentObject, $items, $colPos, $values, $gridContent, $row, $editUidList);
 			// we will need a header for each of the columns to activate mass editing for elements of that column
 			$this->setColumnHeader($parentObject, $head, $colPos, $values['name'], $editUidList);
 		}
@@ -325,24 +325,24 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 	 * @param PageLayoutView $parentObject : The parent object that triggered this hook
 	 * @param array $items : The content data of the column to be rendered
 	 * @param int $colPos : The column position we want to get the content for
+	 * @param array $values : The layout configuration values for the grid column
 	 * @param array $gridContent : The rendered content data of the grid column
 	 * @param $row
 	 * @param array $editUidList : determines if we will get edit icons or not
-	 * @return void
 	 */
-	protected function renderSingleGridColumn(PageLayoutView $parentObject, &$items, &$colPos, &$gridContent, $row, &$editUidList) {
+	protected function renderSingleGridColumn(PageLayoutView $parentObject, &$items, &$colPos, $values, &$gridContent, $row, &$editUidList) {
 
 		$specificIds = Helper::getInstance()->getSpecificIds($row);
 
 		$newParams = '';
 		if ($colPos < 32768) {
-			$newParams = $parentObject->newContentElementOnClick($parentObject->id, '-1' . '&tx_gridelements_container=' . $specificIds['uid'] . '&tx_gridelements_columns=' . $colPos, $row['sys_language_uid']);
+			$newParams = $parentObject->newContentElementOnClick($parentObject->id, '-1' . '&tx_gridelements_allowed=' . $values['allowed'] . '&tx_gridelements_container=' . $specificIds['uid'] . '&tx_gridelements_columns=' . $colPos, $row['sys_language_uid']);
 		}
 
 		$gridContent[$colPos] .= '
 			<div data-colpos="' . $colPos . '" data-language-uid="' . $row['sys_language_uid'] . '" class="t3js-sortable t3js-sortable-lang t3js-sortable-lang-' . $row['sys_language_uid'] . ' t3-page-ce-wrapper ui-sortable">
 				<div class="t3-page-ce t3js-page-ce" data-container="' . $row['uid'] . '" id="' . str_replace('.', '', uniqid('', TRUE)) . '">
-					<div class="t3js-page-new-ce t3-page-ce-wrapper-new-ce" id="colpos-' . $colPos . '-' . str_replace('.', '', uniqid('', TRUE)) . '">
+					<div class="t3js-page-new-ce t3js-page-new-ce-allowed t3-page-ce-wrapper-new-ce" id="colpos-' . $colPos . '-' . str_replace('.', '', uniqid('', TRUE)) . '">
 						<a href="#" onclick="' . htmlspecialchars($newParams) . '" title="' . $this->lang->getLL('newContentElement', TRUE) . '" class="btn btn-default btn-sm">' . IconUtility::getSpriteIcon('actions-document-new') . ' ' . $this->lang->getLL('content', TRUE) . '</a>
 					</div>
 					<div class="t3-page-ce-dropzone-available t3js-page-ce-dropzone-available"></div>
@@ -359,13 +359,13 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 				<div class="t3-page-ce t3js-page-ce t3js-page-ce-sortable' . $statusHidden . '" data-table="tt_content" data-uid="' . $itemRow['uid'] . '" data-container="' . $itemRow['tx_gridelements_container'] . '" data-ctype="' . $itemRow['CType'] . '"><div class="t3-page-ce-dragitem" id="' . str_replace('.', '', uniqid('', TRUE)) . '">' . $this->renderSingleElementHTML($parentObject, $itemRow) . '</div></div>';
 					// New content element:
 					if ($parentObject->option_newWizard) {
-						$onClick = 'window.location.href=' . GeneralUtility::quoteJSvalue(BackendUtility::getModuleUrl('new_content_element') . '&id=' . $itemRow['pid'] . '&colPos=-1&sys_language_uid=' . $itemRow['sys_language_uid'] . '&uid_pid=-' . $itemRow['uid'] . '&returnUrl=' . rawurlencode(GeneralUtility::getIndpEnv('REQUEST_URI'))) . ';';
+						$onClick = 'window.location.href=' . GeneralUtility::quoteJSvalue(BackendUtility::getModuleUrl('new_content_element') . '&id=' . $itemRow['pid'] . '&colPos=-1&sys_language_uid=' . $itemRow['sys_language_uid'] . '&tx_gridelements_allowed=' . $values['allowed'] . '&uid_pid=-' . $itemRow['uid'] . '&returnUrl=' . rawurlencode(GeneralUtility::getIndpEnv('REQUEST_URI'))) . ';';
 					} else {
 						$onClick = BackendUtility::editOnClick('&edit[tt_content][' . $itemRow['uid'] . ']=new&defVals[tt_content][colPos]='
 							. $colPos . '&defVals[tt_content][sys_language_uid]=' . $itemRow['sys_language_uid']);
 					}
 					$gridContent[$colPos] .= '
-				<div class="t3js-page-new-ce t3-page-ce-wrapper-new-ce" id="colpos-' . $itemRow['tx_gridelements_columns'] . '-page-' . $itemRow['pid'] . '-gridcontainer-' . $itemRow['tx_gridelements_container'] . '-' . str_replace('.', '', uniqid('', TRUE)) . '">
+				<div class="t3js-page-new-ce t3js-page-new-ce-allowed t3-page-ce-wrapper-new-ce" id="colpos-' . $itemRow['tx_gridelements_columns'] . '-page-' . $itemRow['pid'] . '-gridcontainer-' . $itemRow['tx_gridelements_container'] . '-' . str_replace('.', '', uniqid('', TRUE)) . '">
 					<a href="#" onclick="' . htmlspecialchars($onClick) . '" title="' . $this->lang->getLL('newContentElement', TRUE) . '" class="btn btn-default btn-sm">' . IconUtility::getSpriteIcon('actions-document-new') . ' ' . $this->lang->getLL('content', TRUE) . '</a>
 				</div>
 				<div class="t3-page-ce-dropzone-available t3js-page-ce-dropzone-available"></div>
