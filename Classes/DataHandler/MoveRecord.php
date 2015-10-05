@@ -123,7 +123,9 @@ class MoveRecord extends AbstractDataHandler {
 				'tx_gridelements_columns' => 0,
 			);
 			// $updateArray['bodytext'] = serialize($cmd) . ' originalUid: ' . $originalUid . ' pointerUid: ' . $pointerUid . ' commandUid: ' . $commandUid . ' placeholderUid: ' . $placeholderUid;
-			$this->getTceMain()->updateDB('tt_content', $originalUid, $updateArray);
+			if($originalUid !== $uid) {
+				$this->getTceMain()->updateDB('tt_content', $originalUid, $updateArray);
+			}
 			$this->getTceMain()->updateDB('tt_content', $uid, $updateArray);
 		}
 	}
@@ -193,7 +195,9 @@ class MoveRecord extends AbstractDataHandler {
 				// $updateArray['header'] = $uid . ' # ' . $pointerUid . ' # ' . $origDestPid . ' ohne X';
 			}
 			// $updateArray['bodytext'] = serialize($cmd) . ' originalUid: ' . $originalUid . ' pointerUid: ' . $pointerUid . ' commandUid: ' . $commandUid . ' placeholderUid: ' . $placeholderUid;
-			$this->getTceMain()->updateDB('tt_content', $originalUid, $updateArray);
+			if($originalUid !== $uid) {
+				$this->getTceMain()->updateDB('tt_content', $originalUid, $updateArray);
+			}
 			if ($setPid) {
 				$updateArray['pid'] = $setPid;
 			}
