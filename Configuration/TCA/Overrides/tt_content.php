@@ -91,15 +91,27 @@ $GLOBALS['TCA']['tt_content']['ctrl']['useColumnsForDefaultValues'] .= ',tx_grid
 $GLOBALS['TCA']['tt_content']['ctrl']['shadowColumnsForNewPlaceholders'] .= ',tx_gridelements_container,tx_gridelements_columns';
 $GLOBALS['TCA']['tt_content']['ctrl']['typeicon_classes']['gridelements_pi1'] = 'tcarecords-tx_gridelements_backend_layout-default';
 
-$GLOBALS['TCA']['tt_content']['types']['gridelements_pi1']['showitem'] = $GLOBALS['TCA']['tt_content']['types']['text']['showitem'];
-
 $GLOBALS['TCA']['tt_content']['columns']['colPos']['config']['itemsProcFunc'] = 'GridElementsTeam\Gridelements\Backend\ItemsProcFuncs\ColPosList->itemsProcFunc';
 $GLOBALS['TCA']['tt_content']['columns']['CType']['config']['itemsProcFunc'] = 'GridElementsTeam\Gridelements\Backend\ItemsProcFuncs\CTypeList->itemsProcFunc';
 $GLOBALS['TCA']['tt_content']['columns']['sys_language_uid']['config']['itemsProcFunc'] = 'GridElementsTeam\Gridelements\Backend\ItemsProcFuncs\SysLanguageUidList->itemsProcFunc';
 $GLOBALS['TCA']['tt_content']['columns']['pi_flexform']['config']['ds']['*,gridelements_pi1'] = '';
 $GLOBALS['TCA']['tt_content']['columns']['records']['config']['allowed'] .= ',pages';
 
+$GLOBALS['TCA']['tt_content']['types']['gridelements_pi1']['showitem'] = '
+	--palette--;LLL:EXT:cms/locallang_ttc.xlf:palette.general;general,
+	--palette--;LLL:EXT:cms/locallang_ttc.xlf:palette.header;header,
+	tx_gridelements_backend_layout,
+	pi_flexform,
+	tx_gridelements_children,
+	--div--;LLL:EXT:cms/locallang_ttc.xlf:tabs.appearance,
+	--palette--;LLL:EXT:cms/locallang_ttc.xlf:palette.frames;frames,
+	media,
+	--div--;LLL:EXT:cms/locallang_ttc.xlf:tabs.access,
+	--palette--;LLL:EXT:cms/locallang_ttc.xlf:palette.visibility;visibility,
+	--palette--;LLL:EXT:cms/locallang_ttc.xlf:palette.access;access,
+	--div--;LLL:EXT:cms/locallang_ttc.xlf:tabs.extended,
+	--div--;LLL:EXT:lang/locallang_tca.xlf:sys_category.tabs.category,
+	categories
+	';
 \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addToAllTCAtypes('tt_content', 'recursive', 'shortcut', 'after:records');
-\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addToAllTCAtypes('tt_content', 'tx_gridelements_backend_layout', 'gridelements_pi1', 'replace:bodytext');
-\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addToAllTCAtypes('tt_content', 'pi_flexform, tx_gridelements_children', 'gridelements_pi1', 'replace:rte_enabled');
 \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addToAllTCAtypes('tt_content', 'tx_gridelements_container, tx_gridelements_columns');
