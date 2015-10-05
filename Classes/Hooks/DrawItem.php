@@ -477,6 +477,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 				// which column should be displayed inside this cell
 				$columnKey = $columnConfig['colPos'] !== '' ? (int)$columnConfig['colPos'] : 32768;
 				// allowed CTypes
+				$allowedContentTypes = array();
 				if (!empty($columnConfig['allowed'])) {
 					$allowedContentTypes = array_flip(GeneralUtility::trimExplode(',', $columnConfig['allowed']));
 					if (!isset($allowedContentTypes['*'])) {
