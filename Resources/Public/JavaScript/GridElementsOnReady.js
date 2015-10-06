@@ -43,7 +43,7 @@ define(['jquery'], function($) {
 	 */
 	OnReady.setAllowedParameters = function(pageColumn) {
 		var allowedCTypes = top.pageColumnsAllowedCTypes[pageColumn.data('colpos')].replace(/ t3-allow-/g, ',').substring(1);
-		if (allowedCTypes !== '') {
+		if (allowedCTypes !== '' && allowedCTypes !== 'all') {
 			pageColumn.find('.t3js-page-new-ce:not(".t3js-page-new-ce-allowed") a').each(function() {
 				$(this).attr('onclick', $(this).attr('onclick').replace(
 					'\\u0026uid_pid',
