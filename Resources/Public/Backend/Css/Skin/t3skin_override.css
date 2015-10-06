@@ -193,22 +193,26 @@
 }
 
 #new-element-drag-in-wizard .media {
-  display: inline-block;
-  margin-top: 0;
+	display: inline-block;
+	margin-top: 0;
 }
 
 #new-element-drag-in-wizard .media-left {
-  display: block;
+	display: block;
 }
 
 #new-element-drag-in-wizard .media-body {
 	width: auto;
-	display: none;
 }
 
 #new-element-drag-in-wizard .panel-body {
 	padding: 5px 10px;
 }
+
+#new-element-drag-in-wizard .panel-tab:hover {
+	min-height: 122px;
+}
+
 #typo3-index-php .exampleContent > .reference {
 	position: relative;
 	margin-top: 7px;
