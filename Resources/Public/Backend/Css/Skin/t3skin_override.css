@@ -67,7 +67,7 @@
   box-shadow: 0 1px 24px rgba(0, 0, 0, 0.50);
 }
 
-#typo3-index-php .t3-grid-container-title-0 {
+.t3js-module-body .t3-grid-container-title-0 {
   font-size: 12px;
   font-weight: normal;
   color: #999999;
@@ -75,14 +75,14 @@
   margin: 0;
 }
 
-#typo3-index-php .t3-grid-container-1 {
+.t3js-module-body .t3-grid-container-1 {
   border-style: solid;
   border-width: 1px;
   border-color: #B48062;
   margin: 5px -11px -11px -11px;
 }
 
-#typo3-index-php .t3-grid-container-title-1 {
+.t3js-module-body .t3-grid-container-title-1 {
   font-size: 12px;
   font-weight: normal;
   color: #5A4031;
@@ -91,14 +91,14 @@
   margin: 0;
 }
 
-#typo3-index-php .t3-grid-container-2 {
+.t3js-module-body .t3-grid-container-2 {
   border-style: solid;
   border-width: 1px 1px 1px 1px;
   border-color: #BABD5A;
   margin: 2px 0 0 0;
 }
 
-#typo3-index-php .t3-grid-container-title-2 {
+.t3js-module-body .t3-grid-container-title-2 {
   font-size: 12px;
   font-weight: normal;
   color: #5D5F2D;
@@ -107,14 +107,14 @@
   margin: 0;
 }
 
-#typo3-index-php .t3-grid-container-3 {
+.t3js-module-body .t3-grid-container-3 {
   border-style: solid;
   border-width: 1px 1px 1px 1px;
   border-color: #427BAB;
   margin: 2px 0 0 0;
 }
 
-#typo3-index-php .t3-grid-container-title-3 {
+.t3js-module-body .t3-grid-container-title-3 {
   font-size: 12px;
   font-weight: normal;
   color: #213E56;
@@ -124,11 +124,11 @@
 }
 
 #new-element-drag-in-wizard {
-	position: fixed;
-	height: auto;
-	top: -1px;
-	right: -1px;
-	max-width: 90%;
+	position: absolute;
+	/*height: auto;*/
+	top: 34px;
+	right: 120px;
+	max-width: 60%;
 	z-index: 20000;
 	float: right;
 	/* setting overflow makes items disappear when dragging
@@ -192,6 +192,10 @@
 	min-height: 122px;
 }
 
+#new-element-drag-in-wizard.dragged .tab-content:hover {
+	min-height: 0px!important;
+}
+
 #new-element-drag-in-wizard .media {
 	display: inline-block;
 	margin-top: 0;
@@ -205,6 +209,10 @@
 	width: auto;
 }
 
+#new-element-drag-in-wizard.dragged .media-body {
+	display: none!important;
+}
+
 #new-element-drag-in-wizard .panel-body {
 	padding: 5px 10px;
 }
@@ -213,18 +221,22 @@
 	min-height: 122px;
 }
 
-#typo3-index-php .exampleContent > .reference {
+#new-element-drag-in-wizard.dragged .panel-tab:hover {
+	min-height: 0px!important;
+}
+
+.t3js-module-body .exampleContent > .reference {
 	position: relative;
 	margin-top: 7px;
 }
 
-#typo3-index-php .exampleContent > .reference .t3-page-ce-header-icons-right,
-#typo3-index-php .exampleContent > .reference .t3-page-ce-wrapper-new-ce,
-#typo3-index-php .exampleContent > .reference .t3-page-ce-dropzone-available {
+.t3js-module-body .exampleContent > .reference .t3-page-ce-header-icons-right,
+.t3js-module-body .exampleContent > .reference .t3-page-ce-wrapper-new-ce,
+.t3js-module-body .exampleContent > .reference .t3-page-ce-dropzone-available {
 	display: none!important;
 }
 
-#typo3-index-php .exampleContent > .reference .reference-overlay {
+.t3js-module-body .exampleContent > .reference .reference-overlay {
 	position: absolute;
 	top: 0px;
 	left: 0px;

@@ -27,7 +27,7 @@ define(['jquery', 'TYPO3/CMS/Gridelements/GridElementsDragDrop', 'jquery-ui/sort
 	 * initializes Drag+Drop for all content elements on the page
 	 */
 	DragInWizard.initialize = function() {
-		if($('#typo3-index-php').length && $('.t3js-page-new-ce a').first().attr('onclick')) {
+		if($('.t3js-module-body').length && $('.t3js-page-new-ce a').first().attr('onclick')) {
 			DragInWizard.getWizardUrl();
 			DragInWizard.createToggleIcon();
 		}
@@ -45,9 +45,9 @@ define(['jquery', 'TYPO3/CMS/Gridelements/GridElementsDragDrop', 'jquery-ui/sort
 	 * create a new icon to make toggling the drag in wizard possible
 	 */
 	DragInWizard.createToggleIcon = function() {
-		var lastIcon = $('.typo3-docheader-buttons .left .buttongroup .icon').last().parent();
+		var lastIcon = $('.module-docheader-bar-column-left .btn-group .icon').last().parent();
 		var addNewIcon = $('.t3-page-ce-wrapper-new-ce a').first();
-		var newIcon = addNewIcon.clone().attr('class', '').insertAfter(lastIcon);
+		var newIcon = addNewIcon.clone().attr('class', 'btn btn-default btn-sm').insertAfter(lastIcon);
 		newIcon.contents().filter(function(){
 			return (this.nodeType == 3);
 		}).remove();
@@ -68,8 +68,8 @@ define(['jquery', 'TYPO3/CMS/Gridelements/GridElementsDragDrop', 'jquery-ui/sort
 		if($('#' + DragInWizard.wizardIdentifier).length) {
 			$('#' + DragInWizard.wizardIdentifier).toggle();
 		} else {
-			$('#typo3-inner-docbody').prepend('<div id="' + DragInWizard.wizardIdentifier + '"></div>');
-			$('#' + DragInWizard.wizardIdentifier).load(DragInWizard.wizardUrl + ' #typo3-inner-docbody div[role=\'tabpanel\']:first', function() {
+			$('.t3js-module-docheader').append('<div id="' + DragInWizard.wizardIdentifier + '"></div>');
+			$('#' + DragInWizard.wizardIdentifier).load(DragInWizard.wizardUrl + ' .t3js-module-body div[role=\'tabpanel\']:first', function() {
 				DragInWizard.makeItemsSortable();
 				DragInWizard.rearrangeItems();
 			});
@@ -107,7 +107,7 @@ define(['jquery', 'TYPO3/CMS/Gridelements/GridElementsDragDrop', 'jquery-ui/sort
 			var description = $(this).find('.media-body');
 			description = description.appendTo( panel );
 			description.width(descriptionWidth);
-			$(this).find('.media-left').on('mouseenter', function() { description.fadeIn() }).on('mouseleave', function() { description.hide() });
+			$(this).find('.media-left').on('mouseenter', function() { description.show() }).on('mouseleave', function() { description.hide() });
 		});
 		$('#' + DragInWizard.wizardIdentifier + ' .media-left input').parent().remove();
 	};
