@@ -43,83 +43,78 @@ class PageRenderer {
 		$pageRenderer->loadRequireJsModule('TYPO3/CMS/Gridelements/GridElementsDragDrop');
 		$pageRenderer->loadRequireJsModule('TYPO3/CMS/Gridelements/GridElementsDragInWizard');
 
-		if (!empty($parameters['jsFiles'])) {
+		/** @var Clipboard $clipObj */
+		$clipObj = GeneralUtility::makeInstance(Clipboard::class); // Start clipboard
+		$clipObj->initializeClipboard();
 
-			if (method_exists($GLOBALS['SOBE']->doc, 'issueCommand')) {
-				/** @var Clipboard $clipObj */
-				$clipObj = GeneralUtility::makeInstance(Clipboard::class); // Start clipboard
-				$clipObj->initializeClipboard();
+		$pasteURL = '';
+		if (isset($clipObj->clipData['normal']['el']) && strpos(key($clipObj->clipData['normal']['el']), 'tt_content') !== false) {
+			$pasteURL = str_replace('&amp;', '&', $clipObj->pasteUrl('tt_content', 'DD_PASTE_UID', 0));
+		}
 
-				$pasteURL = '';
-				if (isset($clipObj->clipData['normal']['el']) && strpos(key($clipObj->clipData['normal']['el']), 'tt_content') !== false) {
-					$pasteURL = str_replace('&amp;', '&', $clipObj->pasteUrl('tt_content', 'DD_PASTE_UID', 0));
+		// add JavaScript library
+		// $pageRenderer->addJsFile($GLOBALS['BACK_PATH'] . ExtensionManagementUtility::extRelPath('gridelements') . 'Resources/Public/Backend/JavaScript/dbNewContentElWizardFixDTM.js', $type = 'text/javascript', $compress = TRUE, $forceOnTop = FALSE, $allWrap = '');
+
+		if (!$pageRenderer->getCharSet()) {
+			$pageRenderer->setCharSet($GLOBALS['LANG']->charSet ? $GLOBALS['LANG']->charSet : 'utf-8');
+		}
+
+		// pull locallang_db.xml to JS side - only the tx_gridelements_js-prefixed keys
+		$pageRenderer->addInlineLanguageLabelFile('EXT:gridelements/Resources/Private/Language/locallang_db.xml', 'tx_gridelements_js');
+
+		$pAddExtOnReadyCode = '
+			TYPO3.l10n = {
+				localize: function(langKey){
+					return TYPO3.lang[langKey];
 				}
+			}
+		';
 
-				// add JavaScript library
-				// $pageRenderer->addJsFile($GLOBALS['BACK_PATH'] . ExtensionManagementUtility::extRelPath('gridelements') . 'Resources/Public/Backend/JavaScript/dbNewContentElWizardFixDTM.js', $type = 'text/javascript', $compress = TRUE, $forceOnTop = FALSE, $allWrap = '');
-
-				if (!$pageRenderer->getCharSet()) {
-					$pageRenderer->setCharSet($GLOBALS['LANG']->charSet ? $GLOBALS['LANG']->charSet : 'utf-8');
-				}
-
-				// pull locallang_db.xml to JS side - only the tx_gridelements_js-prefixed keys
-				$pageRenderer->addInlineLanguageLabelFile('EXT:gridelements/Resources/Private/Language/locallang_db.xml', 'tx_gridelements_js');
-
-				$pAddExtOnReadyCode = '
-					TYPO3.l10n = {
-						localize: function(langKey){
-							return TYPO3.lang[langKey];
-						}
-					}
-				';
-
-				$allowedContentTypesClassesByColPos = array();
-				$layoutSetup = GeneralUtility::callUserFunction('TYPO3\\CMS\\Backend\\View\\BackendLayoutView->getSelectedBackendLayout', intval(GeneralUtility::_GP('id')), $this);
-				if (is_array($layoutSetup) && !empty($layoutSetup['__config']['backend_layout.']['rows.'])) {
-					foreach ($layoutSetup['__config']['backend_layout.']['rows.'] as $rows) {
-						foreach ($rows as $row) {
-							if (!empty($layoutSetup['__config']['backend_layout.']['rows.'])) {
-								foreach ($row as $col) {
-									$classes = '';
-									if ($col['allowed']) {
-										$allowed = explode(',', $col['allowed']);
-										foreach ($allowed as $contentTypes) {
-											$contentTypes = trim($contentTypes);
-											if ($contentTypes === '*') {
-												$classes = 't3-allow-all';
-												break;
-											} else {
-												$contentTypes = explode(',', $contentTypes);
-												foreach ($contentTypes as $contentType) {
-													$classes .= 't3-allow-' . $contentType . ' ';
-												}
-											}
-										}
-									} else {
+		$allowedContentTypesClassesByColPos = array();
+		$layoutSetup = GeneralUtility::callUserFunction('TYPO3\\CMS\\Backend\\View\\BackendLayoutView->getSelectedBackendLayout', intval(GeneralUtility::_GP('id')), $this);
+		if (is_array($layoutSetup) && !empty($layoutSetup['__config']['backend_layout.']['rows.'])) {
+			foreach ($layoutSetup['__config']['backend_layout.']['rows.'] as $rows) {
+				foreach ($rows as $row) {
+					if (!empty($layoutSetup['__config']['backend_layout.']['rows.'])) {
+						foreach ($row as $col) {
+							$classes = '';
+							if ($col['allowed']) {
+								$allowed = explode(',', $col['allowed']);
+								foreach ($allowed as $contentTypes) {
+									$contentTypes = trim($contentTypes);
+									if ($contentTypes === '*') {
 										$classes = 't3-allow-all';
+										break;
+									} else {
+										$contentTypes = explode(',', $contentTypes);
+										foreach ($contentTypes as $contentType) {
+											$classes .= 't3-allow-' . $contentType . ' ';
+										}
 									}
-									$allowedContentTypesClassesByColPos[$col['colPos']] .= ' ' . trim($classes);
 								}
+							} else {
+								$classes = 't3-allow-all';
 							}
+							$allowedContentTypesClassesByColPos[$col['colPos']] .= ' ' . trim($classes);
 						}
 					}
 				}
-
-				// add Ext.onReady() code from file
-				$pAddExtOnReadyCode .= "
-				top.pageColumnsAllowedCTypes = " . json_encode($allowedContentTypesClassesByColPos) . ";
-				top.skipDraggableDetails = " . ($GLOBALS['BE_USER']->uc['dragAndDropHideNewElementWizardInfoOverlay'] ? 'true;' : 'false;') . ";
-				top.geSprites = {
-				copyfrompage: '" . IconUtility::getSpriteIconClasses('extensions-gridelements-copyfrompage') . "',
-					pastecopy: '" . IconUtility::getSpriteIconClasses('extensions-gridelements-pastecopy') . "',
-					pasteref: '" . IconUtility::getSpriteIconClasses('extensions-gridelements-pasteref') . "'
-				};
-				top.backPath = '" . $GLOBALS['BACK_PATH'] . "'";
-
-				$pageRenderer->addJsInlineCode(// add some more JS here
-					'gridelementsExtOnReady', $pAddExtOnReadyCode);
 			}
 		}
+
+		// add Ext.onReady() code from file
+		$pAddExtOnReadyCode .= "
+		top.pageColumnsAllowedCTypes = " . json_encode($allowedContentTypesClassesByColPos) . ";
+		top.skipDraggableDetails = " . ($GLOBALS['BE_USER']->uc['dragAndDropHideNewElementWizardInfoOverlay'] ? 'true;' : 'false;') . ";
+		top.geSprites = {
+		copyfrompage: '" . IconUtility::getSpriteIconClasses('extensions-gridelements-copyfrompage') . "',
+			pastecopy: '" . IconUtility::getSpriteIconClasses('extensions-gridelements-pastecopy') . "',
+			pasteref: '" . IconUtility::getSpriteIconClasses('extensions-gridelements-pasteref') . "'
+		};
+		top.backPath = '" . $GLOBALS['BACK_PATH'] . "'";
+
+		$pageRenderer->addJsInlineCode(// add some more JS here
+			'gridelementsExtOnReady', $pAddExtOnReadyCode);
 	}
 
 	/**
