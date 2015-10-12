@@ -21,6 +21,7 @@ namespace GridElementsTeam\Gridelements\Backend;
 
 use TYPO3\CMS\Core\Database\DatabaseConnection;
 use TYPO3\CMS\Core\Utility\ArrayUtility;
+use TYPO3\CMS\Core\Utility\DebugUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -73,15 +74,16 @@ class TtContent {
 	 */
 	public function columnsItemsProcFunc(&$params) {
 		$this->init($params['row']['pid']);
-		$gridContainerId = (int)$params['row']['tx_gridelements_container'];
+		$gridContainerId = is_array($params['row']['tx_gridelements_container']) ? (int)$params['row']['tx_gridelements_container'][0] : (int)$params['row']['tx_gridelements_container'];
 
 		if ($gridContainerId > 0) {
 			$gridElement = $this->layoutSetup->cacheCurrentParent($gridContainerId, true);
 			$params['items'] = $this->layoutSetup->getLayoutColumnsSelectItems($gridElement['tx_gridelements_backend_layout']);
 
-			if ($params['row']['CType'] !== '' && is_array($params['items'])) {
+			$ContentType = is_array($params['row']['CType']) ? $params['row']['CType'][0] : $params['row']['CType'];
+			if ($ContentType !== '' && is_array($params['items'])) {
 				foreach ($params['items'] as $itemKey => $itemArray) {
-					if ($itemArray[3] !== '' && $itemArray[3] !== '*' && !GeneralUtility::inList($itemArray[3], $params['row']['CType'])) {
+					if ($itemArray[3] !== '' && $itemArray[3] !== '*' && !GeneralUtility::inList($itemArray[3], $ContentType)) {
 						unset($params['items'][$itemKey]);
 					}
 				}
@@ -125,7 +127,8 @@ class TtContent {
 	 * @return void
 	 */
 	public function removesItemsFromListOfSelectableContainers(array &$params, &$possibleContainers) {
-		if ($params['row']['CType'] === 'gridelements_pi1' && count($params['items']) > 1) {
+		$ContentType = is_array($params['row']['CType']) ? $params['row']['CType'][0] : $params['row']['CType'];
+		if ($ContentType === 'gridelements_pi1' && count($params['items']) > 1) {
 			$items = $params['items'];
 			$params['items'] = array(0 => array_shift($items));
 
@@ -146,6 +149,7 @@ class TtContent {
 	 * @return void
 	 */
 	public function deleteUnallowedContainer(array &$params, $itemUidList = '') {
+		$ContentType = is_array($params['row']['CType']) ? $params['row']['CType'][0] : $params['row']['CType'];
 		$layoutSetups = $this->layoutSetup->getLayoutSetup();
 		if ($itemUidList) {
 			$containerRecords = $this->databaseConnection->exec_SELECTgetRows('uid,tx_gridelements_backend_layout', 'tt_content', 'uid IN (' . $itemUidList . ')', '', '', '', 'uid');
@@ -153,7 +157,7 @@ class TtContent {
 			foreach ($params['items'] as $key => $container) {
 				$allowed = $layoutSetups[$containerRecords[$container[1]]['tx_gridelements_backend_layout']]['allowed'];
 				if ($container[1] > 0 && $allowed) {
-					if (!GeneralUtility::inList($allowed, $params['row']['CType']) && !GeneralUtility::inList($allowed, '*')) {
+					if (!GeneralUtility::inList($allowed, $ContentType) && !GeneralUtility::inList($allowed, '*')) {
 						unset($params['items'][$key]);
 					}
 				}
