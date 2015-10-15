@@ -152,9 +152,9 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 			foreach ($shortcutItems as $shortcutItem) {
 				$shortcutItem = trim($shortcutItem);
 				if (strpos($shortcutItem, 'pages_') !== FALSE) {
-					$this->collectContentDataFromPages($shortcutItem, $collectedItems, $row['recursive'], $showHidden, $deleteClause);
+					$this->collectContentDataFromPages($shortcutItem, $collectedItems, $row['recursive'], $showHidden, $deleteClause, $row['uid']);
 				} else if (strpos($shortcutItem, '_') === FALSE || strpos($shortcutItem, 'tt_content_') !== FALSE) {
-					$this->collectContentData($shortcutItem, $collectedItems, $showHidden, $deleteClause);
+					$this->collectContentData($shortcutItem, $collectedItems, $showHidden, $deleteClause, $row['uid']);
 				}
 			}
 			if (count($collectedItems)) {
@@ -522,10 +522,11 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 	 * @param int    $recursive      : The number of levels for the recursion
 	 * @param string $showHidden     : query String containing enable fields
 	 * @param string $deleteClause   : query String to check for deleted items
+	 * @param int    $parentUid      : uid of the referencing tt_content record
 	 *
 	 * @return void
 	 */
-	public function collectContentDataFromPages($shortcutItem, &$collectedItems, $recursive = 0, &$showHidden, &$deleteClause) {
+	public function collectContentDataFromPages($shortcutItem, &$collectedItems, $recursive = 0, &$showHidden, &$deleteClause, $parentUid) {
 		$itemList = str_replace('pages_', '', $shortcutItem);
 		if ($recursive) {
 			if (!$this->tree instanceof QueryGenerator) {
@@ -533,7 +534,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 			}
 			$itemList = $this->tree->getTreeList($itemList, (int)$recursive, 0, 1);
 		}
-		$itemRows = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows('*', 'tt_content', 'pid IN (' . $itemList . ') AND colPos >= 0 ' . $showHidden . $deleteClause, '', 'FIND_IN_SET(pid, \'' . $itemList . '\'),colPos,sorting');
+		$itemRows = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows('*', 'tt_content', 'uid != ' . (int)$parentUid . ' AND pid IN (' . $itemList . ') AND colPos >= 0 ' . $showHidden . $deleteClause, '', 'FIND_IN_SET(pid, \'' . $itemList . '\'),colPos,sorting');
 		foreach ($itemRows as $itemRow) {
 			if ($GLOBALS['BE_USER']->workspace > 0) {
 				BackendUtility::workspaceOL('tt_content', $itemRow, $GLOBALS['BE_USER']->workspace);
@@ -545,21 +546,21 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 
 	/**
 	 * Collects tt_content data from a single tt_content element
-	 *
-	 * @param string $shortcutItem   : The tt_content element to fetch the data from
-	 * @param array  $collectedItems : The collected item data row
-	 * @param string $showHidden     : query String containing enable fields
-	 * @param string $deleteClause   : query String to check for deleted items
-	 *
-	 * @return void
+	 * @param string $shortcutItem : The tt_content element to fetch the data from
+	 * @param array $collectedItems : The collected item data row
+	 * @param string $showHidden : query String containing enable fields
+	 * @param string $deleteClause : query String to check for deleted items
+	 * @param int $parentUid : uid of the referencing tt_content record
 	 */
-	public function collectContentData($shortcutItem, &$collectedItems, &$showHidden, &$deleteClause) {
+	public function collectContentData($shortcutItem, &$collectedItems, &$showHidden, &$deleteClause, $parentUid) {
 		$shortcutItem = str_replace('tt_content_', '', $shortcutItem);
-		$itemRow = $GLOBALS['TYPO3_DB']->exec_SELECTgetSingleRow('*', 'tt_content', 'uid=' . $shortcutItem . $showHidden . $deleteClause);
-		if ($GLOBALS['BE_USER']->workspace > 0) {
-			BackendUtility::workspaceOL('tt_content', $itemRow, $GLOBALS['BE_USER']->workspace);
+		if((int)$shortcutItem !== (int)$parentUid) {
+			$itemRow = $GLOBALS['TYPO3_DB']->exec_SELECTgetSingleRow('*', 'tt_content', 'uid=' . $shortcutItem . $showHidden . $deleteClause);
+			if ($GLOBALS['BE_USER']->workspace > 0) {
+				BackendUtility::workspaceOL('tt_content', $itemRow, $GLOBALS['BE_USER']->workspace);
+			}
+			$collectedItems[] = $itemRow;
 		}
-		$collectedItems[] = $itemRow;
 	}
 
 	/**
