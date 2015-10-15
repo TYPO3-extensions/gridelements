@@ -1109,7 +1109,11 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
 			// Create element in table cells:
 			$iOut .= $this->addelement(1, $theIcon, $theData, $row_bgColor, '', '', $level);
 			// Finally, return table row element:
-			return $iOut;
+			if ($cc > 0 || !$this->csvOutput) {
+				return $iOut;
+			} else {
+				return '';
+			}
 		}
 	}
 
