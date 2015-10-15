@@ -103,10 +103,10 @@ if (typeof GridElementsDD === "undefined"){
 						var allowedGridTypes = new Array;
 						for (var i = 0; i < currentClasses.length; i++) {
 							var currentClass = currentClasses[i];
-							if (currentClass.substr(0, 9) === 't3-allow-'){
+							if (currentClass.substr(0, 18) === 't3-allow-gridtype-'){
+								allowedGridTypes.push(currentClass.substr(18));
+							} else if (currentClass.substr(0, 9) === 't3-allow-'){
 								allowedCTypes.push(currentClass.substr(9));
-							} else if (currentClass.substr(0, 11) === 't3-gridtype-'){
-								allowedGridTypes.push(currentClass.substr(11));
 							}
 						}
 						if (allowedCTypes[0] !== 'all'){
