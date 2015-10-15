@@ -186,7 +186,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 			foreach ($shortcutItems as $shortcutItem) {
 				$shortcutItem = trim($shortcutItem);
 				if (strpos($shortcutItem, 'pages_') !== FALSE) {
-					$this->collectContentDataFromPages($shortcutItem, $collectedItems, $row['recursive'], $showHidden, $deleteClause, $row['uid']);
+					$this->collectContentDataFromPages($shortcutItem, $collectedItems, $row['recursive'], $showHidden, $deleteClaus, $row['uid']);
 				} else if (strpos($shortcutItem, '_') === FALSE || strpos($shortcutItem, 'tt_content_') !== FALSE) {
 					$this->collectContentData($shortcutItem, $collectedItems, $showHidden, $deleteClause, $row['uid']);
 				}
@@ -527,6 +527,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 	 * @param int $recursive : The number of levels for the recursion
 	 * @param string $showHidden : query String containing enable fields
 	 * @param string $deleteClause : query String to check for deleted items
+	 * @param int $parentUid : uid of the referencing tt_content record
 	 * @return void
 	 */
 	public function collectContentDataFromPages($shortcutItem, &$collectedItems, $recursive = 0, &$showHidden, &$deleteClause, $parentUid) {
@@ -537,7 +538,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 			}
 			$itemList = $this->tree->getTreeList($itemList, (int)$recursive, 0, 1);
 		}
-		$itemRows = $this->databaseConnection->exec_SELECTgetRows('*', 'tt_content', 'pid IN (' . $itemList . ') AND colPos >= 0 ' . $showHidden . $deleteClause, '', 'FIND_IN_SET(pid, \'' . $itemList . '\'),colPos,sorting');
+		$itemRows = $this->databaseConnection->exec_SELECTgetRows('*', 'tt_content', 'uid != ' . (int)$parentUid . ' AND pid IN (' . $itemList . ') AND colPos >= 0 ' . $showHidden . $deleteClause, '', 'FIND_IN_SET(pid, \'' . $itemList . '\'),colPos,sorting');
 		foreach ($itemRows as $itemRow) {
 			if ($this->helper->getBackendUser()->workspace > 0) {
 				BackendUtility::workspaceOL('tt_content', $itemRow, $this->helper->getBackendUser()->workspace);
@@ -553,13 +554,17 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 	 * @param array $collectedItems : The collected item data row
 	 * @param string $showHidden : query String containing enable fields
 	 * @param string $deleteClause : query String to check for deleted items
+	 * @param int $parentUid : uid of the referencing tt_content record
 	 * @return void
 	 */
 	public function collectContentData($shortcutItem, &$collectedItems, &$showHidden, &$deleteClause, $parentUid) {
 		$shortcutItem = str_replace('tt_content_', '', $shortcutItem);
-		$itemRow = $this->databaseConnection->exec_SELECTgetSingleRow('*', 'tt_content', 'uid=' . $shortcutItem . $showHidden . $deleteClause);
-		if ($this->helper->getBackendUser()->workspace > 0) {
-			BackendUtility::workspaceOL('tt_content', $itemRow, $this->helper->getBackendUser()->workspace);
+		if((int)$shortcutItem !== (int)$parentUid) {
+			$itemRow = $this->databaseConnection->exec_SELECTgetSingleRow('*', 'tt_content', 'uid=' . $shortcutItem . $showHidden . $deleteClause);
+			if ($this->helper->getBackendUser()->workspace > 0) {
+				BackendUtility::workspaceOL('tt_content', $itemRow, $this->helper->getBackendUser()->workspace);
+			}
+			$collectedItems[] = $itemRow;
 		}
 	}
 
