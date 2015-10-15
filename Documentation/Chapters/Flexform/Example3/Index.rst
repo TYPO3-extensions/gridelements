@@ -112,9 +112,7 @@ and some text.
   </T3DataStructure>
 
 
-Be aware of wrapped lines. For a working, easy to copy scripting, have
-a look at https://gist.github.com/3294052.
-The backend form of this setup will look like this:
+Be aware of wrapped lines. The backend form of this setup will look like this:
 
 |img-20|
 
