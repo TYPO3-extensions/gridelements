@@ -129,7 +129,7 @@ class Gridelements extends ContentObjectRenderer {
 				AND sys_language_uid IN (-1,0)
 			)';
 
-			if ($GLOBALS['TSFE']->sys_language_uid > 0) {
+			if ($GLOBALS['TSFE']->sys_language_content > 0) {
 				if ($GLOBALS['TSFE']->sys_language_contentOL) {
 					if (isset($this->cObj->data['_LOCALIZED_UID']) && $this->cObj->data['_LOCALIZED_UID'] !== 0) {
 						$element = (int)$this->cObj->data['_LOCALIZED_UID'];
@@ -137,14 +137,14 @@ class Gridelements extends ContentObjectRenderer {
 
 					if ($element) {
 						$where .= '  OR (
-						tx_gridelements_container = ' . $element . $this->cObj->enableFields('tt_content') . ' AND sys_language_uid IN (-1,' . $GLOBALS['TSFE']->sys_language_uid . ')
+						tx_gridelements_container = ' . $element . $this->cObj->enableFields('tt_content') . ' AND sys_language_uid IN (-1,' . $GLOBALS['TSFE']->sys_language_content . ')
 							AND l18n_parent = 0
 					)';
 					}
 				} else {
 					if ($element) {
 						$where .= '  OR (
-						tx_gridelements_container = ' . $element . $this->cObj->enableFields('tt_content') . ' AND sys_language_uid IN (-1,' . $GLOBALS['TSFE']->sys_language_uid . ')
+						tx_gridelements_container = ' . $element . $this->cObj->enableFields('tt_content') . ' AND sys_language_uid IN (-1,' . $GLOBALS['TSFE']->sys_language_content . ')
 					)';
 					}
 				}
