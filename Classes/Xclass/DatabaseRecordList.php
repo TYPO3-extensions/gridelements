@@ -318,7 +318,7 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
 							$lastColPos = $row['colPos'];
 							$this->showMoveUp = FALSE;
 							$column = BackendUtility::getProcessedValueExtra($table, 'colPos', $row['colPos'], 100, $row['uid']);
-							$iOut .= '<tr><td></td><td colspan="' . (count($this->fieldArray)-1+$this->maxDepth) . '" style="padding:5px;"><br /><strong>' .
+							$iOut .= '<tr><td></td><td colspan="' . (count($this->fieldArray)+$this->maxDepth) . '" style="padding:5px;"><br /><strong>' .
 								$GLOBALS['LANG']->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:list.columnName') . ' ' .
 								(($column) ? $column : $row['colPos']) . '</strong></td></tr>';
 						} else {
@@ -1168,6 +1168,7 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
 
 		// Show icon and lines
 		if ($this->showIcon) {
+			$level ++;
 			$out .= '
 			<td nowrap="nowrap" class="col-icon">';
 			if (!$h) {
@@ -1211,7 +1212,7 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
 		foreach ($this->fieldArray as $vKey) {
 			if (isset($data[$vKey])) {
 				if ($ccount == 1) {
-					$colsp = ' colspan="' . ($this->maxDepth - $level) . '"';
+					$colsp = ' colspan="' . ($c + $this->maxDepth - $level) . '"';
 				}
 
 				if ($lastKey) {
@@ -1230,7 +1231,6 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
 				if (!$lastKey) {
 					$lastKey = $vKey;
 				}
-				$c++;
 			}
 			$reload = '<a href="#" onclick="document.dblistForm.action=\'' . $listURL . '&pointer=\'+calculatePointer(document.getElementById(\'jumpPage-' . $renderPart . '\').value); document.dblistForm.submit(); return true;" title="' . $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_common.xlf:reload', TRUE) . '">' . IconUtility::getSpriteIcon('actions-system-refresh') . '</a>';
 
@@ -1239,7 +1239,7 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
 			}
 
 			if ($c > 1) {
-				$colsp = ' colspan="' . ($c + $this->maxDepth) . '"';
+				$colsp = ' colspan="' . ($c + $this->maxDepth - $level) . '"';
 			} else {
 				$previous = IconUtility::getSpriteIcon('actions-view-paging-previous-disabled');
 				$colsp = '';
