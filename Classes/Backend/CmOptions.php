@@ -45,7 +45,7 @@ class CmOptions {
 	public function main(ClickMenu $backRef, array $menuItems) {
 
 		$this->lang = GeneralUtility::makeInstance(LanguageService::class);
-		$this->lang->init($GLOBALS['BE_USER']->uc['lang']);
+		$this->lang->init($this->getBackendUser->uc['lang']);
 
 		// add copied item handler to "(un)copy" link in clickmenu
 		if (strpos($menuItems['copy'][0], 't3-icon-edit-copy-release') === false) {
@@ -54,19 +54,28 @@ class CmOptions {
 			$menuItems['copy'][3] = str_replace('return false;', ' GridElementsDD.listenForCopyItem(' . $strUidInLink . '); return false;', $menuItems['copy'][3]);
 		}
 
-		// add "paste reference after"
-		$parkItem = $menuItems['pasteafter'];
-		if ($parkItem) {
-			unset($menuItems['pasteafter']);
-			$menuItems['pasteafter'] = $parkItem;
-			if ($backRef->clipObj->currentMode() === 'copy') {
-				$parkItem[1] = $this->lang->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tx_gridelements_clickmenu_pastereference');
-				$parkItem[3] = preg_replace('/formToken/', 'reference=1&formToken', $parkItem[3]);
-				$menuItems['pastereference'] = $parkItem;
+		// add "paste reference after" if user is allowed to use CType shortcut
+		if($this->getBackendUser->checkAuthMode('tt_content','CType',11,'explicitAllow')) {
+			$parkItem = $menuItems['pasteafter'];
+			if ($parkItem) {
+				unset($menuItems['pasteafter']);
+				$menuItems['pasteafter'] = $parkItem;
+				if ($backRef->clipObj->currentMode() === 'copy') {
+					$parkItem[1] = $this->lang->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tx_gridelements_clickmenu_pastereference');
+					$parkItem[3] = preg_replace('/formToken/', 'reference=1&formToken', $parkItem[3]);
+					$menuItems['pastereference'] = $parkItem;
+				}
 			}
 		}
-
 		return $menuItems;
+	}
+
+	/**
+	 * Gets the current backend user.
+	 * @return \TYPO3\CMS\Core\Authentication\BackendUserAuthentication
+	 */
+	public function getBackendUser() {
+		return $GLOBALS['BE_USER'];
 	}
 
 }

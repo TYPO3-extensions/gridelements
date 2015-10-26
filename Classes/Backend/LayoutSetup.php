@@ -69,7 +69,7 @@ class LayoutSetup {
 		$this->setDatabaseConnection($GLOBALS['TYPO3_DB']);
 		$pageId = (strpos($pageId, 'NEW') === 0) ? 0 : (int)$pageId;
 		$this->lang = GeneralUtility::makeInstance(LanguageService::class);
-		$this->lang->init($GLOBALS['BE_USER']->uc['lang']);
+		$this->lang->init($this->getBackendUser()->uc['lang']);
 		$this->loadLayoutSetup($pageId);
 		foreach ($this->layoutSetup as $key => $setup) {
 			$columns = $this->getLayoutColumns($key);
@@ -428,6 +428,14 @@ class LayoutSetup {
 	 */
 	public function getDatabaseConnection() {
 		return $this->databaseConnection;
+	}
+
+	/**
+	 * Gets the current backend user.
+	 * @return \TYPO3\CMS\Core\Authentication\BackendUserAuthentication
+	 */
+	public function getBackendUser() {
+		return $GLOBALS['BE_USER'];
 	}
 
 }
