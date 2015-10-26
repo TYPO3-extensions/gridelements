@@ -222,7 +222,7 @@ if (typeof GridElementsDD === "undefined"){
 		firstNewIconContainer = Ext.get(Ext.get('typo3-docheader').select('.left .buttongroup').elements[0]);
 
 		// get link around the "new content element" icon and if there is one do the magic
-		if (firstNewIconContainer && firstNewIconContainer.select('.t3-icon:last').elements[0]) {
+		if (firstNewIconContainer && firstNewIconContainer.select('.t3-icon:last').elements[0] && top.newElementWizard === 'true') {
 
 			var
 				lastIcon = Ext.get(firstNewIconContainer.select('.t3-icon:last').elements[0].parentNode.cloneNode(true));
@@ -363,7 +363,7 @@ if (typeof GridElementsDD === "undefined"){
 				DTM_activate(dyntabMenuID, top.DTM_currentTabs[dyntabMenuID] ? top.DTM_currentTabs[dyntabMenuID] : 1, 0);
 			};
 			
-			if (top.draggableContainerActive) {
+			if (top.draggableContainerActive && top.newElementWizard === 'true') {
 
 				// load HTML output from /typo3/sysext/cms/layout/db_new_content_el.php to temp element
 				// e.g. http://core-540-rgeorgi.typo3-entw.telekom.de/typo3/sysext/cms/layout/db_new_content_el.php?id=4722&colPos=1&sys_language_uid=0&uid_pid=4722
@@ -384,33 +384,34 @@ if (typeof GridElementsDD === "undefined"){
 			}
 
 			// over write click event on first "new content element" icon on page - show content draggables instead
-			firstNewIconLink.on('click', function(e) {
+			if (top.newElementWizard === 'true') {
+				firstNewIconLink.on('click', function (e) {
 
-				// disable click (jumping to href)
-				e.preventDefault();
+					// disable click (jumping to href)
+					e.preventDefault();
 
-				top.draggableContainerActive = top.draggableContainerActive === true ? false : true;
-				
-				// load HTML output from /typo3/sysext/cms/layout/db_new_content_el.php to temp element
-				// e.g. http://core-540-rgeorgi.typo3-entw.telekom.de/typo3/sysext/cms/layout/db_new_content_el.php?id=4722&colPos=1&sys_language_uid=0&uid_pid=4722
-				if (draggableContainerFilled === false) {
-				    Ext.get(document.createElement('div')).load({
-					url: top.TYPO3.configuration.PATH_typo3 + 'sysext/cms/layout/db_new_content_el.php' + top.TYPO3.Backend.ContentContainer.iframe.window.location.search,
-					method: 'GET',
-					scripts: false,
-					params: {
-					},
-					callback: fillDraggableContainer
-				    });
-				}
+					top.draggableContainerActive = top.draggableContainerActive === true ? false : true;
 
-				// show content draggables dialog instead
-				draggableContainer.toggle();
-				Ext.get(draggableContainer).dom.style.display = Ext.get(draggableContainer).dom.style.display === 'block' ? 'none' : 'block';
+					// load HTML output from /typo3/sysext/cms/layout/db_new_content_el.php to temp element
+					// e.g. http://core-540-rgeorgi.typo3-entw.telekom.de/typo3/sysext/cms/layout/db_new_content_el.php?id=4722&colPos=1&sys_language_uid=0&uid_pid=4722
+					if (draggableContainerFilled === false) {
+						Ext.get(document.createElement('div')).load({
+							url: top.TYPO3.configuration.PATH_typo3 + 'sysext/cms/layout/db_new_content_el.php' + top.TYPO3.Backend.ContentContainer.iframe.window.location.search,
+							method: 'GET',
+							scripts: false,
+							params: {},
+							callback: fillDraggableContainer
+						});
+					}
 
-				return false;
+					// show content draggables dialog instead
+					draggableContainer.toggle();
+					Ext.get(draggableContainer).dom.style.display = Ext.get(draggableContainer).dom.style.display === 'block' ? 'none' : 'block';
 
-			});
+					return false;
+
+				});
+			}
 
 		}
 		

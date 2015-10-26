@@ -350,7 +350,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 						$onClick = 'window.location.href=\'db_new_content_el.php?id=' . $itemRow['pid'] . '&sys_language_uid=' . $itemRow['sys_language_uid'] . '&colPos=' . $itemRow['colPos'] . '&uid_pid=' . -$itemRow['uid'] . '&returnUrl=' . rawurlencode(GeneralUtility::getIndpEnv('REQUEST_URI')) . '\';';
 					} else {
 						$params = '&edit[tt_content][' . -$itemRow['uid'] . ']=new';
-						$onClick = BackendUtility::editOnClick($params, $this->backPath);
+						$onClick = BackendUtility::editOnClick($params, $parentObject->backPath);
 					}
 					$gridContent[$colPos] .= '
 				<div class="t3-page-ce-dropzone"><div class="t3-page-ce-new-ce">
