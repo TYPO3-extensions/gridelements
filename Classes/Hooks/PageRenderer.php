@@ -24,6 +24,7 @@ namespace GridElementsTeam\Gridelements\Hooks;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 use TYPO3\CMS\Backend\Utility\IconUtility;
+use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\FormProtection\FormProtectionFactory;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -177,6 +178,7 @@ class PageRenderer {
 						top.DDtoken = '" . $formprotection->generateToken('editRecord') . "';
 						top.DDpid = '" . (int)GeneralUtility::_GP('id') . "';
 						top.DDclipboardfilled = '" . ($clipBoardHasContent ? $clipBoardHasContent : 'false') . "';
+						top.pasteReferenceAllowed = '" . ($GLOBALS['BE_USER']->checkAuthMode('tt_content','CType',11,'explicitAllow') ? 'true' : 'false') . "';
 						top.DDclipboardElId = '" . $intFirstCBEl . "';
 					" . // replace placeholder for detail info on draggables
 				             str_replace(array(

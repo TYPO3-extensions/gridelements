@@ -930,26 +930,28 @@ GridElementsDD = function() {
 						});
 
 						// also add "paste reference" icon in this case
-						var
-							pasteRefIconConf = {
-								tag: 'a',
-								href: '#',
-								title: TYPO3.l10n.localize('tx_gridelements_js.pasteref'),
-								cn: {
-									tag:'span',
-									'class': top.geSprites.pasteref,
-									html:'&nbsp;'
-								}
-							},
-							pasteRefIcon = Ext.DomHelper.insertAfter(pasteCopyIcon, pasteRefIconConf, true);
+						if(top.pasteReferenceAllowed === 'true') {
+							var
+								pasteRefIconConf = {
+									tag: 'a',
+									href: '#',
+									title: TYPO3.l10n.localize('tx_gridelements_js.pasteref'),
+									cn: {
+										tag: 'span',
+										'class': top.geSprites.pasteref,
+										html: '&nbsp;'
+									}
+								},
+								pasteRefIcon = Ext.DomHelper.insertAfter(pasteCopyIcon, pasteRefIconConf, true);
 
-						// bind click event
-						pasteRefIcon.on('click', function(){
-							GridElementsDD.ajaxThenReload(
-								top.pasteTpl.replace('DD_REFYN', 1).replace('DD_DRAG_UID', clipboardItemUid).replace('DD_DROP_UID', dropZoneID)
-							);
-							return false;
-						});
+							// bind click event
+							pasteRefIcon.on('click', function () {
+								GridElementsDD.ajaxThenReload(
+									top.pasteTpl.replace('DD_REFYN', 1).replace('DD_DRAG_UID', clipboardItemUid).replace('DD_DROP_UID', dropZoneID)
+								);
+								return false;
+							});
+						}
 					}
 				});
 			}
