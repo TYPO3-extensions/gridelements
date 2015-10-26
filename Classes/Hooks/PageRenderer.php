@@ -105,7 +105,8 @@ class PageRenderer {
 		// add Ext.onReady() code from file
 		$pAddExtOnReadyCode .= "
 		top.pageColumnsAllowedCTypes = " . json_encode($allowedContentTypesClassesByColPos) . ";
-		top.skipDraggableDetails = " . ($GLOBALS['BE_USER']->uc['dragAndDropHideNewElementWizardInfoOverlay'] ? 'true;' : 'false;') . ";
+		top.pasteReferenceAllowed = '" . ($this->getBackendUser()->checkAuthMode('tt_content','CType',11,'explicitAllow') ? 'true' : 'false') . "';
+		top.skipDraggableDetails = " . ($this->getBackendUser()->uc['dragAndDropHideNewElementWizardInfoOverlay'] ? 'true;' : 'false;') . ";
 		top.geSprites = {
 		copyfrompage: '" . IconUtility::getSpriteIconClasses('extensions-gridelements-copyfrompage') . "',
 			pastecopy: '" . IconUtility::getSpriteIconClasses('extensions-gridelements-pastecopy') . "',
@@ -141,4 +142,13 @@ class PageRenderer {
 			}
 		}
 	}
+
+	/**
+	 * Gets the current backend user.
+	 * @return \TYPO3\CMS\Core\Authentication\BackendUserAuthentication
+	 */
+	public function getBackendUser() {
+		return $GLOBALS['BE_USER'];
+	}
+
 }

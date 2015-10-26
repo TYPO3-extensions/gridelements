@@ -61,7 +61,7 @@ abstract class AbstractItemsProcFunc {
 	public function init() {
 		$this->setDatabaseConnection($GLOBALS['TYPO3_DB']);
 		$this->lang = GeneralUtility::makeInstance(LanguageService::class);
-		$this->lang->init($GLOBALS['BE_USER']->uc['lang']);
+		$this->lang->init($this->getBackendUser()->uc['lang']);
 	}
 
 	/**
@@ -115,6 +115,14 @@ abstract class AbstractItemsProcFunc {
 	 */
 	public function getDatabaseConnection() {
 		return $this->databaseConnection;
+	}
+
+	/**
+	 * Gets the current backend user.
+	 * @return \TYPO3\CMS\Core\Authentication\BackendUserAuthentication
+	 */
+	public function getBackendUser() {
+		return $GLOBALS['BE_USER'];
 	}
 
 }
