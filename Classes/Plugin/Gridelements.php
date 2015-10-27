@@ -21,6 +21,7 @@ namespace GridElementsTeam\Gridelements\Plugin;
 
 use GridElementsTeam\Gridelements\Backend\LayoutSetup;
 use TYPO3\CMS\Core\Database\DatabaseConnection;
+use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\MathUtility;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
@@ -37,6 +38,11 @@ class Gridelements extends ContentObjectRenderer {
 	 * @var ContentObjectRenderer
 	 */
 	protected $cObj;
+
+	/**
+	 * @var PageRenderer
+	 */
+	protected $pageRenderer;
 
 	public $prefixId = 'Gridelements'; // Same as class name
 	public $scriptRelPath = 'Classes/Plugin/Gridelements.php'; // Path to this script relative to the extension dir.
@@ -93,6 +99,14 @@ class Gridelements extends ContentObjectRenderer {
 
 		unset($availableColumns);
 		unset($csvColumns);
+
+		if (isset($typoScriptSetup['jsFooterInline']) || isset($typoScriptSetup['jsFooterInline.'])) {
+			$jsFooterInline = isset($typoScriptSetup['jsFooterInline.']) ? $this->cObj->stdWrap($typoScriptSetup['jsFooterInline'], $typoScriptSetup['jsFooterInline.']) : $typoScriptSetup['jsFooterInline'];
+
+			$this->getPageRenderer()->addJsFooterInlineCode('gridelements'.$element, $jsFooterInline);
+			unset($typoScriptSetup['jsFooterInline']);
+			unset($typoScriptSetup['jsFooterInline.']);
+		}
 
 		// finally we can unset the columns setup as well and apply stdWrap operations to the overall result
 		// before returning the content
@@ -542,6 +556,17 @@ class Gridelements extends ContentObjectRenderer {
 	 */
 	protected function getDatabaseConnection() {
 		return $GLOBALS['TYPO3_DB'];
+	}
+
+	/**
+	 * @return PageRenderer
+	 */
+	protected function getPageRenderer() {
+		if ($this->pageRenderer === null) {
+			$this->pageRenderer = GeneralUtility::makeInstance(PageRenderer::class);
+		}
+
+		return $this->pageRenderer;
 	}
 
 }
