@@ -246,3 +246,23 @@
 	opacity: 0.15;
 	filter: alpha(opacity=15);
 }
+
+.t3-page-column-header-icons .toggle-content {
+	display: none;
+}
+
+.t3-page-column-header-icons .toggle-up {
+	display: inline-block;
+}
+
+.invisible-content .t3-page-column-header-icons .toggle-up {
+	display: none;
+}
+
+.invisible-content .t3-page-column-header-icons .toggle-down {
+	display: inline-block;
+}
+
+.invisible-content > .t3-page-ce-wrapper * {
+	display: none;
+}
