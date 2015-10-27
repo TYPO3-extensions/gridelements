@@ -218,19 +218,19 @@ if(typeof GridElementsDD === "undefined"){
 		firstNewIconContainer = Ext.get(Ext.get('typo3-docheader').select('.left .buttongroup').elements[0]);
 
 		// get link around the "new content element" icon and if there is one do the magic
-		if (firstNewIconContainer && firstNewIconContainer.select('.t3-icon:last').elements[0] && top.newElementWizard === 'true') {
+		if(firstNewIconContainer && firstNewIconContainer.select('.t3js-icon:last').elements[0]) {
 
 			var
-				lastIcon = Ext.get(firstNewIconContainer.select('.t3-icon:last').elements[0].parentNode.cloneNode(true));
+				lastIcon = Ext.get(firstNewIconContainer.select('.t3js-icon:last').elements[0].parentNode.cloneNode(true));
 
 			lastIcon.set({onclick:'', title:''});
-			lastIcon.select('span').set({"class":'t3-icon t3-icon-actions t3-icon-actions-document t3-icon-document-new'});
-			lastIcon.insertAfter(Ext.get(firstNewIconContainer.select('.t3-icon:last').elements[0].parentNode));
+			lastIcon.select('span').set({"class":'t3js-icon icon icon-size-small icon-state-default icon-actions-document-new'});
+			lastIcon.insertAfter(Ext.get(firstNewIconContainer.select('.t3js-icon:last').elements[0].parentNode));
 
 			var
 			// create container for content draggables
 				draggableContainer = new Ext.Element(document.createElement ('div'), true),
-				firstNewIconLink = Ext.get(firstNewIconContainer.select('.t3-icon-document-new').elements[0].parentNode),
+				firstNewIconLink = Ext.get(firstNewIconContainer.select('.icon-actions-document-new').elements[0].parentNode),
 				draggableContainerFilled = false;
 
 			// add id and "loading..." text to draggables container

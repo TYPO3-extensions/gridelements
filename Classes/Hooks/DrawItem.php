@@ -22,7 +22,7 @@ namespace GridElementsTeam\Gridelements\Hooks;
 use GridElementsTeam\Gridelements\Backend\LayoutSetup;
 use GridElementsTeam\Gridelements\Helper\Helper;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
-use TYPO3\CMS\Backend\Utility\IconUtility;
+use TYPO3\CMS\Core\Imaging\IconFactory;
 use TYPO3\CMS\Backend\View\PageLayoutView;
 use TYPO3\CMS\Backend\View\PageLayoutViewDrawItemHookInterface;
 use TYPO3\CMS\Core\Database\DatabaseConnection;
@@ -50,6 +50,11 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 	protected $databaseConnection;
 
 	/**
+	 * @var IconFactory
+	 */
+	protected $iconFactory;
+
+	/**
 	 * @var \TYPO3\CMS\Lang\LanguageService
 	 */
 	protected $lang;
@@ -68,6 +73,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 		$this->setDatabaseConnection($GLOBALS['TYPO3_DB']);
 		$this->lang = GeneralUtility::makeInstance(LanguageService::class);
 		$this->helper = Helper::getInstance();
+		$this->iconFactory = GeneralUtility::makeInstance(IconFactory::class);
 		$this->lang->init($this->helper->getBackendUser()->uc['lang']);
 	}
 
@@ -350,7 +356,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 			<div data-colpos="' . $colPos . '" data-language-uid="' . $row['sys_language_uid'] . '" class="t3js-sortable t3js-sortable-lang t3js-sortable-lang-' . $row['sys_language_uid'] . ' t3-page-ce-wrapper ui-sortable">
 				<div class="t3-page-ce t3js-page-ce" data-container="' . $row['uid'] . '" id="' . str_replace('.', '', uniqid('', TRUE)) . '">
 					<div class="t3js-page-new-ce t3js-page-new-ce-allowed t3-page-ce-wrapper-new-ce" id="colpos-' . $colPos . '-' . str_replace('.', '', uniqid('', TRUE)) . '">
-						<a href="#" onclick="' . htmlspecialchars($newParams) . '" title="' . $this->lang->getLL('newContentElement', TRUE) . '" class="btn btn-default btn-sm">' . IconUtility::getSpriteIcon('actions-document-new') . ' ' . $this->lang->getLL('content', TRUE) . '</a>
+						<a href="#" onclick="' . htmlspecialchars($newParams) . '" title="' . $this->lang->getLL('newContentElement', TRUE) . '" class="btn btn-default btn-sm">' . $this->iconFactory->getIcon('actions-document-new', 'small') . ' ' . $this->lang->getLL('content', TRUE) . '</a>
 					</div>
 					<div class="t3-page-ce-dropzone-available t3js-page-ce-dropzone-available"></div>
 				</div>';
@@ -373,7 +379,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 					}
 					$gridContent[$colPos] .= '
 				<div class="t3js-page-new-ce t3js-page-new-ce-allowed t3-page-ce-wrapper-new-ce" id="colpos-' . $itemRow['tx_gridelements_columns'] . '-page-' . $itemRow['pid'] . '-gridcontainer-' . $itemRow['tx_gridelements_container'] . '-' . str_replace('.', '', uniqid('', TRUE)) . '">
-					<a href="#" onclick="' . htmlspecialchars($onClick) . '" title="' . $this->lang->getLL('newContentElement', TRUE) . '" class="btn btn-default btn-sm">' . IconUtility::getSpriteIcon('actions-document-new') . ' ' . $this->lang->getLL('content', TRUE) . '</a>
+					<a href="#" onclick="' . htmlspecialchars($onClick) . '" title="' . $this->lang->getLL('newContentElement', TRUE) . '" class="btn btn-default btn-sm">' . $this->iconFactory->getIcon('actions-document-new', 'small') . ' ' . $this->lang->getLL('content', TRUE) . '</a>
 				</div>
 				<div class="t3-page-ce-dropzone-available t3js-page-ce-dropzone-available"></div>
 				</div>
@@ -415,10 +421,10 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 		if ($parentObject->tt_contentConfig['showCommands']) {
 			// Edit whole of column:
 			if ($editParams) {
-				$icons .= '<a href="#" onclick="' . htmlspecialchars(BackendUtility::editOnClick($editParams)) . '" title="' . $this->lang->getLL('editColumn', TRUE) . '">' . IconUtility::getSpriteIcon('actions-document-open') . '</a>';
+				$icons .= '<a href="#" onclick="' . htmlspecialchars(BackendUtility::editOnClick($editParams)) . '" title="' . $this->lang->getLL('editColumn', TRUE) . '">' . $this->iconFactory->getIcon('actions-document-open', 'small') . '</a>';
 			}
-			$icons .= '<a href="#" class="toggle-content toggle-up" title="' . $this->lang->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tx_gridelements_togglecontent') . '">' . IconUtility::getSpriteIcon('actions-move-to-top') . '</a>';
-			$icons .= '<a href="#" class="toggle-content toggle-down" title="' . $this->lang->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tx_gridelements_togglecontent') . '">' . IconUtility::getSpriteIcon('actions-move-to-bottom') . '</a>';
+			$icons .= '<a href="#" class="toggle-content toggle-up" title="' . $this->lang->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tx_gridelements_togglecontent') . '">' . $this->iconFactory->getIcon('actions-move-to-top', 'small') . '</a>';
+			$icons .= '<a href="#" class="toggle-content toggle-down" title="' . $this->lang->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tx_gridelements_togglecontent') . '">' . $this->iconFactory->getIcon('actions-move-to-bottom', 'small') . '</a>';
 		}
 		if (strlen($icons)) {
 			$icons = '<div class="t3-page-column-header-icons">' . $icons . '</div>';
@@ -611,6 +617,14 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 	 */
 	public function getDatabaseConnection() {
 		return $this->databaseConnection;
+	}
+
+	/**
+	 * getter for Icon Factory
+	 * @return IconFactory iconFactory
+	 */
+	public function getIconFactory() {
+		return $this->iconFactory;
 	}
 
 }
