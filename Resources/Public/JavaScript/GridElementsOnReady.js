@@ -26,6 +26,7 @@ define(['jquery'], function($) {
 	 */
 	OnReady.initialize = function() {
 		OnReady.setAllowedClasses();
+		OnReady.activateContentToggles();
 	};
 
 	/**
@@ -52,6 +53,18 @@ define(['jquery'], function($) {
 			});
 		}
 	};
+
+	/**
+	 * activates the arrow icons to show/hide content previews within a certain grid column
+	 */
+	OnReady.activateContentToggles = function() {
+		$('.toggle-content').each(function () {
+			$(this).click(function () {
+				$(this).closest('.t3-grid-cell').toggleClass('invisible-content');
+				return false;
+			});
+		});
+	}
 
 	/**
 	 * initialize function
