@@ -85,7 +85,7 @@ class BackendLayout {
 	protected function init() {
 		$lang = $this->getLanguageService();
 		$lang->includeLLFile('EXT:lang/locallang_wizards.xlf');
-		$this->iconFactory =
+		$this->iconFactory = GeneralUtility::makeInstance(IconFactory::class);
 		// Setting GET vars (used in frameset script):
 		$this->P = GeneralUtility::_GP('P');
 
@@ -230,9 +230,9 @@ class BackendLayout {
 	public function main() {
 		$lang = $this->getLanguageService();
 		$resourcePath = ExtensionManagementUtility::extRelPath('backend') . 'Resources/Public/Images/BackendLayoutWizard/';
-		$content = '<a href="#" title="' . $lang->sL('LLL:EXT:lang/locallang_core.xlf:rm.saveDoc', true) . '" onclick="storeData(t3Grid.export2LayoutRecord());return true;">' . $this->getIconFactory()->getIcon('actions-document-save') . '</a>';
-		$content .= '<a href="#" title="' . $lang->sL('LLL:EXT:lang/locallang_core.xlf:rm.saveCloseDoc', true) . '" onclick="storeData(t3Grid.export2LayoutRecord());window.close();return true;">' . $this->getIconFactory()->getIcon('actions-document-save-close') . '</a>';
-		$content .= '<a href="#" title="' . $lang->sL('LLL:EXT:lang/locallang_core.xlf:rm.closeDoc', true) . '" onclick="window.close();return true;">' . $this->getIconFactory()->getIcon('actions-document-close') . '</a>';
+		$content = '<a href="#" title="' . $lang->sL('LLL:EXT:lang/locallang_core.xlf:rm.saveDoc', true) . '" onclick="storeData(t3Grid.export2LayoutRecord());return true;">' . $this->getIconFactory()->getIcon('actions-document-save', 'small') . '</a>';
+		$content .= '<a href="#" title="' . $lang->sL('LLL:EXT:lang/locallang_core.xlf:rm.saveCloseDoc', true) . '" onclick="storeData(t3Grid.export2LayoutRecord());window.close();return true;">' . $this->getIconFactory()->getIcon('actions-document-save-close', 'small') . '</a>';
+		$content .= '<a href="#" title="' . $lang->sL('LLL:EXT:lang/locallang_core.xlf:rm.closeDoc', true) . '" onclick="window.close();return true;">' . $this->getIconFactory()->getIcon('actions-document-close', 'small') . '</a>';
 		$content .= $this->doc->spacer(10);
 		$content .= '
 		<table border="0" width="90%" height="90%" id="outer_container">
