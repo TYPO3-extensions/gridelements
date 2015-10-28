@@ -31,9 +31,21 @@
 			<source>Hide content element preview.</source>
 			<target>Vorschau der Inhaltselemente ausblenden.</target>
 		</trans-unit>
-		<trans-unit id="list.collapseElement" approved="yes">
-			<source>Collapse /expand element</source>
-			<target>Element auf- / zusammenklappen</target>
+		<trans-unit id="list.collapseElement">
+			<source>Collapse list of child elements</source>
+			<target>Liste der Kind-Elemente einklappen</target>
+		</trans-unit>
+		<trans-unit id="list.expandElement">
+			<source>Expand list of child elements</source>
+			<target>Liste der Kind-Elemente ausklappen</target>
+		</trans-unit>
+		<trans-unit id="list.collapseAllElements">
+			<source>Collapse all grid containers</source>
+			<target>Alle Grid-Container einklappen</target>
+		</trans-unit>
+		<trans-unit id="list.expandAllElements">
+			<source>Expand all grid containers</source>
+			<target>Alle Grid-Container ausklappen</target>
 		</trans-unit>
 		<trans-unit id="list.columnName" approved="yes">
 			<source>Column:</source>

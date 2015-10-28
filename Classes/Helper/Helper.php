@@ -55,19 +55,20 @@ class Helper {
 		return self::$instance;
 	}
 
-	/**
-	 * @param string $table
-	 * @param int $uid
-	 * @param string $sortingField
-	 * @param int $sortRev
-	 * @return array
-	 */
-	public function getChildren($table = '', $uid = 0, $sortingField = '', $sortRev = 0) {
+    /**
+     * @param string $table
+     * @param int $uid
+     * @param string $sortingField
+     * @param int $sortRev
+     * @param string $selectFieldList
+     * @return array
+     */
+	public function getChildren($table = '', $uid = 0, $sortingField = '', $sortRev = 0, $selectFieldList) {
 		$retVal = array();
 
 		if (trim($table) === 'tt_content' && $uid > 0) {
 
-			$children = self::getDatabaseConnection()->exec_SELECTgetRows('*', 'tt_content', 'tx_gridelements_container = ' . $uid . ' AND deleted = 0');
+			$children = self::getDatabaseConnection()->exec_SELECTgetRows($selectFieldList, 'tt_content', 'tx_gridelements_container = ' . $uid . ' AND deleted = 0', '');
 
 			foreach ($children as $child) {
 				if (trim($sortingField) && isset($child[$sortingField]) && $sortingField !== 'sorting') {
@@ -86,7 +87,7 @@ class Helper {
 			$retVal = array_reverse($retVal);
 		}
 
-		return $retVal;
+		return array_values($retVal);
 	}
 
 	/**

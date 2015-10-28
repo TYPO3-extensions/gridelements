@@ -288,3 +288,40 @@
 .invisible-content > .t3-page-ce-wrapper * {
 	display: none;
 }
+
+#recordlist-tt_content > table {
+	table-layout: fixed;
+	width: auto;
+}
+
+#recordlist-tt_content .col-icon {
+	position: relative;
+	text-align: left;
+}
+
+#recordlist-tt_content .t3js-toggle-gridelements-list {
+}
+
+#recordlist-tt_content .t3js-toggle-gridelements-list .icon-actions-view-list-collapse {
+	display: none;
+}
+
+#recordlist-tt_content .t3js-toggle-gridelements-list .icon-actions-view-list-expand {
+	display: inline-block;
+}
+
+#recordlist-tt_content .t3js-toggle-gridelements-list.open-gridelements-container .icon-actions-view-list-collapse {
+	display: inline-block;
+}
+
+#recordlist-tt_content .t3js-toggle-gridelements-list.open-gridelements-container .icon-actions-view-list-expand {
+	display: none;
+}
+
+#recordlist-tt_content tr.t3-gridelements-child {
+	display: none;
+}
+
+#recordlist-tt_content tr.t3-gridelements-visible-child {
+	display: block;
+}

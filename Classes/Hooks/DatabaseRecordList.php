@@ -23,6 +23,7 @@ use GridElementsTeam\Gridelements\Helper\Helper;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Lang\LanguageService;
+use TYPO3\CMS\Core\Imaging\IconFactory;
 use TYPO3\CMS\Recordlist\RecordList\RecordListHookInterface;
 
 /**
@@ -34,13 +35,18 @@ use TYPO3\CMS\Recordlist\RecordList\RecordListHookInterface;
  */
 class DatabaseRecordList implements RecordListHookInterface {
 
-	/**
-	 * @var LanguageService
-	 */
-	protected $lang;
+    /**
+     * @var Iconfactory
+     */
+    protected $iconFactory;
 
-	public function __construct() {
-		$this->lang = GeneralUtility::makeInstance(LanguageService::class);
+    /**
+     * @var LanguageService
+     */
+    protected $lang;
+
+    public function __construct() {
+        $this->lang = GeneralUtility::makeInstance(LanguageService::class);
 		$this->lang->init($this->getBackendUser()->uc['lang']);
 	}
 
@@ -113,41 +119,59 @@ class DatabaseRecordList implements RecordListHookInterface {
 		return $cells;
 	}
 
-	/**
-	 * check if current row has child elements and add info to $theData array
-	 * @param string $table
-	 * @param array $row
-	 * @param int $level
-	 * @param array $theData
-	 * @return void
-	 */
-	public function checkChildren($table, $row, $level, &$theData) {
+    /**
+     * check if current row has child elements and add info to $theData array
+     * @param string $table
+     * @param array $row
+     * @param int $level
+     * @param array $theData
+     * @param \GridElementsTeam\Gridelements\Xclass\DatabaseRecordList $parentObj
+     */
+	public function checkChildren($table, $row, $level, &$theData, $parentObj) {
 		if ($table === 'tt_content' && $row['CType'] === 'gridelements_pi1') {
-			$elementChildren = Helper::getInstance()->getChildren($table, $row['uid']);
+			$elementChildren = Helper::getInstance()->getChildren($table, $row['uid'], '', 0, $parentObj->selFieldList);
 			if (count($elementChildren) > 0) {
 				$theData['_EXPANDABLE_'] = true;
 				$theData['_EXPAND_ID_'] = $table . ':' . $row['uid'];
 				$theData['_EXPAND_TABLE_'] = $table;
 				$theData['_LEVEL_'] = $level;
+                $theData['_CHILDREN_'] = $elementChildren;
 			}
 		}
 	}
 
-	/**
-	 * return content collapse icon
-	 * @param array $data
-	 * @param string $sortField
-	 * @param int $level
-	 * @param string $contentCollapseIcon
-	 * @return void
-	 */
-	public function contentCollapseIcon($data, $sortField, $level, &$contentCollapseIcon) {
+    /**
+     * return content collapse icon
+     * @param array $data
+     * @param string $sortField
+     * @param int $level
+     * @param string $contentCollapseIcon
+     * @param DatabaseRecordList $parentObj
+     */
+	public function contentCollapseIcon(&$data, $sortField, $level, &$contentCollapseIcon, $parentObj) {
 		if ($data['_EXPAND_TABLE_'] === 'tt_content') {
-			$contentCollapseIcon = '
-				<a href="javascript:GridElementsListView.elExpandCollapse(\'' . $data['_EXPAND_ID_'] . '\',\'' . $sortField . '\', ' . $level . ')" title="' . $this->lang->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang.xml:list.collapseElement', true) . '" rel="' . $data['_EXPAND_ID_'] . '">
-					<span class="t3-icon t3-icon-actions t3-icon-actions-view t3-icon-pagetree-collapse collapseIcon">&nbsp;</span>
-				</a>
-			';
+            $expandTitle = $this->lang->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xlf:list.expandElement');
+            $collapseTitle = $this->lang->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xlf:list.collapseElement');
+            $expandedGridelements = $parentObj->getExpandedGridelements();
+            if($expandedGridelements[$data['uid']]) {
+                $href = htmlspecialchars(($parentObj->listURL() . '&gridelementsExpand[' . (int)$data['uid'] . ']=0'));
+                $contentCollapseIcon = '<a
+                class="btn btn-default t3js-toggle-gridelements-list open-gridelements-container" data-state="expanded" href="' . $href . '" id="t3-gridelements-' . $data['uid'] . '"
+                title="' . $collapseTitle . '"
+                data-toggle-title="' . $expandTitle . '">' .
+                    $this->getIconFactory()->getIcon('actions-view-list-expand','small')->render() .
+                    $this->getIconFactory()->getIcon('actions-view-list-collapse','small')->render() .
+                    '</a>';
+            } else {
+                $href = htmlspecialchars(($parentObj->listURL() . '&gridelementsExpand[' . (int)$data['uid'] . ']=1'));
+                $contentCollapseIcon = '<a
+                class="btn btn-default t3js-toggle-gridelements-list" data-state="collapsed" href="' . $href . '" id="t3-gridelements-' . $data['uid'] . '"
+                title="' . $expandTitle . '"
+                data-toggle-title="' . $collapseTitle . '">' .
+                    $this->getIconFactory()->getIcon('actions-view-list-expand','small')->render() .
+                    $this->getIconFactory()->getIcon('actions-view-list-collapse','small')->render() .
+                    '</a>';
+            }
 		}
 	}
 
@@ -157,5 +181,15 @@ class DatabaseRecordList implements RecordListHookInterface {
 	protected function getBackendUser() {
 		return $GLOBALS['BE_USER'];
 	}
+
+    /**
+     * @return IconFactory
+     */
+    protected function getIconFactory() {
+        if($this->iconFactory === null) {
+            $this->iconFactory = GeneralUtility::makeInstance(IconFactory::class);
+        }
+        return $this->iconFactory;
+    }
 
 }

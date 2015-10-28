@@ -141,7 +141,7 @@ class AjaxRecordList {
 	 * @param array $row
 	 * @return DatabaseRecordList
 	 */
-	private function getRecordList($table, $uid, $row) {
+	public function getRecordList($table, $uid, $row) {
 		$dataBaseList = null;
 		$beUser = $this->getBackendUser();
 
