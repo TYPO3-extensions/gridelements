@@ -18,6 +18,7 @@ GridElementsListView = function() {
 				var idParam = id.split(':');
 				var sorting = sortField.split(':');
 				Ext.Ajax.request({
+				Ext.Ajax.request({
 					url: 'ajax.php',
 					params: {
 						ajaxID: 'tx_gridelements::controller',

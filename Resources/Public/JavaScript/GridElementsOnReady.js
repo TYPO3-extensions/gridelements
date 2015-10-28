@@ -16,17 +16,25 @@
  * based on jQuery UI
  */
 
-define(['jquery'], function($) {
+define(['jquery', 'TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Backend/Storage'], function($, AjaxDataHandler, Storage) {
 
 	var OnReady = {
 	};
+
+	AjaxDataHandler.identifier.allGridelementsToggle = '.t3js-toggle-gridelements-all';
+	AjaxDataHandler.identifier.gridelementToggle = '.t3js-toggle-gridelements-list';
 
 	/**
 	 * initializes Drag+Drop for all content elements on the page
 	 */
 	OnReady.initialize = function() {
-		OnReady.setAllowedClasses();
-		OnReady.activateContentToggles();
+		if($('#recordlist-tt_content').length) {
+			OnReady.activateAllGridExpander();
+		}
+		if($('.t3js-page-columns').length) {
+			OnReady.setAllowedClasses();
+			OnReady.activateContentToggles();
+		}
 	};
 
 	/**
@@ -55,8 +63,7 @@ define(['jquery'], function($) {
 	};
 
 	/**
-	 * activates the arrow icons to show/hide content previews within a certain grid column
-	 */
+	 * activates the arrow icons to show/hide content previews within a certain grid column	 */
 	OnReady.activateContentToggles = function() {
 		$('.toggle-content').each(function () {
 			$(this).click(function () {
@@ -65,6 +72,83 @@ define(['jquery'], function($) {
 			});
 		});
 	}
+
+	/**
+	 * activates the toggle icons to open listings of nested grid container structure in the list module
+	 */
+	OnReady.activateAllGridExpander = function() {
+		OnReady.activateGridExpander();
+		$(document).on('click', AjaxDataHandler.identifier.allGridelementsToggle, function(evt) {
+			evt.preventDefault();
+
+			var $me = $(this),
+				container = '0,' + $me.data('container-ids'),
+				isExpanded = this.id === 't3-gridelements-expand-all' ? 1 : 0;
+
+			// Store collapse state in UC
+			var storedModuleDataList = {};
+
+			if (Storage.Persistent.isset('moduleData.list.gridelementsExpanded')) {
+				storedModuleDataList = Storage.Persistent.get('moduleData.list.gridelementsExpanded');
+			}
+
+			var expandConfig = {};
+			$(container.split(',')).each(function(el, id) {
+				if(id > 0) {
+					expandConfig[id] = isExpanded;
+					if(isExpanded === 1) {
+						$('[data-uid=' + id + ']').find('.t3js-toggle-gridelements-list').addClass('open-gridelements-container');
+						$('[data-trigger-container=' + id + ']').show();
+					} else {
+						$('[data-uid=' + id + ']').find('.t3js-toggle-gridelements-list').removeClass('open-gridelements-container');
+						$('[data-trigger-container=' + id + ']').hide();
+					}
+				}
+			});
+
+			$.extend(true, storedModuleDataList, expandConfig);
+			Storage.Persistent.set('moduleData.list.gridelementsExpanded', storedModuleDataList);
+
+		});
+
+	};
+
+	/**
+	 * activates the toggle icons to open listings of nested grid container structure in the list module
+	 */
+	OnReady.activateGridExpander = function() {
+		$(document).on('click', AjaxDataHandler.identifier.gridelementToggle, function(evt) {
+			evt.preventDefault();
+
+			var $me = $(this),
+				container = $me.closest('tr').data('uid'),
+				isExpanded = $me.data('state') === 'expanded';
+
+			// Store collapse state in UC
+			var storedModuleDataList = {};
+
+			if (Storage.Persistent.isset('moduleData.list.gridelementsExpanded')) {
+				storedModuleDataList = Storage.Persistent.get('moduleData.list.gridelementsExpanded');
+			}
+
+			var expandConfig = {};
+			expandConfig[container] = isExpanded ? 0 : 1;
+
+			$.extend(true, storedModuleDataList, expandConfig);
+			Storage.Persistent.set('moduleData.list.gridelementsExpanded', storedModuleDataList).done(function() {
+				$me.data('state', isExpanded ? 'collapsed' : 'expanded');
+			});
+
+			$(this).toggleClass('open-gridelements-container');
+			var originalTitle = $(this).attr('data-original-title');
+			$(this).attr('data-original-title', $(this).attr('data-toggle-title'));
+			$(this).attr('data-toggle-title', originalTitle);
+			$(this).blur();
+
+			$('[data-trigger-container=' + $(this).closest('tr').data('uid') + ']').toggle().find('.open-gridelements-container').click();
+		});
+
+	};
 
 	/**
 	 * initialize function

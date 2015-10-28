@@ -26,7 +26,16 @@
 			<source>Hide content element preview.</source>
 		</trans-unit>
 		<trans-unit id="list.collapseElement">
-			<source>Collapse /expand element</source>
+			<source>Collapse list of child elements</source>
+		</trans-unit>
+		<trans-unit id="list.expandElement">
+			<source>Expand list of child elements</source>
+		</trans-unit>
+		<trans-unit id="list.collapseAllElements">
+			<source>Collapse all grid containers</source>
+		</trans-unit>
+		<trans-unit id="list.expandAllElements">
+			<source>Expand all grid containers</source>
 		</trans-unit>
 		<trans-unit id="list.columnName">
 			<source>Column:</source>
