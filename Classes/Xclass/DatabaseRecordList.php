@@ -317,7 +317,9 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
 							$lastColPos = $row['colPos'];
 							$this->showMoveUp = false;
 							$column = BackendUtility::getProcessedValueExtra($table, 'colPos', $row['colPos'], 100, $row['uid']);
-							$rowOutput .= '<tr><td colspan="2"></td><td colspan="' . (count($this->fieldArray) - 1 + $this->maxDepth) . '" style="padding:5px;"><br /><strong>' . $this->getLanguageService()->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:list.columnName') . ' ' . (($column) ? $column : $row['colPos']) . '</strong></td></tr>';
+                            if(!$this->searchString) {
+                                $rowOutput .= '<tr><td colspan="2"></td><td colspan="' . (count($this->fieldArray) - 1 + $this->maxDepth) . '" style="padding:5px;"><br /><strong>' . $this->getLanguageService()->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:list.columnName') . ' ' . (($column) ? $column : $row['colPos']) . '</strong></td></tr>';
+                            }
 						} else {
 							$this->showMoveUp = true;
 						}
@@ -1126,7 +1128,7 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
 		if (is_array($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['typo3/class.db_list_extra.inc']['actions'])) {
 			foreach ($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['typo3/class.db_list_extra.inc']['actions'] as $classData) {
 				$hookObject = GeneralUtility::getUserObj($classData);
-				if (is_object($hookObject) && method_exists($hookObject, 'checkChildren')) {
+				if (!$this->searchString && is_object($hookObject) && method_exists($hookObject, 'checkChildren')) {
 					$hookObject->checkChildren($table, $row, $level, $theData, $this);
 				}
 			}
