@@ -51,7 +51,9 @@ class AbstractDatabaseRecordList {
 	public function makeQueryArray_post(&$queryParts, &$parent, $table, $pageId, &$addWhere, &$fieldList, &$params) {
 		if ($table === 'tt_content' && get_class($parent) === 'GridElementsTeam\Gridelements\Xclass\DatabaseRecordList') {
 			$queryParts['ORDERBY'] = $this->addValueToList($queryParts['ORDERBY'], 'colPos');
-			$queryParts['WHERE'] .= ' AND colPos != -1';
+            if(!$parent->searchString) {
+                $queryParts['WHERE'] .= ' AND colPos != -1';
+            }
 
 			if ($queryParts['SELECT'] != '*') {
 				$queryParts['SELECT'] = $this->addValueToList($queryParts['SELECT'], 'colPos');
