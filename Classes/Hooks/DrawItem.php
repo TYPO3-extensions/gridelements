@@ -418,13 +418,13 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 		if ($parentObject->tt_contentConfig['showCommands']) {
 			// Edit whole of column:
 			if ($editParams) {
-				$icons .= '<a href="#" onclick="' . htmlspecialchars(BackendUtility::editOnClick($editParams)) . '" title="' . $this->lang->getLL('editColumn', TRUE) . '">' . $this->iconFactory->getIcon('actions-document-open', 'small') . '</a>';
+				$icons .= '<a class="btn btn-default" href="#" onclick="' . htmlspecialchars(BackendUtility::editOnClick($editParams)) . '" title="' . $this->lang->getLL('editColumn', TRUE) . '">' . $this->iconFactory->getIcon('actions-document-open', 'small') . '</a>';
 			}
-			$icons .= '<a href="#" class="toggle-content toggle-up" title="' . $this->lang->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tx_gridelements_togglecontent') . '">' . $this->iconFactory->getIcon('actions-move-to-top', 'small') . '</a>';
-			$icons .= '<a href="#" class="toggle-content toggle-down" title="' . $this->lang->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tx_gridelements_togglecontent') . '">' . $this->iconFactory->getIcon('actions-move-to-bottom', 'small') . '</a>';
+			$icons .= '<a href="#" class="btn btn-default toggle-content toggle-up" title="' . $this->lang->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tx_gridelements_togglecontent') . '">' . $this->iconFactory->getIcon('actions-view-list-collapse', 'small') . '</a>';
+			$icons .= '<a href="#" class="btn btn-default toggle-content toggle-down" title="' . $this->lang->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tx_gridelements_togglecontent') . '">' . $this->iconFactory->getIcon('actions-view-list-expand', 'small') . '</a>';
 		}
 		if (strlen($icons)) {
-			$icons = '<div class="t3-page-column-header-icons">' . $icons . '</div>';
+			$icons = '<div class="t3-page-column-header-icons btn-group btn-group-sm">' . $icons . '</div>';
 		}
 
 		// Create header row:

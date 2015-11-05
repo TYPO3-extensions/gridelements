@@ -8,6 +8,10 @@
   padding: 5px 10px;
 }
 
+.t3-page-column-header-label {
+	line-height: 26px;
+}
+
 .t3-page-ce-header {
   min-width: 150px;
 }
@@ -245,6 +249,24 @@
 	background: #427BAB;
 	opacity: 0.15;
 	filter: alpha(opacity=15);
+}
+
+.t3-page-column-header-icons {
+	visibility: visible;
+	opacity: 0.3;
+	transition-delay: 0s;
+	transition-duration: 0.15s;
+	transition-property: opacity;
+	transition-timing-function: ease-in;
+}
+
+.t3-page-column-header-icons:hover {
+	visibility: visible;
+	opacity: 1;
+	transition-delay: 0s;
+	transition-duration: 0.15s;
+	transition-property: opacity;
+	transition-timing-function: ease-in;
 }
 
 .t3-page-column-header-icons .toggle-content {
