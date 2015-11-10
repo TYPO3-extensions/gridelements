@@ -34,9 +34,9 @@ class Helper {
 
 	/**
 	 * @param string $table
-	 * @param int    $uid
+	 * @param int $uid
 	 * @param string $sortingField
-	 * @param int    $sortRev
+	 * @param int $sortRev
 	 *
 	 * @return array
 	 */

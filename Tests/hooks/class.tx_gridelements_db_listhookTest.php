@@ -1,4 +1,5 @@
 <?php
+
 /***************************************************************
  *  Copyright notice
  *
@@ -21,8 +22,6 @@
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
-
-
 class tx_gridelements_db_listhookTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 
 	/**
@@ -34,12 +33,12 @@ class tx_gridelements_db_listhookTest extends \TYPO3\CMS\Extbase\Tests\Unit\Base
 		$dbList = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('GridElementsTeam\\Gridelements\\Hooks\\AbstractDatabaseRecordList');
 
 		$queryParts = array(
-			'SELECT' => '*',
-			'FROM' => 'tt_content',
-			'WHERE' => 'uid = 1',
-			'GROUPBY' => '',
-			'ORDERBY' => '',
-			'LIMIT' => ''
+				'SELECT' => '*',
+				'FROM' => 'tt_content',
+				'WHERE' => 'uid = 1',
+				'GROUPBY' => '',
+				'ORDERBY' => '',
+				'LIMIT' => ''
 		);
 		$parent = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('GridElementsTeam\\Gridelements\\Xclass\\DatabaseRecordList');
 		$table = 'pages';

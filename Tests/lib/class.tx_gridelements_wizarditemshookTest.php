@@ -1,4 +1,5 @@
 <?php
+
 /***************************************************************
  *  Copyright notice
  *
@@ -21,7 +22,6 @@
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
-
 class tx_gridelements_wizarditemshookTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 
 	/**
@@ -35,9 +35,6 @@ class tx_gridelements_wizarditemshookTest extends \TYPO3\CMS\Extbase\Tests\Unit\
 	protected $lang;
 
 
-
-
-
 	public function setUp() {
 		$this->tempT3libDb = $GLOBALS['TYPO3_DB'];
 		$this->lang = $GLOBALS['LANG'];
@@ -47,9 +44,6 @@ class tx_gridelements_wizarditemshookTest extends \TYPO3\CMS\Extbase\Tests\Unit\
 		$GLOBALS['TYPO3_DB'] = $this->tempT3libDb;
 		$GLOBALS['LANG'] = $this->lang;
 	}
-
-
-
 
 
 	/**
@@ -105,10 +99,10 @@ class tx_gridelements_wizarditemshookTest extends \TYPO3\CMS\Extbase\Tests\Unit\
 		$itemsHook = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('GridElementsTeam\\Gridelements\\Hooks\\WizardItems');
 		$language = $this->getMock('language', array('sL'));
 		$language
-			->expects($this->once())
-			->method('sL')
-			->with($this->equalTo('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tx_gridelements_backend_layout_wizard_label'))
-			->will($this->returnValue('Rasterelemente'));
+				->expects($this->once())
+				->method('sL')
+				->with($this->equalTo('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tx_gridelements_backend_layout_wizard_label'))
+				->will($this->returnValue('Rasterelemente'));
 		$GLOBALS['LANG'] = $language;
 
 		$newGridItem[0]['title'] = 'News';
@@ -136,10 +130,10 @@ class tx_gridelements_wizarditemshookTest extends \TYPO3\CMS\Extbase\Tests\Unit\
 
 		$language = $this->getMock('language', array('sL'));
 		$language
-			->expects($this->once())
-			->method('sL')
-			->with($this->equalTo('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tx_gridelements_backend_layout_wizard_label'))
-			->will($this->returnValue('Rasterelemente'));
+				->expects($this->once())
+				->method('sL')
+				->with($this->equalTo('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tx_gridelements_backend_layout_wizard_label'))
+				->will($this->returnValue('Rasterelemente'));
 		$GLOBALS['LANG'] = $language;
 		$newGridItem[0]['tll'] = '1';
 		$wizardItems['gridelements_grid_1']['params'] = '&defVals[tt_content][CType]=gridelements_pi1&defVals[tt_content][tx_gridelements_backend_layout]=1&isTopLevelLayout';

@@ -44,10 +44,10 @@ class AfterDatabaseOperations extends AbstractDataHandler {
 	 * -2 = non used elements column
 	 * changes are applied to the field array of the parent object by reference
 	 *
-	 * @param    array                                    $fieldArray : The array of fields and values that have been saved to the datamap
-	 * @param    string                                   $table      : The name of the table the data should be saved to
-	 * @param    integer                                  $id         : The parent uid of either the page or the container we are currently working on
-	 * @param    \TYPO3\CMS\Core\DataHandling\DataHandler $parentObj  : The parent object that triggered this hook
+	 * @param    array $fieldArray : The array of fields and values that have been saved to the datamap
+	 * @param    string $table : The name of the table the data should be saved to
+	 * @param    integer $id : The parent uid of either the page or the container we are currently working on
+	 * @param    \TYPO3\CMS\Core\DataHandling\DataHandler $parentObj : The parent object that triggered this hook
 	 *
 	 * @return void
 	 */
@@ -252,8 +252,8 @@ class AfterDatabaseOperations extends AbstractDataHandler {
 	 * fetches all available columns for a certain grid container based on TCA settings and layout records
 	 *
 	 * @param   string $layout : The selected backend layout of the grid container or the page
-	 * @param   string $table  : The name of the table to get the layout for
-	 * @param   int    $id     : the uid of the parent container - being the page id for the table "pages"
+	 * @param   string $table : The name of the table to get the layout for
+	 * @param   int $id : the uid of the parent container - being the page id for the table "pages"
 	 *
 	 * @return  CSV     $tcaColumns: The columns available for the selected layout as CSV list
 	 *

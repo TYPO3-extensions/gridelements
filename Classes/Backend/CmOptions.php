@@ -17,9 +17,9 @@ class CmOptions {
 	 * Main method
 	 *
 	 * @param ClickMenu $backRef
-	 * @param array     $menuItems
-	 * @param string    $table
-	 * @param integer   $uid
+	 * @param array $menuItems
+	 * @param string $table
+	 * @param integer $uid
 	 *
 	 * @return array
 	 */
@@ -33,7 +33,7 @@ class CmOptions {
 		}
 
 		// add "paste reference after" if user is allowed to use CType shortcut
-		if($GLOBALS['BE_USER']->checkAuthMode('tt_content','CType',11,'explicitAllow')) {
+		if ($GLOBALS['BE_USER']->checkAuthMode('tt_content', 'CType', 11, 'explicitAllow')) {
 			$parkItem = $menuItems['pasteafter'];
 			if ($parkItem) {
 				unset($menuItems['pasteafter']);

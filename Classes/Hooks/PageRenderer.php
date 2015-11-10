@@ -23,11 +23,11 @@ namespace GridElementsTeam\Gridelements\Hooks;
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
+use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Backend\Utility\IconUtility;
 use TYPO3\CMS\Backend\View\PageLayoutView;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\FormProtection\FormProtectionFactory;
-use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -43,7 +43,7 @@ class PageRenderer {
 	/**
 	 * wrapper function called by hook (\TYPO3\CMS\Core\Page\PageRenderer->render-preProcess)
 	 *
-	 * @param    array                             $parameters   : An array of available parameters
+	 * @param    array $parameters : An array of available parameters
 	 * @param    \TYPO3\CMS\Core\Page\PageRenderer $pageRenderer : The parent object that triggered this hook
 	 *
 	 * @return    void
@@ -58,7 +58,7 @@ class PageRenderer {
 	/**
 	 * method that adds JS files within the page renderer
 	 *
-	 * @param    array                             $parameters   : An array of available parameters while adding JS to the page renderer
+	 * @param    array $parameters : An array of available parameters while adding JS to the page renderer
 	 * @param    \TYPO3\CMS\Core\Page\PageRenderer $pageRenderer : The parent object that triggered this hook
 	 *
 	 * @return    void
@@ -157,7 +157,7 @@ class PageRenderer {
 											}
 										}
 									} else {
-										if($classes !== 't3-allow-all') {
+										if ($classes !== 't3-allow-all') {
 											$classes .= 't3-allow-gridelements_pi1 ';
 										}
 									}
@@ -172,7 +172,7 @@ class PageRenderer {
 
 				$modTSconfig = BackendUtility::getModTSconfig((int)GeneralUtility::_GP('id'), 'mod.web_layout');
 				$pageRenderer->addExtOnReadyCode(// add some more JS here
-				             $pRaddExtOnReadyCode . "
+						$pRaddExtOnReadyCode . "
 						top.pageColumnsAllowedCTypes = '" . join('|', $allowedCTypesAndGridTypesClassesByColPos) . "';
 						top.pasteURL = '" . $pasteURL . "';
 						top.moveURL = '" . $moveURL . "';
@@ -182,35 +182,35 @@ class PageRenderer {
 						top.DDtoken = '" . $formprotection->generateToken('editRecord') . "';
 						top.DDpid = '" . (int)GeneralUtility::_GP('id') . "';
 						top.DDclipboardfilled = '" . ($clipBoardHasContent ? $clipBoardHasContent : 'false') . "';
-						top.pasteReferenceAllowed = '" . ($GLOBALS['BE_USER']->checkAuthMode('tt_content','CType',11,'explicitAllow') ? 'true' : 'false') . "';
+						top.pasteReferenceAllowed = '" . ($GLOBALS['BE_USER']->checkAuthMode('tt_content', 'CType', 11, 'explicitAllow') ? 'true' : 'false') . "';
 						top.newElementWizard = '" . ($modTSconfig['properties']['disableNewContentElementWizard'] ? 'false' : 'true') . "';
 						top.DDclipboardElId = '" . $intFirstCBEl . "';
 					" . // replace placeholder for detail info on draggables
-				             str_replace(array(
-						             'top.skipDraggableDetails = 0;',
-						             // set extension path
-						             'insert_ext_baseurl_here',
-						             // set current server time
-						             'insert_server_time_here',
-						             // additional sprites
-						             'top.geSprites = {};',
-						             // back path
-						             "top.backPath = '';"
-					             ), array(
-						             $GLOBALS['BE_USER']->uc['dragAndDropHideNewElementWizardInfoOverlay'] ? 'top.skipDraggableDetails = true;' : 'top.skipDraggableDetails = false;',
-						             // set extension path
-						             GeneralUtility::locationHeaderUrl('/' . ExtensionManagementUtility::siteRelPath('gridelements')),
-						             // set current server time, format matches "+new Date" in JS, accuracy in seconds is fine
-						             time() . '000',
-						             // add sprite icon classes
-						             "top.geSprites = {
+						str_replace(array(
+								'top.skipDraggableDetails = 0;',
+							// set extension path
+								'insert_ext_baseurl_here',
+							// set current server time
+								'insert_server_time_here',
+							// additional sprites
+								'top.geSprites = {};',
+							// back path
+								"top.backPath = '';"
+						), array(
+								$GLOBALS['BE_USER']->uc['dragAndDropHideNewElementWizardInfoOverlay'] ? 'top.skipDraggableDetails = true;' : 'top.skipDraggableDetails = false;',
+							// set extension path
+								GeneralUtility::locationHeaderUrl('/' . ExtensionManagementUtility::siteRelPath('gridelements')),
+							// set current server time, format matches "+new Date" in JS, accuracy in seconds is fine
+								time() . '000',
+							// add sprite icon classes
+								"top.geSprites = {
 							copyfrompage: '" . IconUtility::getSpriteIconClasses('extensions-gridelements-copyfrompage') . "',
 								pastecopy: '" . IconUtility::getSpriteIconClasses('extensions-gridelements-pastecopy') . "',
 								pasteref: '" . IconUtility::getSpriteIconClasses('extensions-gridelements-pasteref') . "'
 							};",
-						             "top.backPath = '" . $GLOBALS['BACK_PATH'] . "';"
-					             ), // load content from file
-					             file_get_contents(ExtensionManagementUtility::extPath('gridelements') . 'Resources/Public/Backend/JavaScript/GridElementsDD_onReady.js')), TRUE);
+								"top.backPath = '" . $GLOBALS['BACK_PATH'] . "';"
+						), // load content from file
+								file_get_contents(ExtensionManagementUtility::extPath('gridelements') . 'Resources/Public/Backend/JavaScript/GridElementsDD_onReady.js')), TRUE);
 			}
 		}
 	}
@@ -218,7 +218,7 @@ class PageRenderer {
 	/**
 	 * method that adds CSS files within the page renderer
 	 *
-	 * @param    array                             $parameters   : An array of available parameters while adding CSS to the page renderer
+	 * @param    array $parameters : An array of available parameters while adding CSS to the page renderer
 	 * @param    \TYPO3\CMS\Core\Page\PageRenderer $pageRenderer : The parent object that triggered this hook
 	 *
 	 * @return    void

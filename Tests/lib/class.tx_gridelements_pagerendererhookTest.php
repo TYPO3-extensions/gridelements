@@ -1,4 +1,5 @@
 <?php
+
 /***************************************************************
  *  Copyright notice
  *
@@ -21,16 +22,12 @@
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
-
 class tx_gridelements_pagerendererhookTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 
 	/**
 	 * @var tx_gridelements_pi1
 	 */
 	var $pi1;
-
-
-
 
 
 	public function setUp() {

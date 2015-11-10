@@ -66,7 +66,7 @@ class BackendUtility {
 				$pageUid = (int)$triggerElement['pid'];
 			}
 			$this->injectLayoutSetup(GeneralUtility::makeInstance('GridElementsTeam\\Gridelements\\Backend\\LayoutSetup')
-			                                       ->init($pageUid));
+					->init($pageUid));
 		}
 	}
 
@@ -74,9 +74,9 @@ class BackendUtility {
 	 * Overwrites the data structure of a given tt_content::pi_flexform by
 	 * by the one matching the gridelements layout.
 	 *
-	 * @param array  $dataStructArray The incoming data structure. This might be the default one.
-	 * @param array  $conf
-	 * @param array  $row
+	 * @param array $dataStructArray The incoming data structure. This might be the default one.
+	 * @param array $conf
+	 * @param array $row
 	 * @param string $table
 	 * @param string $fieldName
 	 *

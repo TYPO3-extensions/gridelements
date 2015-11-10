@@ -45,8 +45,8 @@ class LayoutSetup {
 	/**
 	 * Load page TSconfig
 	 *
-	 * @param integer $pageId          : The current page ID
-	 * @param array   $typoScriptSetup : The PlugIn configuration
+	 * @param integer $pageId : The current page ID
+	 * @param array $typoScriptSetup : The PlugIn configuration
 	 *
 	 * @return \GridElementsTeam\Gridelements\Backend\LayoutSetup
 	 */
@@ -150,7 +150,7 @@ class LayoutSetup {
 	/**
 	 * Caches Container-Records and their setup to avoid multiple selects of the same record during a single request
 	 *
-	 * @param int  $gridContainerId The ID of the current grid container
+	 * @param int $gridContainerId The ID of the current grid container
 	 * @param bool $doReturn
 	 *
 	 * @return void|array
@@ -216,9 +216,9 @@ class LayoutSetup {
 			}
 
 			$selectItems[] = array(
-				$GLOBALS['LANG']->sL($item['title']),
-				$layoutId,
-				$item['icon'][0],
+					$GLOBALS['LANG']->sL($item['title']),
+					$layoutId,
+					$item['icon'][0],
 			);
 		}
 		return $selectItems;
@@ -241,10 +241,10 @@ class LayoutSetup {
 				if (isset($row['columns.']) && is_array($row['columns.'])) {
 					foreach ($row['columns.'] as $column) {
 						$selectItems[] = array(
-							$GLOBALS['LANG']->sL($column['name']),
-							$column['colPos'],
-							NULL,
-							$column['allowed'] ? $column['allowed'] : '*'
+								$GLOBALS['LANG']->sL($column['name']),
+								$column['colPos'],
+								NULL,
+								$column['allowed'] ? $column['allowed'] : '*'
 						);
 					}
 				}
@@ -256,7 +256,7 @@ class LayoutSetup {
 	/**
 	 * Returns the item array for form field selection.
 	 *
-	 * @param int   $colPos
+	 * @param int $colPos
 	 * @param array $excludeLayouts
 	 * @param array $allowedGridTypes
 	 *
@@ -274,11 +274,11 @@ class LayoutSetup {
 			}
 
 			$wizardItems[] = array(
-				'uid'         => $layoutId,
-				'title'       => $GLOBALS['LANG']->sL($item['title']),
-				'description' => $GLOBALS['LANG']->sL($item['description']),
-				'icon'        => $item['icon'],
-				'tll'         => $item['top_level_layout'],
+					'uid' => $layoutId,
+					'title' => $GLOBALS['LANG']->sL($item['title']),
+					'description' => $GLOBALS['LANG']->sL($item['description']),
+					'icon' => $item['icon'],
+					'tll' => $item['top_level_layout'],
 			);
 
 		}
@@ -373,13 +373,13 @@ class LayoutSetup {
 
 		// Load records.
 		$result = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows(
-			'*',
-			'tx_gridelements_backend_layout',
-			'(( ' . $pageTSconfigId . ' = 0 AND ' . (int)$storagePid . ' = 0 ) OR ( tx_gridelements_backend_layout.pid = ' . (int)$pageTSconfigId . ' OR tx_gridelements_backend_layout.pid = ' . (int)$storagePid . ' ) OR ( ' . $pageTSconfigId . ' = 0 AND tx_gridelements_backend_layout.pid = ' . (int)$pageId . ' )) AND tx_gridelements_backend_layout.hidden = 0 AND tx_gridelements_backend_layout.deleted = 0',
-			'',
-			'sorting ASC',
-			'',
-			'uid'
+				'*',
+				'tx_gridelements_backend_layout',
+				'(( ' . $pageTSconfigId . ' = 0 AND ' . (int)$storagePid . ' = 0 ) OR ( tx_gridelements_backend_layout.pid = ' . (int)$pageTSconfigId . ' OR tx_gridelements_backend_layout.pid = ' . (int)$storagePid . ' ) OR ( ' . $pageTSconfigId . ' = 0 AND tx_gridelements_backend_layout.pid = ' . (int)$pageId . ' )) AND tx_gridelements_backend_layout.hidden = 0 AND tx_gridelements_backend_layout.deleted = 0',
+				'',
+				'sorting ASC',
+				'',
+				'uid'
 		);
 
 		$gridLayoutRecords = array();

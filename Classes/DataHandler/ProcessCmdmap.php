@@ -39,12 +39,12 @@ class ProcessCmdmap extends AbstractDataHandler {
 	/**
 	 * Function to process the drag & drop copy action
 	 *
-	 * @param string                                   $command            : The command to be handled by the command map
-	 * @param string                                   $table              : The name of the table we are working on
-	 * @param int                                      $id                 : The id of the record that is going to be copied
-	 * @param string                                   $value              : The value that has been sent with the copy command
-	 * @param boolean                                  $commandIsProcessed : A switch to tell the parent object, if the record has been copied
-	 * @param \TYPO3\CMS\Core\DataHandling\DataHandler $parentObj          : The parent object that triggered this hook
+	 * @param string $command : The command to be handled by the command map
+	 * @param string $table : The name of the table we are working on
+	 * @param int $id : The id of the record that is going to be copied
+	 * @param string $value : The value that has been sent with the copy command
+	 * @param boolean $commandIsProcessed : A switch to tell the parent object, if the record has been copied
+	 * @param \TYPO3\CMS\Core\DataHandling\DataHandler $parentObj : The parent object that triggered this hook
 	 *
 	 * @return    void
 	 *
@@ -98,7 +98,7 @@ class ProcessCmdmap extends AbstractDataHandler {
 						$overrideArray['sys_language_uid'] = $targetRecord['sys_language_uid'];
 					}
 					$this->getTceMain()
-					     ->copyRecord($table, $id, (int)$valueArray[0], 1, $overrideArray);
+							->copyRecord($table, $id, (int)$valueArray[0], 1, $overrideArray);
 					$this->doGridContainerUpdate($containerUpdateArray);
 					if ($targetTable === 'tt_content') {
 						$this->checkAndUpdateTranslatedChildren($containerUpdateArray);
@@ -118,7 +118,7 @@ class ProcessCmdmap extends AbstractDataHandler {
 						$overrideArray['sys_language_uid'] = $targetRecord['sys_language_uid'];
 					}
 					$this->getTceMain()
-					     ->copyRecord($table, $id, $value, 1, $overrideArray);
+							->copyRecord($table, $id, $value, 1, $overrideArray);
 					if ($value < 0) {
 						if ($targetRecord['tx_gridelements_container'] > 0) {
 							$containerUpdateArray[$targetRecord['tx_gridelements_container']] = 1;
@@ -150,7 +150,7 @@ class ProcessCmdmap extends AbstractDataHandler {
 					$overrideArray['sys_language_uid'] = $targetRecord['sys_language_uid'];
 				}
 				$this->getTceMain()
-				     ->copyRecord($table, $id, $value, 1, $overrideArray);
+						->copyRecord($table, $id, $value, 1, $overrideArray);
 				if ($value < 0) {
 					if ($targetRecord['tx_gridelements_container'] > 0) {
 						$containerUpdateArray[$targetRecord['tx_gridelements_container']] = 1;

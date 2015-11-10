@@ -28,7 +28,7 @@ class SysLanguageUidList extends AbstractItemsProcFunc {
 	/**
 	 * Checks if a language is allowed in this particular container - only this one container defines the allowed languages regardless of any parent
 	 *
-	 * @param    array   $items           : The items of the current language list
+	 * @param    array $items : The items of the current language list
 	 * @param    integer $gridContainerId : The ID of the current container
 	 *
 	 * @return   void

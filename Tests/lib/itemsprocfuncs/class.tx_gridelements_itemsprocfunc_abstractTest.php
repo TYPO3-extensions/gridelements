@@ -1,4 +1,5 @@
 <?php
+
 /***************************************************************
  *  Copyright notice
  *
@@ -21,16 +22,12 @@
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
-
 class tx_gridelements_itemsprocfunc_abstract extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 
 	/**
 	 * @var \TYPO3\CMS\Core\Database\DatabaseConnection
 	 */
 	var $tempT3libDb;
-
-
-
 
 
 	public function setUp() {
@@ -42,9 +39,6 @@ class tx_gridelements_itemsprocfunc_abstract extends \TYPO3\CMS\Extbase\Tests\Un
 	}
 
 
-
-
-
 	/**
 	 * test get selected backend layout
 	 *
@@ -53,52 +47,52 @@ class tx_gridelements_itemsprocfunc_abstract extends \TYPO3\CMS\Extbase\Tests\Un
 	public function testGetSelectedBackendLayoutWithNoBackendLayoutDefined() {
 		// create a little rootline
 		$rootline = array(
-			'2' => array(
-				'uid' => '23'
-			),
-			'1' => array(
-				'uid' => '20'
-			),
-			'0' => array(
-				'uid' => '17'
-			)
+				'2' => array(
+						'uid' => '23'
+				),
+				'1' => array(
+						'uid' => '20'
+				),
+				'0' => array(
+						'uid' => '17'
+				)
 		);
 
 		// create the first 3 db results for each rootline entry
 		$t3lib_db = $this->getMock('TYPO3\\CMS\\Core\\Database\\DatabaseConnection', array('exec_SELECTgetSingleRow'));
 
 		$t3lib_db
-			->expects($this->at(0))
-			->method('exec_SELECTgetSingleRow')
-			->will($this->returnValue(array(
-			'uid' => '23',
-			'backend_layout' => '',
-			'backend_layout_next_level' => ''
-		)));
+				->expects($this->at(0))
+				->method('exec_SELECTgetSingleRow')
+				->will($this->returnValue(array(
+						'uid' => '23',
+						'backend_layout' => '',
+						'backend_layout_next_level' => ''
+				)));
 		$t3lib_db
-			->expects($this->at(1))
-			->method('exec_SELECTgetSingleRow')
-			->will($this->returnValue(array(
-			'uid' => '20',
-			'backend_layout' => '',
-			'backend_layout_next_level' => ''
-		)));
+				->expects($this->at(1))
+				->method('exec_SELECTgetSingleRow')
+				->will($this->returnValue(array(
+						'uid' => '20',
+						'backend_layout' => '',
+						'backend_layout_next_level' => ''
+				)));
 		$t3lib_db
-			->expects($this->at(2))
-			->method('exec_SELECTgetSingleRow')
-			->will($this->returnValue(array(
-			'uid' => '17',
-			'backend_layout' => '',
-			'backend_layout_next_level' => ''
-		)));
+				->expects($this->at(2))
+				->method('exec_SELECTgetSingleRow')
+				->will($this->returnValue(array(
+						'uid' => '17',
+						'backend_layout' => '',
+						'backend_layout_next_level' => ''
+				)));
 
 		$GLOBALS['TYPO3_DB'] = $t3lib_db;
 
 		$colPosList = $this->getMock('tx_gridelements_itemsprocfunc_abstract', array('getRootline'));
 		$colPosList
-			->expects($this->once())
-			->method('getRootline')
-			->will($this->returnValue($rootline));
+				->expects($this->once())
+				->method('getRootline')
+				->will($this->returnValue($rootline));
 
 		$result = $colPosList->getSelectedBackendLayout();
 		$this->assertEquals(NULL, $result);
@@ -112,49 +106,49 @@ class tx_gridelements_itemsprocfunc_abstract extends \TYPO3\CMS\Extbase\Tests\Un
 	public function testGetSelectedBackendLayoutWithBackendLayoutSetInParentPage() {
 		// create a little rootline
 		$rootline = array(
-			'2' => array(
-				'uid' => '23'
-			),
-			'1' => array(
-				'uid' => '20'
-			),
-			'0' => array(
-				'uid' => '17'
-			)
+				'2' => array(
+						'uid' => '23'
+				),
+				'1' => array(
+						'uid' => '20'
+				),
+				'0' => array(
+						'uid' => '17'
+				)
 		);
 
 		$colPosList = $this->getMock('tx_gridelements_itemsprocfunc_abstract', array('getRootline'));
 		$colPosList
-			->expects($this->any())
-			->method('getRootline')
-			->will($this->returnValue($rootline));
+				->expects($this->any())
+				->method('getRootline')
+				->will($this->returnValue($rootline));
 
 		// create the first 3 db results for each rootline entry
 		$t3lib_db = $this->getMock('TYPO3\\CMS\\Core\\Database\\DatabaseConnection', array('exec_SELECTgetSingleRow'));
 		$t3lib_db
-			->expects($this->at(0))
-			->method('exec_SELECTgetSingleRow')
-			->will($this->returnValue(array(
-			'uid' => '23',
-			'backend_layout' => '',
-			'backend_layout_next_level' => ''
-		)));
+				->expects($this->at(0))
+				->method('exec_SELECTgetSingleRow')
+				->will($this->returnValue(array(
+						'uid' => '23',
+						'backend_layout' => '',
+						'backend_layout_next_level' => ''
+				)));
 		$t3lib_db
-			->expects($this->at(1))
-			->method('exec_SELECTgetSingleRow')
-			->will($this->returnValue(array(
-			'uid' => '20',
-			'backend_layout' => '2',
-			'backend_layout_next_level' => ''
-		)));
+				->expects($this->at(1))
+				->method('exec_SELECTgetSingleRow')
+				->will($this->returnValue(array(
+						'uid' => '20',
+						'backend_layout' => '2',
+						'backend_layout_next_level' => ''
+				)));
 		$t3lib_db
-			->expects($this->at(2))
-			->method('exec_SELECTgetSingleRow')
-			->will($this->returnValue(array(
-			'uid' => '17',
-			'backend_layout' => '',
-			'backend_layout_next_level' => ''
-		)));
+				->expects($this->at(2))
+				->method('exec_SELECTgetSingleRow')
+				->will($this->returnValue(array(
+						'uid' => '17',
+						'backend_layout' => '',
+						'backend_layout_next_level' => ''
+				)));
 
 		$GLOBALS['TYPO3_DB'] = $t3lib_db;
 
@@ -170,53 +164,53 @@ class tx_gridelements_itemsprocfunc_abstract extends \TYPO3\CMS\Extbase\Tests\Un
 	public function testGetSelectedBackendLayoutWithBackendLayoutNextInRootPage() {
 		// create a little rootline
 		$rootline = array(
-			'2' => array(
-				'uid' => '23'
-			),
-			'1' => array(
-				'uid' => '20'
-			),
-			'0' => array(
-				'uid' => '17'
-			)
+				'2' => array(
+						'uid' => '23'
+				),
+				'1' => array(
+						'uid' => '20'
+				),
+				'0' => array(
+						'uid' => '17'
+				)
 		);
 
 		$colPosList = $this->getMock('tx_gridelements_itemsprocfunc_abstract', array('getRootline'));
 		$colPosList
-			->expects($this->any())
-			->method('getRootline')
-			->will($this->returnValue($rootline));
+				->expects($this->any())
+				->method('getRootline')
+				->will($this->returnValue($rootline));
 
 		// create the first 3 db results for each rootline entry
 		$t3lib_db = $this->getMock('TYPO3\\CMS\\Core\\Database\\DatabaseConnection', array('exec_SELECTgetSingleRow'));
 		$t3lib_db
-			->expects($this->at(0))
-			->method('exec_SELECTgetSingleRow')
-			->will($this->returnValue(array(
-			'uid' => '23',
-			'backend_layout' => '',
-			'backend_layout_next_level' => ''
-		)));
+				->expects($this->at(0))
+				->method('exec_SELECTgetSingleRow')
+				->will($this->returnValue(array(
+						'uid' => '23',
+						'backend_layout' => '',
+						'backend_layout_next_level' => ''
+				)));
 		$t3lib_db
-			->expects($this->at(1))
-			->method('exec_SELECTgetSingleRow')
-			->will($this->returnValue(array(
-			'uid' => '20',
-			'backend_layout' => '2',
-			'backend_layout_next_level' => ''
-		)));
+				->expects($this->at(1))
+				->method('exec_SELECTgetSingleRow')
+				->will($this->returnValue(array(
+						'uid' => '20',
+						'backend_layout' => '2',
+						'backend_layout_next_level' => ''
+				)));
 		$t3lib_db
-			->expects($this->at(2))
-			->method('exec_SELECTgetSingleRow')
-			->will($this->returnValue(array(
-			'uid' => '17',
-			'backend_layout' => '1',
-			'backend_layout_next_level' => '3'
-		)));
+				->expects($this->at(2))
+				->method('exec_SELECTgetSingleRow')
+				->will($this->returnValue(array(
+						'uid' => '17',
+						'backend_layout' => '1',
+						'backend_layout_next_level' => '3'
+				)));
 		$t3lib_db
-			->expects($this->at(3))
-			->method('exec_SELECTgetSingleRow')
-			->will($this->returnValue(NULL));
+				->expects($this->at(3))
+				->method('exec_SELECTgetSingleRow')
+				->will($this->returnValue(NULL));
 
 		$GLOBALS['TYPO3_DB'] = $t3lib_db;
 

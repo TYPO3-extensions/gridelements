@@ -17,11 +17,11 @@ $_EXTCONF = unserialize($_EXTCONF);
 
 // register BE AJAX controller
 $TYPO3_CONF_VARS['BE']['AJAX']['tx_gridelements::controller'] =
-	\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath($_EXTKEY) . 'Classes/View/AjaxRecordList.php:GridElementsTeam\\Gridelements\\View\\AjaxRecordList->init';
+		\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath($_EXTKEY) . 'Classes/View/AjaxRecordList.php:GridElementsTeam\\Gridelements\\View\\AjaxRecordList->init';
 
 // XCLASS
 if ($_EXTCONF['nestingInListModule']) {
 	$GLOBALS['TYPO3_CONF_VARS']['SYS']['Objects']['TYPO3\\CMS\\Recordlist\\RecordList\\DatabaseRecordList'] = array(
-		'className' => 'GridElementsTeam\\Gridelements\\Xclass\\DatabaseRecordList',
+			'className' => 'GridElementsTeam\\Gridelements\\Xclass\\DatabaseRecordList',
 	);
 }

@@ -51,7 +51,7 @@ class Gridelements extends ContentObjectRenderer {
 	 * The main method of the PlugIn
 	 *
 	 * @param    string $content : The PlugIn content
-	 * @param    array  $conf    : The PlugIn configuration
+	 * @param    array $conf : The PlugIn configuration
 	 *
 	 * @return    string The content that is displayed on the website
 	 */
@@ -114,7 +114,7 @@ class Gridelements extends ContentObjectRenderer {
 	/**
 	 * fetches all available children for a certain grid container
 	 *
-	 * @param   int  $element    : The uid of the grid container
+	 * @param   int $element : The uid of the grid container
 	 * @param string $csvColumns : A list of available column IDs
 	 *
 	 * @return  array   $children: The child elements of this grid container
@@ -221,7 +221,7 @@ class Gridelements extends ContentObjectRenderer {
 	 * renders the children of the grid container and
 	 * puts them into their respective columns
 	 *
-	 * @param array   $typoScriptSetup
+	 * @param array $typoScriptSetup
 	 * @param   array $sortColumns : An Array of column positions within the grid container in the order they got in the grid setup
 	 */
 	public function renderChildrenIntoParentColumns($typoScriptSetup = array(), $sortColumns = array()) {
@@ -490,11 +490,11 @@ class Gridelements extends ContentObjectRenderer {
 	/**
 	 * Return value from somewhere inside a FlexForm structure
 	 *
-	 * @param    array  $T3FlexForm_array FlexForm data
-	 * @param    string $fieldName        Field name to extract. Can be given like "test/el/2/test/el/field_templateObject" where each part will dig a level deeper in the FlexForm data.
-	 * @param    string $sheet            Sheet pointer, eg. "sDEF"
-	 * @param    string $lang             Language pointer, eg. "lDEF"
-	 * @param    string $value            Value pointer, eg. "vDEF"
+	 * @param    array $T3FlexForm_array FlexForm data
+	 * @param    string $fieldName Field name to extract. Can be given like "test/el/2/test/el/field_templateObject" where each part will dig a level deeper in the FlexForm data.
+	 * @param    string $sheet Sheet pointer, eg. "sDEF"
+	 * @param    string $lang Language pointer, eg. "lDEF"
+	 * @param    string $value Value pointer, eg. "vDEF"
 	 *
 	 * @return    string        The content.
 	 */
@@ -508,9 +508,9 @@ class Gridelements extends ContentObjectRenderer {
 	/**
 	 * Returns part of $sheetArray pointed to by the keys in $fieldNameArray
 	 *
-	 * @param    array  $sheetArray   Multidimensional array, typically FlexForm contents
-	 * @param    array  $fieldNameArr Array where each value points to a key in the FlexForms content - the input array will have the value returned pointed to by these keys. All integer keys will not take their integer counterparts, but rather traverse the current position in the array an return element number X (whether this is right behavior is not settled yet...)
-	 * @param    string $value        Value for outermost key, typ. "vDEF" depending on language.
+	 * @param    array $sheetArray Multidimensional array, typically FlexForm contents
+	 * @param    array $fieldNameArr Array where each value points to a key in the FlexForms content - the input array will have the value returned pointed to by these keys. All integer keys will not take their integer counterparts, but rather traverse the current position in the array an return element number X (whether this is right behavior is not settled yet...)
+	 * @param    string $value Value for outermost key, typ. "vDEF" depending on language.
 	 *
 	 * @return    mixed        The value, typ. string.
 	 * @access private

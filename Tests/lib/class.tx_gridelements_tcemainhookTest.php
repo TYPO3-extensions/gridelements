@@ -1,4 +1,5 @@
 <?php
+
 /***************************************************************
  *  Copyright notice
  *
@@ -21,16 +22,12 @@
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
-
 class tx_gridelements_tcemainhookTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 
 	/**
 	 * @var \TYPO3\CMS\Core\Database\DatabaseConnection
 	 */
 	var $tempT3libDb;
-
-
-
 
 
 	public function setUp() {
@@ -55,24 +52,24 @@ class tx_gridelements_tcemainhookTest extends \TYPO3\CMS\Extbase\Tests\Unit\Base
 		$id = 12;
 		$fieldArray = array();
 		$map = array(
-			array('tt_content', 0, NULL, 'noPid'),
-			array('tt_content', 0, 23, 123)
+				array('tt_content', 0, NULL, 'noPid'),
+				array('tt_content', 0, 23, 123)
 		);
 		$parentObj = $this->getMock('TYPO3\\CMS\\Core\\DataHandling\\DataHandler', array('getSortNumber'));
 		$parentObj->isImporting = FALSE;
 		$parentObj
-			->expects($this->any())
-			->method('getSortNumber')
-			->will($this->returnValueMap($map));
+				->expects($this->any())
+				->method('getSortNumber')
+				->will($this->returnValueMap($map));
 		$hook->processDatamap_postProcessFieldArray($status, $table, $id, $fieldArray, $parentObj);
 		$this->assertEquals(array(), $fieldArray);
 
 		$_GET['cmd'] = array(
-			'tt_content' => array(
-				12 => array(
-					'copy' => '23x24'
+				'tt_content' => array(
+						12 => array(
+								'copy' => '23x24'
+						)
 				)
-			)
 		);
 		$status = 'new';
 		$expectedFieldArray['sorting'] = 123;
@@ -80,20 +77,20 @@ class tx_gridelements_tcemainhookTest extends \TYPO3\CMS\Extbase\Tests\Unit\Base
 		$this->assertEquals($expectedFieldArray, $fieldArray);
 
 		$_GET['cmd'] = array(
-			'tt_content' => array(
-				12 => array(
-					'copy' => '-2x24'
+				'tt_content' => array(
+						12 => array(
+								'copy' => '-2x24'
+						)
 				)
-			)
 		);
 		$t3lib_db = $this->getMock('t3lib_db', array('exec_SELECTgetSingleRow'));
 		$t3lib_db
-			->expects($this->once())
-			->method('exec_SELECTgetSingleRow')
-			->will($this->returnValue(array(
-				'pid' => 0
-			)
-		));
+				->expects($this->once())
+				->method('exec_SELECTgetSingleRow')
+				->will($this->returnValue(array(
+								'pid' => 0
+						)
+				));
 		$GLOBALS['TYPO3_DB'] = $t3lib_db;
 		$expectedFieldArray['sorting'] = null;
 		$hook->processDatamap_postProcessFieldArray($status, $table, $id, $fieldArray, $parentObj);
@@ -101,12 +98,12 @@ class tx_gridelements_tcemainhookTest extends \TYPO3\CMS\Extbase\Tests\Unit\Base
 
 		$t3lib_db = $this->getMock('t3lib_db', array('exec_SELECTgetSingleRow'));
 		$t3lib_db
-			->expects($this->once())
-			->method('exec_SELECTgetSingleRow')
-			->will($this->returnValue(array(
-				'pid' => 23
-			)
-		));
+				->expects($this->once())
+				->method('exec_SELECTgetSingleRow')
+				->will($this->returnValue(array(
+								'pid' => 23
+						)
+				));
 		$GLOBALS['TYPO3_DB'] = $t3lib_db;
 		$expectedFieldArray['sorting'] = '123';
 		$hook->processDatamap_postProcessFieldArray($status, $table, $id, $fieldArray, $parentObj);

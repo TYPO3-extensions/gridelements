@@ -30,12 +30,12 @@ class AjaxRecordList {
 	 * @var    array
 	 */
 	protected $validParams = array(
-		'cmd',
-		'table',
+			'cmd',
+			'table',
 		// table name
-		'uid',
+			'uid',
 		// uid of the record
-		'level'
+			'level'
 		// the current level
 	);
 
@@ -49,7 +49,7 @@ class AjaxRecordList {
 	/**
 	 * Initialize method
 	 *
-	 * @param    array              $params  not used yet
+	 * @param    array $params not used yet
 	 * @param    AjaxRequestHandler $ajaxObj the parent ajax object
 	 *
 	 * @return void
@@ -106,7 +106,7 @@ class AjaxRecordList {
 			$this->initializeTemplateContainer();
 
 			$elementChildren = Helper::getInstance()
-				->getChildren($table, $uid, GeneralUtility::_GP('sortField'), (int)GeneralUtility::_GP('sortRev'));
+					->getChildren($table, $uid, GeneralUtility::_GP('sortField'), (int)GeneralUtility::_GP('sortRev'));
 
 			$row = BackendUtility::getRecord($table, $uid);
 			$recordList = $this->getRecordList($table, $uid, $row);
@@ -127,8 +127,8 @@ class AjaxRecordList {
 	 * initialize and return localRecordList
 	 *
 	 * @param string $table
-	 * @param int    $uid
-	 * @param array  $row
+	 * @param int $uid
+	 * @param array $row
 	 *
 	 * @return    DatabaseRecordList
 	 */
@@ -169,9 +169,9 @@ class AjaxRecordList {
 
 			$modName = 'web_list';
 			$MOD_MENU = array(
-				'bigControlPanel' => '',
-				'clipBoard'       => '',
-				'localization'    => ''
+					'bigControlPanel' => '',
+					'clipBoard' => '',
+					'localization' => ''
 			);
 			// Loading module configuration:
 			$modTSconfig = BackendUtility::getModTSconfig($uid, 'mod.' . $modName);
