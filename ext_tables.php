@@ -13,8 +13,6 @@ if (TYPO3_MODE === 'BE') {
 
 \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addStaticFile($_EXTKEY, 'Configuration/TypoScript/', 'Gridelements');
 
-\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addModule('wizard_gridelements_backend_layout', '', '', \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath($_EXTKEY) . 'Classes/Wizard/', array('name' => 'wizard_gridelements_backend_layout', 'script' => '_DISPATCH', 'access' => 'user,group'));
-
 \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addPlugin(array('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tt_content.CType_pi1', $_EXTKEY . '_pi1', \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath($_EXTKEY) . 'ext_icon.gif'), 'CType');
 
 // Hooks
