@@ -156,7 +156,7 @@ return array(
 					'0'        => array(
 						'title'        => 'LLL:EXT:cms/locallang_tca.xml:backend_layout.wizard',
 						'type'         => 'popup',
-						'icon'         => 'sysext/cms/layout/wizard_backend_layout.png',
+						'icon' => 'EXT:frontend/Resources/Public/Images/wizard_backend_layout.png',
 						'module'       => array(
 							'name' => 'wizard_gridelements_backend_layout'
 						),

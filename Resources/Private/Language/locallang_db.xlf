@@ -13,6 +13,12 @@
 		<trans-unit id="allowedElementTypesHelp">
 			<source>Select the content element types that may be created or moved here.</source>
 		</trans-unit>
+		<trans-unit id="allowedGridElementTypes">
+			<source>Allowed Grids</source>
+		</trans-unit>
+		<trans-unit id="allowedGridElementTypesHelp">
+			<source>Fill in the Gridelements types that may be created or moved here.</source>
+		</trans-unit>
 		<trans-unit id="dragAndDropHideNewElementWizardInfoOverlay">
 			<source>Hide info overlays for the new content element drag in wizard.</source>
 		</trans-unit>
@@ -135,6 +141,9 @@
 		</trans-unit>
 		<trans-unit id="tx_gridelements_js.allowedElementTypes">
 			<source>Allowed CE</source>
+		</trans-unit>
+		<trans-unit id="tx_gridelements_js.allowedGridElementTypes" approved="yes">
+			<source>Allowed Grids</source>
 		</trans-unit>
 		<trans-unit id="tx_gridelements_js.copyfrompage">
 			<source>Copy content from another page to this place</source>

@@ -15,6 +15,14 @@
 			<source>Select the content element types that may be created or moved here.</source>
 			<target>Wählen Sie die Content-Element-Typen aus, die innerhalb dieser Spalte angelegt oder dorthin bewegt werden dürfen.</target>
 		</trans-unit>
+		<trans-unit id="allowedGridElementTypes">
+			<source>Allowed Grids</source>
+			<target>Zulässige Raster-Elemente</target>
+		</trans-unit>
+		<trans-unit id="allowedGridElementTypesHelp">
+			<source>Fill in the Gridelements types that may be created or moved here.</source>
+			<target>Tragen Sie die Raster-Element-Typen ein, die innerhalb dieser Spalte angelegt oder dorthin bewegt werden dürfen.</target>
+		</trans-unit>
 		<trans-unit id="dragAndDropHideNewElementWizardInfoOverlay" approved="yes">
 			<source>Hide info overlays for the new content element drag in wizard.</source>
 			<target>Info-Overlays beim Drag-In-Wizard für neue Inhaltselemente ausblenden.</target>
@@ -178,6 +186,10 @@
 		<trans-unit id="tx_gridelements_js.allowedElementTypes" approved="yes">
 			<source>Allowed CE</source>
 			<target>Zulässige CE</target>
+		</trans-unit>
+		<trans-unit id="tx_gridelements_js.allowedGridElementTypes" approved="yes">
+			<source>Allowed Grids</source>
+			<target>Zulässige Raster-Elemente</target>
 		</trans-unit>
 		<trans-unit id="tx_gridelements_js.copyfrompage" approved="yes">
 			<source>Copy content from another page to this place</source>

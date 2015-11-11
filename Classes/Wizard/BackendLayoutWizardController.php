@@ -19,45 +19,19 @@ namespace GridElementsTeam\Gridelements\Wizard;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-use TYPO3\CMS\Backend\Template\DocumentTemplate;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Imaging\IconFactory;
 use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\TypoScript\Parser\TypoScriptParser;
-use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 
 /**
  * Script Class for grid wizard
- * @author T3UXW09 Team1 <modernbe@cybercraft.de>
  */
-class BackendLayout {
-
-	/**
-	 * Wizard parameters, coming from TCEforms linking to the wizard.
-	 */
-	public $P;
-
-	/**
-	 * Document template object
-	 * @var \TYPO3\CMS\Backend\Template\DocumentTemplate
-	 */
-	public $doc;
-
-	/**
-	 * Accumulated content.
-	 */
-	public $content;
-
-	/**
-	 * @var string
-	 */
-	public $formName;
-
-	/**
-	 * @var string
-	 */
-	public $fieldName;
+class BackendLayoutWizardController extends \TYPO3\CMS\Backend\Controller\BackendLayoutWizardController {
 
 	/**
 	 * @var string
@@ -72,17 +46,20 @@ class BackendLayout {
 	/**
 	 * Constructor
 	 */
-	public function __construct() {
-		$this->getLanguageService()->includeLLFile('EXT:lang/locallang_wizards.xml');
+	public function __construct()
+	{
+		parent::__construct();
 		$this->init();
 	}
 
 	/**
 	 * Initialises the Class
+	 *
 	 * @return void
 	 * @throws \InvalidArgumentException
 	 */
-	protected function init() {
+	public function init()
+	{
 		$lang = $this->getLanguageService();
 		$lang->includeLLFile('EXT:lang/locallang_wizards.xlf');
 		$this->iconFactory = GeneralUtility::makeInstance(IconFactory::class);
@@ -98,13 +75,26 @@ class BackendLayout {
 		}
 		$this->md5ID = $this->P['md5ID'];
 		$uid = (int)$this->P['uid'];
-		// Initialize document object:
-		$this->doc = GeneralUtility::makeInstance(DocumentTemplate::class);
 
+		/** @var \TYPO3\CMS\Core\Page\PageRenderer $pageRenderer */
 		$pageRenderer = GeneralUtility::makeInstance(PageRenderer::class);
 		$pageRenderer->loadExtJS();
-		$pageRenderer->addJsFile($GLOBALS['BACK_PATH'] . ExtensionManagementUtility::extRelPath('gridelements') . 'Resources/Public/Backend/JavaScript/grideditor.js');
-		$pageRenderer->addInlineSetting('ContextHelp', 'moduleUrl', BackendUtility::getModuleUrl('help_cshmanual'));
+		$pageRenderer->addJsFile(ExtensionManagementUtility::extRelPath('gridelements')
+			. 'Resources/Public/Backend/JavaScript/grideditor.js');
+		$pageRenderer->loadRequireJsModule('TYPO3/CMS/Backend/Tooltip');
+		$pageRenderer->addInlineSetting(
+			'ContextHelp',
+			'moduleUrl',
+			BackendUtility::getModuleUrl(
+				'help_CshmanualCshmanual',
+				array (
+					'tx_cshmanual_help_cshmanualcshmanual' => array (
+						'controller' => 'Help',
+						'action' => 'detail'
+					)
+				)
+			)
+		);
 		$pageRenderer->addJsInlineCode('storeData', '
 			function storeData(data) {
 				if (parent.opener && parent.opener.document && parent.opener.document.' . $this->formName . ' && parent.opener.document.' . $this->formName . '[' . GeneralUtility::quoteJSvalue($this->fieldName) . ']) {
@@ -113,7 +103,22 @@ class BackendLayout {
 				}
 			}
 			', false);
-		$languageLabels = array('save' => $lang->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_labelSave', true), 'title' => $lang->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_windowTitle', true), 'editCell' => $lang->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_editCell', true), 'mergeCell' => $lang->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_mergeCell', true), 'splitCell' => $lang->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_splitCell', true), 'name' => $lang->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_name', true), 'column' => $lang->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_column', true), 'notSet' => $lang->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_notSet', true), 'nameHelp' => $lang->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_nameHelp', true), 'columnHelp' => $lang->sL('LLL:EXT:lang/locallang_wizards.xml:grid_columnHelp', 1), 'allowedElementTypes' => $lang->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:allowedElementTypes', 1), 'allowedElementTypesHelp' => $lang->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:allowedElementTypesHelp', 1),);
+		$languageLabels = array(
+			'save' => $lang->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_labelSave', true),
+			'title' => $lang->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_windowTitle', true),
+			'editCell' => $lang->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_editCell', true),
+			'mergeCell' => $lang->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_mergeCell', true),
+			'splitCell' => $lang->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_splitCell', true),
+			'name' => $lang->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_name', true),
+			'column' => $lang->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_column', true),
+			'notSet' => $lang->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_notSet', true),
+			'nameHelp' => $lang->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_nameHelp', true),
+			'columnHelp' => $lang->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_columnHelp', true),
+			'allowedElementTypes' => $lang->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:allowedElementTypes', 1),
+			'allowedElementTypesHelp' => $lang->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:allowedElementTypesHelp', 1),
+			'allowedGridElementTypes' => $lang->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:allowedGridElementTypes', 1),
+			'allowedGridElementTypesHelp' => $lang->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:allowedGridElementTypesHelp', 1)
+		);
 		$pageRenderer->addInlineLanguageLabelArray($languageLabels);
 		// add gridelement wizard options information
 		$ctypeLabels = array();
@@ -136,9 +141,13 @@ class BackendLayout {
 		');
 
 		// select record
-		$record = $this->getDatabaseConnection()->exec_SELECTgetRows($this->P['field'], $this->P['table'], 'uid=' . (int)$this->P['uid']);
-		if (trim($record[0][$this->P['field']]) === '') {
-			$rows = array(array(array('colspan' => 1, 'rowspan' => 1, 'spanned' => false, 'name' => '', 'allowed' => '')));
+		$record = $this->getDatabaseConnection()->exec_SELECTgetRows(
+			$this->P['field'],
+			$this->P['table'],
+			'uid=' . (int)$this->P['uid']
+		);
+		if (trim($record[0][$this->P['field']]) == '') {
+			$rows = array(array(array('colspan' => 1, 'rowspan' => 1, 'spanned' => false, 'name' => '')));
 			$colCount = 1;
 			$rowCount = 1;
 		} else {
@@ -158,7 +167,7 @@ class BackendLayout {
 				for ($j = 1; $j <= $colCount; $j++) {
 					$cellData = array();
 					if (!$spannedMatrix[$i][$j]) {
-						if (is_array($columns) && count($columns)) {
+						if (is_array($columns) && !empty($columns)) {
 							$column = array_shift($columns);
 							if (isset($column['colspan'])) {
 								$cellData['colspan'] = (int)$column['colspan'];
@@ -198,9 +207,12 @@ class BackendLayout {
 							if (isset($column['allowed'])) {
 								$cellData['allowed'] = $column['allowed'];
 							}
+							if (isset($column['allowedGridTypes'])) {
+								$cellData['allowedGridTypes'] = $column['allowedGridTypes'];
+							}
 						}
 					} else {
-						$cellData = array('colspan' => 1, 'rowspan' => 1, 'spanned' => 1, 'allowed' => '*');
+						$cellData = array('colspan' => 1, 'rowspan' => 1, 'spanned' => 1);
 					}
 					$cells[] = $cellData;
 				}
@@ -220,67 +232,11 @@ class BackendLayout {
 			});
 			t3Grid.drawTable();
 			');
-		$this->doc->styleSheetFile_post = ExtensionManagementUtility::extRelPath('gridelements') . 'Resources/Public/Backend/Css/grideditor.css';
-	}
 
-	/**
-	 * Main Method, rendering either colorpicker or frameset depending on ->showPicker
-	 * @return void
-	 */
-	public function main() {
-		$lang = $this->getLanguageService();
-		$resourcePath = ExtensionManagementUtility::extRelPath('backend') . 'Resources/Public/Images/BackendLayoutWizard/';
-		$content = '<a href="#" title="' . $lang->sL('LLL:EXT:lang/locallang_core.xlf:rm.saveDoc', true) . '" onclick="storeData(t3Grid.export2LayoutRecord());return true;">' . $this->getIconFactory()->getIcon('actions-document-save', 'small') . '</a>';
-		$content .= '<a href="#" title="' . $lang->sL('LLL:EXT:lang/locallang_core.xlf:rm.saveCloseDoc', true) . '" onclick="storeData(t3Grid.export2LayoutRecord());window.close();return true;">' . $this->getIconFactory()->getIcon('actions-document-save-close', 'small') . '</a>';
-		$content .= '<a href="#" title="' . $lang->sL('LLL:EXT:lang/locallang_core.xlf:rm.closeDoc', true) . '" onclick="window.close();return true;">' . $this->getIconFactory()->getIcon('actions-document-close', 'small') . '</a>';
-		$content .= $this->doc->spacer(10);
-		$content .= '
-		<table border="0" width="90%" height="90%" id="outer_container">
-			<tr>
-				<td class="editor_cell">
-					<div id="editor">
-					</div>
-				</td>
-				<td width="20" valign="center">
-					<a class="addCol" href="#" title="' . $lang->getLL('grid_addColumn') . '" onclick="t3Grid.addColumn(); t3Grid.drawTable(\'editor\');">
-						<img src="' . $resourcePath . 't3grid-tableright.png" border="0" />
-					</a><br />
-					<a class="removeCol" href="#" title="' . $lang->getLL('grid_removeColumn') . '" onclick="t3Grid.removeColumn(); t3Grid.drawTable(\'editor\');">
-						<img src="' . $resourcePath . 't3grid-tableleft.png" border="0" />
-					</a>
-				</td>
-			</tr>
-			<tr>
-				<td colspan="2" height="20" align="center">
-					<a class="addCol" href="#" title="' . $lang->getLL('grid_addRow') . '" onclick="t3Grid.addRow(); t3Grid.drawTable(\'editor\');">
-						<img src="' . $resourcePath . 't3grid-tabledown.png" border="0" />
-					</a>
-					<a class="removeCol" href="#" title="' . $lang->getLL('grid_removeRow') . '" onclick="t3Grid.removeRow(); t3Grid.drawTable(\'editor\');">
-						<img src="' . $resourcePath . 't3grid-tableup.png" border="0" />
-					</a>
-				</td>
-			</tr>
-		</table>
-		';
-		$this->content = $content;
-
-		echo $this->doc->render('Grid wizard', $this->content);
-	}
-
-	/**
-	 * Returns LanguageService
-	 * @return \TYPO3\CMS\Lang\LanguageService
-	 */
-	protected function getLanguageService() {
-		return $GLOBALS['LANG'];
-	}
-
-	/**
-	 * Returns the database connection
-	 * @return \TYPO3\CMS\Core\Database\DatabaseConnection
-	 */
-	protected function getDatabaseConnection() {
-		return $GLOBALS['TYPO3_DB'];
+		$this->moduleTemplate->getPageRenderer()->addCssFile(ExtensionManagementUtility::extRelPath('backend')
+			. 'Resources/Public/Css/grideditor.css');
+		$this->moduleTemplate->getPageRenderer()->addCssFile(ExtensionManagementUtility::extRelPath('gridelements')
+			. 'Resources/Public/Backend/Css/grideditor.css');
 	}
 
 	/**
@@ -291,4 +247,13 @@ class BackendLayout {
 		return $this->iconFactory;
 	}
 
+	/**
+	 * Gets the current backend user.
+	 *
+	 * @return \TYPO3\CMS\Core\Authentication\BackendUserAuthentication
+	 */
+	protected function getBackendUser()
+	{
+		return $GLOBALS['BE_USER'];
+	}
 }
