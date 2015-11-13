@@ -96,7 +96,7 @@ class CTypeList extends AbstractItemsProcFunc {
 			$gridElement = $this->layoutSetup->cacheCurrentParent($gridContainerId, true);
 			$backendLayout = $this->layoutSetup->getLayoutSetup($gridElement['tx_gridelements_backend_layout']);
 		}
-		if (isset($backendLayout)) {
+		if (!empty($backendLayout)) {
 			foreach ($items as $key => $item) {
 				if (!(GeneralUtility::inList($backendLayout['columns'][$column], $item[1]) || GeneralUtility::inList($backendLayout['columns'][$column], '*'))) {
 					unset($items[$key]);
