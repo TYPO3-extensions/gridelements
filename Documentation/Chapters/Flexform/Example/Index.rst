@@ -15,12 +15,12 @@
 .. role::   php(code)
 
 
-Example 1
+Example
 ^^^^^^^^^
 
 
-Example 1 - Element with child content and handling settings (recommended)
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+Element with child content and handling settings
+""""""""""""""""""""""""""""""""""""""""""""""""
 
 To get this kind of structure for a Grid Element box with special
 features …

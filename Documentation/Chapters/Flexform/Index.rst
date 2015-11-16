@@ -65,7 +65,5 @@ Sections are not supported by the frontend rendering process yet.
    :titlesonly:
    :glob:
 
-   Example1/Index
-   Example2/Index
-   Example3/Index
+   Example/Index
 

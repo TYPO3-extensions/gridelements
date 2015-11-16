@@ -1,5 +1,0 @@
-.. |img-19|     image:: ../../../Images/Flexform/Example2.png
-   :width: 400
-.. :align: center
-.. :border: 0
-.. :name: Grafik14

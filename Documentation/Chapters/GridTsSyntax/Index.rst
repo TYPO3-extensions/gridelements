@@ -89,12 +89,12 @@ even though it might stay empty later on.
 Create the cells
 """"""""""""""""
 
-Each of the cells comes with up to 5 different keys:  **name** ,
-**colPos** ,  **colspan** ,  **rowspan** and  **allowed** . There must
-be at least the  **name** and if you want to use the column as
-something else than a placeholder, there must be a value for
-**colPos** as well. Otherwise the cell will be marked as  *inactive*
-in the page module.
+Each of the cells comes with up to 6 different keys:  **name** ,
+**colPos** ,  **colspan** ,  **rowspan**,  **allowed** and
+ **allowedGridTypes**. There must be at least the  **name** and if
+you want to use the column as something else than a placeholder, there
+must be a value for  **colPos** as well. Otherwise the cell will be
+marked as  *inactive* in the page module.
 
 The values for  **colspan** ,  **rowspan** ,  **allowed** and
 **allowedGridTypes**  are optional.

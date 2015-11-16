@@ -1,5 +1,0 @@
-.. |img-20|     image:: ../../../Images/Flexform/Example3.png
-   :width: 400
-.. :align: center
-.. :border: 0
-.. :name: Grafik16
