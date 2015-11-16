@@ -1,4 +1,4 @@
-﻿
+
 
 .. ==================================================
 .. FOR YOUR INFORMATION
@@ -13,6 +13,8 @@
 .. role::   ts(typoscript)
    :class:  typoscript
 .. role::   php(code)
+
+.. _Flexform:
 
 
 Flexform
@@ -63,7 +65,5 @@ Sections are not supported by the frontend rendering process yet.
    :titlesonly:
    :glob:
 
-   Example1/Index
-   Example2/Index
-   Example3/Index
+   Example/Index
 

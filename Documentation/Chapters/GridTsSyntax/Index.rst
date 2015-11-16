@@ -1,4 +1,4 @@
-﻿
+.. include:: Images.txt
 
 .. ==================================================
 .. FOR YOUR INFORMATION
@@ -14,6 +14,8 @@
    :class:  typoscript
 .. role::   php(code)
 
+.. _GridTsSyntax:
+
 
 Grid TS Syntax
 --------------
@@ -28,7 +30,7 @@ We could have used serialized objects or arrays as well, but decided
 to go for TypoScript, since this can easily be written by advanced
 integrators. For those, who are not familiar with TypoScript or just
 prefer the usability of a point and click interface, there is a
-comfortable `Grid Wizard <#1.5.Grid%20Wizard|outline>`_ that will help
+comfortable :ref:`Grid Wizard <GridWizard>`, that will help
 to create the TypoScript code. Later on it might be more convenient to
 modify the structures by hand, especially when backend layouts that
 are based on a similar structure haven't got too many differences.
@@ -87,19 +89,29 @@ even though it might stay empty later on.
 Create the cells
 """"""""""""""""
 
-Each of the cells comes with up to 5 different keys:  **name** ,
-**colPos** ,  **colspan** ,  **rowspan** and  **allowed** . There must
-be at least the  **name** and if you want to use the column as
-something else than a placeholder, there must be a value for
-**colPos** as well. Otherwise the cell will be marked as  *inactive*
-in the page module.
+Each of the cells comes with up to 6 different keys:  **name** ,
+**colPos** ,  **colspan** ,  **rowspan**,  **allowed** and
+ **allowedGridTypes**. There must be at least the  **name** and if
+you want to use the column as something else than a placeholder, there
+must be a value for  **colPos** as well. Otherwise the cell will be
+marked as  *inactive* in the page module.
 
-The values for  **colspan** ,  **rowspan** and  **allowed** are
-optional. The  **allowed** feature is used to determine those content
+The values for  **colspan** ,  **rowspan** ,  **allowed** and
+**allowedGridTypes**  are optional.
+
+The  **allowed** feature is used to determine those content
 element types the user will be allowed to use within this column. You
 can use a comma separated list of Ctype values here and as soon as
 this contains at least one value, any other element type will be
-forbidden. The  **colPos** value will be used while fetching the
+forbidden.
+
+Same goes for the  **allowedGridTypes** feature which is used to determine
+those grid types the user will be allowed to use within this column. You
+can use a comma separated list of Grid names here and as soon as
+this contains at least one value, any other Grid type will be forbidden
+and the value gridelements_pi1 will be silently added to **allowed**.
+
+The  **colPos** value will be used while fetching the
 content elements from the database, since grid view and grid elements
 are using normalized relations to relate columns and content elements
 with each other.
@@ -131,10 +143,13 @@ only  *text* and  *text with image* allowed as a content type:
           name = Outer Left
           rowspan = 2
           colPos = 1
+          allowed = text,textpic
+          allowedGridTypes = 2ColumnContainer,3ColumnContainer
         }
         2 {
           name = Left
           colPos = 2
+          allowed = *
         }
         3 {
           name = Right

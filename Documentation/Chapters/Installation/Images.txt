@@ -1,42 +1,35 @@
-﻿.. |img-5|      image:: ../../Images/manual_html_m5edd6e4c.png
-   :height: 203
-   :width: 327
-.. :align: left
+.. |img-5|      image:: ../../Images/Installation/UpdateDatabase.png
+   :width: 800
+.. :align: center
 .. :border: 0
 .. :name: Grafik1
 
-.. |img-6|      image:: ../../Images/manual_html_m6804a5f.png
-   :height: 183
-   :width: 340
-.. :align: left
+.. |img-6|      image:: ../../Images/Installation/IncludeStaticTemplate.png
+   :width: 800
+.. :align: center
 .. :border: 0
 .. :name: Grafik2
 
-.. |img-7|      image:: ../../Images/manual_html_53ed0256.png
-   :height: 357
-   :width: 553
-.. :align: left
+.. |img-7|      image:: ../../Images/Installation/CreateBackendLayouts.png
+   :width: 800
+.. :align: center
 .. :border: 0
 .. :name: Grafik3
 
-.. |img-8|      image:: ../../Images/manual_html_m4c74b5d.png
-   :height: 327
-   :width: 474
-.. :align: left
+.. |img-8|      image:: ../../Images/Installation/CreateGridElements.png
+   :width: 800
+.. :align: center
 .. :border: 0
 .. :name: Grafik4
 
-.. |img-9|      image:: ../../Images/manual_html_47fe076d.png
-   :height: 206
-   :width: 319
-.. :align: left
+.. |img-9|      image:: ../../Images/Installation/ChangeExistingElements.png
+   :width: 800
+.. :align: center
 .. :border: 0
 .. :name: Grafik5
 
-.. |img-10|     image:: ../../Images/manual_html_4045f9e7.png
-   :height: 525
-   :width: 616
-.. :align: left
+.. |img-10|     image:: ../../Images/Installation/FillGridWithContentElements.png
+   :width: 800
+.. :align: center
 .. :border: 0
 .. :name: Grafik6
-

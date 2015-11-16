@@ -1,4 +1,4 @@
-﻿
+
 
 .. ==================================================
 .. FOR YOUR INFORMATION
@@ -13,6 +13,8 @@
 .. role::   ts(typoscript)
    :class:  typoscript
 .. role::   php(code)
+
+.. _TypoScript:
 
 
 TypoScript
@@ -127,6 +129,5 @@ really know what you are doing.
    :titlesonly:
    :glob:
 
-   Example/Index
    Reference/Index
 

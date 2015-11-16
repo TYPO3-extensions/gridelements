@@ -1,4 +1,4 @@
-﻿
+
 
 .. ==================================================
 .. FOR YOUR INFORMATION
@@ -78,7 +78,7 @@ core does not?**
 **Answer:** The reason for this decision is the behaviour of the TYPO3
 core while working on page content. When an editor is working at some
 content, others will be notified only, when they open the editing form
-of that particular content element. While working with D&D drop within
+of that particular content element. While working with D&D within
 a larger editorial team it happens quite often, that people change
 content of the same page at the same time. Just imagine the mess that
 could happen without reloading the current state of that page. So as
