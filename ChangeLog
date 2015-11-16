@@ -1,3 +1,43 @@
+4.0.0 => 2015-12-07 Jo Hasenau <info@cybercraft.de>, Markus Klein <klein.t3@reelworx.at>
+	Done: Issue #65589 Reenabled Gridelements Backend Layout Wizard Module for CMS 7
+	Done: Issue #65510 Adapt GE to list view module UI of CMS 7
+	Done: Increase column icon visibility and size
+	Fixed: Issue #68064 Reactivated content column toggles
+	Fixed: Issue #71266 Added missing comma before KEY
+	Fixed: Added missing class instanciation
+	Fixed: Fix getBackendUser typo with missing ()
+	New: Feature #70924 Add inline javascript to page footer
+	Fixed : Adjusted Drag In Wizard JS and CSS to match new page module
+	Fixed: Issue #70622 Select values can be real values or arrays
+	Done: Issue #70433 Reactivated and deflickered Drag In Wizard hover descriptions
+	Fixed: Issue #70425 Check for empty and "all" to get unset allowed parameter as well
+	Fixed: Reset array to avoid double use of allowed values
+	Fixed: Issue #70023 Use own showitem settings instead of copying text
+	Done: Remove content of other hooks when preview is disabled
+	Fixed: Issue #67551 Added allowed values to new content element links again
+	Done: Issue #70371 Reactivate reference overlay to avoid accidental editing
+	Done: added pid to the specific IDs helper function again
+	Fixed: missing container information when copying element after another
+	Fixed: Check for variable being an array before using array keys
+	Done: Reactivated Drag In Wizard
+	Done: Replaces full path with ::class + CGL fixes
+	Fixed: Add getter for TYPO3_DB in class and do not rely on Core's getter
+	Fixed: Issue #67469 Check for array before calling foreach
+	Fixed: Adjusted new element buttons to current core behaviour
+	Fixed: Added missing init to get database connection
+	Fixed: Make array available for non DD copy actions as well
+	Done: Migrate language files from XML to XLF
+	Done: Disable content nesting in list module by default
+	Done: Further code cleanup and fixes
+	Fixed: Changed variables from $this to self:: for static helper class
+	Done: Added variables and classes
+	Done: Variable names and typos
+	Done: Code reformatting
+	Fixed: Reverted to draggable D&D instead of sortable
+	Fixed: Added missing interface to make list module show up again
+	Fixed: Removed reference to FormEngine, fixed Workspace bug
+	Done: Fixes for 7.5+ compatibility
+
 3.3.0 => 2015-11-18 Jo Hasenau <info@cybercraft.de>
 	Fixed: Issue #71459 Children must be available when there is NO search string
 	Fixed: Issue #71111 Activate column -1 for search result list
