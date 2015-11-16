@@ -1,4 +1,4 @@
-﻿
+.. include:: Images.txt
 
 .. ==================================================
 .. FOR YOUR INFORMATION
@@ -13,6 +13,8 @@
 .. role::   ts(typoscript)
    :class:  typoscript
 .. role::   php(code)
+
+.. _GridWizard:
 
 
 Grid Wizard
@@ -40,9 +42,8 @@ provided in the textarea.
 Now you can click on the  **small triangles** at the right and at the
 bottom to create the basic grid structure. + will increase the number
 of columns and/or rows, - will decrease it. To get the example we have
-been using for the `Grid TS Structure
-<#This%20is%20the%20complete%20example%20code|outline>`_ , the basic
-grid would be looking like this:
+been using for the :ref:`Grid TS Syntax <GridTsSyntax>`,
+the basic grid would be looking like this:
 
 |img-14|
 
@@ -69,7 +70,9 @@ should be looking like this:
 
 |img-15|
 
-|img-16| Finally you should give the cells a  **name** and a number to
+|img-16|
+
+Finally you should give the cells a  **name** and a number to
 be used as the value for the internal colPos within a grid element
 using this layout. And you should decide about the available content
 and grid element types for each cell. If you don't set the **column number**,
@@ -90,9 +93,5 @@ looking like this:
 You can save it by clicking on the  **disk symbol at the upper left
 corner** of the popup window. Depending on the names and column values
 you have been using, the result should be close to the example we have
-been using in the `Grid TS structure
-<#This%20is%20the%20complete%20example%20code|outline>`_ section. When
+used in the :ref:`Grid TS Syntax <GridTsSyntax>` section. When
 you open the wizard the next time, it will come up in the same state.
-
-
-
