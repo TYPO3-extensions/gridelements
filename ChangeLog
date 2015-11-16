@@ -1,4 +1,37 @@
+3.3.0 => 2015-11-18 Jo Hasenau <info@cybercraft.de>
+	Fixed: Issue #71459 Children must be available when there is NO search string
+	Fixed: Issue #71111 Activate column -1 for search result list
+	Fixed: Issue #57925 Adjust colspan of table cells to match overall number of cells
+	Fixed: Issue #67295 Respect TSconfig setting disabling new content element wizard
+	Fixed: Issue #58571 Check if user may use shortcuts before creating reference icons
+	Fixed: Issue #63019 use sys_language_content instead of sys_language_uid
+	Fixed: Issue #58847 Make sure new elements get at least the correct colPos
+	Fixed: Issue #62955 Make sure there is no recursion in referenced records
+	Fixed: Issue #65353 Don't add first line to the actual CSV output
+	Fixed: Issue #69350 Reactivate value processing for the final else part
+	Fixed: Issue #61855 Recognize allowed Gridtypes in the new element wizard as well
+	Done: Added allowedGridTypes to the manual
+	Done: Check for double updates to avoid redundancy
+	Fixed: Issue #66782 New hook method for moving to first position of a page column
+	Feature: Issue #61855 Make gridelement types recognizable as allowed elements
+	Fixed: Issue #69471 Deactivate drop targets within the dragged element
+	Done: Some CGL fixes
+	Fixed: Issue #66655 Check for variable being an array before using array keys
+	Fixed: Issue #61848 Use correct parameter for language ID
+	Fixed: Issue #70110 increase Ajax timeout to avoid broken copies with deep nesting
+	Fixed: Issue #67672 Respect container language when dragging in new content
+	Fixed: Issue #69052 Make array available for non DD copy actions as well
+	Fixed: Issue #67469 Check for array before calling foreach
+	Fixed: Issue #69472 Use correct pid values to make GE work w unpublished pages
+	Fixed: Issue #67502 remove debug comment from onclick JS
+	Done: Fetching children with TYPO3_DB to get rid of version dependency
+	Fixed: Issue #66835 Add necessary CSS classes to page columns in language view
+	Fixed: Issue #66806 Check move command for language parents as well
+	Fixed: Issue #55262 use correct paramater name in showItems
+	Fixed: Issue #65766 Call page renderer hook in BE context only
+
 3.2.0 => 2015-04-17 Jo Hasenau <info@cybercraft.de>, Michael Schams <typo3@2015.trash.schams.net>
+	Fixed: Issue #66472 Check for existing language link before using split
 	Fixed: Issue #65533 Respect language settings when pointing to a referenced page
 	Fixed: Issue #65874 Only add the column settings to the layout if colPos exists
 	Added: Feature #55262 Add layout information plus CSH description to grid containers
