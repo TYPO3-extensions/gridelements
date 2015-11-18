@@ -84,7 +84,8 @@ class WizardItems implements \TYPO3\CMS\Backend\Wizard\NewContentElementWizardHo
 			$allowed_GP = GeneralUtility::_GP('tx_gridelements_allowed');
 			if (!empty($allowed_GP)) {
 				$allowed = array_flip(explode(',', $allowed_GP));
-				if (!empty(GeneralUtility::_GP('tx_gridelements_allowed_grid_types'))) {
+				$allowedGridTypes_GP = GeneralUtility::_GP('tx_gridelements_allowed_grid_types');
+				if (!empty($allowedGridTypes_GP)) {
 					$allowed['gridelements_pi1'] = 1;
 				}
 				$this->removeDisallowedWizardItems($allowed, $wizardItems);
