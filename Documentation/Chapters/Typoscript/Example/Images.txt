@@ -1,5 +1,0 @@
-.. |img-21|     image:: ../../../Images/Typoscript/Example.png
-   :width: 300
-.. :align: center
-.. :border: 0
-.. :name: Grafik17

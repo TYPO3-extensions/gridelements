@@ -64,7 +64,7 @@ class TtContent {
 				$pageUid = (int)$triggerElement['pid'];
 			}
 			$this->injectLayoutSetup(GeneralUtility::makeInstance('GridElementsTeam\\Gridelements\\Backend\\LayoutSetup')
-			                                       ->init($pageUid));
+					->init($pageUid));
 		}
 	}
 
@@ -136,7 +136,7 @@ class TtContent {
 		if ($params['row']['CType'] === 'gridelements_pi1' && count($params['items']) > 1) {
 			$items = $params['items'];
 			$params['items'] = array(
-				0 => array_shift($items)
+					0 => array_shift($items)
 			);
 
 			foreach ($items as $item) {
@@ -152,7 +152,7 @@ class TtContent {
 	/**
 	 * delete containers from params which are not allowed
 	 *
-	 * @param array  $params
+	 * @param array $params
 	 * @param string $itemUidList comma seperated list of uids
 	 *
 	 * @return void
@@ -193,8 +193,8 @@ class TtContent {
 	 * Recursive function to remove any container from the list of possible containers
 	 * that is already a subcontainer on any level of the current container
 	 *
-	 * @param string $containerIds       : A list determining containers that should be checked
-	 * @param array  $possibleContainers : The result list containing the remaining containers after the check
+	 * @param string $containerIds : A list determining containers that should be checked
+	 * @param array $possibleContainers : The result list containing the remaining containers after the check
 	 *
 	 * @return    void
 	 */

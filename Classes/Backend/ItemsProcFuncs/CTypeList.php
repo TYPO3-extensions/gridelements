@@ -11,7 +11,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  * @package        TYPO3
  * @subpackage     tx_gridelements
  */
-
 class CTypeList extends AbstractItemsProcFunc {
 
 	/**
@@ -36,7 +35,7 @@ class CTypeList extends AbstractItemsProcFunc {
 	public function init($pageUid) {
 		if (!$this->layoutSetup instanceof LayoutSetup) {
 			$this->layoutSetup = GeneralUtility::makeInstance('GridElementsTeam\\Gridelements\\Backend\\LayoutSetup')
-			                                                           ->init($pageUid);
+					->init($pageUid);
 		}
 	}
 
@@ -63,11 +62,11 @@ class CTypeList extends AbstractItemsProcFunc {
 	/**
 	 * Checks if a CType is allowed in this particular page or grid column - only this one column defines the allowed CTypes regardless of any parent column
 	 *
-	 * @param    array   $items           : The items of the current CType list
-	 * @param    integer $pid             : The id of the page we are currhently working on
-	 * @param    integer $pageColumn      : The page column the element is a child of
+	 * @param    array $items : The items of the current CType list
+	 * @param    integer $pid : The id of the page we are currhently working on
+	 * @param    integer $pageColumn : The page column the element is a child of
 	 * @param    integer $gridContainerId : The ID of the current container
-	 * @param    integer $gridColumn      : The grid column the element is a child of
+	 * @param    integer $gridColumn : The grid column the element is a child of
 	 *
 	 * @return    array|null    $backendLayout: An array containing the data of the selected backend layout as well as a parsed version of the layout configuration
 	 */

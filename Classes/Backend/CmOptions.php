@@ -2,6 +2,7 @@
 namespace GridElementsTeam\Gridelements\Backend;
 
 use TYPO3\CMS\Backend\ClickMenu\ClickMenu;
+use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 
 /**
  * Class/Function which
@@ -16,9 +17,9 @@ class CmOptions {
 	 * Main method
 	 *
 	 * @param ClickMenu $backRef
-	 * @param array     $menuItems
-	 * @param string    $table
-	 * @param integer   $uid
+	 * @param array $menuItems
+	 * @param string $table
+	 * @param integer $uid
 	 *
 	 * @return array
 	 */
@@ -31,15 +32,17 @@ class CmOptions {
 			$menuItems['copy'][3] = str_replace('return false;', ' GridElementsDD.listenForCopyItem(' . $strUidInLink . '); return false;', $menuItems['copy'][3]);
 		}
 
-		// add "paste reference after"
-		$parkItem = $menuItems['pasteafter'];
-		if ($parkItem) {
-			unset($menuItems['pasteafter']);
-			$menuItems['pasteafter'] = $parkItem;
-			if ($backRef->clipObj->currentMode() === 'copy') {
-				$parkItem[1] = $GLOBALS['LANG']->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tx_gridelements_clickmenu_pastereference');
-				$parkItem[3] = preg_replace('/formToken/', 'reference=1&formToken', $parkItem[3]);
-				$menuItems['pastereference'] = $parkItem;
+		// add "paste reference after" if user is allowed to use CType shortcut
+		if ($GLOBALS['BE_USER']->checkAuthMode('tt_content', 'CType', 11, 'explicitAllow')) {
+			$parkItem = $menuItems['pasteafter'];
+			if ($parkItem) {
+				unset($menuItems['pasteafter']);
+				$menuItems['pasteafter'] = $parkItem;
+				if ($backRef->clipObj->currentMode() === 'copy') {
+					$parkItem[1] = $GLOBALS['LANG']->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tx_gridelements_clickmenu_pastereference');
+					$parkItem[3] = preg_replace('/formToken/', 'reference=1&formToken', $parkItem[3]);
+					$menuItems['pastereference'] = $parkItem;
+				}
 			}
 		}
 		return $menuItems;

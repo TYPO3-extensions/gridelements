@@ -1,4 +1,5 @@
 <?php
+
 /***************************************************************
  *  Copyright notice
  *
@@ -21,7 +22,6 @@
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
-
 class tx_gridelements_itemsprocfunc_colposlistTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 
 	/**
@@ -35,9 +35,6 @@ class tx_gridelements_itemsprocfunc_colposlistTest extends \TYPO3\CMS\Extbase\Te
 	protected $lang;
 
 
-
-
-
 	public function setUp() {
 		$this->tempT3libDb = $GLOBALS['TYPO3_DB'];
 		$this->lang = $GLOBALS['LANG'];
@@ -47,9 +44,6 @@ class tx_gridelements_itemsprocfunc_colposlistTest extends \TYPO3\CMS\Extbase\Te
 		$GLOBALS['TYPO3_DB'] = $this->tempT3libDb;
 		$GLOBALS['LANG'] = $this->lang;
 	}
-
-
-
 
 
 	/**
@@ -74,14 +68,14 @@ class tx_gridelements_itemsprocfunc_colposlistTest extends \TYPO3\CMS\Extbase\Te
 		$expectedParams['items'] = 'Hello world';
 		$colPosList = $this->getMock('GridElementsTeam\\Gridelements\\Backend\\ItemsProcFuncs\\ColPosList', array('addColPosListLayoutItems'));
 		$colPosList
-			->expects($this->once())
-			->method('addColPosListLayoutItems')
-			->with(
-				$this->equalTo(12),
-				$this->equalTo($params['items']),
-				$this->equalTo('gridelements')
-			)
-			->will($this->returnValue('Hello world'));
+				->expects($this->once())
+				->method('addColPosListLayoutItems')
+				->with(
+						$this->equalTo(12),
+						$this->equalTo($params['items']),
+						$this->equalTo('gridelements')
+				)
+				->will($this->returnValue('Hello world'));
 		$testParams = $params;
 		$colPosList->itemsProcFunc($testParams);
 		$this->assertEquals($expectedParams, $testParams);
@@ -91,14 +85,14 @@ class tx_gridelements_itemsprocfunc_colposlistTest extends \TYPO3\CMS\Extbase\Te
 		$dbReturnValue['CType'] = 'gridelements';
 		$t3libDb = $this->getMock('TYPO3\\CMS\\Core\\Database\\DatabaseConnection', array('exec_SELECTgetSingleRow'));
 		$t3libDb
-			->expects($this->once())
-			->method('exec_SELECTgetSingleRow')
-			->with(
-				$this->equalTo('pid, CType'),
-				$this->equalTo('tt_content'),
-				$this->equalTo('uid=15')
-			)
-			->will($this->returnValue($dbReturnValue));
+				->expects($this->once())
+				->method('exec_SELECTgetSingleRow')
+				->with(
+						$this->equalTo('pid, CType'),
+						$this->equalTo('tt_content'),
+						$this->equalTo('uid=15')
+				)
+				->will($this->returnValue($dbReturnValue));
 		$GLOBALS['TYPO3_DB'] = $t3libDb;
 		$testParams = $expectedParams = $params;
 		$colPosList->itemsProcFunc($testParams);
@@ -109,25 +103,25 @@ class tx_gridelements_itemsprocfunc_colposlistTest extends \TYPO3\CMS\Extbase\Te
 		$dbReturnValue['CType'] = 'gridelements';
 		$t3libDb = $this->getMock('TYPO3\\CMS\\Core\\Database\\DatabaseConnection', array('exec_SELECTgetSingleRow'));
 		$t3libDb
-			->expects($this->once())
-			->method('exec_SELECTgetSingleRow')
-			->with(
-				$this->equalTo('pid, CType'),
-				$this->equalTo('tt_content'),
-				$this->equalTo('uid=15')
-			)
-			->will($this->returnValue($dbReturnValue));
+				->expects($this->once())
+				->method('exec_SELECTgetSingleRow')
+				->with(
+						$this->equalTo('pid, CType'),
+						$this->equalTo('tt_content'),
+						$this->equalTo('uid=15')
+				)
+				->will($this->returnValue($dbReturnValue));
 		$GLOBALS['TYPO3_DB'] = $t3libDb;
 		$colPosList = $this->getMock('GridElementsTeam\\Gridelements\\Backend\\ItemsProcFuncs\\ColPosList', array('addColPosListLayoutItems'));
 		$colPosList
-			->expects($this->once())
-			->method('addColPosListLayoutItems')
-			->with(
-				$this->equalTo(12),
-				$this->equalTo($params['items']),
-				$this->equalTo('gridelements')
-			)
-			->will($this->returnValue('Hello world'));
+				->expects($this->once())
+				->method('addColPosListLayoutItems')
+				->with(
+						$this->equalTo(12),
+						$this->equalTo($params['items']),
+						$this->equalTo('gridelements')
+				)
+				->will($this->returnValue('Hello world'));
 		$expectedParams['row']['pid'] = -15;
 		$expectedParams['row']['CType'] = 'gridelements';
 		$expectedParams['items'] = 'Hello world';

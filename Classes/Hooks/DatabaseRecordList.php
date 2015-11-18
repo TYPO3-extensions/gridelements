@@ -40,9 +40,9 @@ class DatabaseRecordList implements RecordListHookInterface {
 	/**
 	 * modifies Web>List clip icons (copy, cut, paste, etc.) of a displayed row
 	 *
-	 * @param    string $table        the current database table
-	 * @param    array  $row          the current record row
-	 * @param    array  $cells        the default clip-icons to get modified
+	 * @param    string $table the current database table
+	 * @param    array $row the current record row
+	 * @param    array $cells the default clip-icons to get modified
 	 * @param    object $parentObject Instance of calling object
 	 *
 	 * @return    array        the modified clip-icons
@@ -50,7 +50,7 @@ class DatabaseRecordList implements RecordListHookInterface {
 	public function makeClip($table, $row, $cells, &$parentObject) {
 
 		/*if ($table == 'tt_content' && get_class($parentObject) == 'localRecordList') {
-			if((int)$row['colPos'] < 0)) {
+			if ((int)$row['colPos'] < 0)) {
 				$cells['pasteInto'] = $parentObject->spaceIcon;
 				$cells['pasteAfter'] = $parentObject->spaceIcon;
 			}
@@ -65,16 +65,16 @@ class DatabaseRecordList implements RecordListHookInterface {
 	/**
 	 * modifies Web>List control icons of a displayed row
 	 *
-	 * @param    string $table        the current database table
-	 * @param    array  $row          the current record row
-	 * @param    array  $cells        the default control-icons to get modified
+	 * @param    string $table the current database table
+	 * @param    array $row the current record row
+	 * @param    array $cells the default control-icons to get modified
 	 * @param    object $parentObject Instance of calling object
 	 *
 	 * @return    array        the modified control-icons
 	 */
 	public function makeControl($table, $row, $cells, &$parentObject) {
 		/*if ($table == 'tt_content' && get_class($parentObject) == 'localRecordList') {
-			if((int)$row['colPos'] < 0) {
+			if ((int)$row['colPos'] < 0) {
 				$cells['move'] = $parentObject->spaceIcon;
 				$cells['new'] = $parentObject->spaceIcon;
 				$cells['moveUp'] = $parentObject->spaceIcon;
@@ -88,10 +88,10 @@ class DatabaseRecordList implements RecordListHookInterface {
 	/**
 	 * modifies Web>List header row columns/cells
 	 *
-	 * @param    string $table         the current database table
-	 * @param    array  $currentIdList Array of the currently displayed uids of the table
-	 * @param    array  $headerColumns An array of rendered cells/columns
-	 * @param    object $parentObject  Instance of calling (parent) object
+	 * @param    string $table the current database table
+	 * @param    array $currentIdList Array of the currently displayed uids of the table
+	 * @param    array $headerColumns An array of rendered cells/columns
+	 * @param    object $parentObject Instance of calling (parent) object
 	 *
 	 * @return    array        Array of modified cells/columns
 	 */
@@ -102,10 +102,10 @@ class DatabaseRecordList implements RecordListHookInterface {
 	/**
 	 * modifies Web>List header row clipboard/action icons
 	 *
-	 * @param    string $table         the current database table
-	 * @param    array  $currentIdList Array of the currently displayed uids of the table
-	 * @param    array  $cells         An array of the current clipboard/action icons
-	 * @param    object $parentObject  Instance of calling (parent) object
+	 * @param    string $table the current database table
+	 * @param    array $currentIdList Array of the currently displayed uids of the table
+	 * @param    array $cells An array of the current clipboard/action icons
+	 * @param    object $parentObject Instance of calling (parent) object
 	 *
 	 * @return    array        Array of modified clipboard/action icons
 	 */
@@ -117,9 +117,9 @@ class DatabaseRecordList implements RecordListHookInterface {
 	 * check if current row has child elements and add info to $theData array
 	 *
 	 * @param string $table
-	 * @param array  $row
-	 * @param int    $level
-	 * @param array  $theData
+	 * @param array $row
+	 * @param int $level
+	 * @param array $theData
 	 * @param object $parentObject
 	 *
 	 * @return void
@@ -127,7 +127,7 @@ class DatabaseRecordList implements RecordListHookInterface {
 	public function checkChildren($table, $row, $level, &$theData, &$parentObject) {
 		if ($table === 'tt_content' && $row['CType'] === 'gridelements_pi1') {
 			$elementChildren = Helper::getInstance()
-			                         ->getChildren($table, $row['uid']);
+					->getChildren($table, $row['uid']);
 			if (count($elementChildren) > 0) {
 				$theData['_EXPANDABLE_'] = TRUE;
 				$theData['_EXPAND_ID_'] = $table . ':' . $row['uid'];
@@ -140,9 +140,9 @@ class DatabaseRecordList implements RecordListHookInterface {
 	/**
 	 * return content collapse icon
 	 *
-	 * @param array  $data
+	 * @param array $data
 	 * @param string $sortField
-	 * @param int    $level
+	 * @param int $level
 	 * @param string $contentCollapseIcon
 	 * @param object $parentObject
 	 *

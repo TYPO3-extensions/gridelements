@@ -45,6 +45,9 @@ $tempColumns = array(
 			),
 			'foreign_table'  => 'tt_content',
 			'foreign_field'  => 'tx_gridelements_container',
+			'foreign_record_defaults' => array(
+				'colPos' => -1,
+			),
 			'foreign_sortby' => 'sorting',
 			'size'           => 5,
 			'autoSizeMax'    => 20,

@@ -16,6 +16,7 @@ GridElementsListView = function() {
 
 				var idParam = id.split(':');
 				var sorting = sortField.split(':');
+				Ext.Ajax.timeout = 600000;
 				Ext.Ajax.request({
 					url: 'ajax.php',
 					params: {

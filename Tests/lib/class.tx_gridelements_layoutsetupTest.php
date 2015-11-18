@@ -1,4 +1,5 @@
 <?php
+
 /***************************************************************
  *  Copyright notice
  *
@@ -21,7 +22,6 @@
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
-
 class LayoutSetupTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 
 	/**
@@ -103,11 +103,11 @@ class LayoutSetupTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 
 		$result = $layoutSetup->getLayoutColumns(1);
 		$expectedResult = array(
-			'CSV' => '-2,-1,12,13,14',
-			'12' => '*',
-			'allowed' => '*,*,1',
-			'13' => '*',
-			'14' => '1'
+				'CSV' => '-2,-1,12,13,14',
+				'12' => '*',
+				'allowed' => '*,*,1',
+				'13' => '*',
+				'14' => '1'
 		);
 		$this->assertEquals($expectedResult, $result);
 	}

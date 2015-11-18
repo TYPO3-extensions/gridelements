@@ -75,8 +75,8 @@ should be looking like this:
 Finally you should give the cells a  **name** and a number to
 be used as the value for the internal colPos within a grid element
 using this layout. And you should decide about the available content
-types for each cell. If you don't set the  **column number** , the
-cell will be a placeholder that can not contain any element later on.
+and grid element types for each cell. If you don't set the **column number**,
+the cell will be a placeholder that can not contain any element later on.
 To edit the values for each cell, just click on the  **pencil within
 the square** in the middle of each cell, fill in the values and save
 them by clicking on the  **disk symbol** .

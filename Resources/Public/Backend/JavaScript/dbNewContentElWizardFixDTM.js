@@ -20,7 +20,7 @@ function DTM_activate(idBase,index,doToogle) {
 		}
 	}
 // Showing one:
-	if(!document.getElementById(idBase+'-'+index+'-MENU')){
+	if (!document.getElementById(idBase+'-'+index+'-MENU')){
 		index = 1;
 	}
 	if (document.getElementById(idBase+'-'+index+'-DIV')) {

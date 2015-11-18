@@ -129,6 +129,5 @@ really know what you are doing.
    :titlesonly:
    :glob:
 
-   Example/Index
    Reference/Index
 

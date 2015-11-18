@@ -44,10 +44,10 @@ class PreProcessFieldArray extends AbstractDataHandler {
 	 * -2 = non used elements column
 	 * changes are applied to the field array of the parent object by reference
 	 *
-	 * @param    array                                    $fieldArray : The array of fields and values that have been saved to the datamap
-	 * @param    string                                   $table      : The name of the table the data should be saved to
-	 * @param    integer                                  $id         : The parent uid of either the page or the container we are currently working on
-	 * @param    \TYPO3\CMS\Core\DataHandling\DataHandler $parentObj  : The parent object that triggered this hook
+	 * @param    array $fieldArray : The array of fields and values that have been saved to the datamap
+	 * @param    string $table : The name of the table the data should be saved to
+	 * @param    integer $id : The parent uid of either the page or the container we are currently working on
+	 * @param    \TYPO3\CMS\Core\DataHandling\DataHandler $parentObj : The parent object that triggered this hook
 	 *
 	 * @return void
 	 */
@@ -83,7 +83,7 @@ class PreProcessFieldArray extends AbstractDataHandler {
 	 * set default field values for new records
 	 *
 	 * @param array $fieldArray
-	 * @param int   $pid
+	 * @param int $pid
 	 *
 	 * @return void
 	 */
@@ -218,7 +218,7 @@ class PreProcessFieldArray extends AbstractDataHandler {
 	/**
 	 * set initial entries to field array
 	 *
-	 * @param array   $fieldArray
+	 * @param array $fieldArray
 	 * @param integer $pid
 	 *
 	 * @return void
@@ -236,7 +236,7 @@ class PreProcessFieldArray extends AbstractDataHandler {
 	/**
 	 * set initial entries to field array
 	 *
-	 * @param array   $fieldArray
+	 * @param array $fieldArray
 	 * @param integer $pid
 	 *
 	 * @return void
@@ -255,9 +255,9 @@ class PreProcessFieldArray extends AbstractDataHandler {
 	/**
 	 * set entries to column targets
 	 *
-	 * @param array   $fieldArray
+	 * @param array $fieldArray
 	 * @param integer $targetUid
-	 * @param array   $target
+	 * @param array $target
 	 *
 	 * @return void
 	 */
@@ -330,7 +330,7 @@ class PreProcessFieldArray extends AbstractDataHandler {
 	 * will still remain in the same major page column
 	 *
 	 * @param    integer $contentId : The uid of the current content element
-	 * @param    integer $colPos    : The current column of this content element
+	 * @param    integer $colPos : The current column of this content element
 	 *
 	 * @return integer $colPos: The new column of this content element
 	 */

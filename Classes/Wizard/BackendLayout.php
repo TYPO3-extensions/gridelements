@@ -68,18 +68,20 @@ class BackendLayout {
 			}
 			', FALSE);
 		$languageLabels = array(
-			'save'                    => $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_labelSave', TRUE),
-			'title'                   => $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_windowTitle', TRUE),
-			'editCell'                => $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_editCell', TRUE),
-			'mergeCell'               => $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_mergeCell', TRUE),
-			'splitCell'               => $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_splitCell', TRUE),
-			'name'                    => $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_name', TRUE),
-			'column'                  => $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_column', TRUE),
-			'notSet'                  => $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_notSet', TRUE),
-			'nameHelp'                => $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_nameHelp', TRUE),
-			'columnHelp'              => $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_wizards.xml:grid_columnHelp', 1),
-			'allowedElementTypes'     => $GLOBALS['LANG']->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:allowedElementTypes', 1),
-			'allowedElementTypesHelp' => $GLOBALS['LANG']->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:allowedElementTypesHelp', 1),
+				'save' => $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_labelSave', TRUE),
+				'title' => $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_windowTitle', TRUE),
+				'editCell' => $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_editCell', TRUE),
+				'mergeCell' => $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_mergeCell', TRUE),
+				'splitCell' => $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_splitCell', TRUE),
+				'name' => $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_name', TRUE),
+				'column' => $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_column', TRUE),
+				'notSet' => $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_notSet', TRUE),
+				'nameHelp' => $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_nameHelp', TRUE),
+				'columnHelp' => $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_wizards.xml:grid_columnHelp', 1),
+				'allowedElementTypes' => $GLOBALS['LANG']->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:allowedElementTypes', 1),
+				'allowedElementTypesHelp' => $GLOBALS['LANG']->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:allowedElementTypesHelp', 1),
+				'allowedGridElementTypes' => $GLOBALS['LANG']->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:allowedGridElementTypes', 1),
+				'allowedGridElementTypesHelp' => $GLOBALS['LANG']->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:allowedGridElementTypesHelp', 1),
 		);
 		$pageRenderer->addInlineLanguageLabelArray($languageLabels);
 		// add gridelement wizard options information
@@ -106,15 +108,15 @@ class BackendLayout {
 		$record = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows($this->P['field'], $this->P['table'], 'uid=' . (int)$this->P['uid']);
 		if (trim($record[0][$this->P['field']]) === '') {
 			$rows = array(
-				array(
 					array(
-						'colspan' => 1,
-						'rowspan' => 1,
-						'spanned' => FALSE,
-						'name'    => '',
-						'allowed' => ''
+							array(
+									'colspan' => 1,
+									'rowspan' => 1,
+									'spanned' => FALSE,
+									'name' => '',
+									'allowed' => ''
+							)
 					)
-				)
 			);
 			$colCount = 1;
 			$rowCount = 1;
@@ -175,13 +177,16 @@ class BackendLayout {
 							if (isset($column['allowed'])) {
 								$cellData['allowed'] = $column['allowed'];
 							}
+							if (isset($column['allowedGridTypes'])) {
+								$cellData['allowedGridTypes'] = $column['allowedGridTypes'];
+							}
 						}
 					} else {
 						$cellData = array(
-							'colspan' => 1,
-							'rowspan' => 1,
-							'spanned' => 1,
-							'allowed' => '*'
+								'colspan' => 1,
+								'rowspan' => 1,
+								'spanned' => 1,
+								'allowed' => '*'
 						);
 					}
 					$cells[] = $cellData;

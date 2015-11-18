@@ -58,8 +58,8 @@ class ColPosList extends AbstractItemsProcFunc {
 	 * Adds items to a colpos list
 	 *
 	 * @param   integer $pageId : The uid of the page we are currently working on
-	 * @param   array   $items  : The array of items before the action
-	 * @param   string  $CType  : The content type of the item holding the colPosList
+	 * @param   array $items : The array of items before the action
+	 * @param   string $CType : The content type of the item holding the colPosList
 	 *
 	 * @return  array   $items: The ready made array of items
 	 */
@@ -80,10 +80,10 @@ class ColPosList extends AbstractItemsProcFunc {
 		}
 
 		$items[] = array(
-			$GLOBALS['LANG']->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tt_content.tx_gridelements_container'),
-			'-1',
-			NULL,
-			NULL
+				$GLOBALS['LANG']->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tt_content.tx_gridelements_container'),
+				'-1',
+				NULL,
+				NULL
 		);
 		return $items;
 	}
