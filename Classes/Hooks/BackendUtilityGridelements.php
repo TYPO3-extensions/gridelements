@@ -34,7 +34,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  * @package        TYPO3
  * @subpackage     tx_gridelements
  */
-class BackendUtility {
+class BackendUtilityGridelements {
 
 	/**
 	 * @var \GridElementsTeam\Gridelements\Backend\LayoutSetup

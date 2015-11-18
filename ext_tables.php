@@ -41,7 +41,7 @@ $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['move
 		'EXT:gridelements/Classes/Hooks/DataHandler.php:GridElementsTeam\\Gridelements\\Hooks\\DataHandler';
 
 $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_befunc.php']['getFlexFormDSClass'][] =
-		'EXT:gridelements/Classes/Hooks/BackendUtility.php:GridElementsTeam\\Gridelements\\Hooks\\BackendUtility';
+		'EXT:gridelements/Classes/Hooks/BackendUtilityGridelements.php:GridElementsTeam\\Gridelements\\Hooks\\BackendUtilityGridelements';
 
 $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['tx_templavoila_api']['apiIsRunningTCEmain'] = TRUE;
 
