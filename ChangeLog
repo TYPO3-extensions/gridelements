@@ -1,4 +1,5 @@
 4.0.0 => 2015-12-07 Jo Hasenau <info@cybercraft.de>, Markus Klein <klein.t3@reelworx.at>
+	Fixed: Issue #71654 Class renamed to avoid a naming conflict with use statements.
 	Done: Issue #65589 Reenabled Gridelements Backend Layout Wizard Module for CMS 7
 	Done: Issue #65510 Adapt GE to list view module UI of CMS 7
 	Done: Increase column icon visibility and size
