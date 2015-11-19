@@ -21,6 +21,7 @@ namespace GridElementsTeam\Gridelements\DataHandler;
 
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\DataHandling\DataHandler;
+use TYPO3\CMS\Core\Utility\DebugUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -87,15 +88,16 @@ class MoveRecord extends AbstractDataHandler {
 		$targetContainer = (int)($targetElement['t3ver_oid'] ? $targetElement['t3ver_oid'] : $targetElement['uid']);
 
 		$this->init($table, $uid, $parentObj);
-		$cmd = GeneralUtility::_GET('cmd');
+		$clipboard = GeneralUtility::_GET('CB');
+		$pasteArray = GeneralUtility::trimExplode('|', $clipboard['paste']);
 
 		$originalUid = (int)($movedRecord['_ORIG_uid'] ? $movedRecord['_ORIG_uid'] : $uid);
-		$commandUid = key($cmd['tt_content']);
+		$pasteUid = $pasteArray[1];
 		$placeholderUid = (int)($movedRecord['t3ver_move_id'] ? $movedRecord['t3ver_move_id'] : $uid);
 
 		$setPid = 0;
-		if (strpos($cmd['tt_content'][$commandUid]['move'], 'x') !== FALSE) {
-			$target = explode('x', $cmd['tt_content'][$commandUid]['move']);
+		if (strpos($pasteUid, 'x') !== FALSE) {
+			$target = explode('x', $pasteUid);
 			$column = (int)$target[1];
 			$sortNumberArray = $this->dataHandler->getSortNumber('tt_content', $originalUid, $targetElement['pid']);
 			if (is_array($sortNumberArray)) {
@@ -106,7 +108,7 @@ class MoveRecord extends AbstractDataHandler {
 				$sortNumber = 0;
 			}
 			$GLOBALS['TCA']['tt_content']['ctrl']['copyAfterDuplFields'] = str_replace('colPos,', '', $GLOBALS['TCA']['tt_content']['ctrl']['copyAfterDuplFields']);
-			if ($uid === -$originalDestinationPid || $commandUid === -$originalDestinationPid || $placeholderUid === -$originalDestinationPid) {
+			if ($uid === -$originalDestinationPid || $pasteUid === -$originalDestinationPid || $placeholderUid === -$originalDestinationPid) {
 				$updateArray = array('colPos' => $column, 'sorting' => $sortNumber, 'tx_gridelements_container' => 0, 'tx_gridelements_columns' => 0);
 				$setPid = $targetElement['pid'];
 			} else {
