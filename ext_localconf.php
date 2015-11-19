@@ -9,10 +9,6 @@ $_EXTCONF = unserialize($_EXTCONF);
 	options.saveDocNew.tx_gridelements_backend_layout=1
 ');
 
-\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addPageTSConfig('
-	mod.wizards.newContentElement.renderMode = tabs
-');
-
 \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addPItoST43($_EXTKEY, 'Classes/Plugin/Gridelements.php', '_pi1', 'CType', 1);
 
 // register BE AJAX controller
