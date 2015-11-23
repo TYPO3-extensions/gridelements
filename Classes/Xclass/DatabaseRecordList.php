@@ -91,6 +91,7 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
     /**
      * Used to indicate which tables (values in the array) that can have a
      * create-new-record link. If the array is empty, all tables are allowed.
+     *
      * @var string[]
      */
     public $allowedNewTables = array();
@@ -98,6 +99,7 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
     /**
      * Used to indicate which tables (values in the array) that cannot have a
      * create-new-record link. If the array is empty, all tables are allowed.
+     *
      * @var string[]
      */
     public $deniedNewTables = array();
@@ -106,48 +108,56 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
      * If TRUE, the control panel will contain links to the create-new wizards for
      * pages and tt_content elements (normally, the link goes to just creatinga new
      * element without the wizards!).
+     *
      * @var bool
      */
     public $newWizards = false;
 
     /**
      * If TRUE, will disable the rendering of clipboard + control panels.
+     *
      * @var bool
      */
     public $dontShowClipControlPanels = false;
 
     /**
      * If TRUE, will show the clipboard in the field list.
+     *
      * @var bool
      */
     public $showClipboard = false;
 
     /**
      * If TRUE, will DISABLE all control panels in lists. (Takes precedence)
+     *
      * @var bool
      */
     public $noControlPanels = false;
 
     /**
      * If TRUE, clickmenus will be rendered
+     *
      * @var bool
      */
     public $clickMenuEnabled = true;
 
     /**
      * Count of record rows in view
+     *
      * @var int
      */
     public $totalRowCount;
 
     /**
      * Space icon used for alignment
+     *
      * @var string
      */
     public $spaceIcon;
 
     /**
      * Disable single table view
+     *
      * @var bool
      */
     public $disableSingleTableView = false;
@@ -158,42 +168,49 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
 
     /**
      * Set to the page record (see writeTop())
+     *
      * @var string[]
      */
     public $pageRow = array();
 
     /**
      * Used to accumulate CSV lines for CSV export.
+     *
      * @var string[]
      */
     protected $csvLines = array();
 
     /**
      * If set, the listing is returned as CSV instead.
+     *
      * @var bool
      */
     public $csvOutput = false;
 
     /**
      * Clipboard object
+     *
      * @var \TYPO3\CMS\Backend\Clipboard\Clipboard
      */
     public $clipObj;
 
     /**
      * Tracking names of elements (for clipboard use)
+     *
      * @var string[]
      */
     public $CBnames = array();
 
     /**
      * [$tablename][$uid] = number of references to this record
+     *
      * @var int[][]
      */
     protected $referenceCount = array();
 
     /**
      * Translations of the current record
+     *
      * @var string[]
      */
     public $translations;
@@ -201,6 +218,7 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
     /**
      * select fields for the query which fetches the translations of the current
      * record
+     *
      * @var string
      */
     public $selFieldList;
@@ -212,12 +230,14 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
 
     /**
      * Injected by RecordList
+     *
      * @var string[]
      */
     public $MOD_MENU;
 
     /**
      * If defined the records are editable
+     *
      * @var bool
      */
     protected $editable = true;
@@ -239,6 +259,7 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
     /**
      * Create the panel of buttons for submitting the form or otherwise perform
      * operations.
+     *
      * @return string[] All available buttons as an assoc. array
      */
     public function getButtons()
@@ -326,8 +347,7 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
             $buttons['cache'] = '<a href="' . htmlspecialchars(($this->listURL() . '&clear_cache=1')) . '" title="' . $lang->sL('LLL:EXT:lang/locallang_core.xlf:labels.clear_cache',
                     true) . '">' . $this->iconFactory->getIcon('actions-system-cache-clear',
                     Icon::SIZE_SMALL)->render() . '</a>';
-            if ($this->table && (!isset($module->modTSconfig['properties']['noExportRecordsLinks']) || (isset($module->modTSconfig['properties']['noExportRecordsLinks']) && !$module->modTSconfig['properties']['noExportRecordsLinks']))
-            ) {
+            if ($this->table && (!isset($module->modTSconfig['properties']['noExportRecordsLinks']) || (isset($module->modTSconfig['properties']['noExportRecordsLinks']) && !$module->modTSconfig['properties']['noExportRecordsLinks']))) {
                 // CSV
                 $buttons['csv'] = '<a href="' . htmlspecialchars(($this->listURL() . '&csv=1')) . '" title="' . $lang->sL('LLL:EXT:lang/locallang_core.xlf:labels.csv',
                         true) . '">' . $this->iconFactory->getIcon('actions-document-export-csv',
@@ -363,6 +383,7 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
     /**
      * Create the panel of buttons for submitting the form or otherwise perform
      * operations.
+     *
      * @param ModuleTemplate $moduleTemplate
      */
     public function getDocHeaderButtons(ModuleTemplate $moduleTemplate)
@@ -435,8 +456,7 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
             $clearCacheButton = $buttonBar->makeLinkButton()->setHref($this->listURL() . '&clear_cache=1')->setTitle($lang->sL('LLL:EXT:lang/locallang_core.xlf:labels.clear_cache',
                 true))->setIcon($this->iconFactory->getIcon('actions-system-cache-clear', Icon::SIZE_SMALL));
             $buttonBar->addButton($clearCacheButton, ButtonBar::BUTTON_POSITION_RIGHT);
-            if ($this->table && (!isset($module->modTSconfig['properties']['noExportRecordsLinks']) || (isset($module->modTSconfig['properties']['noExportRecordsLinks']) && !$module->modTSconfig['properties']['noExportRecordsLinks']))
-            ) {
+            if ($this->table && (!isset($module->modTSconfig['properties']['noExportRecordsLinks']) || (isset($module->modTSconfig['properties']['noExportRecordsLinks']) && !$module->modTSconfig['properties']['noExportRecordsLinks']))) {
                 // CSV
                 $csvButton = $buttonBar->makeLinkButton()->setHref($this->listURL() . '&csv=1')->setTitle($lang->sL('LLL:EXT:lang/locallang_core.xlf:labels.csv',
                     true))->setIcon($this->iconFactory->getIcon('actions-document-export-csv', Icon::SIZE_SMALL));
@@ -480,9 +500,11 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
 
     /**
      * Creates the listing of records from a single table
+     *
      * @param string $table Table name
      * @param int $id Page id
      * @param string $rowList List of fields to show in the listing. Pseudo fields will be added including the record header.
+     *
      * @throws \UnexpectedValueException
      * @return string HTML table with the listing for the record.
      */
@@ -706,16 +728,16 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
                 $tableHeader .= $theData[$titleCol] . $collapseIcon;
             }
             // Check if gridelements containers are expanded or collapsed
-            if($table === 'tt_content') {
+            if ($table === 'tt_content') {
                 $this->expandedGridelements = array();
                 $backendUser = $this->getBackendUserAuthentication();
-                if(is_array($backendUser->uc['moduleData']['list']['gridelementsExpanded'])) {
+                if (is_array($backendUser->uc['moduleData']['list']['gridelementsExpanded'])) {
                     $this->expandedGridelements = $backendUser->uc['moduleData']['list']['gridelementsExpanded'];
                 }
                 $expandOverride = GeneralUtility::_GP('gridelementsExpand');
                 if (is_array($expandOverride)) {
                     foreach ($expandOverride as $expandContainer => $expandValue) {
-                        if($expandValue) {
+                        if ($expandValue) {
                             $this->expandedGridelements[$expandContainer] = 1;
                         } else {
                             unset($this->expandedGridelements[$expandContainer]);
@@ -756,7 +778,7 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
                     if (is_array($row)) {
                         $accRows[] = $row;
                         $this->currentIdList[] = $row['uid'];
-                        if($row['CType'] === 'gridelements_pi1') {
+                        if ($row['CType'] === 'gridelements_pi1') {
                             $this->currentContainerIdList[] = $row['uid'];
                         }
                         if ($doSort) {
@@ -870,8 +892,10 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
     /**
      * Check if all row listing conditions are fulfilled.
      * This function serves as a dummy method to be overriden in extending classes.
+     *
      * @param string $table Table name
      * @param string[] $row Record
+     *
      * @return bool True, if all conditions are fulfilled.
      */
     protected function isRowListingConditionFulfilled($table, $row)
@@ -882,8 +906,10 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
     /**
      * Gets the number of records referencing the record with the UID $uid in
      * the table $tableName.
+     *
      * @param string $tableName
      * @param int $uid
+     *
      * @return int The number of references to record $uid in table
      */
     protected function getReferenceCount($tableName, $uid)
@@ -901,8 +927,10 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
 
     /**
      * Rendering the header row for a table
+     *
      * @param string $table Table name
      * @param int[] $currentIdList Array of the currently displayed uids of the table
+     *
      * @throws \UnexpectedValueException
      * @return string Header table row
      * @access private
@@ -1013,20 +1041,18 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
                     if ($this->isEditable($table)) {
                         // If new records can be created on this page, add links:
                         $permsAdditional = ($table === 'pages' ? 8 : 16);
-                        if($table === 'tt_content') {
+                        if ($table === 'tt_content') {
 
                             $expandTitle = $lang->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xlf:list.expandAllElements');
                             $collapseTitle = $lang->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xlf:list.collapseAllElements');
                             $containerIds = implode(',', array_flip(array_flip($this->currentContainerIdList)));
                             $icon = '<a
                 class="btn btn-default t3js-toggle-gridelements-all" href="#t3-gridelements-collapse-all" id="t3-gridelements-collapse-all"
-                title="' . $collapseTitle . '" data-container-ids="' . $containerIds . '">' .
-                                $this->iconFactory->getIcon('actions-view-list-collapse','small')->render() .
-                                '</a><a
+                title="' . $collapseTitle . '" data-container-ids="' . $containerIds . '">' . $this->iconFactory->getIcon('actions-view-list-collapse',
+                                    'small')->render() . '</a><a
                 class="btn btn-default t3js-toggle-gridelements-all" href="#t3-gridelements-expand-all" id="t3-gridelements-expand-all"
-                title="' . $expandTitle . '" data-container-ids="' . $containerIds . '">' .
-                                $this->iconFactory->getIcon('actions-view-list-expand','small')->render() .
-                                '</a>';
+                title="' . $expandTitle . '" data-container-ids="' . $containerIds . '">' . $this->iconFactory->getIcon('actions-view-list-expand',
+                                    'small')->render() . '</a>';
 
                         }
                         if ($this->calcPerms & $permsAdditional && $this->showNewRecLink($table)) {
@@ -1169,7 +1195,9 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
 
     /**
      * Get pointer for first element on the page
+     *
      * @param int $page Page number starting with 1
+     *
      * @return int Pointer to first element on the page (starting with 0)
      */
     protected function getPointerForPage($page)
@@ -1179,7 +1207,9 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
 
     /**
      * Creates a page browser for tables with many records
+     *
      * @param string $renderPart Distinguish between 'top' and 'bottom' part of the navigation (above or below the records)
+     *
      * @return string Navigation HTML
      */
     protected function renderListNavigation($renderPart = 'top')
@@ -1281,9 +1311,11 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
 
     /**
      * Creates the control panel for a single record in the listing.
+     *
      * @param string $table The table
      * @param mixed[] $row The record for which to make the control panel.
      * @param string $level
+     *
      * @throws \UnexpectedValueException
      * @return string HTML table with the control panel (unless disabled)
      */
@@ -1573,8 +1605,10 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
 
     /**
      * Creates the clipboard panel for a single record in the listing.
+     *
      * @param string $table The table
      * @param mixed[] $row The record for which to make the clipboard panel.
+     *
      * @throws \UnexpectedValueException
      * @return string HTML table with the clipboard panel (unless disabled)
      */
@@ -1685,6 +1719,7 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
 
     /**
      * Rendering a single row for the list
+     *
      * @param string $table Table name
      * @param mixed[] $row Current record
      * @param int $cc Counter, counting for each time an element is rendered (used for alternating colors)
@@ -1693,6 +1728,7 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
      * @param int $indent Indent from left.
      * @param integer $level
      * @param string $expanded
+     *
      * @return string Table row for the element
      * @access private
      * @see getTable()
@@ -1768,8 +1804,7 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
                 ) {
                     $theData[$fCol] .= '<br />' . $this->thumbCode($row, $table, $thumbsCol);
                 }
-                if (isset($GLOBALS['TCA'][$table]['ctrl']['languageField']) && $row[$GLOBALS['TCA'][$table]['ctrl']['languageField']] != 0 && $row[$GLOBALS['TCA'][$table]['ctrl']['transOrigPointerField']] != 0
-                ) {
+                if (isset($GLOBALS['TCA'][$table]['ctrl']['languageField']) && $row[$GLOBALS['TCA'][$table]['ctrl']['languageField']] != 0 && $row[$GLOBALS['TCA'][$table]['ctrl']['transOrigPointerField']] != 0) {
                     // It's a translated record with a language parent
                     $localizationMarkerClass = ' localization';
                 }
@@ -1834,8 +1869,7 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
         if ($table === 'tt_content') {
             $theData['tx_gridelements_container'] = $row['tx_gridelements_container'];
         }
-        if (isset($GLOBALS['TCA'][$table]['ctrl']['languageField']) && isset($GLOBALS['TCA'][$table]['ctrl']['transOrigPointerField']) && !isset($GLOBALS['TCA'][$table]['ctrl']['transOrigPointerTable'])
-        ) {
+        if (isset($GLOBALS['TCA'][$table]['ctrl']['languageField']) && isset($GLOBALS['TCA'][$table]['ctrl']['transOrigPointerField']) && !isset($GLOBALS['TCA'][$table]['ctrl']['transOrigPointerTable'])) {
             $theData['parent'] = $row[$GLOBALS['TCA'][$table]['ctrl']['transOrigPointerField']];
         }
         $rowOutput .= $this->addElement(1, $theIcon, $theData, $row_bgColor, '', '', '', $level);
@@ -1897,19 +1931,18 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
                     } else {
                         $this->showMoveUp = true;
                     }
-                    if (isset($child['tx_gridelements_columns']) &&
-                        isset($theData['_CHILDREN_'][$key + 1]) &&
-                        $child['tx_gridelements_columns'] != $theData['_CHILDREN_'][$key + 1]['tx_gridelements_columns']) {
-                            $this->showMoveDown = false;
+                    if (isset($child['tx_gridelements_columns']) && isset($theData['_CHILDREN_'][$key + 1]) && $child['tx_gridelements_columns'] != $theData['_CHILDREN_'][$key + 1]['tx_gridelements_columns']) {
+                        $this->showMoveDown = false;
                     } else {
                         $this->showMoveDown = true;
                     }
                     $this->currentIdList[] = $child['uid'];
-                    if($row['CType'] === 'gridelements_pi1') {
+                    if ($row['CType'] === 'gridelements_pi1') {
                         $this->currentContainerIdList[] = $row['uid'];
                     }
                     $child['_CSSCLASS'] = 't3-gridelements-child" data-trigger-container="' . ($this->localizationView && $row['l18n_parent'] ? $row['l18n_parent'] : $row['uid']) . $expanded;
-                    $rowOutput .= $this->renderListRow($table, $child, $cc, $titleCol, $thumbsCol, 0, $level + 1, $expanded);
+                    $rowOutput .= $this->renderListRow($table, $child, $cc, $titleCol, $thumbsCol, 0, $level + 1,
+                        $expanded);
                 }
                 $this->showMoveUp = $originalMoveUp;
                 $this->showMoveDown = $originalMoveDown;
@@ -1923,6 +1956,7 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
     /**
      * Returns a table-row with the content from the fields in the input data array.
      * OBS: $this->fieldArray MUST be set! (represents the list of fields to display)
+     *
      * @param int $h Is an integer >=0 and denotes how tall an element is. Set to '0' makes a halv line, -1 = full line, set to 1 makes a 'join' and above makes 'line'
      * @param string $icon Is the <img>+<a> of the record. If not supplied the first 'join'-icon will be a 'line' instead
      * @param array $data Is the dataarray, record with the fields. Notice: These fields are (currently) NOT htmlspecialchar'ed before being wrapped in <td>-tags
@@ -1931,6 +1965,7 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
      * @param string $_ OBSOLETE - NOT USED ANYMORE. Is the HTML <img>-tag for an alternative 'gfx/ol/line.gif'-icon (used in the top)
      * @param string $colType Defines the tag being used for the columns. Default is td.
      * @param int $level
+     *
      * @return string HTML content for the table row
      */
     public function addElement($h, $icon, $data, $rowParams = '', $_ = '', $_2 = '', $colType = 'td', $level = 0)
@@ -2053,10 +2088,12 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
      * pasteUrl of the element (database and file)
      * For the meaning of $table and $uid, please read from ->makePasteCmdArray!!!
      * The URL will point to tce_file or tce_db depending in $table
+     *
      * @param string $table Tablename (_FILE for files)
      * @param mixed $uid "destination": can be positive or negative indicating how the paste is done (paste into / paste after)
      * @param bool $setRedirect If set, then the redirect URL will point back to the current script, but with CB reset.
      * @param array|NULL $update Additional key/value pairs which should get set in the moved/copied record (via DataHandler)
+     *
      * @return string
      */
     public function pasteUrl($table, $uid, $setRedirect = true, array $update = null)
@@ -2069,11 +2106,13 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
 
     /**
      * Returns the select-url for database elements
+     *
      * @param string $table Table name
      * @param int $uid Uid of record
      * @param bool $copy If set, copymode will be enabled
      * @param bool $deselect If set, the link will deselect, otherwise select.
      * @param array $baseArray The base array of GET vars to be sent in addition. Notice that current GET vars WILL automatically be included.
+     *
      * @return string URL linking to the current script but with the CB array set to select the element with table/uid
      */
     public function selUrlDB($table, $uid, $copy = false, $deselect = false, $baseArray = array())
@@ -2090,8 +2129,10 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
     /**
      * Creates the HTML for a reference count for the record with the UID $uid
      * in the table $tableName.
+     *
      * @param string $tableName
      * @param int $uid
+     *
      * @return string HTML of reference a link, will be empty if there are no
      */
     protected function createReferenceHtml($tableName, $uid)
@@ -2105,8 +2146,10 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
 
     /**
      * Creates the localization panel
+     *
      * @param string $table The table
      * @param mixed[] $row The record for which to make the localization panel.
+     *
      * @return string[] Array with key 0/1 with content for column 1 and 2
      */
     public function makeLocalizationPanel($table, $row)
@@ -2154,8 +2197,10 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
 
     /**
      * Creates a checkbox list for selecting fields to display from a table:
+     *
      * @param string $table Table name
      * @param bool $formFields If TRUE, form-fields will be wrapped around the table.
+     *
      * @return string HTML table with the selector check box (name: displayFields['.$table.'][])
      */
     public function fieldSelectBox($table, $formFields = true)
@@ -2226,10 +2271,12 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
      * Creates a link around $string. The link contains an onclick action
      * which submits the script with some clipboard action.
      * Currently, this is used for setting elements / delete elements.
+     *
      * @param string $string The HTML content to link (image/text)
      * @param string $table Table name
      * @param string $cmd Clipboard command (eg. "setCB" or "delete")
      * @param string $warning Warning text, if any ("delete" uses this for confirmation)
+     *
      * @return string <a> tag wrapped link.
      */
     public function linkClipboardHeaderIcon($string, $table, $cmd, $warning = '')
@@ -2244,6 +2291,7 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
 
     /**
      * Returns TRUE if a numeric clipboard pad is selected/active
+     *
      * @return bool
      */
     public function clipNumPane()
@@ -2255,9 +2303,11 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
      * Creates a sort-by link on the input string ($code).
      * It will automatically detect if sorting should be ascending or descending depending on $this->sortRev.
      * Also some fields will not be possible to sort (including if single-table-view is disabled).
+     *
      * @param string $code The string to link (text)
      * @param string $field The fieldname represented by the title ($code)
      * @param string $table Table name
+     *
      * @return string Linked $code variable
      */
     public function addSortLink($code, $field, $table)
@@ -2284,7 +2334,9 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
      * Returns the path for a certain pid
      * The result is cached internally for the session, thus you can call
      * this function as much as you like without performance problems.
+     *
      * @param int $pid The page id for which to get the path
+     *
      * @return mixed[] The path.
      */
     public function recPath($pid)
@@ -2298,7 +2350,9 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
 
     /**
      * Returns TRUE if a link for creating new records should be displayed for $table
+     *
      * @param string $table Table name
+     *
      * @return bool Returns TRUE if a link for creating new records should be displayed for $table
      * @see \TYPO3\CMS\Backend\Controller\NewRecordController::showNewRecLink
      */
@@ -2317,6 +2371,7 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
      * Creates the "&returnUrl" parameter for links - this is used when the script links
      * to other scripts and passes its own URL with the link so other scripts can return to the listing again.
      * Uses REQUEST_URI as value.
+     *
      * @return string
      */
     public function makeReturnUrl()
@@ -2329,6 +2384,7 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
      ************************************/
     /**
      * Initializes internal csvLines array with the header of field names
+     *
      * @return void
      */
     protected function initCSV()
@@ -2338,6 +2394,7 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
 
     /**
      * Add header line with field names as CSV line
+     *
      * @return void
      */
     protected function addHeaderRowToCSV()
@@ -2348,7 +2405,9 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
 
     /**
      * Adds selected columns of one table row as CSV line.
+     *
      * @param mixed[] $row Record array, from which the values of fields found in $this->fieldArray will be listed in the CSV output.
+     *
      * @return void
      */
     protected function addToCSV(array $row = array())
@@ -2360,7 +2419,9 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
 
     /**
      * Remove control fields from row for CSV export
+     *
      * @param mixed[] $row fieldNames => fieldValues
+     *
      * @return mixed[] Input array reduces by control fields
      */
     protected static function removeControlFieldsFromFieldRow(array $row = array())
@@ -2380,7 +2441,9 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
 
     /**
      * Adds input row of values to the internal csvLines array as a CSV formatted line
+     *
      * @param mixed[] $csvRow Array with values to be listed.
+     *
      * @return void
      */
     public function setCsvRow($csvRow)
@@ -2391,7 +2454,9 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
     /**
      * Compiles the internal csvLines array to a csv-string and outputs it to the browser.
      * This function exits!
+     *
      * @param string $prefix Filename prefix:
+     *
      * @return void EXITS php execution!
      */
     public function outputCSV($prefix)
@@ -2412,6 +2477,7 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
 
     /**
      * add action into correct section
+     *
      * @param array $cells
      * @param string $action
      * @param string $actionKey
@@ -2446,8 +2512,10 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
 
     /**
      * Check if the record represents the current backend user
+     *
      * @param string $table
      * @param array $row
+     *
      * @return bool
      */
     protected function isRecordCurrentBackendUser($table, $row)
@@ -2465,7 +2533,9 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
 
     /**
      * Check if the table is readonly or editable
+     *
      * @param string $table
+     *
      * @return bool
      */
     public function isEditable($table)
@@ -2477,9 +2547,11 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
      * Check if the current record is locked by editlock. Pages are locked if their editlock flag is set,
      * records are if they are locked themselves or if the page they are on is locked (a page’s editlock
      * is transitive for its content elements).
+     *
      * @param string $table
      * @param array $row
      * @param bool $editPermission
+     *
      * @return bool
      */
     protected function overlayEditLockPermissions($table, $row = array(), $editPermission = true)
@@ -2502,6 +2574,7 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
     /**
      * Check whether or not the current backend user is an admin or the current page is
      * locked by editlock.
+     *
      * @return bool
      */
     protected function editLockPermissions()

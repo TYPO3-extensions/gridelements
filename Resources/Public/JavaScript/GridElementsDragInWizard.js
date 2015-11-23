@@ -98,7 +98,7 @@ define(['jquery', 'TYPO3/CMS/Gridelements/GridElementsDragDrop', 'jquery-ui/sort
 			if(CTypeCheck[0] === 'gridelements') {
 				CType = 'gridelements_pi1';
 				var txGridelementsBackendLayout = CTypeCheck[1];
-				$(this).find('.media-left').addClass('t3-ctype-identifier').attr('data-tx_gridelements_backend_layout', txGridelementsBackendLayout);
+				$(this).find('.media-left').addClass('t3-ctype-identifier').attr('data-gridtype', txGridelementsBackendLayout);
 			} else {
 				CType = CTypeCheck[1];
 			}

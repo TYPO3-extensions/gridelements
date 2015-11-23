@@ -17,69 +17,78 @@
  *  GNU General Public License for more details.
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
-class tx_gridelements_db_list_extra_hookTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
+class tx_gridelements_db_list_extra_hookTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase
+{
 
-	/**
-	 * test make clip
-	 * @test
-	 */
-	public function testMakeClip() {
-		$dbList = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('GridElementsTeam\\Gridelements\\Hooks\\DatabaseRecordList');
+    /**
+     * test make clip
+     *
+     * @test
+     */
+    public function testMakeClip()
+    {
+        $dbList = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('GridElementsTeam\\Gridelements\\Hooks\\DatabaseRecordList');
 
-		$table = 'pages';
-		$row = array('uid' => 12, 'pid' => 5);
-		$cells = 'uid,pid';
-		$parentObject = new stdClass();
+        $table = 'pages';
+        $row = array('uid' => 12, 'pid' => 5);
+        $cells = 'uid,pid';
+        $parentObject = new stdClass();
 
-		$result = $dbList->makeClip($table, $row, $cells, $parentObject);
-		$this->assertEquals('uid,pid', $result);
-	}
+        $result = $dbList->makeClip($table, $row, $cells, $parentObject);
+        $this->assertEquals('uid,pid', $result);
+    }
 
-	/**
-	 * test make control
-	 * @test
-	 */
-	public function testMakeControl() {
-		$dbList = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('GridElementsTeam\\Gridelements\\Hooks\\DatabaseRecordList');
+    /**
+     * test make control
+     *
+     * @test
+     */
+    public function testMakeControl()
+    {
+        $dbList = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('GridElementsTeam\\Gridelements\\Hooks\\DatabaseRecordList');
 
-		$table = 'pages';
-		$row = array('uid' => 12, 'pid' => 5);
-		$cells = 'uid,pid';
-		$parentObject = new stdClass();
+        $table = 'pages';
+        $row = array('uid' => 12, 'pid' => 5);
+        $cells = 'uid,pid';
+        $parentObject = new stdClass();
 
-		$result = $dbList->makeControl($table, $row, $cells, $parentObject);
-		$this->assertEquals('uid,pid', $result);
-	}
+        $result = $dbList->makeControl($table, $row, $cells, $parentObject);
+        $this->assertEquals('uid,pid', $result);
+    }
 
-	/**
-	 * test render list header
-	 * @test
-	 */
-	public function testRenderListHeader() {
-		$dbList = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('GridElementsTeam\\Gridelements\\Hooks\\DatabaseRecordList');
+    /**
+     * test render list header
+     *
+     * @test
+     */
+    public function testRenderListHeader()
+    {
+        $dbList = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('GridElementsTeam\\Gridelements\\Hooks\\DatabaseRecordList');
 
-		$table = 'pages';
-		$currentIdList = '12,23,34';
-		$headerColumns = '1,2';
-		$parentObject = new stdClass();
+        $table = 'pages';
+        $currentIdList = '12,23,34';
+        $headerColumns = '1,2';
+        $parentObject = new stdClass();
 
-		$result = $dbList->renderListHeader($table, $currentIdList, $headerColumns, $parentObject);
-		$this->assertEquals('1,2', $result);
-	}
+        $result = $dbList->renderListHeader($table, $currentIdList, $headerColumns, $parentObject);
+        $this->assertEquals('1,2', $result);
+    }
 
-	/**
-	 * test render list header actions
-	 * @test
-	 */
-	public function testRenderListHeaderActions() {
-		$dbList = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('GridElementsTeam\\Gridelements\\Hooks\\DatabaseRecordList');
+    /**
+     * test render list header actions
+     *
+     * @test
+     */
+    public function testRenderListHeaderActions()
+    {
+        $dbList = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('GridElementsTeam\\Gridelements\\Hooks\\DatabaseRecordList');
 
-		$table = 'pages';
-		$currentIdList = '12,23,34';
-		$cells = 'uid,pid';
-		$parentObject = new stdClass();
+        $table = 'pages';
+        $currentIdList = '12,23,34';
+        $cells = 'uid,pid';
+        $parentObject = new stdClass();
 
-		$result = $dbList->renderListHeaderActions($table, $currentIdList, $cells, $parentObject);
-		$this->assertEquals('uid,pid', $result);
-	}
+        $result = $dbList->renderListHeaderActions($table, $currentIdList, $cells, $parentObject);
+        $this->assertEquals('uid,pid', $result);
+    }
 }

@@ -21,19 +21,21 @@ namespace GridElementsTeam\Gridelements\Hooks;
 
 use GridElementsTeam\Gridelements\Helper\Helper;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
+use TYPO3\CMS\Core\Imaging\IconFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Lang\LanguageService;
-use TYPO3\CMS\Core\Imaging\IconFactory;
 use TYPO3\CMS\Recordlist\RecordList\RecordListHookInterface;
 
 /**
  * Class/Function which offers TCE main hook functions.
+ *
  * @author Jo Hasenau <info@cybercraft.de>
  * @author Dirk Hoffmann <hoffmann@vmd-jena.de>
  * @package TYPO3
  * @subpackage tx_gridelements
  */
-class DatabaseRecordList implements RecordListHookInterface {
+class DatabaseRecordList implements RecordListHookInterface
+{
 
     /**
      * @var Iconfactory
@@ -43,152 +45,191 @@ class DatabaseRecordList implements RecordListHookInterface {
     /**
      * @var LanguageService
      */
-    protected $lang;
+    protected $languageService;
 
-    public function __construct() {
-        $this->lang = GeneralUtility::makeInstance(LanguageService::class);
-		$this->lang->init($this->getBackendUser()->uc['lang']);
-	}
+    public function __construct()
+    {
+        $this->setLanguageService($GLOBALS['LANG']);
+    }
 
 
-	/**
-	 * modifies Web>List clip icons (copy, cut, paste, etc.) of a displayed row
-	 * @param string $table the current database table
-	 * @param array $row the current record row
-	 * @param array $cells the default clip-icons to get modified
-	 * @param object $parentObject Instance of calling object
-	 * @return array the modified clip-icons
-	 */
-	public function makeClip($table, $row, $cells, &$parentObject) {
+    /**
+     * modifies Web>List clip icons (copy, cut, paste, etc.) of a displayed row
+     *
+     * @param string $table the current database table
+     * @param array $row the current record row
+     * @param array $cells the default clip-icons to get modified
+     * @param object $parentObject Instance of calling object
+     *
+     * @return array the modified clip-icons
+     */
+    public function makeClip($table, $row, $cells, &$parentObject)
+    {
 
-		/*if ($table == 'tt_content' && get_class($parentObject) == 'localRecordList') {
-			if((int)$row['colPos'] < 0)) {
-				$cells['pasteInto'] = $parentObject->spaceIcon;
-				$cells['pasteAfter'] = $parentObject->spaceIcon;
-			}
-		}*/
-		if ($table === 'tt_content') {
-			$cells['moveUp'] = '';
-		}
+        /*if ($table == 'tt_content' && get_class($parentObject) == 'localRecordList') {
+            if((int)$row['colPos'] < 0)) {
+                $cells['pasteInto'] = $parentObject->spaceIcon;
+                $cells['pasteAfter'] = $parentObject->spaceIcon;
+            }
+        }*/
+        if ($table === 'tt_content') {
+            $cells['moveUp'] = '';
+        }
 
-		return $cells;
-	}
+        return $cells;
+    }
 
-	/**
-	 * modifies Web>List control icons of a displayed row
-	 * @param string $table the current database table
-	 * @param array $row the current record row
-	 * @param array $cells the default control-icons to get modified
-	 * @param object $parentObject Instance of calling object
-	 * @return array the modified control-icons
-	 */
-	public function makeControl($table, $row, $cells, &$parentObject) {
-		/*if ($table == 'tt_content' && get_class($parentObject) == 'localRecordList') {
-			if((int)$row['colPos'] < 0) {
-				$cells['move'] = $parentObject->spaceIcon;
-				$cells['new'] = $parentObject->spaceIcon;
-				$cells['moveUp'] = $parentObject->spaceIcon;
-				$cells['moveDown'] = $parentObject->spaceIcon;
-			}
-		}*/
+    /**
+     * modifies Web>List control icons of a displayed row
+     *
+     * @param string $table the current database table
+     * @param array $row the current record row
+     * @param array $cells the default control-icons to get modified
+     * @param object $parentObject Instance of calling object
+     *
+     * @return array the modified control-icons
+     */
+    public function makeControl($table, $row, $cells, &$parentObject)
+    {
+        /*if ($table == 'tt_content' && get_class($parentObject) == 'localRecordList') {
+            if((int)$row['colPos'] < 0) {
+                $cells['move'] = $parentObject->spaceIcon;
+                $cells['new'] = $parentObject->spaceIcon;
+                $cells['moveUp'] = $parentObject->spaceIcon;
+                $cells['moveDown'] = $parentObject->spaceIcon;
+            }
+        }*/
 
-		return $cells;
-	}
+        return $cells;
+    }
 
-	/**
-	 * modifies Web>List header row columns/cells
-	 * @param string $table the current database table
-	 * @param array $currentIdList Array of the currently displayed uids of the table
-	 * @param array $headerColumns An array of rendered cells/columns
-	 * @param object $parentObject Instance of calling (parent) object
-	 * @return array Array of modified cells/columns
-	 */
-	public function renderListHeader($table, $currentIdList, $headerColumns, &$parentObject) {
-		return $headerColumns;
-	}
+    /**
+     * modifies Web>List header row columns/cells
+     *
+     * @param string $table the current database table
+     * @param array $currentIdList Array of the currently displayed uids of the table
+     * @param array $headerColumns An array of rendered cells/columns
+     * @param object $parentObject Instance of calling (parent) object
+     *
+     * @return array Array of modified cells/columns
+     */
+    public function renderListHeader($table, $currentIdList, $headerColumns, &$parentObject)
+    {
+        return $headerColumns;
+    }
 
-	/**
-	 * modifies Web>List header row clipboard/action icons
-	 * @param string $table the current database table
-	 * @param array $currentIdList Array of the currently displayed uids of the table
-	 * @param array $cells An array of the current clipboard/action icons
-	 * @param object $parentObject Instance of calling (parent) object
-	 * @return array Array of modified clipboard/action icons
-	 */
-	public function renderListHeaderActions($table, $currentIdList, $cells, &$parentObject) {
-		return $cells;
-	}
+    /**
+     * modifies Web>List header row clipboard/action icons
+     *
+     * @param string $table the current database table
+     * @param array $currentIdList Array of the currently displayed uids of the table
+     * @param array $cells An array of the current clipboard/action icons
+     * @param object $parentObject Instance of calling (parent) object
+     *
+     * @return array Array of modified clipboard/action icons
+     */
+    public function renderListHeaderActions($table, $currentIdList, $cells, &$parentObject)
+    {
+        return $cells;
+    }
 
     /**
      * check if current row has child elements and add info to $theData array
+     *
      * @param string $table
      * @param array $row
      * @param int $level
      * @param array $theData
      * @param \GridElementsTeam\Gridelements\Xclass\DatabaseRecordList $parentObj
      */
-	public function checkChildren($table, $row, $level, &$theData, $parentObj) {
-		if ($table === 'tt_content' && $row['CType'] === 'gridelements_pi1') {
-			$elementChildren = Helper::getInstance()->getChildren($table, $row['uid'], '', 0, $parentObj->selFieldList);
-			if (count($elementChildren) > 0) {
-				$theData['_EXPANDABLE_'] = true;
-				$theData['_EXPAND_ID_'] = $table . ':' . $row['uid'];
-				$theData['_EXPAND_TABLE_'] = $table;
-				$theData['_LEVEL_'] = $level;
+    public function checkChildren($table, $row, $level, &$theData, $parentObj)
+    {
+        if ($table === 'tt_content' && $row['CType'] === 'gridelements_pi1') {
+            $elementChildren = Helper::getInstance()->getChildren($table, $row['uid'], '', 0, $parentObj->selFieldList);
+            if (!empty($elementChildren)) {
+                $theData['_EXPANDABLE_'] = true;
+                $theData['_EXPAND_ID_'] = $table . ':' . $row['uid'];
+                $theData['_EXPAND_TABLE_'] = $table;
+                $theData['_LEVEL_'] = $level;
                 $theData['_CHILDREN_'] = $elementChildren;
-			}
-		}
-	}
+            }
+        }
+    }
 
     /**
      * return content collapse icon
+     *
      * @param array $data
      * @param string $sortField
      * @param int $level
      * @param string $contentCollapseIcon
      * @param DatabaseRecordList $parentObj
      */
-	public function contentCollapseIcon(&$data, $sortField, $level, &$contentCollapseIcon, $parentObj) {
-		if ($data['_EXPAND_TABLE_'] === 'tt_content') {
-            $expandTitle = $this->lang->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xlf:list.expandElement');
-            $collapseTitle = $this->lang->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xlf:list.collapseElement');
+    public function contentCollapseIcon(&$data, $sortField, $level, &$contentCollapseIcon, $parentObj)
+    {
+        if ($data['_EXPAND_TABLE_'] === 'tt_content') {
+            $expandTitle = $this->languageService->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xlf:list.expandElement');
+            $collapseTitle = $this->languageService->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xlf:list.collapseElement');
             $expandedGridelements = $parentObj->getExpandedGridelements();
-            if($expandedGridelements[$data['uid']]) {
+            if ($expandedGridelements[$data['uid']]) {
                 $href = htmlspecialchars(($parentObj->listURL() . '&gridelementsExpand[' . (int)$data['uid'] . ']=0'));
                 $contentCollapseIcon = '<a
                 class="btn btn-default t3js-toggle-gridelements-list open-gridelements-container" data-state="expanded" href="' . $href . '" id="t3-gridelements-' . $data['uid'] . '"
                 title="' . $collapseTitle . '"
-                data-toggle-title="' . $expandTitle . '">' .
-                    $this->getIconFactory()->getIcon('actions-view-list-expand','small')->render() .
-                    $this->getIconFactory()->getIcon('actions-view-list-collapse','small')->render() .
-                    '</a>';
+                data-toggle-title="' . $expandTitle . '">' . $this->getIconFactory()->getIcon('actions-view-list-expand',
+                        'small')->render() . $this->getIconFactory()->getIcon('actions-view-list-collapse',
+                        'small')->render() . '</a>';
             } else {
                 $href = htmlspecialchars(($parentObj->listURL() . '&gridelementsExpand[' . (int)$data['uid'] . ']=1'));
                 $contentCollapseIcon = '<a
                 class="btn btn-default t3js-toggle-gridelements-list" data-state="collapsed" href="' . $href . '" id="t3-gridelements-' . $data['uid'] . '"
                 title="' . $expandTitle . '"
-                data-toggle-title="' . $collapseTitle . '">' .
-                    $this->getIconFactory()->getIcon('actions-view-list-expand','small')->render() .
-                    $this->getIconFactory()->getIcon('actions-view-list-collapse','small')->render() .
-                    '</a>';
+                data-toggle-title="' . $collapseTitle . '">' . $this->getIconFactory()->getIcon('actions-view-list-expand',
+                        'small')->render() . $this->getIconFactory()->getIcon('actions-view-list-collapse',
+                        'small')->render() . '</a>';
             }
-		}
-	}
+        }
+    }
 
-	/**
-	 * @return BackendUserAuthentication
-	 */
-	protected function getBackendUser() {
-		return $GLOBALS['BE_USER'];
-	}
+    /**
+     * getter for databaseConnection
+     *
+     * @return LanguageService $languageService
+     */
+    public function getLanguageService()
+    {
+        return $this->languageService;
+    }
+
+    /**
+     * setter for databaseConnection object
+     *
+     * @param LanguageService $languageService
+     *
+     * @return void
+     */
+    public function setLanguageService(LanguageService $languageService)
+    {
+        $this->languageService = $languageService;
+    }
+
+    /**
+     * @return BackendUserAuthentication
+     */
+    protected function getBackendUser()
+    {
+        return $GLOBALS['BE_USER'];
+    }
 
     /**
      * @return IconFactory
      */
-    protected function getIconFactory() {
-        if($this->iconFactory === null) {
+    protected function getIconFactory()
+    {
+        if ($this->iconFactory === null) {
             $this->iconFactory = GeneralUtility::makeInstance(IconFactory::class);
         }
+
         return $this->iconFactory;
     }
 

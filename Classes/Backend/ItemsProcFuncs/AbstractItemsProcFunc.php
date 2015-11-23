@@ -28,101 +28,138 @@ use TYPO3\CMS\Lang\LanguageService;
 
 /**
  * Class/Function which offers TCE main hook functions.
+ *
  * @author Jo Hasenau <info@cybercraft.de>
  * @package TYPO3
  * @subpackage tx_gridelements
  */
-abstract class AbstractItemsProcFunc {
+abstract class AbstractItemsProcFunc
+{
 
-	/**
-	 * @var DatabaseConnection
-	 */
-	protected $databaseConnection;
+    /**
+     * @var DatabaseConnection
+     */
+    protected $databaseConnection;
 
-	/**
-	 * @var LanguageService
-	 */
-	protected $lang;
+    /**
+     * @var LanguageService
+     */
+    protected $languageService;
 
-	/**
-	 * @var QueryGenerator
-	 */
-	protected $tree;
+    /**
+     * @var QueryGenerator
+     */
+    protected $tree;
 
-	/**
-	 * @var string
-	 */
-	protected $backPath = '';
+    /**
+     * @var string
+     */
+    protected $backPath = '';
 
-	/**
-	 * initializes this class
+    /**
+     * initializes this class
+     */
+    public function init()
+    {
+        $this->setDatabaseConnection($GLOBALS['TYPO3_DB']);
+        $this->setLanguageService($GLOBALS['LANG']);
+    }
 
-	 */
-	public function init() {
-		$this->setDatabaseConnection($GLOBALS['TYPO3_DB']);
-		$this->lang = GeneralUtility::makeInstance(LanguageService::class);
-		$this->lang->init($this->getBackendUser()->uc['lang']);
-	}
+    /**
+     * Gets the selected backend layout
+     *
+     * @param int $id : The uid of the page we are currently working on
+     *
+     * @return array|null $backendLayout : An array containing the data of the selected backend layout as well as a parsed version of the layout configuration
+     */
+    public function getSelectedBackendLayout($id)
+    {
+        $backendLayoutData = GeneralUtility::callUserFunction('TYPO3\\CMS\\Backend\\View\\BackendLayoutView->getSelectedBackendLayout',
+            $id, $this);
+        // add allowed CTypes to the columns, since this is not done by the native core methods
+        if (count($backendLayoutData['__items']) > 0) {
+            if (!empty($backendLayoutData['__config']['backend_layout.']['rows.'])) {
+                foreach ($backendLayoutData['__config']['backend_layout.']['rows.'] as $row) {
+                    if (!empty($row['columns.'])) {
+                        foreach ($row['columns.'] as $column) {
+                            $backendLayoutData['columns'][$column['colPos']] = $column['allowed'] ? $column['allowed'] : '*';
+                            $backendLayoutData['columns']['allowed'] .= $backendLayoutData['columns']['allowed'] ? ',' . $backendLayoutData['columns'][$column['colPos']] : $backendLayoutData['columns'][$column['colPos']];
+                        }
+                    }
+                }
+            }
+            foreach ($backendLayoutData['__items'] as $key => $item) {
+                $backendLayoutData['__items'][$key][3] = $backendLayoutData['columns'][$item[1]];
+            }
+        };
 
-	/**
-	 * Gets the selected backend layout
-	 * @param int $id : The uid of the page we are currently working on
-	 * @return array|null $backendLayout : An array containing the data of the selected backend layout as well as a parsed version of the layout configuration
-	 */
-	public function getSelectedBackendLayout($id) {
-		$backendLayoutData = GeneralUtility::callUserFunction('TYPO3\\CMS\\Backend\\View\\BackendLayoutView->getSelectedBackendLayout', $id, $this);
-		// add allowed CTypes to the columns, since this is not done by the native core methods
-		if (count($backendLayoutData['__items']) > 0) {
-			if (!empty($backendLayoutData['__config']['backend_layout.']['rows.'])) {
-				foreach ($backendLayoutData['__config']['backend_layout.']['rows.'] as $row) {
-					if (!empty($row['columns.'])) {
-						foreach ($row['columns.'] as $column) {
-							$backendLayoutData['columns'][$column['colPos']] = $column['allowed'] ? $column['allowed'] : '*';
-							$backendLayoutData['columns']['allowed'] .= $backendLayoutData['columns']['allowed'] ? ',' . $backendLayoutData['columns'][$column['colPos']] : $backendLayoutData['columns'][$column['colPos']];
-						}
-					}
-				}
-			}
-			foreach ($backendLayoutData['__items'] as $key => $item) {
-				$backendLayoutData['__items'][$key][3] = $backendLayoutData['columns'][$item[1]];
-			}
-		};
+        return $backendLayoutData;
+    }
 
-		return $backendLayoutData;
-	}
+    /**
+     * This method is a wrapper for unitTests because of the static method
+     *
+     * @param $pageUid
+     *
+     * @return array
+     */
+    public function getRootline($pageUid)
+    {
+        return BackendUtility::BEgetRootLine($pageUid);
+    }
 
-	/**
-	 * This method is a wrapper for unitTests because of the static method
-	 * @param $pageUid
-	 * @return array
-	 */
-	public function getRootline($pageUid) {
-		return BackendUtility::BEgetRootLine($pageUid);
-	}
+    /**
+     * setter for databaseConnection object
+     *
+     * @param DatabaseConnection $databaseConnection
+     *
+     * @return void
+     */
+    public function setDatabaseConnection(DatabaseConnection $databaseConnection)
+    {
+        $this->databaseConnection = $databaseConnection;
+    }
 
-	/**
-	 * setter for databaseConnection object
-	 * @param DatabaseConnection $databaseConnection
-	 * @return void
-	 */
-	public function setDatabaseConnection(DatabaseConnection $databaseConnection) {
-		$this->databaseConnection = $databaseConnection;
-	}
+    /**
+     * getter for databaseConnection
+     *
+     * @return DatabaseConnection databaseConnection
+     */
+    public function getDatabaseConnection()
+    {
+        return $this->databaseConnection;
+    }
 
-	/**
-	 * getter for databaseConnection
-	 * @return DatabaseConnection databaseConnection
-	 */
-	public function getDatabaseConnection() {
-		return $this->databaseConnection;
-	}
+    /**
+     * getter for databaseConnection
+     *
+     * @return LanguageService $languageService
+     */
+    public function getLanguageService()
+    {
+        return $this->languageService;
+    }
 
-	/**
-	 * Gets the current backend user.
-	 * @return \TYPO3\CMS\Core\Authentication\BackendUserAuthentication
-	 */
-	public function getBackendUser() {
-		return $GLOBALS['BE_USER'];
-	}
+    /**
+     * setter for databaseConnection object
+     *
+     * @param LanguageService $languageService
+     *
+     * @return void
+     */
+    public function setLanguageService(LanguageService $languageService)
+    {
+        $this->languageService = $languageService;
+    }
+
+    /**
+     * Gets the current backend user.
+     *
+     * @return \TYPO3\CMS\Core\Authentication\BackendUserAuthentication
+     */
+    public function getBackendUser()
+    {
+        return $GLOBALS['BE_USER'];
+    }
 
 }
