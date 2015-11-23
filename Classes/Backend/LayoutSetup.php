@@ -23,6 +23,7 @@ use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Database\DatabaseConnection;
 use TYPO3\CMS\Core\TypoScript\Parser\TypoScriptParser;
 use TYPO3\CMS\Core\Utility\ArrayUtility;
+use TYPO3\CMS\Core\Utility\DebugUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Lang\LanguageService;
 
@@ -402,10 +403,7 @@ class LayoutSetup {
 		}
 
 		if ($overruleRecords === true) {
-			ArrayUtility::mergeRecursiveWithOverrule($gridLayoutConfig, $gridLayoutRecords, true);
-			$this->setLayoutSetup($gridLayoutConfig);
-		} else {
-			ArrayUtility::mergeRecursiveWithOverrule($gridLayoutRecords, $gridLayoutConfig, true);
+			ArrayUtility::mergeRecursiveWithOverrule($gridLayoutRecords, $gridLayoutConfig);
 			$this->setLayoutSetup($gridLayoutRecords);
 		} else {
 			ArrayUtility::mergeRecursiveWithOverrule($gridLayoutConfig, $gridLayoutRecords);
