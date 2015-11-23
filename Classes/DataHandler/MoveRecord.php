@@ -84,54 +84,7 @@ class MoveRecord extends AbstractDataHandler {
 	}
 
 	/**
-	 * Function to handle record movement to the first position of a column
-	 *
-	 * @param string $table : The name of the table we are working on
-	 * @param int $uid : The uid of the record that is going to be moved
-	 * @param string $destPid : The resolved target the record should be moved to
-	 * @param array $moveRec : An array of some values of the record that is going to be moved
-	 * @param array $updateFields : An array of some values of the record that have been updated
-	 * @param \TYPO3\CMS\Core\DataHandling\DataHandler $parentObj : The parent object that triggered this hook
-	 *
-	 */
-	public function execute_moveRecord_firstElementPostProcess($table, $uid, $destPid, $moveRec, $updateFields, \TYPO3\CMS\Core\DataHandling\DataHandler &$parentObj) {
-		if ($table === 'tt_content') {
-			$movedRecord = BackendUtility::getRecordWSOL('tt_content', $uid, 'uid,t3ver_oid,t3ver_move_id,l18n_parent');
-			$targetElement = BackendUtility::getRecordWSOL('tt_content', $destPid, 'uid,pid,colPos,tx_gridelements_container,tx_gridelements_columns');
-
-			$this->init($table, $uid, $parentObj);
-			$cmd = GeneralUtility::_GET('cmd');
-
-			$originalUid = (int)($movedRecord['_ORIG_uid'] ? $movedRecord['_ORIG_uid'] : $uid);
-			$commandUid = key($cmd['tt_content']);
-
-			$target = explode('x', $cmd['tt_content'][$commandUid]['move']);
-			$column = (int)$target[1];
-			$sortNumberArray = $this->dataHandler->getSortNumber('tt_content', $originalUid, $targetElement['pid']);
-			if (is_array($sortNumberArray)) {
-				$sortNumber = $sortNumberArray['sortNumber'];
-			} else if (!empty($sortNumberArray)) {
-				$sortNumber = $sortNumberArray;
-			} else {
-				$sortNumber = 0;
-			}
-			$GLOBALS['TCA']['tt_content']['ctrl']['copyAfterDuplFields'] = str_replace('colPos,', '', $GLOBALS['TCA']['tt_content']['ctrl']['copyAfterDuplFields']);
-			$updateArray = array(
-					'colPos' => $column,
-					'sorting' => $sortNumber,
-					'tx_gridelements_container' => 0,
-					'tx_gridelements_columns' => 0,
-			);
-			// $updateArray['bodytext'] = serialize($cmd) . ' originalUid: ' . $originalUid . ' pointerUid: ' . $pointerUid . ' commandUid: ' . $commandUid . ' placeholderUid: ' . $placeholderUid;
-			if ($originalUid !== $uid) {
-				$this->getTceMain()->updateDB('tt_content', $originalUid, $updateArray);
-			}
-			$this->getTceMain()->updateDB('tt_content', $uid, $updateArray);
-		}
-	}
-
-	/**
-	 * Function to handle record movement to the first position of a column
+	 * Function to handle record movement after another element
 	 *
 	 * @param string $table : The name of the table we are working on
 	 * @param int $uid : The uid of the record that is going to be moved
