@@ -39,6 +39,12 @@
 	Fixed: Removed reference to FormEngine, fixed Workspace bug
 	Done: Fixes for 7.5+ compatibility
 
+3.3.1 => 2015-11-23 Jo Hasenau <info@cybercraft.de>
+	Fixed: Regression #66782 Regression: Remove buggy method since it does not fix the issue
+	Fixed: Issue #71729 Changed the order of arrays according to mergeRecursiveWithOverrule
+	Fixed: Issue #71657 replace function with variable within empty() to work with PHP < 5.5
+	Fixed: Issue #71654 Class renamed to avoid a naming conflict with use statements
+
 3.3.0 => 2015-11-18 Jo Hasenau <info@cybercraft.de>
 	Fixed: Issue #71459 Children must be available when there is NO search string
 	Fixed: Issue #71111 Activate column -1 for search result list
