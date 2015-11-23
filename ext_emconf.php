@@ -9,28 +9,29 @@
  ***************************************************************/
 
 $EM_CONF[$_EXTKEY] = array(
-	'title' => 'Grid Elements',
-	'description' => 'This extension integrates the grid layout concept also to regular content elements - the grid elements.
+    'title' => 'Grid Elements',
+    'description' => 'This extension integrates the grid layout concept also to regular content elements - the grid elements.
 It offers a lot of new features like advanced drag & drop or real references, that improve the usability of the page and list module to speed up the daily work with the backend.',
-	'category' => 'be',
-	'version' => '4.0.0-dev',
-	'priority' => 'bottom',
-	'module' => '',
-	'state' => 'beta',
-	'uploadfolder' => true,
-	'createDirs' => '',
-	'modify_tables' => 'tt_content',
-	'clearcacheonload' => true,
-	'author' => 'Grid Elements Team',
-	'author_email' => 'info@cybercraft.de',
-	'author_company' => '',
-	'constraints' => array(
-		'depends' => array(
-			'typo3' => '7.4.0-7.99.99',
-		),
-		'conflicts' => array(
-			'templavoila' => '', 'jfmulticontent' => '',
-		),
-		'suggests' => array(),
-	),
+    'category' => 'be',
+    'version' => '4.0.0-dev',
+    'priority' => 'bottom',
+    'module' => '',
+    'state' => 'beta',
+    'uploadfolder' => true,
+    'createDirs' => '',
+    'modify_tables' => 'tt_content',
+    'clearcacheonload' => true,
+    'author' => 'Grid Elements Team',
+    'author_email' => 'info@cybercraft.de',
+    'author_company' => '',
+    'constraints' => array(
+        'depends' => array(
+            'typo3' => '7.4.0-7.99.99',
+        ),
+        'conflicts' => array(
+            'templavoila' => '',
+            'jfmulticontent' => '',
+        ),
+        'suggests' => array(),
+    ),
 );

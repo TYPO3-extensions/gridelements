@@ -17,33 +17,39 @@
  *  GNU General Public License for more details.
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
-class tx_gridelements_pagerendererhookTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
+class tx_gridelements_pagerendererhookTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase
+{
 
-	/**
-	 * @var tx_gridelements_pi1
-	 */
-	var $pi1;
-
-
-	public function setUp() {
-		$GLOBALS['TSFE'] = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Frontend\\Controller\\TypoScriptFrontendController', $GLOBALS['TYPO3_CONF_VARS'], 0, null);
-		$GLOBALS['TSFE']->sys_page = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Frontend\\Page\\PageRepository');
-		$this->view = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('GridElementsTeam\\Gridelements\\Plugin\\Gridelements');
-		$this->view->cObj = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Frontend\\ContentObject\\ContentObjectRenderer');
-	}
-
-	public function tearDown() {
-		unset($this->view);
-	}
+    /**
+     * @var tx_gridelements_pi1
+     */
+    var $pi1;
 
 
-	/**
-	 * fetches all available children for a certain grid container
-	 * @test
-	 */
-	public function testGetChildrenWithEmptyValues() {
-		$result = $this->view->getChildren();
-		$this->assertEquals(null, $result);
-		// add additional test here with DB
-	}
+    public function setUp()
+    {
+        $GLOBALS['TSFE'] = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Frontend\\Controller\\TypoScriptFrontendController',
+            $GLOBALS['TYPO3_CONF_VARS'], 0, null);
+        $GLOBALS['TSFE']->sys_page = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Frontend\\Page\\PageRepository');
+        $this->view = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('GridElementsTeam\\Gridelements\\Plugin\\Gridelements');
+        $this->view->cObj = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Frontend\\ContentObject\\ContentObjectRenderer');
+    }
+
+    public function tearDown()
+    {
+        unset($this->view);
+    }
+
+
+    /**
+     * fetches all available children for a certain grid container
+     *
+     * @test
+     */
+    public function testGetChildrenWithEmptyValues()
+    {
+        $result = $this->view->getChildren();
+        $this->assertEquals(null, $result);
+        // add additional test here with DB
+    }
 }

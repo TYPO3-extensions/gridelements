@@ -24,42 +24,50 @@ use TYPO3\CMS\Recordlist\RecordList\DatabaseRecordList;
 
 /**
  * Class/Function which manipulates the query parts while fetching tt_content records within the list module.
+ *
  * @author Jo Hasenau <info@cybercraft.de>
  * @author Dirk Hoffmann <hoffmann@vmd-jena.de>
  * @package TYPO3
  * @subpackage tx_gridelements
  */
-class AbstractDatabaseRecordList {
+class AbstractDatabaseRecordList
+{
 
-	/**
-	 * ItemProcFunc for columns items
-	 * @param array $queryParts : The array containing the parts to build the query from
-	 * @param DatabaseRecordList $parent : The parent object that triggered this hook
-	 * @param string $table : The name of the table we are currently working on
-	 * @return void
-	 */
-	public function makeQueryArray_post(&$queryParts, &$parent, $table) {
-		if ($table === 'tt_content' && $parent instanceof \GridElementsTeam\Gridelements\Xclass\DatabaseRecordList) {
-			$queryParts['ORDERBY'] = $this->addValueToList($queryParts['ORDERBY'], 'colPos');
-            if(!$parent->searchString) {
+    /**
+     * ItemProcFunc for columns items
+     *
+     * @param array $queryParts : The array containing the parts to build the query from
+     * @param DatabaseRecordList $parent : The parent object that triggered this hook
+     * @param string $table : The name of the table we are currently working on
+     *
+     * @return void
+     */
+    public function makeQueryArray_post(&$queryParts, &$parent, $table)
+    {
+        if ($table === 'tt_content' && $parent instanceof \GridElementsTeam\Gridelements\Xclass\DatabaseRecordList) {
+            $queryParts['ORDERBY'] = $this->addValueToList($queryParts['ORDERBY'], 'colPos');
+            if (!$parent->searchString) {
                 $queryParts['WHERE'] .= ' AND colPos != -1';
             }
 
-			if ($queryParts['SELECT'] != '*') {
-				$queryParts['SELECT'] = $this->addValueToList($queryParts['SELECT'], 'colPos');
-			}
-		}
-	}
+            if ($queryParts['SELECT'] != '*') {
+                $queryParts['SELECT'] = $this->addValueToList($queryParts['SELECT'], 'colPos');
+            }
+        }
+    }
 
-	/**
-	 * adds a new value to the given list
-	 * @param string $list comma seperated list of values
-	 * @param string $value
-	 * @return string
-	 */
-	public function addValueToList($list, $value) {
-		$parts = GeneralUtility::trimExplode(',', $value . ',' . $list, true);
+    /**
+     * adds a new value to the given list
+     *
+     * @param string $list comma seperated list of values
+     * @param string $value
+     *
+     * @return string
+     */
+    public function addValueToList($list, $value)
+    {
+        $parts = GeneralUtility::trimExplode(',', $value . ',' . $list, true);
 
-		return implode(',', array_flip(array_flip($parts)));
-	}
+        return implode(',', array_flip(array_flip($parts)));
+    }
 }

@@ -28,111 +28,154 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Class/Function which offers TCE main hook functions.
+ *
  * @author Jo Hasenau <info@cybercraft.de>
  * @package TYPO3
  * @subpackage tx_gridelements
  */
-class DataHandler {
+class DataHandler
+{
 
-	/**
-	 * @var DatabaseConnection
-	 */
-	protected $databaseConnection;
+    /**
+     * @var DatabaseConnection
+     */
+    protected $databaseConnection;
 
-	public function __construct() {
-		$this->setDatabaseConnection($GLOBALS['TYPO3_DB']);
-	}
+    public function __construct()
+    {
+        $this->setDatabaseConnection($GLOBALS['TYPO3_DB']);
+    }
 
-	/**
-	 * Function to set the colPos of an element depending on
-	 * whether it is a child of a parent container or not
-	 * will set colPos according to availability of the current grid column of an element
-	 * 0 = no column at all
-	 * -1 = grid element column
-	 * -2 = non used elements column
-	 * changes are applied to the field array of the parent object by reference
-	 * @param array $fieldArray : The array of fields and values that have been saved to the datamap
-	 * @param string $table : The name of the table the data should be saved to
-	 * @param int $id : The uid of the page we are currently working on
-	 * @param \TYPO3\CMS\Core\DataHandling\DataHandler $parentObj : The parent object that triggered this hook
-	 * @return void
-	 */
-	public function processDatamap_preProcessFieldArray(&$fieldArray, $table, $id, \TYPO3\CMS\Core\DataHandling\DataHandler $parentObj) {
-		if (($table === 'tt_content' || $table === 'pages') && !$parentObj->isImporting) {
-			/** @var $hook PreProcessFieldArray */
-			$hook = GeneralUtility::makeInstance(PreProcessFieldArray::class);
-			$hook->execute_preProcessFieldArray($fieldArray, $table, $id, $parentObj);
-		}
-	}
+    /**
+     * Function to set the colPos of an element depending on
+     * whether it is a child of a parent container or not
+     * will set colPos according to availability of the current grid column of an element
+     * 0 = no column at all
+     * -1 = grid element column
+     * -2 = non used elements column
+     * changes are applied to the field array of the parent object by reference
+     *
+     * @param array $fieldArray : The array of fields and values that have been saved to the datamap
+     * @param string $table : The name of the table the data should be saved to
+     * @param int $id : The uid of the page we are currently working on
+     * @param \TYPO3\CMS\Core\DataHandling\DataHandler $parentObj : The parent object that triggered this hook
+     *
+     * @return void
+     */
+    public function processDatamap_preProcessFieldArray(
+        &$fieldArray,
+        $table,
+        $id,
+        \TYPO3\CMS\Core\DataHandling\DataHandler $parentObj
+    ) {
+        if (($table === 'tt_content' || $table === 'pages') && !$parentObj->isImporting) {
+            /** @var $hook PreProcessFieldArray */
+            $hook = GeneralUtility::makeInstance(PreProcessFieldArray::class);
+            $hook->execute_preProcessFieldArray($fieldArray, $table, $id, $parentObj);
+        }
+    }
 
-	/**
-	 * @param string $status
-	 * @param string $table : The name of the table the data should be saved to
-	 * @param int $id : The uid of the page we are currently working on
-	 * @param array $fieldArray : The array of fields and values that have been saved to the datamap
-	 * @param \TYPO3\CMS\Core\DataHandling\DataHandler $parentObj : The parent object that triggered this hook
-	 * @return void
-	 */
-	public function processDatamap_afterDatabaseOperations(&$status, &$table, &$id, &$fieldArray, \TYPO3\CMS\Core\DataHandling\DataHandler $parentObj) {
-		if (($table === 'tt_content' || $table === 'pages') && $status === 'update' && !$parentObj->isImporting) {
-			/** @var $hook AfterDatabaseOperations */
-			$hook = GeneralUtility::makeInstance(AfterDatabaseOperations::class);
-			$hook->execute_afterDatabaseOperations($fieldArray, $table, $id, $parentObj);
-		}
-	}
+    /**
+     * @param string $status
+     * @param string $table : The name of the table the data should be saved to
+     * @param int $id : The uid of the page we are currently working on
+     * @param array $fieldArray : The array of fields and values that have been saved to the datamap
+     * @param \TYPO3\CMS\Core\DataHandling\DataHandler $parentObj : The parent object that triggered this hook
+     *
+     * @return void
+     */
+    public function processDatamap_afterDatabaseOperations(
+        &$status,
+        &$table,
+        &$id,
+        &$fieldArray,
+        \TYPO3\CMS\Core\DataHandling\DataHandler $parentObj
+    ) {
+        if (($table === 'tt_content' || $table === 'pages') && $status === 'update' && !$parentObj->isImporting) {
+            /** @var $hook AfterDatabaseOperations */
+            $hook = GeneralUtility::makeInstance(AfterDatabaseOperations::class);
+            $hook->execute_afterDatabaseOperations($fieldArray, $table, $id, $parentObj);
+        }
+    }
 
-	/**
-	 * Function to handle record movement to the first position of a column
-	 * @param string $table : The name of the table we are working on
-	 * @param int $uid : The uid of the record that is going to be moved
-	 * @param string $destinationPid : The target the record should be moved to
-	 * @param array $propArr : The array of properties for the move action
-	 * @param array $moveRec : An array of some values of the record that is going to be moved
-	 * @param int $resolvedPid : The calculated id of the page the record should be moved to
-	 * @param boolean $recordWasMoved : A switch to tell the parent object, if the record has been moved
-	 * @param \TYPO3\CMS\Core\DataHandling\DataHandler $parentObj : The parent object that triggered this hook
-	 */
-	public function moveRecord($table, $uid, &$destinationPid, &$propArr, &$moveRec, $resolvedPid, &$recordWasMoved, \TYPO3\CMS\Core\DataHandling\DataHandler $parentObj) {
-		/** @var $hook MoveRecord */
-		if (!$parentObj->isImporting) {
-			$hook = GeneralUtility::makeInstance(MoveRecord::class);
-			$hook->execute_moveRecord($table, $uid, $destinationPid, $propArr, $moveRec, $resolvedPid, $recordWasMoved, $parentObj);
-		}
-	}
+    /**
+     * Function to handle record movement to the first position of a column
+     *
+     * @param string $table : The name of the table we are working on
+     * @param int $uid : The uid of the record that is going to be moved
+     * @param string $destinationPid : The target the record should be moved to
+     * @param array $propArr : The array of properties for the move action
+     * @param array $moveRec : An array of some values of the record that is going to be moved
+     * @param int $resolvedPid : The calculated id of the page the record should be moved to
+     * @param boolean $recordWasMoved : A switch to tell the parent object, if the record has been moved
+     * @param \TYPO3\CMS\Core\DataHandling\DataHandler $parentObj : The parent object that triggered this hook
+     */
+    public function moveRecord(
+        $table,
+        $uid,
+        &$destinationPid,
+        &$propArr,
+        &$moveRec,
+        $resolvedPid,
+        &$recordWasMoved,
+        \TYPO3\CMS\Core\DataHandling\DataHandler $parentObj
+    ) {
+        /** @var $hook MoveRecord */
+        if (!$parentObj->isImporting) {
+            $hook = GeneralUtility::makeInstance(MoveRecord::class);
+            $hook->execute_moveRecord($table, $uid, $destinationPid, $propArr, $moveRec, $resolvedPid, $recordWasMoved,
+                $parentObj);
+        }
+    }
 
-	/**
-	 * Function to handle record movement to the first position of a column
-	 * @param string $table : The name of the table we are working on
-	 * @param int $uid : The uid of the record that is going to be moved
-	 * @param string $destinationPid : The resolved target the record should be moved to
-	 * @param string $originalDestinationPid : The original target the record should be moved to
-	 * @param array $moveRec : An array of some values of the record that is going to be moved
-	 * @param array $updateFields : An array of some values of the record that have been updated
-	 * @param \TYPO3\CMS\Core\DataHandling\DataHandler $parentObj : The parent object that triggered this hook
-	 */
-	public function moveRecord_afterAnotherElementPostProcess($table, $uid, $destinationPid, $originalDestinationPid, $moveRec, $updateFields, \TYPO3\CMS\Core\DataHandling\DataHandler &$parentObj) {
-		/** @var $hook MoveRecord */
-		if (!$parentObj->isImporting) {
-			$hook = GeneralUtility::makeInstance(MoveRecord::class);
-			$hook->execute_moveRecord_afterAnotherElementPostProcess($table, $uid, $destinationPid, $originalDestinationPid, $moveRec, $updateFields, $parentObj);
-		}
-	}
+    /**
+     * Function to handle record movement to the first position of a column
+     *
+     * @param string $table : The name of the table we are working on
+     * @param int $uid : The uid of the record that is going to be moved
+     * @param string $destinationPid : The resolved target the record should be moved to
+     * @param string $originalDestinationPid : The original target the record should be moved to
+     * @param array $moveRec : An array of some values of the record that is going to be moved
+     * @param array $updateFields : An array of some values of the record that have been updated
+     * @param \TYPO3\CMS\Core\DataHandling\DataHandler $parentObj : The parent object that triggered this hook
+     */
+    public function moveRecord_afterAnotherElementPostProcess(
+        $table,
+        $uid,
+        $destinationPid,
+        $originalDestinationPid,
+        $moveRec,
+        $updateFields,
+        \TYPO3\CMS\Core\DataHandling\DataHandler &$parentObj
+    ) {
+        /** @var $hook MoveRecord */
+        if (!$parentObj->isImporting) {
+            $hook = GeneralUtility::makeInstance(MoveRecord::class);
+            $hook->execute_moveRecord_afterAnotherElementPostProcess($table, $uid, $destinationPid,
+                $originalDestinationPid, $moveRec, $updateFields, $parentObj);
+        }
+    }
 
-	/**
-	 * setter for databaseConnection object
-	 * @param DatabaseConnection $databaseConnection
-	 * @return void
-	 */
-	public function setDatabaseConnection(DatabaseConnection $databaseConnection) {
-		$this->databaseConnection = $databaseConnection;
-	}
+    /**
+     * setter for databaseConnection object
+     *
+     * @param DatabaseConnection $databaseConnection
+     *
+     * @return void
+     */
+    public function setDatabaseConnection(DatabaseConnection $databaseConnection)
+    {
+        $this->databaseConnection = $databaseConnection;
+    }
 
-	/**
-	 * getter for databaseConnection
-	 * @return DatabaseConnection databaseConnection
-	 */
-	public function getDatabaseConnection() {
-		return $this->databaseConnection;
-	}
+    /**
+     * getter for databaseConnection
+     *
+     * @return DatabaseConnection databaseConnection
+     */
+    public function getDatabaseConnection()
+    {
+        return $this->databaseConnection;
+    }
 
 }

@@ -23,37 +23,53 @@ use TYPO3\CMS\Core\Database\DatabaseConnection;
 
 /**
  * Gridelements helper class
+ *
  * @author Dirk Hoffmann <dirk-hoffmann@telekom.de>
  * @package TYPO3
  * @subpackage tx_gridelements
  */
+class Helper
+{
 
-class Helper {
+    /**
+     * @var DatabaseConnection
+     */
+    protected static $databaseConnection;
 
-	/**
-	 * @var DatabaseConnection
-	 */
-	protected static $databaseConnection;
+    /**
+     * Local instance of the helper
+     *
+     * @var Helper
+     */
+    protected static $instance = null;
 
-	/**
-	 * Local instance of the helper
-	 * @var Helper
-	 */
-	protected static $instance = null;
+    /**
+     * Get instance from the class.
+     *
+     * @static
+     * @return    Helper
+     */
+    public static function getInstance()
+    {
+        if (!self::$instance instanceof Helper) {
+            self::$instance = new self();
+        }
+        self::setDatabaseConnection($GLOBALS['TYPO3_DB']);
 
-	/**
-	 * Get instance from the class.
-	 * @static
-	 * @return    Helper
-	 */
-	public static function getInstance() {
-		if (!self::$instance instanceof Helper) {
-			self::$instance = new self();
-		}
-		self::setDatabaseConnection($GLOBALS['TYPO3_DB']);
+        return self::$instance;
+    }
 
-		return self::$instance;
-	}
+    /**
+     * setter for databaseConnection object
+     *
+     * @param DatabaseConnection $databaseConnection
+     *
+     * @return void
+     */
+    public function setDatabaseConnection(DatabaseConnection $databaseConnection)
+    {
+        self::$databaseConnection = $databaseConnection;
+    }
 
     /**
      * @param string $table
@@ -61,78 +77,80 @@ class Helper {
      * @param string $sortingField
      * @param int $sortRev
      * @param string $selectFieldList
+     *
      * @return array
      */
-	public function getChildren($table = '', $uid = 0, $sortingField = '', $sortRev = 0, $selectFieldList) {
-		$retVal = array();
+    public function getChildren($table = '', $uid = 0, $sortingField = '', $sortRev = 0, $selectFieldList)
+    {
+        $retVal = array();
 
-		if (trim($table) === 'tt_content' && $uid > 0) {
+        if (trim($table) === 'tt_content' && $uid > 0) {
 
-			$children = self::getDatabaseConnection()->exec_SELECTgetRows($selectFieldList, 'tt_content', 'tx_gridelements_container = ' . $uid . ' AND deleted = 0', '');
+            $children = self::getDatabaseConnection()->exec_SELECTgetRows($selectFieldList, 'tt_content',
+                'tx_gridelements_container = ' . $uid . ' AND deleted = 0', '');
 
-			foreach ($children as $child) {
-				if (trim($sortingField) && isset($child[$sortingField]) && $sortingField !== 'sorting') {
-					$sortField = $child[$sortingField];
-				} else {
-					$sortField = sprintf('%1$011d', $child['sorting']);
-				}
-				$sortKey = sprintf('%1$011d', $child['tx_gridelements_columns']) . '.' . $sortField . ':' . sprintf('%1$011d', $child['uid']);
+            foreach ($children as $child) {
+                if (trim($sortingField) && isset($child[$sortingField]) && $sortingField !== 'sorting') {
+                    $sortField = $child[$sortingField];
+                } else {
+                    $sortField = sprintf('%1$011d', $child['sorting']);
+                }
+                $sortKey = sprintf('%1$011d',
+                        $child['tx_gridelements_columns']) . '.' . $sortField . ':' . sprintf('%1$011d', $child['uid']);
 
-				$retVal[$sortKey] = $child;
-			}
-		}
+                $retVal[$sortKey] = $child;
+            }
+        }
 
-		ksort($retVal);
-		if ($sortRev) {
-			$retVal = array_reverse($retVal);
-		}
+        ksort($retVal);
+        if ($sortRev) {
+            $retVal = array_reverse($retVal);
+        }
 
-		return array_values($retVal);
-	}
+        return array_values($retVal);
+    }
 
-	/**
-	 * Gets the uid of a record depending on the current context.
-	 * If in workspace mode, the overlay uid is used (if available),
-	 * otherwise the regular uid is used.
-	 * @param array $record Overlaid record data
-	 * @return integer
-	 */
-	public function getSpecificIds(array $record) {
-		$specificIds = array();
-		$specificIds['uid'] = (int)$record['uid'];
-		$specificIds['pid'] = (int)$record['pid'];
+    /**
+     * getter for databaseConnection
+     *
+     * @return DatabaseConnection databaseConnection
+     */
+    public function getDatabaseConnection()
+    {
+        return self::$databaseConnection;
+    }
 
-		if (self::getBackendUser()->workspace > 0 && !empty($record['t3ver_oid'])) {
-			$specificIds['uid'] = (int)$record['t3ver_oid'];
-			$specificIds['pid'] = -1;
-		}
+    /**
+     * Gets the uid of a record depending on the current context.
+     * If in workspace mode, the overlay uid is used (if available),
+     * otherwise the regular uid is used.
+     *
+     * @param array $record Overlaid record data
+     *
+     * @return integer
+     */
+    public function getSpecificIds(array $record)
+    {
+        $specificIds = array();
+        $specificIds['uid'] = (int)$record['uid'];
+        $specificIds['pid'] = (int)$record['pid'];
 
-		return $specificIds;
-	}
+        if (self::getBackendUser()->workspace > 0 && !empty($record['t3ver_oid'])) {
+            $specificIds['uid'] = (int)$record['t3ver_oid'];
+            $specificIds['pid'] = -1;
+        }
 
-	/**
-	 * Gets the current backend user.
-	 * @return \TYPO3\CMS\Core\Authentication\BackendUserAuthentication
-	 */
-	public function getBackendUser() {
-		return $GLOBALS['BE_USER'];
-	}
+        return $specificIds;
+    }
 
-	/**
-	 * setter for databaseConnection object
-	 * @param DatabaseConnection $databaseConnection
-	 * @return void
-	 */
-	public function setDatabaseConnection(DatabaseConnection $databaseConnection) {
-		self::$databaseConnection = $databaseConnection;
-	}
-
-	/**
-	 * getter for databaseConnection
-	 * @return DatabaseConnection databaseConnection
-	 */
-	public function getDatabaseConnection() {
-		return self::$databaseConnection;
-	}
+    /**
+     * Gets the current backend user.
+     *
+     * @return \TYPO3\CMS\Core\Authentication\BackendUserAuthentication
+     */
+    public function getBackendUser()
+    {
+        return $GLOBALS['BE_USER'];
+    }
 
 }

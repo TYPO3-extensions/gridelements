@@ -43,6 +43,7 @@ define(['jquery', 'TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Backend/Storag
 	OnReady.setAllowedClasses = function() {
 		$('table.t3js-page-columns > tbody > tr > td').each(function() {
 			$(this).addClass(top.pageColumnsAllowedCTypes[$(this).data('colpos')]);
+			$(this).addClass(top.pageColumnsAllowedGridTypes[$(this).data('colpos')]);
 			OnReady.setAllowedParameters($(this));
 		});
 	};
@@ -52,11 +53,12 @@ define(['jquery', 'TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Backend/Storag
 	 */
 	OnReady.setAllowedParameters = function(pageColumn) {
 		var allowedCTypes = top.pageColumnsAllowedCTypes[pageColumn.data('colpos')].replace(/ t3-allow-/g, ',').substring(1);
-		if (allowedCTypes !== '' && allowedCTypes !== 'all') {
+		var allowedGridTypes = top.pageColumnsAllowedGridTypes[pageColumn.data('colpos')].replace(/ t3-allow-gridtype-/g, ',').substring(1);
+		if (allowedCTypes !== '' && allowedCTypes !== 'all' || allowedGridTypes !== '') {
 			pageColumn.find('.t3js-page-new-ce:not(".t3js-page-new-ce-allowed") a').each(function() {
 				$(this).attr('onclick', $(this).attr('onclick').replace(
 					'\\u0026uid_pid',
-					'\\u0026tx_gridelements_allowed=' + allowedCTypes + '\\u0026uid_pid'
+					'\\u0026tx_gridelements_allowed=' + allowedCTypes + '\\u0026tx_gridelements_allowed_grid_types=' + allowedGridTypes + '\\u0026uid_pid'
 				));
 			});
 		}

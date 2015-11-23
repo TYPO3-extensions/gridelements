@@ -86,12 +86,16 @@ define(['jquery', 'jquery-ui/sortable', 'jquery-ui/droppable'], function($) {
 		$element.parents(DragDrop.columnHolderIdentifier).find(DragDrop.addContentIdentifier).hide();
 		$element.find(DragDrop.dropZoneIdentifier).hide();
 
-		// make the dropzones visible (all except the previous one in the current list)
+		// make the drop zones visible (all except the previous one in the current list)
 		var $previousDropZone = $element.prev().children(DragDrop.dropZoneIdentifier);
-		var $allowedElementMimeType = $element.find('.t3-ctype-identifier').data('ctype');
+		var allowedElementMimeType = $element.find('.t3-ctype-identifier').data('ctype');
+		var allowedGridType = $element.find('.t3-ctype-identifier').data('gridtype');
 		$(DragDrop.dropZoneIdentifier).not($previousDropZone).each(function() {
 			var $closestColumn = $(this).closest(DragDrop.columnIdentifier);
-			if($closestColumn.hasClass('t3-allow-all') || $closestColumn.hasClass('t3-allow-' + $allowedElementMimeType)) {
+			if ($closestColumn.hasClass('t3-allow-all') ||
+				allowedGridType === '' && $closestColumn.hasClass('t3-allow-' + allowedElementMimeType) ||
+				$closestColumn.hasClass('t3-allow-gridelements_pi1') && $closestColumn.hasClass('t3-allow-gridtype-' + allowedGridType)
+				) {
 				$(this).addClass(DragDrop.validDropZoneClass);
 			} else {
 				$(this).closest(DragDrop.contentIdentifier).find('> ' + DragDrop.addContentIdentifier + ', > > ' + DragDrop.addContentIdentifier).show();
