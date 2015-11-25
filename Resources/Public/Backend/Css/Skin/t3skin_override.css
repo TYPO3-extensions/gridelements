@@ -12,6 +12,10 @@
 	line-height: 26px;
 }
 
+.t3-page-ce {
+	height: auto!important;
+}
+
 .t3-page-ce-header {
   min-width: 150px;
 }
