@@ -114,7 +114,7 @@ class PageRenderer
                                     if ($gridTypes !== '*') {
                                         $gridTypes = explode(',', $gridTypes);
                                         foreach ($gridTypes as $gridType) {
-                                            $gridClasses .= 't3-allow-gridtype-' . $gridType . ' ';
+                                            $gridClasses .= 't3-allow-gridtype t3-allow-gridtype-' . $gridType . ' ';
                                         }
                                     }
                                 }
