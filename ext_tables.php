@@ -68,7 +68,7 @@ $GLOBALS['TYPO3_USER_SETTINGS']['showitem'] .= ',--div--;LLL:EXT:gridelements/Re
 $TBE_STYLES['skins']['gridelements']['name'] = 'gridelements';
 $TBE_STYLES['skins']['gridelements']['stylesheetDirectories']['structure'] = 'EXT:' . ($_EXTKEY) . '/Resources/Public/Backend/Css/Skin/';
 
-$GLOBALS['TBE_MODULES_EXT']['xMOD_alt_clickmenu']['extendCMclasses'][] = array('name' => 'GridElementsTeam\\Gridelements\\Backend\\CmOptions',);
+$GLOBALS['TBE_MODULES_EXT']['xMOD_alt_clickmenu']['extendCMclasses'][] = array('name' => 'GridElementsTeam\\Gridelements\\Backend\\ClickMenuOptions',);
 
 // add custom sprite icons
 $geIcons = array(

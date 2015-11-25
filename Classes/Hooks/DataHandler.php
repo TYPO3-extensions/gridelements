@@ -22,7 +22,6 @@ namespace GridElementsTeam\Gridelements\Hooks;
 use GridElementsTeam\Gridelements\DataHandler\AfterDatabaseOperations;
 use GridElementsTeam\Gridelements\DataHandler\MoveRecord;
 use GridElementsTeam\Gridelements\DataHandler\PreProcessFieldArray;
-use GridElementsTeam\Gridelements\DataHandler\ProcessCmdmap;
 use TYPO3\CMS\Core\Database\DatabaseConnection;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -153,6 +152,33 @@ class DataHandler
             $hook = GeneralUtility::makeInstance(MoveRecord::class);
             $hook->execute_moveRecord_afterAnotherElementPostProcess($table, $uid, $destinationPid,
                 $originalDestinationPid, $moveRec, $updateFields, $parentObj);
+        }
+    }
+
+    /**
+     * Function to process the drag & drop copy action
+     *
+     * @param string $command : The command to be handled by the command map
+     * @param string $table : The name of the table we are working on
+     * @param int $id : The id of the record that is going to be copied
+     * @param string $value : The value that has been sent with the copy command
+     * @param boolean $commandIsProcessed : A switch to tell the parent object, if the record has been copied
+     * @param \TYPO3\CMS\Core\DataHandling\DataHandler $parentObj : The parent object that triggered this hook
+     *
+     * @return    void
+     */
+    public function processCmdmap(
+        $command,
+        $table,
+        $id,
+        $value,
+        &$commandIsProcessed,
+        \TYPO3\CMS\Core\DataHandling\DataHandler &$parentObj
+    ) {
+        /** @var $hook \GridElementsTeam\Gridelements\DataHandler\ProcessCmdmap */
+        if (!$parentObj->isImporting) {
+            $hook = GeneralUtility::makeInstance('GridElementsTeam\\Gridelements\\DataHandler\\ProcessCmdmap');
+            $hook->execute_processCmdmap($command, $table, $id, $value, $commandIsProcessed, $parentObj);
         }
     }
 
