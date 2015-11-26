@@ -42,18 +42,21 @@ define(['jquery', 'TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Backend/Storag
 	 */
 	OnReady.setAllowedClasses = function() {
 		$('table.t3js-page-columns > tbody > tr > td').each(function() {
-			$(this).addClass(top.pageColumnsAllowedCTypes[$(this).data('colpos')]);
-			$(this).addClass(top.pageColumnsAllowedGridTypes[$(this).data('colpos')]);
-			OnReady.setAllowedParameters($(this));
+			var colPos = $(this).data('colpos') ? $(this).data('colpos') : $(this).find('> .t3-page-ce-wrapper').data('colpos');
+			if(typeof colPos !== 'undefined') {
+				$(this).addClass(top.pageColumnsAllowedCTypes[colPos]);
+				$(this).addClass(top.pageColumnsAllowedGridTypes[colPos]);
+				OnReady.setAllowedParameters($(this), colPos);
+			}
 		});
 	};
 
 	/**
 	 * sets the parameters for allowed element types to the add new content links of the original page module
 	 */
-	OnReady.setAllowedParameters = function(pageColumn) {
-		var allowedCTypes = top.pageColumnsAllowedCTypes[pageColumn.data('colpos')].replace(/ t3-allow-/g, ',').substring(1);
-		var allowedGridTypes = top.pageColumnsAllowedGridTypes[pageColumn.data('colpos')].replace(/ t3-allow-gridtype-/g, ',').substring(1);
+	OnReady.setAllowedParameters = function(pageColumn, colPos) {
+		var allowedCTypes = top.pageColumnsAllowedCTypes[colPos].replace(/ t3-allow-/g, ',').substring(1);
+		var allowedGridTypes = top.pageColumnsAllowedGridTypes[colPos].replace(/ t3-allow-gridtype-/g, ',').substring(1);
 		if (allowedCTypes !== '' && allowedCTypes !== 'all' || allowedGridTypes !== '') {
 			pageColumn.find('.t3js-page-new-ce:not(".t3js-page-new-ce-allowed") a').each(function() {
 				$(this).attr('onclick', $(this).attr('onclick').replace(
