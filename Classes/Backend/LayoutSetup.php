@@ -190,7 +190,17 @@ class LayoutSetup {
 								if (isset($column['colPos'])) {
 									$availableColumns['CSV'] .= ',' . $column['colPos'];
 									$availableColumns[$column['colPos']] = $column['allowed'] ? $column['allowed'] : '*';
-									$availableColumns['allowed'] .= $availableColumns['allowed'] ? ',' . $availableColumns[$column['colPos']] : $availableColumns[$column['colPos']];
+									if ($column['allowedGridTypes']) {
+										$availableGridColumns[$column['colPos']] = $column['allowedGridTypes'];
+									}
+									$availableColumns['allowed'] .= $availableColumns['allowed'] ?
+											',' . $availableColumns[$column['colPos']] :
+											$availableColumns[$column['colPos']];
+									if ($availableGridColumns[$column['colPos']]) {
+										$availableColumns['allowedGridTypes'] .= $availableColumns['allowedGridTypes'] ?
+												',' . $availableGridColumns[$column['colPos']] :
+												$availableGridColumns[$column['colPos']];
+									}
 								}
 							}
 						}
