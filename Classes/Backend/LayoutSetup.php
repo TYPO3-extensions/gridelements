@@ -495,7 +495,7 @@ class LayoutSetup
      */
     public function setLanguageService($languageService)
     {
-        $this->languageService = $languageService instanceof LanguageService::class ? $languageService : GeneralUtility::makeInstance(LanguageService::class);
+        $this->languageService = $languageService instanceof LanguageService ? $languageService : GeneralUtility::makeInstance(LanguageService::class);
         if ($this->getBackendUser()) {
             $this->languageService->init($this->getBackendUser()->uc['lang']);
         }
