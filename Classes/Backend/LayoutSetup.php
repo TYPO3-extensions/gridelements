@@ -489,13 +489,13 @@ class LayoutSetup
     /**
      * setter for databaseConnection object
      *
-     * @param LanguageService $languageService
+     * @param mixed $languageService
      *
      * @return void
      */
-    public function setLanguageService(LanguageService $languageService)
+    public function setLanguageService($languageService)
     {
-        $this->languageService = $languageService ? $languageService : GeneralUtility::makeInstance(LanguageService::class);
+        $this->languageService = $languageService instanceof LanguageService::class ? $languageService : GeneralUtility::makeInstance(LanguageService::class);
         if ($this->getBackendUser()) {
             $this->languageService->init($this->getBackendUser()->uc['lang']);
         }
