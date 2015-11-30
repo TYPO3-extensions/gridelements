@@ -27,6 +27,7 @@ use TYPO3\CMS\Backend\View\PageLayoutViewDrawItemHookInterface;
 use TYPO3\CMS\Core\Database\DatabaseConnection;
 use TYPO3\CMS\Core\Database\QueryGenerator;
 use TYPO3\CMS\Core\Database\ReferenceIndex;
+use TYPO3\CMS\Core\Imaging\Icon;
 use TYPO3\CMS\Core\Imaging\IconFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Lang\LanguageService;
@@ -403,22 +404,25 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface
 
         $specificIds = $this->helper->getSpecificIds($row);
 
-        $newParams = '';
+        $newParameters = '';
         if ($colPos < 32768) {
-            $newParams = $parentObject->newContentElementOnClick($parentObject->id,
+            $newParameters = $parentObject->newContentElementOnClick($parentObject->id,
                 '-1' . '&tx_gridelements_allowed=' . $values['allowed'] . '&tx_gridelements_allowed_grid_types=' . $values['allowedGridTypes'] . '&tx_gridelements_container=' . $specificIds['uid'] . '&tx_gridelements_columns=' . $colPos,
                 $row['sys_language_uid']);
         }
+
+        $iconsArray = array(
+            'new' => '<a href="#" onclick="' . htmlspecialchars($newParameters) . '" title="' . $this->languageService->getLL('newContentElement',
+                    true) . '" class="btn btn-default btn-sm">' . $this->iconFactory->getIcon('actions-document-new',
+                    'small') . ' ' . $this->languageService->getLL('content', true) . '</a>'
+        );
 
         $gridContent[$colPos] .= '
 			<div data-colpos="' . $colPos . '" data-language-uid="' . $row['sys_language_uid'] . '" class="t3js-sortable t3js-sortable-lang t3js-sortable-lang-' . $row['sys_language_uid'] . ' t3-page-ce-wrapper ui-sortable">
 				<div class="t3-page-ce t3js-page-ce" data-container="' . $row['uid'] . '" id="' . str_replace('.', '',
                 uniqid('', true)) . '">
-					<div class="t3js-page-new-ce t3js-page-new-ce-allowed t3-page-ce-wrapper-new-ce" id="colpos-' . $colPos . '-' . str_replace('.',
-                '', uniqid('', true)) . '">
-						<a href="#" onclick="' . htmlspecialchars($newParams) . '" title="' . $this->languageService->getLL('newContentElement',
-                true) . '" class="btn btn-default btn-sm">' . $this->iconFactory->getIcon('actions-document-new',
-                'small') . ' ' . $this->languageService->getLL('content', true) . '</a>
+					<div class="t3js-page-new-ce t3js-page-new-ce-allowed t3-page-ce-wrapper-new-ce btn-group btn-group-sm" id="colpos-' . $colPos . '-' . str_replace('.',
+                '', uniqid('', true)) . '">' . implode('', $iconsArray) . '
 					</div>
 					<div class="t3-page-ce-dropzone-available t3js-page-ce-dropzone-available"></div>
 				</div>';
@@ -437,12 +441,15 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface
                     } else {
                         $onClick = BackendUtility::editOnClick('&edit[tt_content][' . $itemRow['uid'] . ']=new&defVals[tt_content][colPos]=' . $colPos . '&defVals[tt_content][sys_language_uid]=' . $itemRow['sys_language_uid']);
                     }
+                    $iconsArray = array(
+                        'new' => '<a href="#" onclick="' . htmlspecialchars($onClick) . '" title="' . $this->languageService->getLL('newContentElement',
+                                true) . '" class="btn btn-default btn-sm">' . $this->iconFactory->getIcon('actions-document-new',
+                                'small') . ' ' . $this->languageService->getLL('content', true) . '</a>'
+                    );
+
                     $gridContent[$colPos] .= '
-				<div class="t3js-page-new-ce t3js-page-new-ce-allowed t3-page-ce-wrapper-new-ce" id="colpos-' . $itemRow['tx_gridelements_columns'] . '-page-' . $itemRow['pid'] . '-gridcontainer-' . $itemRow['tx_gridelements_container'] . '-' . str_replace('.',
-                            '', uniqid('', true)) . '">
-					<a href="#" onclick="' . htmlspecialchars($onClick) . '" title="' . $this->languageService->getLL('newContentElement',
-                            true) . '" class="btn btn-default btn-sm">' . $this->iconFactory->getIcon('actions-document-new',
-                            'small') . ' ' . $this->languageService->getLL('content', true) . '</a>
+				<div class="t3js-page-new-ce t3js-page-new-ce-allowed t3-page-ce-wrapper-new-ce btn-group btn-group-sm" id="colpos-' . $itemRow['tx_gridelements_columns'] . '-page-' . $itemRow['pid'] . '-gridcontainer-' . $itemRow['tx_gridelements_container'] . '-' . str_replace('.',
+                            '', uniqid('', true)) . '">' . implode('', $iconsArray) . '
 				</div>
 				<div class="t3-page-ce-dropzone-available t3js-page-ce-dropzone-available"></div>
 				</div>
@@ -465,7 +472,6 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface
      * @param array $editUidList : determines if we will get edit icons or not
      *
      * @internal param array $row : The current data row for the container item
-     * @return void
      */
     public function setColumnHeader(PageLayoutView $parentObject, &$head, &$colPos, &$name, &$editUidList)
     {
@@ -479,31 +485,32 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface
      * Draw header for a content element column:
      *
      * @param string $colName Column name
-     * @param string $editParams Edit params (Syntax: &edit[...] for alt_doc.php)
-     * @param PageLayoutView $parentObject
+     * @param string $editParams Edit params (Syntax: &edit[...] for FormEngine)
+     * @param \TYPO3\CMS\Backend\View\PageLayoutView $parentObject
      *
      * @return string HTML table
      */
-    function tt_content_drawColHeader($colName, $editParams, PageLayoutView $parentObject)
+    public function tt_content_drawColHeader($colName, $editParams, PageLayoutView $parentObject)
     {
-
         $icons = '';
+        $iconsArr = array();
         // Create command links:
         if ($parentObject->tt_contentConfig['showCommands']) {
             // Edit whole of column:
             if ($editParams) {
-                $icons .= '<a class="btn btn-default" href="#" onclick="' . htmlspecialchars(BackendUtility::editOnClick($editParams)) . '" title="' . $this->languageService->getLL('editColumn',
-                        true) . '">' . $this->iconFactory->getIcon('actions-document-open', 'small') . '</a>';
+                $iconsArr['edit'] = '<a class="btn btn-default" href="#" onclick="' . htmlspecialchars(BackendUtility::editOnClick($editParams)) . '" title="' . $this->getLanguageService()->getLL('editColumn',
+                        true) . '">' . $this->iconFactory->getIcon('actions-document-open',
+                        Icon::SIZE_SMALL)->render() . '</a>';
             }
-            $icons .= '<a href="#" class="btn btn-default toggle-content toggle-up" title="' . $this->languageService->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tx_gridelements_togglecontent') . '">' . $this->iconFactory->getIcon('actions-view-list-collapse',
-                    'small') . '</a>';
-            $icons .= '<a href="#" class="btn btn-default toggle-content toggle-down" title="' . $this->languageService->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tx_gridelements_togglecontent') . '">' . $this->iconFactory->getIcon('actions-view-list-expand',
-                    'small') . '</a>';
         }
-        if (strlen($icons)) {
-            $icons = '<div class="t3-page-column-header-icons btn-group btn-group-sm">' . $icons . '</div>';
+        $iconsArr['toggleUp'] = '<a href="#" class="btn btn-default toggle-content toggle-up" title="' . $this->languageService->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tx_gridelements_togglecontent') . '">' . $this->iconFactory->getIcon('actions-view-list-collapse',
+                'small') . '</a>';
+        $iconsArr['toggleDown'] = '<a href="#" class="btn btn-default toggle-content toggle-down" title="' . $this->languageService->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tx_gridelements_togglecontent') . '">' . $this->iconFactory->getIcon('actions-view-list-expand',
+                'small') . '</a>';
+        if (!empty($iconsArr)) {
+            $icons = '<div class="t3-page-column-header-icons btn-group btn-group-sm">' . implode('',
+                    $iconsArr) . '</div>';
         }
-
         // Create header row:
         $out = '<div class="t3-page-column-header">
 					' . $icons . '
@@ -760,4 +767,11 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface
         return $this->iconFactory;
     }
 
+    /**
+     * @return PageLayoutController
+     */
+    protected function getPageLayoutController()
+    {
+        return $GLOBALS['SOBE'];
+    }
 }

@@ -168,11 +168,11 @@
 			<target>Nieuw</target>
 		</trans-unit>
 		<trans-unit id="tx_gridelements_js.pastecopy" approved="yes">
-			<source>Paste copy at this place</source>
+			<source>Paste copy into this column</source>
 			<target>Plak kopie in</target>
 		</trans-unit>
 		<trans-unit id="tx_gridelements_js.pasteref" approved="yes">
-			<source>Paste reference at this place</source>
+			<source>Paste reference into this column</source>
 			<target>Plak referentie in</target>
 		</trans-unit>
 		</body>

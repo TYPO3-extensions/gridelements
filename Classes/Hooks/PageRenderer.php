@@ -20,7 +20,9 @@ namespace GridElementsTeam\Gridelements\Hooks;
  ***************************************************************/
 
 use TYPO3\CMS\Backend\Clipboard\Clipboard;
-use TYPO3\CMS\Backend\Utility\IconUtility;
+use TYPO3\CMS\Backend\Utility\BackendUtility;
+use TYPO3\CMS\Core\Imaging\Icon;
+use TYPO3\CMS\Core\Imaging\IconFactory;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -44,6 +46,8 @@ class PageRenderer
      */
     public function addJSCSS($parameters, &$pageRenderer)
     {
+        $iconFactory = GeneralUtility::makeInstance(IconFactory::class);
+
         $pageRenderer->loadRequireJsModule('TYPO3/CMS/Gridelements/GridElementsOnReady');
         $pageRenderer->loadRequireJsModule('TYPO3/CMS/Gridelements/GridElementsDragDrop');
         $pageRenderer->loadRequireJsModule('TYPO3/CMS/Gridelements/GridElementsDragInWizard');
@@ -51,6 +55,7 @@ class PageRenderer
         /** @var Clipboard $clipObj */
         $clipObj = GeneralUtility::makeInstance(Clipboard::class); // Start clipboard
         $clipObj->initializeClipboard();
+        $clipObj->lockToNormal();
 
         $pasteURL = '';
         if (isset($clipObj->clipData['normal']['el']) && strpos(key($clipObj->clipData['normal']['el']),
@@ -134,18 +139,50 @@ class PageRenderer
         $pAddExtOnReadyCode .= "
 		top.pageColumnsAllowedCTypes = " . json_encode($allowedContentTypesClassesByColPos) . ";
 		top.pageColumnsAllowedGridTypes = " . json_encode($allowedGridTypesClassesByColPos) . ";
-		top.pasteReferenceAllowed = '" . ($this->getBackendUser()->checkAuthMode('tt_content', 'CType', 11,
-                'explicitAllow') ? 'true' : 'false') . "';
+        top.pasteReferenceAllowed = " . ($this->getBackendUser()->checkAuthMode('tt_content', 'CType', 11,
+                'explicitAllow') ? 'true' : 'false') . ";
 		top.skipDraggableDetails = " . ($this->getBackendUser()->uc['dragAndDropHideNewElementWizardInfoOverlay'] ? 'true;' : 'false;') . ";
-		top.geSprites = {
-		copyfrompage: '" . IconUtility::getSpriteIconClasses('extensions-gridelements-copyfrompage') . "',
-			pastecopy: '" . IconUtility::getSpriteIconClasses('extensions-gridelements-pastecopy') . "',
-			pasteref: '" . IconUtility::getSpriteIconClasses('extensions-gridelements-pasteref') . "'
-		};
 		top.backPath = '" . $GLOBALS['BACK_PATH'] . "'";
+
+        $elFromTable = $clipObj->elFromTable('tt_content');
+        if (!empty($elFromTable)) {
+            $pasteItem = substr(key($elFromTable), 11);
+            $pasteRecord = BackendUtility::getRecord('tt_content', (int)$pasteItem);
+            $pasteTitle = $pasteRecord['header'] ? $pasteRecord['header'] : $pasteItem;
+            $copyMode = $clipObj->clipData['normal']['mode'] ? '-' . $clipObj->clipData['normal']['mode'] : '';
+            $pAddExtOnReadyCode .= "
+                top.pasteIntoLinkTemplate = " . json_encode('<a data-pasteitem="' . $pasteItem . '" data-pastetitle="' . $pasteTitle . '" class="t3js-paste t3js-paste' . $copyMode . ' t3js-paste-into btn btn-default" title="' . $this->getLanguageService()->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tx_gridelements_js.pasteinto') . '">' . $iconFactory->getIcon('actions-document-paste-into',
+                        Icon::SIZE_SMALL)->render() . '</a>') . ";
+                top.pasteAfterLinkTemplate = " . json_encode('<a data-pasteitem="' . $pasteItem . '" data-pastetitle="' . $pasteTitle . '"  class="t3js-paste t3js-paste' . $copyMode . ' t3js-paste-after btn btn-default" title="' . $this->getLanguageService()->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tx_gridelements_js.pasteafter') . '">' . $iconFactory->getIcon('actions-document-paste-into',
+                        Icon::SIZE_SMALL)->render() . '</a>') . ";";
+        } else {
+            $pAddExtOnReadyCode .= "
+                top.pasteIntoLinkTemplate = '';
+                top.pasteAfterLinkTemplate = '';";
+        }
 
         $pageRenderer->addJsInlineCode(// add some more JS here
             'gridelementsExtOnReady', $pAddExtOnReadyCode);
+    }
+
+    /**
+     * Gets the current backend user.
+     *
+     * @return \TYPO3\CMS\Core\Authentication\BackendUserAuthentication
+     */
+    public function getBackendUser()
+    {
+        return $GLOBALS['BE_USER'];
+    }
+
+    /**
+     * getter for databaseConnection
+     *
+     * @return \TYPO3\CMS\Lang\LanguageService
+     */
+    public function getLanguageService()
+    {
+        return $GLOBALS['LANG'];
     }
 
     /**
@@ -174,16 +211,6 @@ class PageRenderer
                 $pageRenderer->addCssFile($filename, 'stylesheet', 'screen');
             }
         }
-    }
-
-    /**
-     * Gets the current backend user.
-     *
-     * @return \TYPO3\CMS\Core\Authentication\BackendUserAuthentication
-     */
-    public function getBackendUser()
-    {
-        return $GLOBALS['BE_USER'];
     }
 
 }

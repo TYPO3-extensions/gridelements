@@ -43,7 +43,8 @@ class ColPosList extends AbstractItemsProcFunc
         parent::init();
         if ($params['row']['pid'] > 0) {
             $ContentType = is_array($params['row']['CType']) ? $params['row']['CType'][0] : $params['row']['CType'];
-            $params['items'] = $this->addColPosListLayoutItems($params['row']['pid'], $params['items'], $ContentType, $params['row']['tx_gridelements_container']);
+            $params['items'] = $this->addColPosListLayoutItems($params['row']['pid'], $params['items'], $ContentType,
+                $params['row']['tx_gridelements_container']);
         } else {
             // negative uid_pid values indicate that the element has been inserted after an existing element
             // so there is no pid to get the backendLayout for and we have to get that first

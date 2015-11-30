@@ -60,19 +60,20 @@ class ProcessCmdmap extends AbstractDataHandler
             $copyAfterDuplicationFields = $GLOBALS['TCA']['tt_content']['ctrl']['copyAfterDuplFields'];
             $GLOBALS['TCA']['tt_content']['ctrl']['copyAfterDuplFields'] .= ',tx_gridelements_container,tx_gridelements_columns';
 
-            $overrideArray = array();
-
-            foreach ($GLOBALS['TCA']['tt_content']['columns'] as $key => $column) {
-                if (strpos(',' . $GLOBALS['TCA']['tt_content']['ctrl']['copyAfterDuplFields'] . ',', ',' . $key . ',') === FALSE) {
-                    $overrideArray[$key] = '';
-                }
-            }
-
             $overrideArray = array(
                 'CType' => 'shortcut',
                 'records' => $id,
-                'header' => 'Reference'
+                'header' => 'Reference',
             );
+
+            $clipBoard = GeneralUtility::_GET('CB');
+            if (!empty($clipBoard)) {
+                $updateArray = $clipBoard['update'];
+                if (!empty($updateArray)) {
+                    $overrideArray = array_merge($overrideArray, $updateArray);
+                }
+            }
+
 
             $this->getTceMain()->copyRecord($table, $id, $value, 1, $overrideArray);
 

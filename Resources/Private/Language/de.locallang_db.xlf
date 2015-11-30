@@ -208,12 +208,12 @@
 			<target>Neu</target>
 		</trans-unit>
 		<trans-unit id="tx_gridelements_js.pastecopy" approved="yes">
-			<source>Paste copy at this place</source>
-			<target>Kopie hier einfügen</target>
+			<source>Paste copy into this column</source>
+			<target>Kopie in diese Spalte einfügen</target>
 		</trans-unit>
 		<trans-unit id="tx_gridelements_js.pasteref" approved="yes">
-			<source>Paste reference at this place</source>
-			<target>Referenz hier einfügen</target>
+			<source>Paste reference into this column</source>
+			<target>Referenz in diese Spalte einfügen</target>
 		</trans-unit>
 		<trans-unit id="tx_gridelements_togglecontent" approved="yes">
 			<source>Toggle Content</source>

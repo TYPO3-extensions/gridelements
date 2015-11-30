@@ -20,7 +20,7 @@ Ext.namespace('TYPO3.Backend.t3Grid');
 
 TYPO3.Backend.t3Grid = Ext.extend(Ext.Component, {
 
-	constructor: function(config) {
+	constructor: function (config) {
 
 		config = Ext.apply({
 			colCount: config.colCount,
@@ -37,10 +37,10 @@ TYPO3.Backend.t3Grid = Ext.extend(Ext.Component, {
 	/**
 	 * Adds a row below the grid
 	 */
-	addRow: function() {
+	addRow: function () {
 		var newRow = [];
 		for (var i = 0; i < this.colCount; i++) {
-			newRow[i] = {spanned:false,rowspan:1,colspan:1};
+			newRow[i] = {spanned: false, rowspan: 1, colspan: 1};
 		}
 		this.data.push(newRow);
 		this.rowCount++;
@@ -52,7 +52,7 @@ TYPO3.Backend.t3Grid = Ext.extend(Ext.Component, {
 	 *
 	 * @returns void
 	 */
-	removeRow: function() {
+	removeRow: function () {
 		if (this.rowCount <= 1) return false;
 		var newData = [];
 		for (var rowIndex = 0; rowIndex < this.rowCount - 1; rowIndex++) {
@@ -79,7 +79,7 @@ TYPO3.Backend.t3Grid = Ext.extend(Ext.Component, {
 	 * @param row integer
 	 * @return void
 	 */
-	findUpperCellWidthRowspanAndDecreaseByOne: function(col, row) {
+	findUpperCellWidthRowspanAndDecreaseByOne: function (col, row) {
 		var upperCell = this.getCell(col, row - 1);
 		if (!upperCell) return false;
 
@@ -97,7 +97,7 @@ TYPO3.Backend.t3Grid = Ext.extend(Ext.Component, {
 	 *
 	 * @return void
 	 */
-	removeColumn: function() {
+	removeColumn: function () {
 		if (this.colCount <= 1) return false;
 		var newData = [];
 
@@ -124,7 +124,7 @@ TYPO3.Backend.t3Grid = Ext.extend(Ext.Component, {
 	 * @param row integer
 	 * @return void
 	 */
-	findLeftCellWidthColspanAndDecreaseByOne: function(col, row) {
+	findLeftCellWidthColspanAndDecreaseByOne: function (col, row) {
 		var leftCell = this.getCell(col - 1, row);
 		if (!leftCell) return false;
 
@@ -142,7 +142,7 @@ TYPO3.Backend.t3Grid = Ext.extend(Ext.Component, {
 	 *
 	 * @return void
 	 */
-	addColumn: function() {
+	addColumn: function () {
 		for (var rowIndex = 0; rowIndex < this.rowCount; rowIndex++) {
 			this.data[rowIndex].push({
 				spanned: false,
@@ -160,7 +160,7 @@ TYPO3.Backend.t3Grid = Ext.extend(Ext.Component, {
 	 *
 	 * @return void
 	 */
-	drawTable: function() {
+	drawTable: function () {
 		var domHelper = Ext.DomHelper;
 		var newTable = {
 			tag: 'table',
@@ -190,7 +190,7 @@ TYPO3.Backend.t3Grid = Ext.extend(Ext.Component, {
 			var rowData = this.data[row];
 			if (rowData.length == 0) continue;
 
-			var rowSpec = {tag: 'tr', children:[]};
+			var rowSpec = {tag: 'tr', children: []};
 
 			for (var col = 0; col < this.colCount; col++) {
 				var cell = this.data[row][col];
@@ -202,29 +202,29 @@ TYPO3.Backend.t3Grid = Ext.extend(Ext.Component, {
 					+ col + '_' + row + '" title="' + TYPO3.l10n.localize('editCell') + '" href="#"><!-- --></a>';
 				if (this.cellCanSpanRight(col, row)) {
 					cellHtml += '<a href="#" id="r_'
-					+ col + '_' + row + '" title="' + TYPO3.l10n.localize('mergeCell') + '" class="link_expand_right"><!-- --></a>';
+						+ col + '_' + row + '" title="' + TYPO3.l10n.localize('mergeCell') + '" class="link_expand_right"><!-- --></a>';
 				}
 				if (this.cellCanShrinkLeft(col, row)) {
 					cellHtml += '<a href="#" id="l_'
-					+ col + '_' + row + '" title="' + TYPO3.l10n.localize('splitCell') + '" class="link_shrink_left"><!-- --></a>';
+						+ col + '_' + row + '" title="' + TYPO3.l10n.localize('splitCell') + '" class="link_shrink_left"><!-- --></a>';
 				}
 				if (this.cellCanSpanDown(col, row)) {
 					cellHtml += '<a href="#" id="d_'
-					+ col + '_' + row + '" title="' + TYPO3.l10n.localize('mergeCell') + '" class="link_expand_down"><!-- --></a>';
+						+ col + '_' + row + '" title="' + TYPO3.l10n.localize('mergeCell') + '" class="link_expand_down"><!-- --></a>';
 				}
 				if (this.cellCanShrinkUp(col, row)) {
 					cellHtml += '<a href="#" id="u_'
-					+ col + '_' + row + '" title="' + TYPO3.l10n.localize('splitCell') + '" class="link_shrink_up"><!-- --></a>';
+						+ col + '_' + row + '" title="' + TYPO3.l10n.localize('splitCell') + '" class="link_shrink_up"><!-- --></a>';
 				}
 				cellHtml += '</div>';
 
 				cellHtml += '<div class="cell_data">' + TYPO3.l10n.localize('name') + ': ' + (cell.name ? Ext.util.Format.htmlEncode(cell.name) : TYPO3.l10n.localize('notSet'))
-				+ '<br />' + TYPO3.l10n.localize('column') + ': '
-				+ (cell.column === undefined ? TYPO3.lang.notSet : parseInt(cell.column, 10))
-				+ '<br />' + TYPO3.lang.allowedElementTypes + ': '
-				+ (cell.allowed ? Ext.util.Format.htmlEncode(cell.allowed) : '*')
-				+ '<br />' + TYPO3.lang.allowedGridElementTypes + ': '
-				+ (cell.allowedGridTypes ? Ext.util.Format.htmlEncode(cell.allowedGridTypes) : '*') + '</div>';
+					+ '<br />' + TYPO3.l10n.localize('column') + ': '
+					+ (cell.column === undefined ? TYPO3.lang.notSet : parseInt(cell.column, 10))
+					+ '<br />' + TYPO3.lang.allowedElementTypes + ': '
+					+ (cell.allowed ? Ext.util.Format.htmlEncode(cell.allowed) : '*')
+					+ '<br />' + TYPO3.lang.allowedGridElementTypes + ': '
+					+ (cell.allowedGridTypes ? Ext.util.Format.htmlEncode(cell.allowedGridTypes) : '*') + '</div>';
 
 				// create cells
 				var child = {
@@ -259,7 +259,7 @@ TYPO3.Backend.t3Grid = Ext.extend(Ext.Component, {
 	 *
 	 * @return boolean
 	 */
-	setName: function(newName, col, row) {
+	setName: function (newName, col, row) {
 		var cell = this.getCell(col, row);
 		if (!cell) return false;
 		cell.name = newName;
@@ -275,7 +275,7 @@ TYPO3.Backend.t3Grid = Ext.extend(Ext.Component, {
 	 *
 	 * @return boolean
 	 */
-	setAllowed: function(newAllowed, col, row) {
+	setAllowed: function (newAllowed, col, row) {
 		var cell = this.getCell(col, row);
 		if (!cell) return false;
 		cell.allowed = newAllowed;
@@ -291,7 +291,7 @@ TYPO3.Backend.t3Grid = Ext.extend(Ext.Component, {
 	 *
 	 * @return boolean
 	 */
-	setAllowedGridTypes: function(newAllowedGridTypes, col, row) {
+	setAllowedGridTypes: function (newAllowedGridTypes, col, row) {
 		var cell = this.getCell(col, row);
 		if (!cell) return false;
 		cell.allowedGridTypes = newAllowedGridTypes;
@@ -308,7 +308,7 @@ TYPO3.Backend.t3Grid = Ext.extend(Ext.Component, {
 	 *
 	 * @return boolean
 	 */
-	setColumn: function(newColumn, col, row) {
+	setColumn: function (newColumn, col, row) {
 		var cell = this.getCell(col, row);
 		if (!cell) return false;
 		cell.column = newColumn;
@@ -320,51 +320,51 @@ TYPO3.Backend.t3Grid = Ext.extend(Ext.Component, {
 	 *
 	 * @return void
 	 */
-	bindLinks: function() {
+	bindLinks: function () {
 		for (var row = 0; row < this.rowCount; row++) {
 			for (var col = 0; col < this.colCount; col++) {
 				// span right
 				var el = Ext.Element.get('r_' + col + '_' + row);
 				if (el) {
-					el.addListener('click', function(e, sender, params) {
+					el.addListener('click', function (e, sender, params) {
 						this.addColspan(params.colIndex, params.rowIndex);
 						this.drawTable();
-					}, this, {stopEvent:true, colIndex:col, rowIndex:row});
+					}, this, {stopEvent: true, colIndex: col, rowIndex: row});
 				}
 
 				// reduce to left
 				var el = Ext.Element.get('l_' + col + '_' + row);
 				if (el) {
-					el.addListener('click', function(e, sender, params) {
+					el.addListener('click', function (e, sender, params) {
 						this.removeColspan(params.colIndex, params.rowIndex);
 						this.drawTable();
-					}, this, {stopEvent:true, colIndex:col, rowIndex:row});
+					}, this, {stopEvent: true, colIndex: col, rowIndex: row});
 				}
 
 				// span down
 				var el = Ext.Element.get('d_' + col + '_' + row);
 				if (el) {
-					el.addListener('click', function(e, sender, params) {
+					el.addListener('click', function (e, sender, params) {
 						this.addRowspan(params.colIndex, params.rowIndex);
 						this.drawTable();
-					}, this, {stopEvent:true, colIndex:col, rowIndex:row});
+					}, this, {stopEvent: true, colIndex: col, rowIndex: row});
 				}
 
 				// reduce up
 				var el = Ext.Element.get('u_' + col + '_' + row);
 				if (el) {
-					el.addListener('click', function(e, sender, params) {
+					el.addListener('click', function (e, sender, params) {
 						this.removeRowspan(params.colIndex, params.rowIndex);
 						this.drawTable();
-					}, this, {stopEvent:true, colIndex:col, rowIndex:row});
+					}, this, {stopEvent: true, colIndex: col, rowIndex: row});
 				}
 
 				// edit
 				var el = Ext.Element.get('e_' + col + '_' + row);
 				if (el) {
-					el.addListener('click', function(e, sender, params) {
+					el.addListener('click', function (e, sender, params) {
 						this.showOptions(sender, params.colIndex, params.rowIndex);
-					}, this, {stopEvent:true, colIndex:col, rowIndex:row});
+					}, this, {stopEvent: true, colIndex: col, rowIndex: row});
 				}
 			}
 		}
@@ -378,7 +378,7 @@ TYPO3.Backend.t3Grid = Ext.extend(Ext.Component, {
 	 * @param col integer
 	 * @param row integer
 	 */
-	showOptions: function(sender, col, row) {
+	showOptions: function (sender, col, row) {
 		var win;
 		sender = Ext.get('base');
 		var cell = this.getCell(col, row);
@@ -392,14 +392,14 @@ TYPO3.Backend.t3Grid = Ext.extend(Ext.Component, {
 				value: cell.name,
 				tabIndex: 1,
 				listeners: {
-					render: function(c) {
+					render: function (c) {
 						c.getEl().set({
 							'data-toggle': 'tooltip',
 							'data-placement': 'bottom',
 							'data-title': TYPO3.l10n.localize('nameHelp')
 						});
 					},
-					afterrender: function(cmp) {
+					afterrender: function (cmp) {
 						TYPO3.Tooltip.initialize('[data-toggle="tooltip"]');
 					}
 				}
@@ -412,14 +412,14 @@ TYPO3.Backend.t3Grid = Ext.extend(Ext.Component, {
 				value: cell.column,
 				tabIndex: 2,
 				listeners: {
-					render: function(c) {
+					render: function (c) {
 						c.getEl().set({
 							'data-toggle': 'tooltip',
 							'data-placement': 'bottom',
 							'data-title': TYPO3.l10n.localize('columnHelp')
 						});
 					},
-					afterrender: function(cmp) {
+					afterrender: function (cmp) {
 						TYPO3.Tooltip.initialize('[data-toggle="tooltip"]');
 					}
 				}
@@ -431,20 +431,20 @@ TYPO3.Backend.t3Grid = Ext.extend(Ext.Component, {
 				tabIndex: 2,
 				style: 'width:340px;height:100px;',
 				autoEl: {
-					tag:'select',
-					cls:'x-font-select',
+					tag: 'select',
+					cls: 'x-font-select',
 					multiple: 'multiple',
 					html: this.getCTypeOptions(cell.allowed)
 				},
 				listeners: {
-					render: function(c) {
+					render: function (c) {
 						c.getEl().set({
 							'data-toggle': 'tooltip',
 							'data-placement': 'bottom',
 							'data-title': TYPO3.l10n.localize('allowedElementTypesHelp')
 						});
 					},
-					afterrender: function(cmp) {
+					afterrender: function (cmp) {
 						TYPO3.Tooltip.initialize('[data-toggle="tooltip"]');
 					}
 				}
@@ -457,14 +457,14 @@ TYPO3.Backend.t3Grid = Ext.extend(Ext.Component, {
 				value: cell.allowedGridTypes,
 				tabIndex: 1,
 				listeners: {
-					render: function(c) {
+					render: function (c) {
 						c.getEl().set({
 							'data-toggle': 'tooltip',
 							'data-placement': 'bottom',
 							'data-title': TYPO3.l10n.localize('allowedGridElementTypesHelp')
 						});
 					},
-					afterrender: function(cmp) {
+					afterrender: function (cmp) {
 						TYPO3.Tooltip.initialize('[data-toggle="tooltip"]');
 					}
 				}
@@ -492,9 +492,9 @@ TYPO3.Backend.t3Grid = Ext.extend(Ext.Component, {
 
 				buttons: [
 					{
-						iconCls:'save',
+						iconCls: 'save',
 						text: TYPO3.l10n.localize('save'),
-						handler: function(fieldName, fieldColumn, fieldAllowed, fieldAllowedGridTypes, col, row) {
+						handler: function (fieldName, fieldColumn, fieldAllowed, fieldAllowedGridTypes, col, row) {
 							t3Grid.setName(fieldName.getValue(), col, row);
 							t3Grid.setAllowed(t3Grid.getSelectedOptions(fieldAllowed), col, row);
 							t3Grid.setAllowedGridTypes(fieldAllowedGridTypes.getValue(), col, row);
@@ -515,11 +515,11 @@ TYPO3.Backend.t3Grid = Ext.extend(Ext.Component, {
 	 * @param selectedOptions string (csv)
 	 * return string
 	 */
-	getCTypeOptions: function(selectedCTypesCSV) {
+	getCTypeOptions: function (selectedCTypesCSV) {
 		var allowedCTypeOptions = [];
 
 		var selectedCTypes = [];
-		if (selectedCTypesCSV){
+		if (selectedCTypesCSV) {
 			selectedCTypes = selectedCTypesCSV.split(',');
 		}
 
@@ -542,12 +542,12 @@ TYPO3.Backend.t3Grid = Ext.extend(Ext.Component, {
 	 * @param selectElement object
 	 * return string
 	 */
-	getSelectedOptions: function(selectElement){
+	getSelectedOptions: function (selectElement) {
 		var selectedOptions = [];
 
 		var options = selectElement.getEl().select('option').elements;
-		Ext.each(options, function(option){
-			if (Ext.get(option).dom.selected ){
+		Ext.each(options, function (option) {
+			if (Ext.get(option).dom.selected) {
 				selectedOptions.push(Ext.get(option).getAttribute('value'));
 			}
 		});
@@ -562,9 +562,9 @@ TYPO3.Backend.t3Grid = Ext.extend(Ext.Component, {
 	 * @param row integer The array to look in
 	 * return int
 	 */
-	inArray: function(needle, haystack) {
+	inArray: function (needle, haystack) {
 		var length = haystack.length;
-		for(var i = 0; i < length; i++) {
+		for (var i = 0; i < length; i++) {
 			if (haystack[i] === needle) return true;
 		}
 		return false;
@@ -577,7 +577,7 @@ TYPO3.Backend.t3Grid = Ext.extend(Ext.Component, {
 	 * @param row integer
 	 * return Object
 	 */
-	getCell: function(col, row) {
+	getCell: function (col, row) {
 		if (col > this.colCount - 1) return false;
 		if (row > this.rowCount - 1) return false;
 		return this.data[row][col];
@@ -593,7 +593,7 @@ TYPO3.Backend.t3Grid = Ext.extend(Ext.Component, {
 	 *
 	 * @return boolean
 	 */
-	cellCanSpanRight: function(col, row) {
+	cellCanSpanRight: function (col, row) {
 		if (col == this.colCount - 1) {
 			return false;
 		}
@@ -624,7 +624,7 @@ TYPO3.Backend.t3Grid = Ext.extend(Ext.Component, {
 	 *
 	 * @return boolean
 	 */
-	cellCanSpanDown: function(col, row) {
+	cellCanSpanDown: function (col, row) {
 		if (row == this.rowCount - 1) {
 			return false;
 		}
@@ -657,7 +657,7 @@ TYPO3.Backend.t3Grid = Ext.extend(Ext.Component, {
 	 *
 	 * @return boolean
 	 */
-	cellCanShrinkLeft: function(col, row) {
+	cellCanShrinkLeft: function (col, row) {
 		return (this.data[row][col].colspan > 1);
 	},
 
@@ -670,7 +670,7 @@ TYPO3.Backend.t3Grid = Ext.extend(Ext.Component, {
 	 *
 	 * @return boolean
 	 */
-	cellCanShrinkUp: function(col, row) {
+	cellCanShrinkUp: function (col, row) {
 		return (this.data[row][col].rowspan > 1);
 	},
 
@@ -680,7 +680,7 @@ TYPO3.Backend.t3Grid = Ext.extend(Ext.Component, {
 	 * @param col integr
 	 * @param row integer
 	 */
-	addColspan: function(col, row) {
+	addColspan: function (col, row) {
 		var cell = this.getCell(col, row);
 		if (!cell || !this.cellCanSpanRight(col, row)) return false;
 
@@ -698,7 +698,7 @@ TYPO3.Backend.t3Grid = Ext.extend(Ext.Component, {
 	 *
 	 * @return void
 	 */
-	addRowspan: function(col, row) {
+	addRowspan: function (col, row) {
 		var cell = this.getCell(col, row);
 		if (!cell || !this.cellCanSpanDown(col, row)) return false;
 
@@ -716,7 +716,7 @@ TYPO3.Backend.t3Grid = Ext.extend(Ext.Component, {
 	 *
 	 * @return void
 	 */
-	removeColspan: function(col, row) {
+	removeColspan: function (col, row) {
 		var cell = this.getCell(col, row);
 		if (!cell || !this.cellCanShrinkLeft(col, row)) return false;
 
@@ -734,7 +734,7 @@ TYPO3.Backend.t3Grid = Ext.extend(Ext.Component, {
 	 *
 	 * @return void
 	 */
-	removeRowspan: function(col, row) {
+	removeRowspan: function (col, row) {
 		var cell = this.getCell(col, row);
 		if (!cell || !this.cellCanShrinkUp(col, row)) return false;
 
@@ -750,7 +750,7 @@ TYPO3.Backend.t3Grid = Ext.extend(Ext.Component, {
 	 *
 	 * @return string
 	 */
-	export2LayoutRecord: function() {
+	export2LayoutRecord: function () {
 		var result = "backend_layout {\n\tcolCount = " + this.colCount + "\n\trowCount = " + this.rowCount + "\n\trows {\n";
 		for (var row = 0; row < this.rowCount; row++) {
 			result += "\t\t" + (row + 1) + " {\n";
