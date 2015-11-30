@@ -118,7 +118,6 @@ class PageRenderer
                                         }
                                     }
                                 }
-                            } else {
                                 if ($classes !== 't3-allow-all') {
                                     $classes .= 't3-allow-gridelements_pi1 ';
                                 }

@@ -580,13 +580,13 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface
                 }
                 if (!empty($columnConfig['allowedGridTypes'])) {
                     $allowedGridTypes = array_flip(GeneralUtility::trimExplode(',', $columnConfig['allowedGridTypes']));
-                    if (!isset($allowedGridTypes['*'])) {
+                    if (!isset($allowedGridTypes['*']) && !empty($allowedGridTypes)) {
                         foreach ($allowedGridTypes as $gridType => &$gridTypeClass) {
                             $gridTypeClass = 't3-allow-gridtype t3-allow-gridtype-' . $gridType;
                         }
                         $allowedContentTypes['gridelements_pi1'] = 't3-allow-gridelements_pi1';
                     } else {
-                        if (isset($allowedContentTypes)) {
+                        if (!empty($allowedContentTypes)) {
                             $allowedContentTypes['gridelements_pi1'] = 't3-allow-gridelements_pi1';
                         }
                         unset($allowedGridTypes);
