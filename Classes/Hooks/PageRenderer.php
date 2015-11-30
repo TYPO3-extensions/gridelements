@@ -146,7 +146,6 @@ class PageRenderer {
 									}
 									if ($col['allowedGridTypes']) {
 										$allowedGridTypes = explode(',', $col['allowedGridTypes']);
-										$classes .= 't3-allow-gridelements_pi1 ';
 										foreach ($allowedGridTypes as $gridTypes) {
 											$gridTypes = trim($gridTypes);
 											if ($gridTypes !== '*') {
@@ -156,7 +155,6 @@ class PageRenderer {
 												}
 											}
 										}
-									} else {
 										if ($classes !== 't3-allow-all') {
 											$classes .= 't3-allow-gridelements_pi1 ';
 										}
