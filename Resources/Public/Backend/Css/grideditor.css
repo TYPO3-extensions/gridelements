@@ -4,7 +4,9 @@
 	position: relative;
 }
 
-body { padding: 10px; }
+body {
+	padding: 10px;
+}
 
 table#outer_container td, table#editor td {
 	vertical-align: middle;
@@ -66,7 +68,6 @@ div.cell_container:hover {
 
 .link_expand_right:hover {
 }
-
 
 .link_shrink_left {
 	left: 0px;
@@ -170,7 +171,6 @@ div.cell_container:hover {
 
 .link_expand_right:hover {
 }
-
 
 .link_shrink_left {
 	left: 0px;

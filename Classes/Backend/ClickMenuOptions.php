@@ -122,24 +122,16 @@ class ClickMenuOptions
         );
         $loc = 'top.content.list_frame';
         if ($this->getBackendUser()->jsConfirmation(JsConfirmation::COPY_MOVE_PASTE)) {
-            $conf = $loc . ' && confirm(' .
-                GeneralUtility::quoteJSvalue(sprintf($this->getLanguageService()->sL(('LLL:EXT:lang/locallang_core.xlf:mess.' .
-                    ($elInfo[2] === 'copy' ? 'copy' : 'move') . '_' . $type)),
+            $conf = $loc . ' && confirm(' . GeneralUtility::quoteJSvalue(sprintf($this->getLanguageService()->sL(('LLL:EXT:lang/locallang_core.xlf:mess.' . ($elInfo[2] === 'copy' ? 'copy' : 'move') . '_' . $type)),
                     $elInfo[0], $elInfo[1])) . ')';
         } else {
             $conf = $loc;
         }
-        $editOnClick = 'if(' . $conf . '){' . $loc . '.location.href=' .
-            GeneralUtility::quoteJSvalue($backRef->clipObj->pasteUrl($table, $uid, 0, $updateArray) .
-            ($reference ? '&reference=1' : '') .
-            '&redirect=') .
-            '+top.rawurlencode(' .
-            $backRef->frameLocation(($loc . '.document')) .
-            '.pathname+' . $backRef->frameLocation(($loc . '.document')) . '.search);}';
+        $editOnClick = 'if(' . $conf . '){' . $loc . '.location.href=' . GeneralUtility::quoteJSvalue($backRef->clipObj->pasteUrl($table,
+                    $uid, 0,
+                    $updateArray) . ($reference ? '&reference=1' : '') . '&redirect=') . '+top.rawurlencode(' . $backRef->frameLocation(($loc . '.document')) . '.pathname+' . $backRef->frameLocation(($loc . '.document')) . '.search);}';
 
-        return $backRef->linkItem($reference ?
-            $this->getLanguageService()->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tx_gridelements_clickmenu_pastereference') :
-            $backRef->label('paste' . $type),
+        return $backRef->linkItem($reference ? $this->getLanguageService()->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tx_gridelements_clickmenu_pastereference') : $backRef->label('paste' . $type),
             $this->iconFactory->getIcon('actions-document-paste-' . $type, Icon::SIZE_SMALL)->render(),
             $editOnClick . 'return false;');
     }

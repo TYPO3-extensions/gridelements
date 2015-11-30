@@ -157,11 +157,17 @@
 		<trans-unit id="tx_gridelements_js.newcontentelementheader">
 			<source>New</source>
 		</trans-unit>
+		<trans-unit id="tx_gridelements_js.pasteinto">
+			<source>Paste into this column</source>
+		</trans-unit>
+		<trans-unit id="tx_gridelements_js.pasteafter">
+			<source>Paste after this record</source>
+		</trans-unit>
 		<trans-unit id="tx_gridelements_js.pastecopy">
-			<source>Paste copy at this place</source>
+			<source>Paste copy into this column</source>
 		</trans-unit>
 		<trans-unit id="tx_gridelements_js.pasteref">
-			<source>Paste reference at this place</source>
+			<source>Paste reference into this column</source>
 		</trans-unit>
 		<trans-unit id="tx_gridelements_togglecontent">
 			<source>Toggle Content</source>

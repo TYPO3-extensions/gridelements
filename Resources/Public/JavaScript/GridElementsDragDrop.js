@@ -16,7 +16,7 @@
  * based on jQuery UI
  */
 
-define(['jquery', 'jquery-ui/sortable', 'jquery-ui/droppable'], function($) {
+define(['jquery', 'jquery-ui/sortable', 'jquery-ui/droppable'], function ($) {
 
 	var DragDrop = {
 		contentIdentifier: '.t3js-page-ce',
@@ -36,7 +36,7 @@ define(['jquery', 'jquery-ui/sortable', 'jquery-ui/droppable'], function($) {
 	/**
 	 * initializes Drag+Drop for all content elements on the page
 	 */
-	DragDrop.initialize = function() {
+	DragDrop.initialize = function () {
 		$(this.contentIdentifier).draggable({
 			handle: this.dragHeaderIdentifier,
 			scope: 'tt_content',
@@ -45,10 +45,10 @@ define(['jquery', 'jquery-ui/sortable', 'jquery-ui/droppable'], function($) {
 			addClasses: 'active-drag',
 			revert: 'invalid',
 			zIndex: 100,
-			start: function(evt, ui) {
+			start: function (evt, ui) {
 				DragDrop.onDragStart($(this));
 			},
-			stop: function(evt, ui) {
+			stop: function (evt, ui) {
 				DragDrop.onDragStop($(this));
 			}
 		});
@@ -57,13 +57,13 @@ define(['jquery', 'jquery-ui/sortable', 'jquery-ui/droppable'], function($) {
 			accept: this.contentIdentifier,
 			scope: 'tt_content',
 			tolerance: 'pointer',
-			over: function(evt, ui) {
+			over: function (evt, ui) {
 				DragDrop.onDropHoverOver($(ui.draggable), $(this));
 			},
-			out: function(evt, ui) {
+			out: function (evt, ui) {
 				DragDrop.onDropHoverOut($(ui.draggable), $(this));
 			},
-			drop: function(evt, ui) {
+			drop: function (evt, ui) {
 				DragDrop.onDrop($(ui.draggable), $(this), evt);
 			}
 		});
@@ -75,7 +75,7 @@ define(['jquery', 'jquery-ui/sortable', 'jquery-ui/droppable'], function($) {
 	 * @param $element a jQuery object for the draggable
 	 * @private
 	 */
-	DragDrop.onDragStart = function($element) {
+	DragDrop.onDragStart = function ($element) {
 		// Add css class for the drag shadow
 		$element.children(DragDrop.dragIdentifier).addClass('dragitem-shadow');
 		// Hide create new element button
@@ -90,13 +90,13 @@ define(['jquery', 'jquery-ui/sortable', 'jquery-ui/droppable'], function($) {
 		var $previousDropZone = $element.prev().children(DragDrop.dropZoneIdentifier);
 		var allowedElementMimeType = $element.find('.t3-ctype-identifier').data('ctype');
 		var allowedGridType = $element.find('.t3-ctype-identifier').data('gridtype');
-		$(DragDrop.dropZoneIdentifier).not($previousDropZone).each(function() {
+		$(DragDrop.dropZoneIdentifier).not($previousDropZone).each(function () {
 			var $closestColumn = $(this).closest(DragDrop.columnIdentifier);
 			if ($closestColumn.hasClass('t3-allow-all') ||
-				allowedGridType === '' && $closestColumn.hasClass('t3-allow-' + allowedElementMimeType) ||
-					$closestColumn.hasClass('t3-allow-gridelements_pi1') && $closestColumn.hasClass('t3-allow-gridtype-' + allowedGridType) ||
-					$closestColumn.hasClass('t3-allow-gridelements_pi1') && !$closestColumn.hasClass('t3-allow-gridtype')
-				) {
+				!allowedGridType && $closestColumn.hasClass('t3-allow-' + allowedElementMimeType) ||
+				$closestColumn.hasClass('t3-allow-gridelements_pi1') && $closestColumn.hasClass('t3-allow-gridtype-' + allowedGridType) ||
+				$closestColumn.hasClass('t3-allow-gridelements_pi1') && !$closestColumn.hasClass('t3-allow-gridtype')
+			) {
 				$(this).addClass(DragDrop.validDropZoneClass);
 			} else {
 				$(this).closest(DragDrop.contentIdentifier).find('> ' + DragDrop.addContentIdentifier + ', > > ' + DragDrop.addContentIdentifier).show();
@@ -109,7 +109,7 @@ define(['jquery', 'jquery-ui/sortable', 'jquery-ui/droppable'], function($) {
 	 * @param $element a jQuery object for the draggable
 	 * @private
 	 */
-	DragDrop.onDragStop = function($element) {
+	DragDrop.onDragStop = function ($element) {
 		// Remove css class for the drag shadow
 		$element.children(DragDrop.dragIdentifier).removeClass('dragitem-shadow');
 		// Show create new element button
@@ -127,7 +127,7 @@ define(['jquery', 'jquery-ui/sortable', 'jquery-ui/droppable'], function($) {
 	 * @param $droppableElement
 	 * @private
 	 */
-	DragDrop.onDropHoverOver = function($draggableElement, $droppableElement) {
+	DragDrop.onDropHoverOver = function ($draggableElement, $droppableElement) {
 		if ($droppableElement.hasClass(DragDrop.validDropZoneClass)) {
 			$droppableElement.addClass(DragDrop.dropPossibleHoverClass);
 		}
@@ -139,7 +139,7 @@ define(['jquery', 'jquery-ui/sortable', 'jquery-ui/droppable'], function($) {
 	 * @param $droppableElement
 	 * @private
 	 */
-	DragDrop.onDropHoverOut = function($draggableElement, $droppableElement) {
+	DragDrop.onDropHoverOut = function ($draggableElement, $droppableElement) {
 		$droppableElement.removeClass(DragDrop.dropPossibleHoverClass);
 	};
 
@@ -151,29 +151,29 @@ define(['jquery', 'jquery-ui/sortable', 'jquery-ui/droppable'], function($) {
 	 * @param $droppableElement
 	 * @private
 	 */
-	DragDrop.onDrop = function($draggableElement, $droppableElement, evt) {
+	DragDrop.onDrop = function ($draggableElement, $droppableElement, evt) {
 		var newColumn = DragDrop.getColumnPositionForElement($droppableElement),
 			gridColumn = DragDrop.getGridColumnPositionForElement($droppableElement);
-		if(gridColumn !== false && gridColumn !== '') {
+		if (gridColumn !== false && gridColumn !== '') {
 			newColumn = -1;
 		}
 
 		$droppableElement.removeClass(DragDrop.dropPossibleHoverClass);
+		var $pasteAction = typeof $draggableElement === 'number';
 
 		// send an AJAX requst via the AjaxDataHandler
-		var contentElementUid = parseInt($draggableElement.data('uid'));
+		var contentElementUid = $pasteAction ? $draggableElement : parseInt($draggableElement.data('uid'));
 		var newContentElementType = '';
 		var txGridelementsBackendLayout = '';
-		if($draggableElement.closest(DragDrop.newContentElementWizardIdentifier).length) {
+		if (!$pasteAction && $draggableElement.closest(DragDrop.newContentElementWizardIdentifier).length) {
 			newContentElementType = $draggableElement.find(DragDrop.newCTypeIdentifier).data('ctype');
-			txGridelementsBackendLayout = $draggableElement.find(DragDrop.newCTypeIdentifier).data('tx_gridelements_backend_layout');
+			txGridelementsBackendLayout = $draggableElement.find(DragDrop.newCTypeIdentifier).data('gridtype');
 		}
 		if (contentElementUid > 0 || newContentElementType.length) {
 			var parameters = {};
 			// add the information about a possible column position change
-			var targetFound = $droppableElement.closest(DragDrop.contentIdentifier).data('uid');
+			var targetFound = $droppableElement.closest('[data-uid]').data('uid');
 			// the item was moved to the top of the colPos, so the page ID is used here
-			var container = 0;
 			var targetPid = 0;
 			if (typeof targetFound === 'undefined') {
 				// the actual page is needed
@@ -182,16 +182,17 @@ define(['jquery', 'jquery-ui/sortable', 'jquery-ui/droppable'], function($) {
 				// the negative value of the content element after where it should be moved
 				targetPid = 0 - parseInt(targetFound);
 			}
-			container = parseInt($droppableElement.closest(DragDrop.contentIdentifier).data('container'));
+			var container = parseInt($droppableElement.closest(DragDrop.contentIdentifier).data('container'));
+			var language = parseInt($droppableElement.closest('[data-language-uid]').data('language-uid'));
 			var colPos = 0;
 			if (container > 0 && gridColumn !== false && gridColumn !== '') {
 				colPos = -1;
-			} else if (targetPid > 0) {
+			} else if (targetPid !== 0) {
 				colPos = newColumn;
 			}
 			parameters['cmd'] = {tt_content: {}};
 			parameters['data'] = {tt_content: {}};
-			if(newContentElementType.length) {
+			if (newContentElementType.length) {
 				parameters['data']['tt_content']['NEW234134'] = {
 					pid: targetPid,
 					colPos: colPos,
@@ -199,26 +200,28 @@ define(['jquery', 'jquery-ui/sortable', 'jquery-ui/droppable'], function($) {
 					tx_gridelements_container: container,
 					tx_gridelements_columns: gridColumn,
 					tx_gridelements_backend_layout: txGridelementsBackendLayout,
+					sys_language_uid: language,
 					header: TYPO3.l10n.localize('tx_gridelements_js.newcontentelementheader')
 				};
 				// fire the request, and show a message if it has failed
-				require(['TYPO3/CMS/Backend/AjaxDataHandler'], function(DataHandler) {
-					DataHandler.process(parameters).done(function(result) {
+				require(['TYPO3/CMS/Backend/AjaxDataHandler'], function (DataHandler) {
+					DataHandler.process(parameters).done(function (result) {
 						if (!result.hasErrors) {
 							// insert draggable on the new position
-							if(!$droppableElement.parent().hasClass(DragDrop.contentIdentifier.substring(1))) {
-								$draggableElement.detach().css({top: 0, left: 0})
-									.insertAfter($droppableElement.closest(DragDrop.dropZoneIdentifier));
-							} else {
-								$draggableElement.detach().css({top: 0, left: 0})
-									.insertAfter($droppableElement.closest(DragDrop.contentIdentifier));
+							if (!$pasteAction) {
+								if (!$droppableElement.parent().hasClass(DragDrop.contentIdentifier.substring(1))) {
+									$draggableElement.detach().css({top: 0, left: 0})
+										.insertAfter($droppableElement.closest(DragDrop.dropZoneIdentifier));
+								} else {
+									$draggableElement.detach().css({top: 0, left: 0})
+										.insertAfter($droppableElement.closest(DragDrop.contentIdentifier));
+								}
 							}
 							self.location.reload(true);
 						}
 					});
 				});
-			} else if(evt.originalEvent.ctrlKey) {
-				alert('newColumn: ' + newColumn + ' targetFound: ' + targetFound + ' targetPid: ' + newColumn + ' colPos: ' + colPos + ' container: ' + container);
+			} else if ((evt && evt !== 'reference' && evt.originalEvent.ctrlKey) || $droppableElement.hasClass('t3js-paste-copy')) {
 				parameters['cmd']['tt_content'][contentElementUid] = {
 					copy: {
 						action: 'paste',
@@ -226,21 +229,27 @@ define(['jquery', 'jquery-ui/sortable', 'jquery-ui/droppable'], function($) {
 						update: {
 							colPos: colPos,
 							tx_gridelements_container: container,
-							tx_gridelements_columns: gridColumn
+							tx_gridelements_columns: gridColumn,
+							sys_language_uid: language
 						}
 					}
 				};
+				if (evt === 'reference') {
+					parameters['reference'] = 1;
+				}
 				// fire the request, and show a message if it has failed
-				require(['TYPO3/CMS/Backend/AjaxDataHandler'], function(DataHandler) {
-					DataHandler.process(parameters).done(function(result) {
+				require(['TYPO3/CMS/Backend/AjaxDataHandler'], function (DataHandler) {
+					DataHandler.process(parameters).done(function (result) {
 						if (!result.hasErrors) {
 							// insert draggable on the new position
-							if(!$droppableElement.parent().hasClass(DragDrop.contentIdentifier.substring(1))) {
-								$draggableElement.detach().css({top: 0, left: 0})
-									.insertAfter($droppableElement.closest(DragDrop.dropZoneIdentifier));
-							} else {
-								$draggableElement.detach().css({top: 0, left: 0})
-									.insertAfter($droppableElement.closest(DragDrop.contentIdentifier));
+							if (!$pasteAction) {
+								if (!$droppableElement.parent().hasClass(DragDrop.contentIdentifier.substring(1))) {
+									$draggableElement.detach().css({top: 0, left: 0})
+										.insertAfter($droppableElement.closest(DragDrop.dropZoneIdentifier));
+								} else {
+									$draggableElement.detach().css({top: 0, left: 0})
+										.insertAfter($droppableElement.closest(DragDrop.contentIdentifier));
+								}
 							}
 							self.location.reload(true);
 						}
@@ -250,20 +259,25 @@ define(['jquery', 'jquery-ui/sortable', 'jquery-ui/droppable'], function($) {
 				parameters['data']['tt_content'][contentElementUid] = {
 					colPos: colPos,
 					tx_gridelements_container: container,
-					tx_gridelements_columns: gridColumn
+					tx_gridelements_columns: gridColumn,
+					sys_language_uid: language
 				};
 				parameters['cmd']['tt_content'][contentElementUid] = {move: targetPid};
 				// fire the request, and show a message if it has failed
-				require(['TYPO3/CMS/Backend/AjaxDataHandler'], function(DataHandler) {
-					DataHandler.process(parameters).done(function(result) {
+				require(['TYPO3/CMS/Backend/AjaxDataHandler'], function (DataHandler) {
+					DataHandler.process(parameters).done(function (result) {
 						if (!result.hasErrors) {
 							// insert draggable on the new position
-							if(!$droppableElement.parent().hasClass(DragDrop.contentIdentifier.substring(1))) {
-								$draggableElement.detach().css({top: 0, left: 0})
-									.insertAfter($droppableElement.closest(DragDrop.dropZoneIdentifier));
+							if (!$pasteAction) {
+								if (!$droppableElement.parent().hasClass(DragDrop.contentIdentifier.substring(1))) {
+									$draggableElement.detach().css({top: 0, left: 0})
+										.insertAfter($droppableElement.closest(DragDrop.dropZoneIdentifier));
+								} else {
+									$draggableElement.detach().css({top: 0, left: 0})
+										.insertAfter($droppableElement.closest(DragDrop.contentIdentifier));
+								}
 							} else {
-								$draggableElement.detach().css({top: 0, left: 0})
-									.insertAfter($droppableElement.closest(DragDrop.contentIdentifier));
+								self.location.reload(true);
 							}
 						}
 					});
@@ -277,12 +291,12 @@ define(['jquery', 'jquery-ui/sortable', 'jquery-ui/droppable'], function($) {
 	 * @param $element
 	 * @return int|null the colPos
 	 */
-	DragDrop.getColumnPositionForElement = function($element) {
+	DragDrop.getColumnPositionForElement = function ($element) {
 		var $gridContainer = $element.closest(DragDrop.gridContainerIdentifier);
-		if ( $gridContainer.length) {
+		if ($gridContainer.length) {
 			return -1;
 		}
-		var $columnContainer = $element.closest(DragDrop.columnIdentifier);
+		var $columnContainer = $element.closest('[data-colpos]');
 		if ($columnContainer.length && $columnContainer.data('colpos') !== 'undefined') {
 			return $columnContainer.data('colpos');
 		} else {
@@ -295,7 +309,7 @@ define(['jquery', 'jquery-ui/sortable', 'jquery-ui/droppable'], function($) {
 	 * @param $element
 	 * @return int|null the colPos
 	 */
-	DragDrop.getGridColumnPositionForElement = function($element) {
+	DragDrop.getGridColumnPositionForElement = function ($element) {
 		var $gridContainer = $element.closest(DragDrop.gridContainerIdentifier);
 		var $columnContainer = $element.closest(DragDrop.columnIdentifier);
 		if ($gridContainer.length && $columnContainer.length && $columnContainer.data('colpos') !== 'undefined') {
@@ -308,7 +322,7 @@ define(['jquery', 'jquery-ui/sortable', 'jquery-ui/droppable'], function($) {
 	/**
 	 * initialize function
 	 */
-	return function() {
+	return function () {
 		DragDrop.initialize();
 		return DragDrop;
 	}();
