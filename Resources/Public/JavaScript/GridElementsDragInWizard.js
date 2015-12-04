@@ -89,8 +89,7 @@ define(['jquery', 'TYPO3/CMS/Gridelements/GridElementsDragDrop', 'jquery-ui/sort
 	 * rearrange wizard items, so only icons will remain as the draggable part
 	 */
 	DragInWizard.rearrangeItems = function () {
-		var panel = $('#' + DragInWizard.wizardIdentifier + ' .panel-body');
-		var descriptionWidth = panel.width() - 20;
+		var panel = $('#' + DragInWizard.wizardIdentifier + ' .t3js-tabs');
 		var CType;
 		$('#' + DragInWizard.wizardIdentifier + ' .media').each(function () {
 			var CTypeCheck = $(this).find('input').attr('value').match(/^([^_]*?)_(.*)$/);
@@ -105,14 +104,16 @@ define(['jquery', 'TYPO3/CMS/Gridelements/GridElementsDragDrop', 'jquery-ui/sort
 			$(this).find('.media-left').addClass('t3-ctype-identifier').attr('data-ctype', CType);
 
 			var description = $(this).find('.media-body');
-			description = description.appendTo(panel);
-			description.width(descriptionWidth);
+			description = description.appendTo($(this).parent()).hide();
 			$(this).find('.media-left').on('mouseenter', function () {
 				description.show()
 			}).on('mouseleave', function () {
 				description.hide()
 			});
 		});
+		var descriptionWidth = panel.width() - 50;
+		var description = $('#' + DragInWizard.wizardIdentifier + ' .media-body');
+		description.width(descriptionWidth);
 		$('#' + DragInWizard.wizardIdentifier + ' .media-left input').parent().remove();
 	};
 
