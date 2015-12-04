@@ -1,22 +1,25 @@
 {
   "name": "GridElementsTeam/Gridelements",
   "description": "This extension integrates the grid layout concept to regular content elements.",
+  "type": "typo3-cms-extension",
+  "keywords": ["TYPO3 CMS", "Grids", "Gridelements"],
+  "homepage": "https://git.typo3.org/TYPO3CMS/Extensions/gridelements.git",
+  "license": "GPL-2.0+",
+  "version": "7.0.0-dev",
+  "support": {
+    "issues": "https://forge.typo3.org/"
+  },
+  "require": {
+    "typo3/cms-core": ">=7.6.0,<8.0"
+  },
   "autoload": {
     "psr-4": {
       "GridElementsTeam\\Gridelements\\": "Classes/"
     }
   },
-  "type": "typo3-cms-extension",
-  "keywords": ["TYPO3 CMS", "Grids", "Gridelements"],
-  "homepage": "https://git.typo3.org/TYPO3CMS/Extensions/gridelements.git",
-  "license": "GPL-2.0+",
-  "version": "4.0.0-dev",
-  "support": {
-    "issues": "https://forge.typo3.org/"
-  },
   "extra": {
     "branch-alias": {
-      "dev-master": "4.0.0-dev"
+      "dev-master": "7.0.0-dev"
     }
   }
 }
