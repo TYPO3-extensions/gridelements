@@ -19,6 +19,7 @@ namespace GridElementsTeam\Gridelements\Hooks;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Recordlist\RecordList\DatabaseRecordList;
 
@@ -30,7 +31,7 @@ use TYPO3\CMS\Recordlist\RecordList\DatabaseRecordList;
  * @package TYPO3
  * @subpackage tx_gridelements
  */
-class AbstractDatabaseRecordList
+class AbstractDatabaseRecordList implements SingletonInterface
 {
 
     /**

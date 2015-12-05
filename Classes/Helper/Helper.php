@@ -20,6 +20,7 @@ namespace GridElementsTeam\Gridelements\Helper;
  ***************************************************************/
 
 use TYPO3\CMS\Core\Database\DatabaseConnection;
+use TYPO3\CMS\Core\SingletonInterface;
 
 /**
  * Gridelements helper class
@@ -28,7 +29,7 @@ use TYPO3\CMS\Core\Database\DatabaseConnection;
  * @package TYPO3
  * @subpackage tx_gridelements
  */
-class Helper
+class Helper implements SingletonInterface
 {
 
     /**

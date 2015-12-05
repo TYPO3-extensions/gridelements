@@ -19,6 +19,7 @@ namespace GridElementsTeam\Gridelements\Hooks;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 
 /**
@@ -26,7 +27,7 @@ use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
  *
  * @package GridElementsTeam\Gridelements\Hooks
  */
-class PreHeaderRenderHook
+class PreHeaderRenderHook implements SingletonInterface
 {
 
     /**
