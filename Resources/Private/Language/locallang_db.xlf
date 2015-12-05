@@ -169,8 +169,14 @@
 		<trans-unit id="tx_gridelements_js.pasteref">
 			<source>Paste reference into this column</source>
 		</trans-unit>
-		<trans-unit id="tx_gridelements_togglecontent">
-			<source>Toggle Content</source>
+		<trans-unit id="tx_gridelements_collapsecontent">
+			<source>Collapse content in column</source>
+		</trans-unit>
+		<trans-unit id="tx_gridelements_expandcontent">
+			<source>Expand content in column</source>
+		</trans-unit>
+		<trans-unit id="tx_gridelements_contentcollapsed">
+			<source>This column is collapsed!</source>
 		</trans-unit>
 		</body>
 	</file>

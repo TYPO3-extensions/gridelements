@@ -215,9 +215,17 @@
 			<source>Paste reference into this column</source>
 			<target>Referenz in diese Spalte einfügen</target>
 		</trans-unit>
-		<trans-unit id="tx_gridelements_togglecontent" approved="yes">
-			<source>Toggle Content</source>
-			<target>Inhaltsanzeige umschalten</target>
+		<trans-unit id="tx_gridelements_collapsecontent" approved="yes">
+			<source>Collapse content in column</source>
+			<target>Inhalt dieser Spalte ausblenden</target>
+		</trans-unit>
+		<trans-unit id="tx_gridelements_expandcontent" approved="yes">
+			<source>Expand content in column</source>
+			<target>Inhalt dieser Spalte einblenden</target>
+		</trans-unit>
+		<trans-unit id="tx_gridelements_contentcollapsed">
+			<source>This column is collapsed!</source>
+			<target>Diese Spalte ist ausgeblendet!</target>
 		</trans-unit>
 		</body>
 	</file>

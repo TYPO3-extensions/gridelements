@@ -79,6 +79,26 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
         $this->setLanguageService($GLOBALS['LANG']);
         $this->helper = Helper::getInstance();
         $this->iconFactory = GeneralUtility::makeInstance(IconFactory::class);
+        $this->cleanupCollapsedStatesInUC();
+    }
+
+    /**
+     * Processes the collapsed states of Gridelements columns and removes columns with 0 values
+     */
+    public function cleanupCollapsedStatesInUC()
+    {
+        $backendUser = $this->getBackendUser();
+        if (is_array($backendUser->uc['moduleData']['page']['gridelementsCollapsedColumns'])) {
+            $collapsedGridelementColumns = $backendUser->uc['moduleData']['page']['gridelementsCollapsedColumns'];
+        }
+        foreach ($collapsedGridelementColumns as $item => $collapsed) {
+            if (empty($collapsed)) {
+                unset($collapsedGridelementColumns[$item]);
+            }
+        }
+        $backendUser->uc['moduleData']['page']['gridelementsCollapsedColumns'] = $collapsedGridelementColumns;
+        // Save modified user uc
+        $backendUser->writeUC($backendUser->uc);
     }
 
     /**
@@ -335,7 +355,8 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
             // if there are any items, we can create the HTML for them just like in the original TCEform
             $this->renderSingleGridColumn($parentObject, $items, $colPos, $values, $gridContent, $row, $editUidList);
             // we will need a header for each of the columns to activate mass editing for elements of that column
-            $this->setColumnHeader($parentObject, $head, $colPos, $values['name'], $editUidList);
+            $expanded = $this->helper->getBackendUser()->uc['moduleData']['page']['gridelementsCollapsedColumns'][$row['uid'] . '_' . $colPos] ? false : true;
+            $this->setColumnHeader($parentObject, $head, $colPos, $values['name'], $editUidList, $expanded);
         }
     }
 
@@ -422,9 +443,11 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
             );
         }
 
+        $gridContent[$colPos] .= '<div class="t3-page-ce gridelements-collapsed-column-marker">' . $this->languageService->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tx_gridelements_contentcollapsed') . '</div>';
+
         $gridContent[$colPos] .= '
 			<div data-colpos="' . $colPos . '" data-language-uid="' . $row['sys_language_uid'] . '" class="t3js-sortable t3js-sortable-lang t3js-sortable-lang-' . $row['sys_language_uid'] . ' t3-page-ce-wrapper ui-sortable">
-				<div class="t3-page-ce t3js-page-ce" data-container="' . $row['uid'] . '" id="' . str_replace('.', '',
+			<div class="t3-page-ce t3js-page-ce" data-container="' . $row['uid'] . '" id="' . str_replace('.', '',
                 uniqid('', true)) . '">
 					<div class="t3js-page-new-ce t3js-page-new-ce-allowed t3-page-ce-wrapper-new-ce btn-group btn-group-sm" id="colpos-' . $colPos . '-' . str_replace('.',
                 '', uniqid('', true)) . '">' . implode('', $iconsArray) . '
@@ -475,15 +498,15 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
      * @param int $colPos : The column position we want to get a header for
      * @param string $name : The name of the header
      * @param array $editUidList : determines if we will get edit icons or not
+     * @param bool $expanded
      *
      * @internal param array $row : The current data row for the container item
      */
-    public function setColumnHeader(PageLayoutView $parentObject, &$head, &$colPos, &$name, &$editUidList)
+    public function setColumnHeader(PageLayoutView $parentObject, &$head, &$colPos, &$name, &$editUidList, $expanded = true)
     {
-        // @todo $parentObject->pageTitleParamForAltDoc was appended to =edit but this property is gone
         $head[$colPos] = $this->tt_content_drawColHeader($name,
             ($parentObject->doEdit && $editUidList[$colPos]) ? '&edit[tt_content][' . $editUidList[$colPos] . ']=edit' : '',
-            $parentObject);
+            $parentObject, $expanded);
     }
 
     /**
@@ -492,10 +515,11 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
      * @param string $colName Column name
      * @param string $editParams Edit params (Syntax: &edit[...] for FormEngine)
      * @param \TYPO3\CMS\Backend\View\PageLayoutView $parentObject
+     * @param boolean $expanded
      *
      * @return string HTML table
      */
-    public function tt_content_drawColHeader($colName, $editParams, PageLayoutView $parentObject)
+    public function tt_content_drawColHeader($colName, $editParams, PageLayoutView $parentObject, $expanded = true)
     {
         $icons = '';
         $iconsArr = array();
@@ -508,14 +532,22 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
                         Icon::SIZE_SMALL)->render() . '</a>';
             }
         }
-        $iconsArr['toggleUp'] = '<a href="#" class="btn btn-default toggle-content toggle-up" title="' . $this->languageService->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tx_gridelements_togglecontent') . '">' . $this->iconFactory->getIcon('actions-view-list-collapse',
-                'small') . '</a>';
-        $iconsArr['toggleDown'] = '<a href="#" class="btn btn-default toggle-content toggle-down" title="' . $this->languageService->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tx_gridelements_togglecontent') . '">' . $this->iconFactory->getIcon('actions-view-list-expand',
-                'small') . '</a>';
-        if (!empty($iconsArr)) {
-            $icons = '<div class="t3-page-column-header-icons btn-group btn-group-sm">' . implode('',
-                    $iconsArr) . '</div>';
+
+        if ($expanded) {
+            $state = 'expanded';
+            $title = $this->languageService->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tx_gridelements_collapsecontent');
+            $toggleTitle = $this->languageService->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tx_gridelements_expandcontent');
+        } else {
+            $state = 'collapsed';
+            $title = $this->languageService->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tx_gridelements_expandcontent');
+            $toggleTitle = $this->languageService->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tx_gridelements_collapsecontent');
         }
+
+        $iconsArr['toggleContent'] = '<a href="#" class="btn btn-default t3js-toggle-gridelements-column toggle-content" title="' . $title . '" data-toggle-title="' . $toggleTitle . '" data-state="' . $state  . '">' . $this->iconFactory->getIcon('actions-view-list-collapse',
+                'small') . $this->iconFactory->getIcon('actions-view-list-expand',
+                'small') . '</a>';
+        $icons = '<div class="t3-page-column-header-icons btn-group btn-group-sm">' . implode('',
+                    $iconsArr) . '</div>';
         // Create header row:
         $out = '<div class="t3-page-column-header">
 					' . $icons . '
@@ -607,10 +639,11 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
                 // render the grid cell
                 $colSpan = (int)$columnConfig['colspan'];
                 $rowSpan = (int)$columnConfig['rowspan'];
-                $grid .= '<td valign="top"' . (isset($columnConfig['colspan']) ? ' colspan="' . $colSpan . '"' : '') . (isset($columnConfig['rowspan']) ? ' rowspan="' . $rowSpan . '"' : '') . 'data-colpos="' . $columnKey . '" id="column-' . $specificIds['uid'] . 'x' . $columnKey . '"
+                $expanded = $this->helper->getBackendUser()->uc['moduleData']['page']['gridelementsCollapsedColumns'][$row['uid'] . '_' . $columnKey] ? 'collapsed' : 'expanded';
+                $grid .= '<td valign="top"' . (isset($columnConfig['colspan']) ? ' colspan="' . $colSpan . '"' : '') . (isset($columnConfig['rowspan']) ? ' rowspan="' . $rowSpan . '"' : '') . 'data-colpos="' . $columnKey . '" data-columnkey="' . $specificIds['uid'] . '_' . $columnKey . '"
 					class="t3-grid-cell t3js-page-column t3-page-column t3-page-column-' . $columnKey . (!isset($columnConfig['colPos']) || $columnConfig['colPos'] === '' ? ' t3-grid-cell-unassigned' : '') . (isset($columnConfig['colspan']) && $columnConfig['colPos'] !== '' ? ' t3-grid-cell-width' . $colSpan : '') . (isset($columnConfig['rowspan']) && $columnConfig['colPos'] !== '' ? ' t3-grid-cell-height' . $rowSpan : '') . ' ' . ($layoutSetup['horizontal'] ? ' t3-grid-cell-horizontal' : '') . (!empty($allowedContentTypes) ? ' ' . join(' ',
                             $allowedContentTypes) : ' t3-allow-all') . (!empty($allowedGridTypes) ? ' ' . join(' ',
-                            $allowedGridTypes) : '') . '">';
+                            $allowedGridTypes) : '') . ' ' . $expanded . '" data-state="' . $expanded . '">';
 
                 $grid .= ($this->helper->getBackendUser()->uc['hideColumnHeaders'] ? '' : $head[$columnKey]) . $gridContent[$columnKey];
                 $grid .= '</td>';
@@ -779,4 +812,13 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
     {
         return $GLOBALS['SOBE'];
     }
+
+    /**
+     * @return BackendUserAuthentication
+     */
+    protected function getBackendUser()
+    {
+        return $GLOBALS['BE_USER'];
+    }
+
 }

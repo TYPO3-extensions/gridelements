@@ -22,6 +22,8 @@ define(['jquery', 'TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Backend/Storag
 
 	AjaxDataHandler.identifier.allGridelementsToggle = '.t3js-toggle-gridelements-all';
 	AjaxDataHandler.identifier.gridelementToggle = '.t3js-toggle-gridelements-list';
+	AjaxDataHandler.identifier.allGridelementsColumnsToggle = '.t3js-toggle-gridelements-columns-all';
+	AjaxDataHandler.identifier.gridelementColumnToggle = '.t3js-toggle-gridelements-column';
 
 	/**
 	 * initializes Drag+Drop for all content elements on the page
@@ -32,7 +34,7 @@ define(['jquery', 'TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Backend/Storag
 		}
 		if ($('.t3js-page-columns').length) {
 			OnReady.setAllowedClasses();
-			OnReady.activateContentIcons();
+			OnReady.activateAllCollapseIcons();
 			OnReady.activatePasteIcons();
 		}
 	};
@@ -69,13 +71,82 @@ define(['jquery', 'TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Backend/Storag
 
 	/**
 	 * activates the arrow icons to show/hide content previews within a certain grid column     */
-	OnReady.activateContentIcons = function () {
-		$('.toggle-content').each(function () {
-			$(this).click(function () {
-				$(this).closest('.t3-grid-cell').toggleClass('invisible-content');
-				return false;
+	OnReady.activateAllCollapseIcons = function () {
+		OnReady.activateCollapseIcons();
+		var lastIcon = $('.module-docheader-bar-column-left .btn-group .icon').last().parent();
+		var addNewIcon = $('.t3js-toggle-gridelements-column').first();
+		var newIcon = addNewIcon.clone().attr('class', 'btn btn-default btn-sm t3js-gridcolumn-toggle t3js-gridcolumn-expand').insertAfter(lastIcon);
+		newIcon.contents().filter(function () {
+			return (this.nodeType == 3);
+		}).remove();
+		newIcon.find('.icon-actions-view-list-collapse').remove();
+		newIcon.removeAttr('onclick').attr('title', 'Expand all grid columns');
+		var newIcon = addNewIcon.clone().attr('class', 'btn btn-default btn-sm t3js-gridcolumn-toggle').insertAfter(lastIcon);
+		newIcon.contents().filter(function () {
+			return (this.nodeType == 3);
+		}).remove();
+		newIcon.find('.icon-actions-view-list-expand').remove();
+		newIcon.removeAttr('onclick').attr('title', 'Collapse all grid columns');
+		$(document).on('click', '.t3js-gridcolumn-toggle', function (evt) {
+			evt.preventDefault();
+
+			var $me = $(this),
+					collapsed = $me.hasClass('t3js-gridcolumn-expand') ? 0 : 1;
+
+			// Store collapse state in UC
+			var storedModuleDataPage = {};
+
+			if (Storage.Persistent.isset('moduleData.page.gridelementsCollapsedColumns')) {
+				storedModuleDataPage = Storage.Persistent.get('moduleData.list.gridelementsExpanded');
+			}
+
+			var collapseConfig = {};
+			$('[data-columnkey]').each(function () {
+				collapseConfig[$(this).data('columnkey')] = collapsed;
+				$(this).removeClass('collapsed','expanded');
+				$(this).addClass(collapsed ? 'collapsed' : 'expanded');
 			});
+
+			$.extend(true, storedModuleDataPage, collapseConfig);
+			Storage.Persistent.set('moduleData.page.gridelementsCollapsedColumns', storedModuleDataPage);
+
 		});
+	}
+
+	/**
+	 * activates the arrow icons to show/hide content previews within a certain grid column     */
+	OnReady.activateCollapseIcons = function () {
+		$(document).on('click', AjaxDataHandler.identifier.gridelementColumnToggle, function (evt) {
+			evt.preventDefault();
+
+			var $me = $(this),
+					column = $me.closest('.t3js-page-column').data('colpos'),
+					columnKey = $me.closest('.t3js-page-column').data('columnkey'),
+					isExpanded = $me.data('state') === 'expanded';
+
+			// Store collapse state in UC
+			var storedModuleDataPage = {};
+
+			if (Storage.Persistent.isset('moduleData.page.gridelementsCollapsedColumns')) {
+				storedModuleDataPage = Storage.Persistent.get('moduleData.page.gridelementsCollapsedColumns');
+			}
+
+			var expandConfig = {};
+			expandConfig[columnKey] = isExpanded ? 1 : 0;
+
+			$.extend(true, storedModuleDataPage, expandConfig);
+			Storage.Persistent.set('moduleData.page.gridelementsCollapsedColumns', storedModuleDataPage).done(function () {
+				$me.data('state', isExpanded ? 'collapsed' : 'expanded');
+			});
+
+			$me.closest('.t3-grid-cell').toggleClass('collapsed','expanded');
+			var originalTitle = $me.attr('title');
+			$me.attr('title', $me.attr('data-toggle-title'));
+			$me.attr('data-toggle-title', originalTitle);
+			$me.blur();
+
+		});
+
 		$('.t3-page-column-header-icons').each(function () {
 			$(this).addClass('btn-group btn-group-sm');
 			$(this).find('a').addClass('btn btn-default');

@@ -87,7 +87,7 @@ $tempColumns = array(
 
 \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addTCAcolumns('tt_content', $tempColumns);
 
-$GLOBALS['TCA']['tt_content']['ctrl']['requestUpdate'] .= ',tx_gridelements_container,tx_gridelements_columns,colPos';
+$GLOBALS['TCA']['tt_content']['ctrl']['requestUpdate'] .= ',tx_gridelements_backend_layout,tx_gridelements_container,tx_gridelements_columns,colPos';
 $GLOBALS['TCA']['tt_content']['ctrl']['typeicons']['gridelements_pi1'] = 'backend_layout.gif';
 $GLOBALS['TCA']['tt_content']['ctrl']['useColumnsForDefaultValues'] .= ',tx_gridelements_container,tx_gridelements_columns';
 $GLOBALS['TCA']['tt_content']['ctrl']['shadowColumnsForNewPlaceholders'] .= ',tx_gridelements_container,tx_gridelements_columns';
