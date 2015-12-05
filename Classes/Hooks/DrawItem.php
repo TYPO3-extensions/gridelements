@@ -29,6 +29,7 @@ use TYPO3\CMS\Core\Database\QueryGenerator;
 use TYPO3\CMS\Core\Database\ReferenceIndex;
 use TYPO3\CMS\Core\Imaging\Icon;
 use TYPO3\CMS\Core\Imaging\IconFactory;
+use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Lang\LanguageService;
 
@@ -39,7 +40,7 @@ use TYPO3\CMS\Lang\LanguageService;
  * @package TYPO3
  * @subpackage tx_gridelements
  */
-class DrawItem implements PageLayoutViewDrawItemHookInterface
+class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterface
 {
 
     /**

@@ -23,6 +23,7 @@ use GridElementsTeam\Gridelements\DataHandler\AfterDatabaseOperations;
 use GridElementsTeam\Gridelements\DataHandler\MoveRecord;
 use GridElementsTeam\Gridelements\DataHandler\PreProcessFieldArray;
 use TYPO3\CMS\Core\Database\DatabaseConnection;
+use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -32,7 +33,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  * @package TYPO3
  * @subpackage tx_gridelements
  */
-class DataHandler
+class DataHandler implements SingletonInterface
 {
 
     /**
