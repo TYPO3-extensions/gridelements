@@ -29,6 +29,7 @@ use TYPO3\CMS\Core\Database\QueryGenerator;
 use TYPO3\CMS\Core\Database\ReferenceIndex;
 use TYPO3\CMS\Core\Imaging\Icon;
 use TYPO3\CMS\Core\Imaging\IconFactory;
+use TYPO3\CMS\Core\Utility\DebugUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Lang\LanguageService;
 
@@ -243,7 +244,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface
                 if (is_array($parserRow['columns.']) && !empty($parserRow['columns.'])) {
                     foreach ($parserRow['columns.'] as $parserColumns) {
                         $name = $this->languageService->sL($parserColumns['name'], true);
-                        if ($parserColumns['colPos'] !== '') {
+                        if (isset($parserColumns['colPos']) && $parserColumns['colPos'] !== '') {
                             $colPosValues[(int)$parserColumns['colPos']] = array(
                                 'name' => $name,
                                 'allowed' => $parserColumns['allowed'],
@@ -411,11 +412,15 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface
                 $row['sys_language_uid']);
         }
 
-        $iconsArray = array(
-            'new' => '<a href="#" onclick="' . htmlspecialchars($newParameters) . '" title="' . $this->languageService->getLL('newContentElement',
-                    true) . '" class="btn btn-default btn-sm">' . $this->iconFactory->getIcon('actions-document-new',
-                    'small') . ' ' . $this->languageService->getLL('content', true) . '</a>'
-        );
+        $iconsArray = array();
+
+        if(!empty($colPos) && $colPos < 32768) {
+            $iconsArray = array(
+                'new' => '<a href="#" onclick="' . htmlspecialchars($newParameters) . '" title="' . $this->languageService->getLL('newContentElement',
+                        true) . '" class="btn btn-default btn-sm">' . $this->iconFactory->getIcon('actions-document-new',
+                        'small') . ' ' . $this->languageService->getLL('content', true) . '</a>'
+            );
+        }
 
         $gridContent[$colPos] .= '
 			<div data-colpos="' . $colPos . '" data-language-uid="' . $row['sys_language_uid'] . '" class="t3js-sortable t3js-sortable-lang t3js-sortable-lang-' . $row['sys_language_uid'] . ' t3-page-ce-wrapper ui-sortable">
@@ -572,7 +577,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface
                     continue;
                 }
                 // which column should be displayed inside this cell
-                $columnKey = $columnConfig['colPos'] !== '' ? (int)$columnConfig['colPos'] : 32768;
+                $columnKey = isset($columnConfig['colPos']) && $columnConfig['colPos'] !== '' ? (int)$columnConfig['colPos'] : 32768;
                 // allowed CTypes
                 $allowedContentTypes = array();
                 if (!empty($columnConfig['allowed'])) {
