@@ -166,6 +166,7 @@ define(['jquery', 'TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Backend/Storag
 				} else {
 					$(this).append(top.pasteAfterLinkTemplate);
 				}
+				$('.t3js-page-lang-column .t3-page-ce > .t3-page-ce').removeClass('t3js-page-ce');
 				$(this).find('.t3js-paste').on('click', function (evt) {
 					evt.preventDefault();
 					OnReady.activatePasteModal($(this));
