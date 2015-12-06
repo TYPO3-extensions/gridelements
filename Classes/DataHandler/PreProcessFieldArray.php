@@ -82,7 +82,7 @@ class PreProcessFieldArray extends AbstractDataHandler
                 $this->getDefaultFlexformValues($fieldArray);
             }
         }
-        $this->setFieldEntries($fieldArray, $pid);
+        $this->setFieldEntries($fieldArray);
     }
 
     /**
@@ -230,92 +230,18 @@ class PreProcessFieldArray extends AbstractDataHandler
      * set initial entries to field array
      *
      * @param array $fieldArray
-     * @param integer $pid
      *
      * @return void
      */
-    public function setFieldEntries(array &$fieldArray, $pid)
+    public function setFieldEntries(array &$fieldArray)
     {
-        if ($pid > 0) {
-            $this->setFieldEntriesForTargets($fieldArray, $pid);
-        } else if ((int)$fieldArray['tx_gridelements_container'] > 0 && strpos(key($this->getTceMain()->datamap['tt_content']),
+        if ((int)$fieldArray['tx_gridelements_container'] > 0 && strpos(key($this->getTceMain()->datamap['tt_content']),
                 'NEW') !== false
         ) {
             $containerUpdateArray[(int)$fieldArray['tx_gridelements_container']] = 1;
             $this->doGridContainerUpdate($containerUpdateArray);
         }
         $this->setFieldEntriesForGridContainers($fieldArray);
-    }
-
-    /**
-     * set initial entries to field array
-     *
-     * @param array $fieldArray
-     * @param integer $pid
-     *
-     * @return void
-     */
-    public function setFieldEntriesForTargets(array &$fieldArray, $pid)
-    {
-        if (!empty($fieldArray) && strpos($fieldArray['pid'], 'x') !== false) {
-            $target = explode('x', $fieldArray['pid']);
-            $fieldArray['pid'] = $pid;
-            $targetUid = $target[0] === '-NEW' || $target[0] === 'NEW' ? 'NEW' : abs((int)$target[0]);
-            $this->setFieldEntriesForColumnTargets($fieldArray, $targetUid, $target);
-        } else {
-            $this->setFieldEntriesForSimpleTargets($fieldArray);
-        }
-    }
-
-    /**
-     * set entries to column targets
-     *
-     * @param array $fieldArray
-     * @param integer $targetUid
-     * @param array $target
-     *
-     * @return void
-     */
-    public function setFieldEntriesForColumnTargets(array &$fieldArray, $targetUid, array $target)
-    {
-        if ($targetUid !== $this->getPageUid() && $targetUid !== 'NEW') {
-            $fieldArray['colPos'] = -1;
-            $fieldArray['sorting'] = 0;
-            $fieldArray['tx_gridelements_container'] = $targetUid;
-            $fieldArray['tx_gridelements_columns'] = (int)$target[1];
-            $containerUpdateArray[$targetUid] = 1;
-            $this->doGridContainerUpdate($containerUpdateArray);
-        } else {
-            $fieldArray['colPos'] = (int)$target[1];
-            $fieldArray['sorting'] = 0;
-            $fieldArray['tx_gridelements_container'] = 0;
-            $fieldArray['tx_gridelements_columns'] = 0;
-        }
-    }
-
-    /**
-     * set entries to simple targets
-     *
-     * @param array $fieldArray
-     *
-     * @return void
-     */
-    public function setFieldEntriesForSimpleTargets(array &$fieldArray)
-    {
-        $targetElement = $this->databaseConnection->exec_SELECTgetSingleRow('*', 'tt_content',
-            'uid=' . abs($fieldArray['pid']));
-        if ($targetElement['uid']) {
-            if ($targetElement['tx_gridelements_container'] > 0) {
-                $containerUpdateArray[$targetElement['tx_gridelements_container']] = 1;
-                $this->doGridContainerUpdate($containerUpdateArray);
-                $fieldArray['tx_gridelements_container'] = $targetElement['tx_gridelements_container'];
-                $fieldArray['tx_gridelements_columns'] = $targetElement['tx_gridelements_columns'];
-                $fieldArray['colPos'] = -1;
-            }
-            $fieldArray['colPos'] = $targetElement['colPos'];
-            $fieldArray['sys_language_uid'] = $targetElement['sys_language_uid'];
-            $fieldArray['sorting'] = $targetElement['sorting'] + 2;
-        }
     }
 
     /**

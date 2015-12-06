@@ -203,6 +203,7 @@ define(['jquery', 'jquery-ui/sortable', 'jquery-ui/droppable'], function ($) {
 					sys_language_uid: language,
 					header: TYPO3.l10n.localize('tx_gridelements_js.newcontentelementheader')
 				};
+				parameters['DDinsertNew'] = 1;
 				// fire the request, and show a message if it has failed
 				require(['TYPO3/CMS/Backend/AjaxDataHandler'], function (DataHandler) {
 					DataHandler.process(parameters).done(function (result) {

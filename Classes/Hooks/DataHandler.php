@@ -99,64 +99,6 @@ class DataHandler implements SingletonInterface
     }
 
     /**
-     * Function to handle record movement to the first position of a column
-     *
-     * @param string $table : The name of the table we are working on
-     * @param int $uid : The uid of the record that is going to be moved
-     * @param string $destinationPid : The target the record should be moved to
-     * @param array $propArr : The array of properties for the move action
-     * @param array $moveRec : An array of some values of the record that is going to be moved
-     * @param int $resolvedPid : The calculated id of the page the record should be moved to
-     * @param boolean $recordWasMoved : A switch to tell the parent object, if the record has been moved
-     * @param \TYPO3\CMS\Core\DataHandling\DataHandler $parentObj : The parent object that triggered this hook
-     */
-    public function moveRecord(
-        $table,
-        $uid,
-        &$destinationPid,
-        &$propArr,
-        &$moveRec,
-        $resolvedPid,
-        &$recordWasMoved,
-        \TYPO3\CMS\Core\DataHandling\DataHandler $parentObj
-    ) {
-        /** @var $hook MoveRecord */
-        if (!$parentObj->isImporting) {
-            $hook = GeneralUtility::makeInstance(MoveRecord::class);
-            $hook->execute_moveRecord($table, $uid, $destinationPid, $propArr, $moveRec, $resolvedPid, $recordWasMoved,
-                $parentObj);
-        }
-    }
-
-    /**
-     * Function to handle record movement to the first position of a column
-     *
-     * @param string $table : The name of the table we are working on
-     * @param int $uid : The uid of the record that is going to be moved
-     * @param string $destinationPid : The resolved target the record should be moved to
-     * @param string $originalDestinationPid : The original target the record should be moved to
-     * @param array $moveRec : An array of some values of the record that is going to be moved
-     * @param array $updateFields : An array of some values of the record that have been updated
-     * @param \TYPO3\CMS\Core\DataHandling\DataHandler $parentObj : The parent object that triggered this hook
-     */
-    public function moveRecord_afterAnotherElementPostProcess(
-        $table,
-        $uid,
-        $destinationPid,
-        $originalDestinationPid,
-        $moveRec,
-        $updateFields,
-        \TYPO3\CMS\Core\DataHandling\DataHandler &$parentObj
-    ) {
-        /** @var $hook MoveRecord */
-        if (!$parentObj->isImporting) {
-            $hook = GeneralUtility::makeInstance(MoveRecord::class);
-            $hook->execute_moveRecord_afterAnotherElementPostProcess($table, $uid, $destinationPid,
-                $originalDestinationPid, $moveRec, $updateFields, $parentObj);
-        }
-    }
-
-    /**
      * Function to process the drag & drop copy action
      *
      * @param string $command : The command to be handled by the command map
