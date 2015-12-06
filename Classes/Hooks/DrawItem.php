@@ -31,6 +31,7 @@ use TYPO3\CMS\Core\Imaging\Icon;
 use TYPO3\CMS\Core\Imaging\IconFactory;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\Versioning\VersionState;
 use TYPO3\CMS\Lang\LanguageService;
 
 /**
@@ -382,7 +383,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
         if (!$parentObject->tt_contentConfig['languageMode']) {
             $showLanguage = ' AND (sys_language_uid = -1 OR sys_language_uid=' . $parentObject->tt_contentConfig['sys_language_uid'] . ')';
         } else if ($row['sys_language_uid'] > 0) {
-            $showLanguage = ' AND sys_language_uid=' . $row['sys_language_uid'];
+            $showLanguage = ' AND sys_language_uid = ' . $row['sys_language_uid'];
         } else {
             $showLanguage = '';
         }
@@ -391,7 +392,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
         if ($this->helper->getBackendUser()->workspace > 0 && $row['t3ver_wsid'] > 0) {
             $where .= 'AND t3ver_wsid = ' . $row['t3ver_wsid'];
         }
-        $where .= ' AND colPos = -1 AND tx_gridelements_container IN (' . $row['uid'] . ',' . $specificIds['uid'] . ') AND tx_gridelements_columns=' . $colPos . $showHidden . $deleteClause . $showLanguage;
+        $where .= ' AND colPos = -1 AND tx_gridelements_container IN (' . $row['uid'] . ',' . $specificIds['uid'] . ') AND tx_gridelements_columns = ' . $colPos . $showHidden . $deleteClause . $showLanguage;
 
         $queryParts = $parentObject->makeQueryArray('tt_content', $row['pid'], $where);
 
@@ -435,7 +436,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
 
         $iconsArray = array();
 
-        if(!empty($colPos) && $colPos < 32768) {
+        if($colPos !== '' && $colPos !== null && $colPos < 32768) {
             $iconsArray = array(
                 'new' => '<a href="#" onclick="' . htmlspecialchars($newParameters) . '" title="' . $this->languageService->getLL('newContentElement',
                         true) . '" class="btn btn-default btn-sm">' . $this->iconFactory->getIcon('actions-document-new',
@@ -457,6 +458,9 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
 
         if (!empty($items)) {
             foreach ($items as $itemRow) {
+                if((int)$itemRow['t3ver_state'] === VersionState::DELETE_PLACEHOLDER) {
+                    continue;
+                }
                 if (is_array($itemRow)) {
                     $statusHidden = $parentObject->isDisabled('tt_content', $itemRow) ? ' t3-page-ce-hidden' : '';
                     $gridContent[$colPos] .= '
