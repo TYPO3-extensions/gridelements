@@ -172,7 +172,7 @@ define(['jquery', 'jquery-ui/sortable', 'jquery-ui/droppable'], function ($) {
 		if (contentElementUid > 0 || newContentElementType.length) {
 			var parameters = {};
 			// add the information about a possible column position change
-			var targetFound = $droppableElement.closest('[data-uid]').data('uid');
+			var targetFound = $droppableElement.closest(DragDrop.contentIdentifier).data('uid');
 			// the item was moved to the top of the colPos, so the page ID is used here
 			var targetPid = 0;
 			if (typeof targetFound === 'undefined') {
