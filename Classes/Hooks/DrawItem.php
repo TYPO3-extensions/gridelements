@@ -8,6 +8,7 @@ use TYPO3\CMS\Backend\View\PageLayoutView;
 use TYPO3\CMS\Backend\View\PageLayoutViewDrawItemHookInterface;
 use TYPO3\CMS\Core\Database\QueryGenerator;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\Versioning\VersionState;
 
 /**
  * Class/Function which manipulates the rendering of item example content and replaces it with a grid of child elements.
@@ -341,6 +342,9 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 
 		if (count($items) > 0) {
 			foreach ($items as $itemRow) {
+				if((int)$itemRow['t3ver_state'] === VersionState::DELETE_PLACEHOLDER) {
+					continue;
+				}
 				if (is_array($itemRow)) {
 					$statusHidden = $parentObject->isDisabled('tt_content', $itemRow) ? ' t3-page-ce-hidden' : '';
 					$gridContent[$colPos] .= '
