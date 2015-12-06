@@ -91,15 +91,14 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
         $backendUser = $this->getBackendUser();
         if (is_array($backendUser->uc['moduleData']['page']['gridelementsCollapsedColumns'])) {
             $collapsedGridelementColumns = $backendUser->uc['moduleData']['page']['gridelementsCollapsedColumns'];
-        }
-        foreach ($collapsedGridelementColumns as $item => $collapsed) {
-            if (empty($collapsed)) {
-                unset($collapsedGridelementColumns[$item]);
+            foreach ($collapsedGridelementColumns as $item => $collapsed) {
+                if (empty($collapsed)) {
+                    unset($collapsedGridelementColumns[$item]);
+                }
             }
+            $backendUser->uc['moduleData']['page']['gridelementsCollapsedColumns'] = $collapsedGridelementColumns;
+            $backendUser->writeUC($backendUser->uc);
         }
-        $backendUser->uc['moduleData']['page']['gridelementsCollapsedColumns'] = $collapsedGridelementColumns;
-        // Save modified user uc
-        $backendUser->writeUC($backendUser->uc);
     }
 
     /**
