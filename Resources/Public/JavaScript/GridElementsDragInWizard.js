@@ -27,7 +27,7 @@ define(['jquery', 'TYPO3/CMS/Gridelements/GridElementsDragDrop', 'jquery-ui/sort
 	 * initializes Drag+Drop for all content elements on the page
 	 */
 	DragInWizard.initialize = function () {
-		if ($('.t3js-module-body').length && $('.t3js-page-new-ce a').first().attr('onclick')) {
+		if ($('.t3js-module-body').length && $('.t3js-page-new-ce a').first()) {
 			DragInWizard.getWizardUrl();
 			DragInWizard.createToggleIcon();
 		}
@@ -37,7 +37,11 @@ define(['jquery', 'TYPO3/CMS/Gridelements/GridElementsDragDrop', 'jquery-ui/sort
 	 * get the URL for the new element wizard the correct module token
 	 */
 	DragInWizard.getWizardUrl = function () {
-		var originalWizardUrl = $('.t3js-page-new-ce a').first().attr('onclick').split('\\u0026', 4);
+		if($('.t3js-page-new-ce a').first().attr('onclick')) {
+			var originalWizardUrl = $('.t3js-page-new-ce a').first().attr('onclick').split('\\u0026', 4);
+		} else {
+			var originalWizardUrl = $('.t3js-page-new-ce a').first().attr('href').split('\&', 4);
+		}
 		DragInWizard.wizardUrl = '\/typo3\/index.php?route=%2Frecord%2Fcontent%2Fnew&' + originalWizardUrl[1] + '&' + originalWizardUrl[2];
 	};
 
@@ -55,6 +59,7 @@ define(['jquery', 'TYPO3/CMS/Gridelements/GridElementsDragDrop', 'jquery-ui/sort
 		newIcon.click(function () {
 			top.dragInWizardActive = top.dragInWizardActive === true ? false : true;
 			DragInWizard.toggleWizard();
+			return false;
 		});
 		if (top.dragInWizardActive) {
 			DragInWizard.toggleWizard();
