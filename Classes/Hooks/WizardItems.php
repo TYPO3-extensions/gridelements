@@ -23,8 +23,10 @@ use GridElementsTeam\Gridelements\Backend\LayoutSetup;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Backend\Wizard\NewContentElementWizardHookInterface;
 use TYPO3\CMS\Core\Database\DatabaseConnection;
-use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
+use TYPO3\CMS\Core\Imaging\IconProvider\BitmapIconProvider;
+use TYPO3\CMS\Core\Imaging\IconRegistry;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\Utility\StringUtility;
 use TYPO3\CMS\Lang\LanguageService;
 
 /**
@@ -221,22 +223,56 @@ class WizardItems implements NewContentElementWizardHookInterface
             // set header label
             $wizardItems['gridelements']['header'] = $this->getLanguageService()->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tx_gridelements_backend_layout_wizard_label');
 
+            $iconRegistry = GeneralUtility::makeInstance(IconRegistry::class);
+
             // traverse the gridelements and create wizard item for each gridelement
             foreach ($gridItems as $key => $item) {
+                if (isset($item['icon'][1])) {
+                    $item['iconIdentifier'] = 'gridelements-' . $key;
+                    $largeIcon = $item['icon'][1];
+                    if (StringUtility::beginsWith($largeIcon, '../typo3conf/ext/')) {
+                        $largeIcon = str_replace('../typo3conf/ext/', 'EXT:', $largeIcon);
+                    }
+                    if (StringUtility::beginsWith($largeIcon, '../uploads/tx_gridelements/')) {
+                        $largeIcon = str_replace('../', '', $largeIcon);
+                    } else if (!StringUtility::beginsWith($largeIcon, 'EXT:') && strpos($largeIcon, '/') !== false) {
+                        $largeIcon = TYPO3_mainDir . GeneralUtility::resolveBackPath($item['icon'][1]);
+                    }
+                    $iconRegistry->registerIcon($item['iconIdentifier'], BitmapIconProvider::class, array(
+                        'source' => $largeIcon
+                    ));
+                }
                 $itemIdentifier = $item['alias'] ? $item['alias'] : $item['uid'];
                 $wizardItems['gridelements_' . $itemIdentifier] = array(
                     'title' => $item['title'],
                     'description' => $item['description'],
-                    'params' => ($item['icon'][1] ? '&largeIconImage=' . $item['icon'][1] : '') . '&defVals[tt_content][CType]=gridelements_pi1&defVals[tt_content][tx_gridelements_backend_layout]=' . $item['uid'] . ($item['tll'] ? '&isTopLevelLayout' : ''),
+                    'params' => ($largeIcon ? '&largeIconImage=' . $largeIcon : '') . '&defVals[tt_content][CType]=gridelements_pi1&defVals[tt_content][tx_gridelements_backend_layout]=' . $item['uid'] . ($item['tll'] ? '&isTopLevelLayout' : ''),
                     'tt_content_defValues' => array(
                         'CType' => 'gridelements_pi1',
                         'tx_gridelements_backend_layout' => $item['uid']
                     ),
                 );
-                if ($item['icon'][0]) {
-                    $wizardItems['gridelements_' . $itemIdentifier]['icon'] = $item['icon'][0];
+                if (isset($item['icon'][0])) {
+                    $icon = $item['icon'][0];
+                    if (StringUtility::beginsWith($icon, '../typo3conf/ext/')) {
+                        $icon = str_replace('../typo3conf/ext/', 'EXT:', $icon);
+                    }
+                    if (StringUtility::beginsWith($icon, '../uploads/tx_gridelements/')) {
+                        $icon = str_replace('../', '', $icon);
+                    } else if (!StringUtility::beginsWith($icon, 'EXT:') && strpos($icon, '/') !== false) {
+                        $icon = TYPO3_mainDir . GeneralUtility::resolveBackPath($item['icon'][0]);
+                    }
+                    $iconRegistry->registerIcon($item['iconIdentifier'], BitmapIconProvider::class, array(
+                        'source' => $icon
+                    ));
+                }
+                if ($icon) {
+                    $wizardItems['gridelements_' . $itemIdentifier]['iconIdentifier'] = 'gridelements-' . $key;
                 } else {
-                    $wizardItems['gridelements_' . $itemIdentifier]['icon'] = ExtensionManagementUtility::extRelPath('gridelements') . 'Resources/Public/Backend/Images/new_content_el.gif';
+                    $iconRegistry->registerIcon('gridelements-default', BitmapIconProvider::class, array(
+                        'source' => 'EXT:gridelements/Resources/Public/Backend/Images/new_content_el.gif'
+                    ));
+                    $wizardItems['gridelements_' . $itemIdentifier]['iconIdentifier'] = 'gridelements-default';
                 }
                 /*
                 if($container != 0) {
