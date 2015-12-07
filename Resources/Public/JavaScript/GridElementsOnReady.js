@@ -16,9 +16,14 @@
  * based on jQuery UI
  */
 
+var setFormValueFromBrowseWin;
+
 define(['jquery', 'TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Backend/Storage', 'TYPO3/CMS/Gridelements/GridElementsDragDrop', 'TYPO3/CMS/Backend/Modal'], function ($, AjaxDataHandler, Storage, DragDrop, Modal) {
 
-	var OnReady = {};
+	var OnReady = {
+		openedPopupWindow: []
+	};
+
 
 	AjaxDataHandler.identifier.allGridelementsToggle = '.t3js-toggle-gridelements-all';
 	AjaxDataHandler.identifier.gridelementToggle = '.t3js-toggle-gridelements-list';
@@ -70,7 +75,8 @@ define(['jquery', 'TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Backend/Storag
 	};
 
 	/**
-	 * activates the arrow icons to show/hide content previews within a certain grid column     */
+	 * activates the arrow icons to show/hide content previews within a certain grid column
+	 */
 	OnReady.activateAllCollapseIcons = function () {
 		OnReady.activateCollapseIcons();
 		var lastIcon = $('.module-docheader-bar-column-left .btn-group .icon').last().parent();
@@ -114,7 +120,8 @@ define(['jquery', 'TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Backend/Storag
 	}
 
 	/**
-	 * activates the arrow icons to show/hide content previews within a certain grid column     */
+	 * activates the arrow icons to show/hide content previews within a certain grid column
+	 */
 	OnReady.activateCollapseIcons = function () {
 		$(document).on('click', AjaxDataHandler.identifier.gridelementColumnToggle, function (evt) {
 			evt.preventDefault();
@@ -154,11 +161,13 @@ define(['jquery', 'TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Backend/Storag
 	}
 
 	/**
-	 * activates the paste into / paste after and fetch copy from another page icons outside of the context menus */
+	 * activates the paste into / paste after and fetch copy from another page icons outside of the context menus
+	 */
 	OnReady.activatePasteIcons = function () {
 		$('.icon-actions-document-paste-into').parent().remove();
 		$('.t3-page-ce-wrapper-new-ce').each(function () {
 			$(this).addClass('btn-group btn-group-sm');
+			$('.t3js-page-lang-column .t3-page-ce > .t3-page-ce').removeClass('t3js-page-ce');
 			if (top.pasteAfterLinkTemplate && top.pasteIntoLinkTemplate) {
 				var parent = $(this).parent();
 				if (parent.data('page') || (parent.data('container') && !parent.data('uid'))) {
@@ -166,17 +175,22 @@ define(['jquery', 'TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Backend/Storag
 				} else {
 					$(this).append(top.pasteAfterLinkTemplate);
 				}
-				$('.t3js-page-lang-column .t3-page-ce > .t3-page-ce').removeClass('t3js-page-ce');
 				$(this).find('.t3js-paste').on('click', function (evt) {
 					evt.preventDefault();
 					OnReady.activatePasteModal($(this));
 				});
 			}
+			$(this).append(top.copyFromAnotherPageLinkTemplate);
+			$(this).find('.t3js-paste-new').on('click', function (evt) {
+				evt.preventDefault();
+				OnReady.copyFromAnotherPage($(this));
+			});
 		});
 	}
 
 	/**
-	 * activates the paste into / paste after and fetch copy from another page icons outside of the context menus */
+	 * generates the paste into / paste after modal
+	 */
 	OnReady.activatePasteModal = function (element) {
 		var $element = $(element);
 		var url = $element.data('url') || null;
@@ -241,6 +255,25 @@ define(['jquery', 'TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Backend/Storag
 		} else {
 			Modal.show(title, content, severity, buttons);
 		}
+	}
+
+	/**
+	 * generates the paste into / paste after modal
+	 */
+	OnReady.copyFromAnotherPage = function (element) {
+		var url = top.backPath + top.browserUrl + '&mode=db&bparams=' + element.parent().attr('id') + '|||tt_content|';
+		var width = top.TYPO3.configuration.PopupWindow.width;
+		var height = top.TYPO3.configuration.PopupWindow.height;
+		OnReady.openedPopupWindow = window.open(url, 'Typo3WinBrowser', 'height=' + height + ',width=' + width + ',status=0,menubar=0,resizable=1,scrollbars=1');
+		OnReady.openedPopupWindow.focus();
+	}
+
+	/**
+	 * gives back the data form the popup window to the copy action
+	 */
+	OnReady.setSelectOptionFromExternalSource = setFormValueFromBrowseWin = function(elementId, tableUid){
+		tableUid = tableUid.replace('tt_content_', '') * 1;
+		DragDrop.onDrop(tableUid, $('#' + elementId).find('.t3js-paste-new'), null);
 	}
 
 	/**
