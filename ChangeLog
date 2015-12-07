@@ -1,11 +1,9 @@
-7.0.0 => 2015-12-07 Jo Hasenau <info@cybercraft.de>, Markus Klein <klein.t3@reelworx.at>
+7.0.0 => 2015-12-07 Jo Hasenau <info@cybercraft.de>
 	Done: New version number compatible to the matching TYPO3 version
 	Fixes: Drag In Wizard Fixes
 	Fixed: #66511 Activated pasting into empty columns and pasting modal dialogs
-	Fixed: #66782 Disable possibility to "move" children by changing their colPos
 	Fixed: #71860 Make language view fetch data-colpos from another HTML tag
 	Fixed: #71721 override height which is set and kept by jQuery Drag/Drop with "auto"
-	Fixed: #71970 Show only allowed gridelements in new CE wizard of page columns
 	Fixed: #70737 Reenabled paste after and paste reference after click menu actions
 	Fixed: Make languageService mixed to be able to instanciate when necessary
 	Fixed: #71849 Make sure there is a language service without logged in BE user
@@ -56,6 +54,13 @@
 	Fixed: Added missing interface to make list module show up again
 	Fixed: Removed reference to FormEngine, fixed Workspace bug
 	Done: Fixes for 7.5+ compatibility
+
+3.3.2 => 2015-12-07 Jo Hasenau <info@cybercraft.de>
+	Fixed: Issue #71875 Respect deleted state within workspaces
+	Done: Issue #66782 Disable possibility to "move" children by changing their colPos
+	Fixed: Issue #71970 Show only allowed gridelements in new CE wizard of page columns
+	Done: Reenabled allowed grid types after regression fixes
+	Fixed: Issue #71801 Reenable moving to first column positions after regression fix
 
 3.3.1 => 2015-11-23 Jo Hasenau <info@cybercraft.de>
 	Fixed: Regression #66782 Regression: Remove buggy method since it does not fix the issue
