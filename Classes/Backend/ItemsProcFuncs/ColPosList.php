@@ -48,7 +48,7 @@ class ColPosList extends AbstractItemsProcFunc
         } else {
             // negative uid_pid values indicate that the element has been inserted after an existing element
             // so there is no pid to get the backendLayout for and we have to get that first
-            $existingElement = $this->databaseConnection->exec_SELECTgetSingleRow('pid, CType', 'tt_content',
+            $existingElement = $this->databaseConnection->exec_SELECTgetSingleRow('pid, CType, tx_gridelements_container', 'tt_content',
                 'uid=' . -((int)$params['row']['pid']));
             if ($existingElement['pid'] > 0) {
                 $params['items'] = $this->addColPosListLayoutItems($existingElement['pid'], $params['items'],
