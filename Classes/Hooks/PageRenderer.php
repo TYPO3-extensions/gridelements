@@ -24,6 +24,7 @@ use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Imaging\Icon;
 use TYPO3\CMS\Core\Imaging\IconFactory;
 use TYPO3\CMS\Core\SingletonInterface;
+use TYPO3\CMS\Core\Utility\DebugUtility;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -142,8 +143,8 @@ class PageRenderer implements SingletonInterface
 		top.pageColumnsAllowedGridTypes = " . json_encode($allowedGridTypesClassesByColPos) . ";
         top.pasteReferenceAllowed = " . ($this->getBackendUser()->checkAuthMode('tt_content', 'CType', 11,
                 'explicitAllow') ? 'true' : 'false') . ";
-		top.skipDraggableDetails = " . ($this->getBackendUser()->uc['dragAndDropHideNewElementWizardInfoOverlay'] ? 'true;' : 'false;') . ";
-		top.backPath = '" . $GLOBALS['BACK_PATH'] . "'";
+		top.skipDraggableDetails = " . ($this->getBackendUser()->uc['dragAndDropHideNewElementWizardInfoOverlay'] ? 'true' : 'false') . ";
+		top.backPath = '" . $GLOBALS['BACK_PATH'] . "';";
 
         $elFromTable = $clipObj->elFromTable('tt_content');
         if (!empty($elFromTable)) {
@@ -156,6 +157,11 @@ class PageRenderer implements SingletonInterface
                         Icon::SIZE_SMALL)->render() . '</a>') . ";
                 top.pasteAfterLinkTemplate = " . json_encode('<a data-pasteitem="' . $pasteItem . '" data-pastetitle="' . $pasteTitle . '"  class="t3js-paste t3js-paste' . $copyMode . ' t3js-paste-after btn btn-default" title="' . $this->getLanguageService()->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tx_gridelements_js.pasteafter') . '">' . $iconFactory->getIcon('actions-document-paste-into',
                         Icon::SIZE_SMALL)->render() . '</a>') . ";";
+            if ($this->getBackendUser()->checkAuthMode('tt_content', 'CType', 11, 'explicitAllow')) {
+                $pAddExtOnReadyCode .= "
+                    top.pasteReferencesAllowed = true;";
+            }
+
         } else {
             $pAddExtOnReadyCode .= "
                 top.pasteIntoLinkTemplate = '';

@@ -210,6 +210,9 @@ define(['jquery', 'TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Backend/Storag
 					}
 				}
 			];
+			if(top.pasteReferencesAllowed !== true) {
+				buttons.pop();
+			}
 		} else {
 			var content = $element.data('content') || 'Do you want to paste that clipboard content here?';
 			var buttons = [
