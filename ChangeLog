@@ -1,12 +1,26 @@
 7.0.0 => 2015-12-07 Jo Hasenau <info@cybercraft.de>
+	Fixed: Issue #71647 Wizard items must use icon registry to store icons
+	Done: Issue #72093 Reenabled copy from another page feature based on DragDrop.onDrop
+	Done: Make modal button to paste references only available when allowed
+	Done: Check first link href vs. onclick due to change in core master
+	Fixed: Add container to select fields to avoid error message in dropdown
+	Fixed: Issue #72075 Moved for each into condition to avoid missing array
+	Done: Deleted unnecessary CSS files
+	Fixed: Issue #71875 Respect deleted state within workspaces
+	Done: Removed superfluous hooks and methods
+	Fixed: Issue #72073 Remove class in language mode and use it again for move actions
+	Added: Feature #68064 Toggle icons for grid columns have persisted states
+	Done: Increase performance by assigning Singleton interface to classes
+	Fixed: Columns which are not assigned get correct headers
+	Fixed: Allowed elements must always respect mime type
 	Done: New version number compatible to the matching TYPO3 version
 	Fixes: Drag In Wizard Fixes
-	Fixed: #66511 Activated pasting into empty columns and pasting modal dialogs
-	Fixed: #71860 Make language view fetch data-colpos from another HTML tag
-	Fixed: #71721 override height which is set and kept by jQuery Drag/Drop with "auto"
-	Fixed: #70737 Reenabled paste after and paste reference after click menu actions
+	Fixed: Issue #66511 Activated pasting into empty columns and pasting modal dialogs
+	Fixed: Issue #71860 Make language view fetch data-colpos from another HTML tag
+	Fixed: Issue #71721 override height which is set and kept by jQuery Drag/Drop with "auto"
+	Fixed: Issue #70737 Reenabled paste after and paste reference after click menu actions
 	Fixed: Make languageService mixed to be able to instanciate when necessary
-	Fixed: #71849 Make sure there is a language service without logged in BE user
+	Fixed: Issue #71849 Make sure there is a language service without logged in BE user
 	Fixed: Reenabled common Gridelements allowance
 	Fixed: Issue #61855 Recognize allowed Gridtypes in the new element wizard as well
 	Done: CGL Fixes
