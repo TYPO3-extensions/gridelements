@@ -1,3 +1,10 @@
+3.3.2 => 2015-12-07 Jo Hasenau <info@cybercraft.de>
+	Fixed: Issue #71875 Respect deleted state within workspaces
+	Done: Issue #66782 Disable possibility to "move" children by changing their colPos
+	Fixed: Issue #71970 Show only allowed gridelements in new CE wizard of page columns
+	Done: Reenabled allowed grid types after regression fixes
+	Fixed: Issue #71801 Reenable moving to first column positions after regression fix
+
 3.3.1 => 2015-11-23 Jo Hasenau <info@cybercraft.de>
 	Fixed: Regression #66782 Regression: Remove buggy method since it does not fix the issue
 	Fixed: Issue #71729 Changed the order of arrays according to mergeRecursiveWithOverrule
