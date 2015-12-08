@@ -64,14 +64,6 @@ class ClickMenuOptions implements SingletonInterface
         if ($table === 'tt_content') {
             $this->setLanguageService($GLOBALS['LANG']);
 
-            // add copied item handler to "(un)copy" link in clickmenu
-            if (strpos($menuItems['copy'][0], 't3-icon-edit-copy-release') === false) {
-                preg_match('@&uid=(?P<digit>\d+)&@', $menuItems['copy'][3], $arrMatches);
-                $strUidInLink = $arrMatches[1];
-                $menuItems['copy'][3] = str_replace('return false;',
-                    ' GridElementsDD.listenForCopyItem(' . $strUidInLink . '); return false;', $menuItems['copy'][3]);
-            }
-
             // add "paste reference after" if user is allowed to use CType shortcut
             if ($this->getBackendUser()->checkAuthMode('tt_content', 'CType', 11, 'explicitAllow')) {
                 if ($menuItems['pasteafter']) {

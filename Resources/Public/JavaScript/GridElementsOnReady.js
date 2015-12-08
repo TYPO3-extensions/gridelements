@@ -16,8 +16,6 @@
  * based on jQuery UI
  */
 
-var setFormValueFromBrowseWin;
-
 define(['jquery', 'TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Backend/Storage', 'TYPO3/CMS/Gridelements/GridElementsDragDrop', 'TYPO3/CMS/Backend/Modal'], function ($, AjaxDataHandler, Storage, DragDrop, Modal) {
 
 	var OnReady = {
@@ -271,9 +269,11 @@ define(['jquery', 'TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Backend/Storag
 	/**
 	 * gives back the data form the popup window to the copy action
 	 */
-	OnReady.setSelectOptionFromExternalSource = setFormValueFromBrowseWin = function(elementId, tableUid){
-		tableUid = tableUid.replace('tt_content_', '') * 1;
-		DragDrop.onDrop(tableUid, $('#' + elementId).find('.t3js-paste-new'), null);
+	if (!$('.typo3-TCEforms').length) {
+		OnReady.setSelectOptionFromExternalSource = setFormValueFromBrowseWin = function(elementId, tableUid){
+			tableUid = tableUid.replace('tt_content_', '') * 1;
+			DragDrop.onDrop(tableUid, $('#' + elementId).find('.t3js-paste-new'), null);
+		}
 	}
 
 	/**
