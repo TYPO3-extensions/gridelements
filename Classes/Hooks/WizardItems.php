@@ -227,8 +227,8 @@ class WizardItems implements NewContentElementWizardHookInterface
 
             // traverse the gridelements and create wizard item for each gridelement
             foreach ($gridItems as $key => $item) {
-                if (isset($item['icon'][1])) {
-                    $item['iconIdentifier'] = 'gridelements-' . $key;
+                if (is_array($item['icon']) && isset($item['icon'][1])) {
+                    $item['iconIdentifierLarge'] = 'gridelements-large-' . $key;
                     $largeIcon = $item['icon'][1];
                     if (StringUtility::beginsWith($largeIcon, '../typo3conf/ext/')) {
                         $largeIcon = str_replace('../typo3conf/ext/', 'EXT:', $largeIcon);
@@ -238,7 +238,7 @@ class WizardItems implements NewContentElementWizardHookInterface
                     } else if (!StringUtility::beginsWith($largeIcon, 'EXT:') && strpos($largeIcon, '/') !== false) {
                         $largeIcon = TYPO3_mainDir . GeneralUtility::resolveBackPath($item['icon'][1]);
                     }
-                    $iconRegistry->registerIcon($item['iconIdentifier'], BitmapIconProvider::class, array(
+                    $iconRegistry->registerIcon($item['iconIdentifierLarge'], BitmapIconProvider::class, array(
                         'source' => $largeIcon
                     ));
                 }
@@ -252,7 +252,11 @@ class WizardItems implements NewContentElementWizardHookInterface
                         'tx_gridelements_backend_layout' => $item['uid']
                     ),
                 );
-                if (isset($item['icon'][0])) {
+                if ($item['iconIdentifier']) {
+                    $wizardItems['gridelements_' . $itemIdentifier]['iconIdentifier'] = $item['iconIdentifier'];
+                }
+                if (is_array($item['icon']) && isset($item['icon'][0])) {
+                    $item['iconIdentifier'] = 'gridelements-' . $key;
                     $icon = $item['icon'][0];
                     if (StringUtility::beginsWith($icon, '../typo3conf/ext/')) {
                         $icon = str_replace('../typo3conf/ext/', 'EXT:', $icon);
@@ -266,22 +270,11 @@ class WizardItems implements NewContentElementWizardHookInterface
                         'source' => $icon
                     ));
                 }
-                if ($icon) {
+                if ($icon && !isset($wizardItems['gridelements_' . $itemIdentifier]['iconIdentifier'])) {
                     $wizardItems['gridelements_' . $itemIdentifier]['iconIdentifier'] = 'gridelements-' . $key;
-                } else {
-                    $iconRegistry->registerIcon('gridelements-default', BitmapIconProvider::class, array(
-                        'source' => 'EXT:gridelements/Resources/Public/Backend/Images/new_content_el.gif'
-                    ));
+                } else if (!isset($wizardItems['gridelements_' . $itemIdentifier]['iconIdentifier'])) {
                     $wizardItems['gridelements_' . $itemIdentifier]['iconIdentifier'] = 'gridelements-default';
                 }
-                /*
-                if($container != 0) {
-                    $wizardItems['gridelements_' . $item['uid']]['tx_gridelements_container'] = $container;
-                }
-                if($column != 0) {
-                    $wizardItems['gridelements_' . $item['uid']]['tx_gridelements_columns'] = $column;
-                }
-                */
             }
         }
     }

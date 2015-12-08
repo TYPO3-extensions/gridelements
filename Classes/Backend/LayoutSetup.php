@@ -256,8 +256,9 @@ class LayoutSetup
             if ((int)$colPos === -1 && $item['top_level_layout']) {
                 continue;
             }
-
-            $selectItems[] = array($this->languageService->sL($item['title']), $layoutId, $item['icon'][0],);
+            $icon = $item['iconIdentifier'] ? $item['iconIdentifier'] : 'gridelements-default';
+            $icon = $item['icon'][0] ? $item['icon'][0] : $icon;
+            $selectItems[] = array($this->languageService->sL($item['title']), $layoutId, $icon);
         }
 
         return $selectItems;
@@ -320,6 +321,7 @@ class LayoutSetup
                 'title' => $this->languageService->sL($item['title']),
                 'description' => $this->languageService->sL($item['description']),
                 'icon' => $item['icon'],
+                'iconIdentifier' => $item['iconIdentifier'],
                 'tll' => $item['top_level_layout'],
             );
 
