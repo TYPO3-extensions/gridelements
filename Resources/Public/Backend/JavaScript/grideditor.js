@@ -470,22 +470,6 @@ TYPO3.Backend.t3Grid = Ext.extend(Ext.Component, {
 				}
 			});
 
-			var fieldAllowedGridTypes = new Ext.form.TextField({
-				fieldLabel: TYPO3.lang.allowedGridElementTypes,
-				name: 'allowedGridTypes',
-				width: 270,
-				value: cell.allowedGridTypes,
-				tabIndex: 1,
-				listeners: {
-					render: function(c) {
-						Ext.QuickTips.register({
-							target: c,
-							text: TYPO3.lang.allowedGridElementTypesHelp
-						});
-					}
-				}
-			});
-
 			win = new Ext.Window({
 				layout: 'fit',
 				title: TYPO3.l10n.localize('title'),
