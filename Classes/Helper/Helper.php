@@ -67,7 +67,7 @@ class Helper implements SingletonInterface
      *
      * @return void
      */
-    public function setDatabaseConnection(DatabaseConnection $databaseConnection)
+    public static function setDatabaseConnection(DatabaseConnection $databaseConnection)
     {
         self::$databaseConnection = $databaseConnection;
     }
