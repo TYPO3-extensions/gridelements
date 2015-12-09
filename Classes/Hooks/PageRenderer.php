@@ -24,7 +24,6 @@ use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Imaging\Icon;
 use TYPO3\CMS\Core\Imaging\IconFactory;
 use TYPO3\CMS\Core\SingletonInterface;
-use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -47,133 +46,128 @@ class PageRenderer implements SingletonInterface
      */
     public function addJSCSS($parameters, &$pageRenderer)
     {
-        $iconFactory = GeneralUtility::makeInstance(IconFactory::class);
-
-        $pageRenderer->loadRequireJsModule('TYPO3/CMS/Gridelements/GridElementsOnReady');
-        $pageRenderer->loadRequireJsModule('TYPO3/CMS/Gridelements/GridElementsDragDrop');
-        $pageRenderer->loadRequireJsModule('TYPO3/CMS/Gridelements/GridElementsDragInWizard');
-
-        /** @var Clipboard $clipObj */
-        $clipObj = GeneralUtility::makeInstance(Clipboard::class); // Start clipboard
-        $clipObj->initializeClipboard();
-        $clipObj->lockToNormal();
-
-        $pasteURL = '';
-        if (isset($clipObj->clipData['normal']['el']) && strpos(key($clipObj->clipData['normal']['el']),
-                'tt_content') !== false
-        ) {
-            $pasteURL = str_replace('&amp;', '&', $clipObj->pasteUrl('tt_content', 'DD_PASTE_UID', 0));
+        if (get_class($GLOBALS['SOBE']) === 'TYPO3\CMS\Recordlist\RecordList') {
+            $pageRenderer->loadRequireJsModule('TYPO3/CMS/Gridelements/GridElementsOnReady');
+            return;
         }
+        if (get_class($GLOBALS['SOBE']) === 'TYPO3\CMS\Backend\Controller\PageLayoutController') {
+            $iconFactory = GeneralUtility::makeInstance(IconFactory::class);
+            $pageRenderer->loadRequireJsModule('TYPO3/CMS/Gridelements/GridElementsOnReady');
+            $pageRenderer->loadRequireJsModule('TYPO3/CMS/Gridelements/GridElementsDragDrop');
+            $pageRenderer->loadRequireJsModule('TYPO3/CMS/Gridelements/GridElementsDragInWizard');
 
-        // add JavaScript library
-        // $pageRenderer->addJsFile($GLOBALS['BACK_PATH'] . ExtensionManagementUtility::extRelPath('gridelements') . 'Resources/Public/Backend/JavaScript/dbNewContentElWizardFixDTM.js', $type = 'text/javascript', $compress = TRUE, $forceOnTop = FALSE, $allWrap = '');
+            /** @var Clipboard $clipObj */
+            $clipObj = GeneralUtility::makeInstance(Clipboard::class); // Start clipboard
+            $clipObj->initializeClipboard();
+            $clipObj->lockToNormal();
 
-        if (!$pageRenderer->getCharSet()) {
-            $pageRenderer->setCharSet($GLOBALS['LANG']->charSet ? $GLOBALS['LANG']->charSet : 'utf-8');
-        }
+            if (!$pageRenderer->getCharSet()) {
+                $pageRenderer->setCharSet($GLOBALS['LANG']->charSet ? $GLOBALS['LANG']->charSet : 'utf-8');
+            }
 
-        // pull locallang_db.xml to JS side - only the tx_gridelements_js-prefixed keys
-        $pageRenderer->addInlineLanguageLabelFile('EXT:gridelements/Resources/Private/Language/locallang_db.xml',
-            'tx_gridelements_js');
+            // pull locallang_db.xml to JS side - only the tx_gridelements_js-prefixed keys
+            $pageRenderer->addInlineLanguageLabelFile('EXT:gridelements/Resources/Private/Language/locallang_db.xml',
+                'tx_gridelements_js');
 
-        $pAddExtOnReadyCode = '
-			TYPO3.l10n = {
-				localize: function(langKey){
-					return TYPO3.lang[langKey];
-				}
-			}
-		';
+            $pAddExtOnReadyCode = '
+                TYPO3.l10n = {
+                    localize: function(langKey){
+                        return TYPO3.lang[langKey];
+                    }
+                }
+            ';
 
-        $allowedContentTypesClassesByColPos = array();
-        $allowedGridTypesClassesByColPos = array();
-        $layoutSetup = GeneralUtility::callUserFunction('TYPO3\\CMS\\Backend\\View\\BackendLayoutView->getSelectedBackendLayout',
-            intval(GeneralUtility::_GP('id')), $this);
-        if (is_array($layoutSetup) && !empty($layoutSetup['__config']['backend_layout.']['rows.'])) {
-            foreach ($layoutSetup['__config']['backend_layout.']['rows.'] as $rows) {
-                foreach ($rows as $row) {
-                    if (!empty($layoutSetup['__config']['backend_layout.']['rows.'])) {
-                        foreach ($row as $col) {
-                            $classes = '';
-                            $gridClasses = '';
-                            if ($col['allowed']) {
-                                $allowed = explode(',', $col['allowed']);
-                                foreach ($allowed as $contentTypes) {
-                                    $contentTypes = trim($contentTypes);
-                                    if ($contentTypes === '*') {
-                                        $classes = 't3-allow-all';
-                                        break;
-                                    } else {
-                                        $contentTypes = explode(',', $contentTypes);
-                                        foreach ($contentTypes as $contentType) {
-                                            $classes .= 't3-allow-' . $contentType . ' ';
+            $allowedContentTypesClassesByColPos = array();
+            $allowedGridTypesClassesByColPos = array();
+            $layoutSetup = GeneralUtility::callUserFunction('TYPO3\\CMS\\Backend\\View\\BackendLayoutView->getSelectedBackendLayout',
+                intval(GeneralUtility::_GP('id')), $this);
+            if (is_array($layoutSetup) && !empty($layoutSetup['__config']['backend_layout.']['rows.'])) {
+                foreach ($layoutSetup['__config']['backend_layout.']['rows.'] as $rows) {
+                    foreach ($rows as $row) {
+                        if (!empty($layoutSetup['__config']['backend_layout.']['rows.'])) {
+                            foreach ($row as $col) {
+                                $classes = '';
+                                $gridClasses = '';
+                                if ($col['allowed']) {
+                                    $allowed = explode(',', $col['allowed']);
+                                    foreach ($allowed as $contentTypes) {
+                                        $contentTypes = trim($contentTypes);
+                                        if ($contentTypes === '*') {
+                                            $classes = 't3-allow-all';
+                                            break;
+                                        } else {
+                                            $contentTypes = explode(',', $contentTypes);
+                                            foreach ($contentTypes as $contentType) {
+                                                $classes .= 't3-allow-' . $contentType . ' ';
+                                            }
                                         }
                                     }
+                                } else {
+                                    $classes = 't3-allow-all';
                                 }
-                            } else {
-                                $classes = 't3-allow-all';
-                            }
-                            if ($col['allowedGridTypes']) {
-                                $allowedGridTypes = explode(',', $col['allowedGridTypes']);
-                                $classes .= 't3-allow-gridelements_pi1 ';
-                                foreach ($allowedGridTypes as $gridTypes) {
-                                    $gridTypes = trim($gridTypes);
-                                    if ($gridTypes !== '*') {
-                                        $gridTypes = explode(',', $gridTypes);
-                                        foreach ($gridTypes as $gridType) {
-                                            $gridClasses .= 't3-allow-gridtype t3-allow-gridtype-' . $gridType . ' ';
-                                        }
-                                    }
-                                }
-                                if ($classes !== 't3-allow-all') {
+                                if ($col['allowedGridTypes']) {
+                                    $allowedGridTypes = explode(',', $col['allowedGridTypes']);
                                     $classes .= 't3-allow-gridelements_pi1 ';
+                                    foreach ($allowedGridTypes as $gridTypes) {
+                                        $gridTypes = trim($gridTypes);
+                                        if ($gridTypes !== '*') {
+                                            $gridTypes = explode(',', $gridTypes);
+                                            foreach ($gridTypes as $gridType) {
+                                                $gridClasses .= 't3-allow-gridtype t3-allow-gridtype-' . $gridType . ' ';
+                                            }
+                                        }
+                                    }
+                                    if ($classes !== 't3-allow-all') {
+                                        $classes .= 't3-allow-gridelements_pi1 ';
+                                    }
                                 }
+                                $allowedContentTypesClassesByColPos[$col['colPos']] .= ' ' . trim($classes);
+                                $allowedGridTypesClassesByColPos[$col['colPos']] .= ' ' . trim($gridClasses);
                             }
-                            $allowedContentTypesClassesByColPos[$col['colPos']] .= ' ' . trim($classes);
-                            $allowedGridTypesClassesByColPos[$col['colPos']] .= ' ' . trim($gridClasses);
                         }
                     }
                 }
             }
-        }
 
-        // add Ext.onReady() code from file
-        $pAddExtOnReadyCode .= "
-		top.pageColumnsAllowedCTypes = " . json_encode($allowedContentTypesClassesByColPos) . ";
-		top.pageColumnsAllowedGridTypes = " . json_encode($allowedGridTypesClassesByColPos) . ";
-        top.pasteReferenceAllowed = " . ($this->getBackendUser()->checkAuthMode('tt_content', 'CType', 11,
-                'explicitAllow') ? 'true' : 'false') . ";
-		top.skipDraggableDetails = " . ($this->getBackendUser()->uc['dragAndDropHideNewElementWizardInfoOverlay'] ? 'true' : 'false') . ";
-		top.backPath = '" . $GLOBALS['BACK_PATH'] . "';
-        top.browserUrl = '" . BackendUtility::getModuleUrl('wizard_element_browser') . "'";
-
-        $elFromTable = $clipObj->elFromTable('tt_content');
-        if (!empty($elFromTable)) {
-            $pasteItem = substr(key($elFromTable), 11);
-            $pasteRecord = BackendUtility::getRecord('tt_content', (int)$pasteItem);
-            $pasteTitle = $pasteRecord['header'] ? $pasteRecord['header'] : $pasteItem;
-            $copyMode = $clipObj->clipData['normal']['mode'] ? '-' . $clipObj->clipData['normal']['mode'] : '';
+            // add Ext.onReady() code from file
             $pAddExtOnReadyCode .= "
-                top.pasteIntoLinkTemplate = " . json_encode('<a data-pasteitem="' . $pasteItem . '" data-pastetitle="' . $pasteTitle . '" class="t3js-paste t3js-paste' . $copyMode . ' t3js-paste-into btn btn-default" title="' . $this->getLanguageService()->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tx_gridelements_js.pasteinto') . '">' . $iconFactory->getIcon('actions-document-paste-into',
-                        Icon::SIZE_SMALL)->render() . '</a>') . ";
-                top.pasteAfterLinkTemplate = " . json_encode('<a data-pasteitem="' . $pasteItem . '" data-pastetitle="' . $pasteTitle . '"  class="t3js-paste t3js-paste' . $copyMode . ' t3js-paste-after btn btn-default" title="' . $this->getLanguageService()->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tx_gridelements_js.pasteafter') . '">' . $iconFactory->getIcon('actions-document-paste-into',
-                        Icon::SIZE_SMALL)->render() . '</a>') . ";";
-            if ($this->getBackendUser()->checkAuthMode('tt_content', 'CType', 11, 'explicitAllow')) {
+            top.pageColumnsAllowedCTypes = " . json_encode($allowedContentTypesClassesByColPos) . ";
+            top.pageColumnsAllowedGridTypes = " . json_encode($allowedGridTypesClassesByColPos) . ";
+            top.pasteReferenceAllowed = " . ($this->getBackendUser()->checkAuthMode('tt_content', 'CType', 11,
+                    'explicitAllow') ? 'true' : 'false') . ";
+            top.skipDraggableDetails = " . ($this->getBackendUser()->uc['dragAndDropHideNewElementWizardInfoOverlay'] ? 'true' : 'false') . ";
+            top.backPath = '" . $GLOBALS['BACK_PATH'] . "';
+            top.browserUrl = '" . BackendUtility::getModuleUrl('wizard_element_browser') . "'";
+
+            $elFromTable = $clipObj->elFromTable('tt_content');
+            if (!empty($elFromTable)) {
+                $pasteItem = substr(key($elFromTable), 11);
+                $pasteRecord = BackendUtility::getRecord('tt_content', (int)$pasteItem);
+                $pasteTitle = $pasteRecord['header'] ? $pasteRecord['header'] : $pasteItem;
+                $copyMode = $clipObj->clipData['normal']['mode'] ? '-' . $clipObj->clipData['normal']['mode'] : '';
                 $pAddExtOnReadyCode .= "
-                    top.pasteReferencesAllowed = true;";
+                    top.pasteIntoLinkTemplate = " . json_encode('<a data-pasteitem="' . $pasteItem . '" data-pastetitle="' . $pasteTitle . '" class="t3js-paste t3js-paste' . $copyMode . ' t3js-paste-into btn btn-default" title="' . $this->getLanguageService()->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tx_gridelements_js.pasteinto') . '">' . $iconFactory->getIcon('actions-document-paste-into',
+                            Icon::SIZE_SMALL)->render() . '</a>') . ";
+                    top.pasteAfterLinkTemplate = " . json_encode('<a data-pasteitem="' . $pasteItem . '" data-pastetitle="' . $pasteTitle . '"  class="t3js-paste t3js-paste' . $copyMode . ' t3js-paste-after btn btn-default" title="' . $this->getLanguageService()->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tx_gridelements_js.pasteafter') . '">' . $iconFactory->getIcon('actions-document-paste-into',
+                            Icon::SIZE_SMALL)->render() . '</a>') . ";";
+                if ($this->getBackendUser()->checkAuthMode('tt_content', 'CType', 11, 'explicitAllow')) {
+                    $pAddExtOnReadyCode .= "
+                        top.pasteReferencesAllowed = true;";
+                }
+
+            } else {
+                $pAddExtOnReadyCode .= "
+                    top.pasteIntoLinkTemplate = '';
+                    top.pasteAfterLinkTemplate = '';";
             }
 
-        } else {
             $pAddExtOnReadyCode .= "
-                top.pasteIntoLinkTemplate = '';
-                top.pasteAfterLinkTemplate = '';";
+                    top.copyFromAnotherPageLinkTemplate = " . json_encode('<a class="t3js-paste-new btn btn-default" title="' . $this->getLanguageService()->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tx_gridelements_js.copyfrompage') . '">' . $iconFactory->getIcon('actions-insert-reference',
+                        Icon::SIZE_SMALL)->render() . '</a>') . ";";
+
+            $pageRenderer->addJsInlineCode(// add some more JS here
+                'gridelementsExtOnReady', $pAddExtOnReadyCode);
         }
-
-        $pAddExtOnReadyCode .= "
-                top.copyFromAnotherPageLinkTemplate = " . json_encode('<a class="t3js-paste-new btn btn-default" title="' . $this->getLanguageService()->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tx_gridelements_js.copyfrompage') . '">' . $iconFactory->getIcon('actions-insert-reference',
-                    Icon::SIZE_SMALL)->render() . '</a>') . ";";
-
-        $pageRenderer->addJsInlineCode(// add some more JS here
-            'gridelementsExtOnReady', $pAddExtOnReadyCode);
     }
 
     /**
@@ -194,34 +188,6 @@ class PageRenderer implements SingletonInterface
     public function getLanguageService()
     {
         return $GLOBALS['LANG'];
-    }
-
-    /**
-     * method that adds CSS files within the page renderer
-     *
-     * @param array $parameters : An array of available parameters while adding CSS to the page renderer
-     * @param \TYPO3\CMS\Core\Page\PageRenderer $pageRenderer : The parent object that triggered this hook
-     *
-     * @return void
-     */
-    protected function addCSS($parameters, &$pageRenderer)
-    {
-        if (!empty($parameters['cssFiles'])) {
-            // get configuration
-            $configurationArray = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['gridelements']);
-            $filename = $configurationArray['additionalStylesheet'];
-            if ($filename) {
-                // evaluate filename
-                if (substr($filename, 0, 4) === 'EXT:') { // extension
-                    list($extKey, $local) = explode('/', substr($filename, 4), 2);
-                    $filename = '';
-                    if (strcmp($extKey, '') && ExtensionManagementUtility::isLoaded($extKey) && strcmp($local, '')) {
-                        $filename = ExtensionManagementUtility::extRelPath($extKey) . $local;
-                    }
-                }
-                $pageRenderer->addCssFile($filename, 'stylesheet', 'screen');
-            }
-        }
     }
 
 }
