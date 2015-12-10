@@ -182,7 +182,7 @@ define(['jquery', 'jquery-ui/sortable', 'jquery-ui/droppable'], function ($) {
 				// the negative value of the content element after where it should be moved
 				targetPid = 0 - parseInt(targetFound);
 			}
-			var container = parseInt($droppableElement.closest(DragDrop.contentIdentifier).data('container'));
+			var container = parseInt($droppableElement.closest(DragDrop.gridContainerIdentifier).closest(DragDrop.contentIdentifier).data('uid'));
 			var language = parseInt($droppableElement.closest('[data-language-uid]').data('language-uid'));
 			var colPos = 0;
 			if (container > 0 && gridColumn !== false && gridColumn !== '') {
