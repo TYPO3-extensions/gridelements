@@ -1,5 +1,3 @@
-.. include:: Images.txt
-
 .. ==================================================
 .. FOR YOUR INFORMATION
 .. --------------------------------------------------
@@ -21,7 +19,7 @@ Grid TS Syntax
 --------------
 
 The syntax we use to store information about the grid structure within
-the page and CE backend layout records is basically  *TypoScript* .
+the page and CE backend layout records is basically *TypoScript* .
 Both grid view and grid elements are using the internal TS parser of
 the core to transform this syntax into an array, which is then used by
 the different methods we attached to the hooks provided by the core.
@@ -42,10 +40,10 @@ Step by step:
 Start with the number of columns and rows
 """""""""""""""""""""""""""""""""""""""""
 
-Go to the  **Configuration** tab of the layout record and edit the
+Go to the **Configuration** tab of the layout record and edit the
 **Grid Configuration** there. The wrapper for the whole block is the
-same as for pages:  **backend\_layout** – Use the keys  **colCount**
-and  **rowCount** to create the basic grid structure. Both values
+same as for pages: **backend\_layout** – Use the keys **colCount**
+and **rowCount** to create the basic grid structure. Both values
 should be at least the lowest common multiple of the column sizes you
 want to create. They represent the actual grid behind the cell
 structure. The calculation should take into account that you might be
@@ -89,35 +87,35 @@ even though it might stay empty later on.
 Create the cells
 """"""""""""""""
 
-Each of the cells comes with up to 6 different keys:  **name** ,
-**colPos** ,  **colspan** ,  **rowspan**,  **allowed** and
- **allowedGridTypes**. There must be at least the  **name** and if
+Each of the cells comes with up to 6 different keys: **name**,
+**colPos**, **colspan**, **rowspan**, **allowed** and
+**allowedGridTypes**. There must be at least the **name** and if
 you want to use the column as something else than a placeholder, there
-must be a value for  **colPos** as well. Otherwise the cell will be
-marked as  *inactive* in the page module.
+must be a value for **colPos** as well. Otherwise the cell will be
+marked as *inactive* in the page module.
 
-The values for  **colspan** ,  **rowspan** ,  **allowed** and
-**allowedGridTypes**  are optional.
+The values for **colspan** , **rowspan**, **allowed** and
+**allowedGridTypes** are optional.
 
-The  **allowed** feature is used to determine those content
+The **allowed** feature is used to determine those content
 element types the user will be allowed to use within this column. You
 can use a comma separated list of Ctype values here and as soon as
 this contains at least one value, any other element type will be
 forbidden.
 
-Same goes for the  **allowedGridTypes** feature which is used to determine
+Same goes for the **allowedGridTypes** feature which is used to determine
 those grid types the user will be allowed to use within this column. You
 can use a comma separated list of Grid names here and as soon as
 this contains at least one value, any other Grid type will be forbidden
 and the value gridelements_pi1 will be silently added to **allowed**.
 
-The  **colPos** value will be used while fetching the
+The **colPos** value will be used while fetching the
 content elements from the database, since grid view and grid elements
 are using normalized relations to relate columns and content elements
 with each other.
 
 The following example will create a cell for a larger top column with
-only  *text* and  *text with image* allowed as a content type:
+only *text* and *text with image* allowed as a content type:
 
 
 
@@ -175,7 +173,12 @@ only  *text* and  *text with image* allowed as a content type:
 
 This is the visible result of the example code
 
-|img-11|
+.. figure:: ../../Images/GridTsSyntax/ResultOfTheExampleCode.png
+   :alt: Result of example code
+   :width: 800
+.. :align: center
+.. :name: Result of example code
+
 
 When you now edit this grid element, you can see how the child
 elements are connected to their parent grid via the core functions
@@ -187,4 +190,8 @@ Sorting by D&D or clicking on the sorting arrows will be disabled
 inside the editing form as well. But you still can sort elements by
 directly dragging and dropping them in the page module.
 
-|img-12|
+.. figure:: ../../Images/GridTsSyntax/EditPageContent.png
+   :alt: Edit page content
+   :width: 600
+.. :align: center
+.. :name: Edit page content
