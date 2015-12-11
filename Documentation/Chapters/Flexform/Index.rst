@@ -58,12 +58,3 @@ don't override any other field with the same name, but still can be
 accessed via the usual TypoScript functions.
 
 Sections are not supported by the frontend rendering process yet.
-
-
-.. toctree::
-   :maxdepth: 5
-   :titlesonly:
-   :glob:
-
-   Example/Index
-

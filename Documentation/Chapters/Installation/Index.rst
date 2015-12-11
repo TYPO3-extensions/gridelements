@@ -1,5 +1,3 @@
-.. include:: Images.txt
-
 .. ==================================================
 .. FOR YOUR INFORMATION
 .. --------------------------------------------------
@@ -44,7 +42,11 @@ When the Extension Manager is asking you for permission to add and/or
 modify some of the database tables, you should give your OK, so the
 necessary fields will be available.
 
-|img-5|
+.. figure:: ../../Images/Installation/UpdateDatabase.png
+   :alt: Update database
+   :width: 800
+.. :align: center
+.. :name: Update database
 
 
 **Important Note** : The colPos field of the tt\_content table will be
@@ -68,7 +70,11 @@ plugin. You will find it in the select box at the  *Include static
 only one static template  *gridelements(gridelements)* available.
 There might be more in future releases.
 
-|img-6|
+.. figure:: ../../Images/Installation/IncludeStaticTemplate.png
+   :alt: Include static template
+   :width: 800
+.. :align: center
+.. :name: Include static template
 
 
 Create some CE backend layouts
@@ -102,7 +108,12 @@ page, that you want to use as the container for your backend layouts
   with the :ref:`Grid Wizard <GridWizard>`. Go to the
   appropriate chapters to find out how to do so.
 
-  |img-7|
+.. figure:: ../../Images/Installation/CreateBackendLayouts.png
+   :alt: Create backend layouts
+   :width: 800
+.. :align: center
+.. :name: Create backend layouts
+
 
 - If necessary you can fill in a flexform datastructure to provide
   additional settings within your grid element. Values of these
@@ -128,7 +139,12 @@ column. After a few seconds the spinner symbol will disappear and show
 your newly created grid element. Drag in as many elements as necessary
 for the desired page layout.
 
-|img-8|
+.. figure:: ../../Images/Installation/CreateGridElements.png
+   :alt: Create grid elements
+   :width: 800
+.. :align: center
+.. :name: Create grid elements
+
 
 **Note:** Of course you can drag elements into the columns of a Grid
 Element as well, as soon as you got at least one of them on your page.
@@ -147,7 +163,11 @@ of the  *General* tab and select one of the backend layouts you have
 created before. Now save the record and close, and you should see the
 new Grid Element in your page module.
 
-|img-9|
+.. figure:: ../../Images/Installation/ChangeExistingElements.png
+   :alt: Change existing elements
+   :width: 800
+.. :align: center
+.. :name: Change existing elements
 
 
 Fill your grid with content elements
@@ -161,7 +181,11 @@ elements without dragging. Of course you can copy and/or move existing
 elements into the columns of your newly created grids and even
 creating references to elements in the clipboard is possible.
 
-|img-10|
+.. figure:: ../../Images/Installation/FillGridWithContentElements.png
+   :alt: Fill grid with content elements
+   :width: 800
+.. :align: center
+.. :name: Fill grid with content elements
 
 
 Include your own TypoScript

@@ -1,5 +1,3 @@
-.. include:: Images.txt
-
 .. ==================================================
 .. FOR YOUR INFORMATION
 .. --------------------------------------------------
@@ -34,7 +32,12 @@ right of the of the  **Grid Configuration** area and wait for the
 popup window to open. When this is a newly created record, the wizard
 will look like this:
 
-|img-13|
+.. figure:: ../../Images/GridWizard/CreateBasicGridStructureStep1.png
+   :alt: Create basic grid structure step 1
+   :width: 400
+.. :align: center
+.. :name: Create basic grid structure step 1
+
 
 Otherwise it will show a visible representation of the structure
 provided in the textarea.
@@ -45,7 +48,11 @@ of columns and/or rows, - will decrease it. To get the example we have
 been using for the :ref:`Grid TS Syntax <GridTsSyntax>`,
 the basic grid would be looking like this:
 
-|img-14|
+.. figure:: ../../Images/GridWizard/CreateBasicGridStructureStep2.png
+   :alt: Create basic grid structure step 2
+   :width: 400
+.. :align: center
+.. :name: Create basic grid structure step 2
 
 
 Spanning, naming and assigning cells
@@ -68,9 +75,19 @@ click on the right triangle of the second cell of the last row until
 it spans the remaining three columns of the last row. Now the result
 should be looking like this:
 
-|img-15|
+.. figure:: ../../Images/GridWizard/CreateBasicGridStructureStep3.png
+   :alt: Create basic grid structure step 3
+   :width: 400
+.. :align: center
+.. :name: Create basic grid structure step 3
 
-|img-16|
+
+.. figure:: ../../Images/GridWizard/CreateBasicGridStructureStep4.png
+   :alt: Create basic grid structure step 4
+   :width: 400
+.. :align: center
+.. :name: Create basic grid structure step 4
+
 
 Finally you should give the cells a  **name** and a number to
 be used as the value for the internal colPos within a grid element
@@ -88,7 +105,12 @@ Saving the layout to the CE backend layout record
 Now that you have named and assigned each cell, the layout should be
 looking like this:
 
-|img-17|
+.. figure:: ../../Images/GridWizard/CreateBasicGridStructureStep5.png
+   :alt: Create basic grid structure step 5
+   :width: 400
+.. :align: center
+.. :name: Create basic grid structure step 5
+
 
 You can save it by clicking on the  **disk symbol at the upper left
 corner** of the popup window. Depending on the names and column values
