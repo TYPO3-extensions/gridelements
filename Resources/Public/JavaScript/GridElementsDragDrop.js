@@ -37,7 +37,7 @@ define(['jquery', 'jquery-ui/sortable', 'jquery-ui/droppable'], function ($) {
 	 * initializes Drag+Drop for all content elements on the page
 	 */
 	DragDrop.initialize = function () {
-		$(this.contentIdentifier).draggable({
+		$(DragDrop.contentIdentifier).draggable({
 			handle: this.dragHeaderIdentifier,
 			scope: 'tt_content',
 			cursor: 'move',
@@ -53,7 +53,7 @@ define(['jquery', 'jquery-ui/sortable', 'jquery-ui/droppable'], function ($) {
 			}
 		});
 
-		$(this.dropZoneIdentifier).droppable({
+		$(DragDrop.dropZoneIdentifier).droppable({
 			accept: this.contentIdentifier,
 			scope: 'tt_content',
 			tolerance: 'pointer',
@@ -320,11 +320,6 @@ define(['jquery', 'jquery-ui/sortable', 'jquery-ui/droppable'], function ($) {
 		}
 	};
 
-	/**
-	 * initialize function
-	 */
-	return function () {
-		DragDrop.initialize();
-		return DragDrop;
-	}();
+	$(DragDrop.initialize);
+	return DragDrop;
 });

@@ -353,11 +353,6 @@ define(['jquery', 'TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Backend/Storag
 
 	};
 
-	/**
-	 * initialize function
-	 */
-	return function () {
-		OnReady.initialize();
-		return OnReady;
-	}();
+	$(OnReady.initialize);
+	return OnReady;
 });

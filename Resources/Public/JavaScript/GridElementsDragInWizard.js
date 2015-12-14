@@ -39,10 +39,12 @@ define(['jquery', 'TYPO3/CMS/Gridelements/GridElementsDragDrop', 'jquery-ui/sort
 	 * get the URL for the new element wizard the correct module token
 	 */
 	DragInWizard.getWizardUrl = function () {
-		if ($('.t3js-page-new-ce a').first().attr('onclick')) {
-			var originalWizardUrl = $('.t3js-page-new-ce a').first().attr('onclick').split('\\u0026', 4);
-		} else if ($('.t3js-page-new-ce a').first().attr('href')) {
-			var originalWizardUrl = $('.t3js-page-new-ce a').first().attr('href').split('\&', 4);
+		var originalWizardUrl;
+		var $newCeLink = $('.t3js-page-new-ce a').first();
+		if ($newCeLink.attr('onclick')) {
+			originalWizardUrl = $newCeLink.attr('onclick').split('\\u0026', 4);
+		} else if ($newCeLink.attr('href')) {
+			originalWizardUrl = $newCeLink.attr('href').split('\&', 4);
 		}
 		if (typeof originalWizardUrl !== 'undefined') {
 			DragInWizard.wizardUrl = '\/typo3\/index.php?route=%2Frecord%2Fcontent%2Fnew&' + originalWizardUrl[1] + '&' + originalWizardUrl[2];
@@ -61,7 +63,7 @@ define(['jquery', 'TYPO3/CMS/Gridelements/GridElementsDragDrop', 'jquery-ui/sort
 		}).remove();
 		newIcon.removeAttr('onclick').attr('title', 'Toggle Drag In Wizard');
 		newIcon.click(function () {
-			top.dragInWizardActive = top.dragInWizardActive === true ? false : true;
+			top.dragInWizardActive = !top.dragInWizardActive;
 			DragInWizard.toggleWizard();
 			return false;
 		});
@@ -74,15 +76,16 @@ define(['jquery', 'TYPO3/CMS/Gridelements/GridElementsDragDrop', 'jquery-ui/sort
 	 * load and/or activate the new item wizard on click
 	 */
 	DragInWizard.toggleWizard = function () {
-		if ($('#' + DragInWizard.wizardIdentifier).length) {
-			$('#' + DragInWizard.wizardIdentifier).toggle();
+		var $wizard = $('#' + DragInWizard.wizardIdentifier);
+		if ($wizard.length) {
+			$wizard.toggle();
 		} else {
 			$('.t3js-module-docheader').append('<div id="' + DragInWizard.wizardIdentifier + '"></div>');
-			$('#' + DragInWizard.wizardIdentifier).load(DragInWizard.wizardUrl + ' .t3js-module-body div[role=\'tabpanel\']:first', function () {
+			$wizard.load(DragInWizard.wizardUrl + ' .t3js-module-body div[role=\'tabpanel\']:first', function () {
 				DragInWizard.makeItemsSortable();
 				DragInWizard.rearrangeItems();
 			});
-			$('#' + DragInWizard.wizardIdentifier).css('visibility', 'visible');
+			$wizard.css('visibility', 'visible');
 		}
 	};
 
@@ -126,11 +129,6 @@ define(['jquery', 'TYPO3/CMS/Gridelements/GridElementsDragDrop', 'jquery-ui/sort
 		$('#' + DragInWizard.wizardIdentifier + ' .media-left input').parent().remove();
 	};
 
-	/**
-	 * initialize function
-	 */
-	return function () {
-		DragInWizard.initialize();
-		return DragInWizard;
-	}();
+	$(DragInWizard.initialize);
+	return DragInWizard;
 });
