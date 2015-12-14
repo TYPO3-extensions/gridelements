@@ -3,6 +3,7 @@ namespace GridElementsTeam\Gridelements\Backend;
 
 use TYPO3\CMS\Backend\ClickMenu\ClickMenu;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
+use TYPO3\CMS\Core\Utility\DebugUtility;
 
 /**
  * Class/Function which
@@ -33,7 +34,7 @@ class CmOptions {
 		}
 
 		// add "paste reference after" if user is allowed to use CType shortcut
-		if ($GLOBALS['BE_USER']->checkAuthMode('tt_content', 'CType', 11, 'explicitAllow')) {
+		if ($GLOBALS['BE_USER']->checkAuthMode('tt_content', 'CType', 'shortcut', 'explicitAllow')) {
 			$parkItem = $menuItems['pasteafter'];
 			if ($parkItem) {
 				unset($menuItems['pasteafter']);
