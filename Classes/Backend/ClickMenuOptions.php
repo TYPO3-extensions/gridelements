@@ -65,7 +65,7 @@ class ClickMenuOptions implements SingletonInterface
             $this->setLanguageService($GLOBALS['LANG']);
 
             // add "paste reference after" if user is allowed to use CType shortcut
-            if ($this->getBackendUser()->checkAuthMode('tt_content', 'CType', 11, 'explicitAllow')) {
+            if ($this->getBackendUser()->checkAuthMode('tt_content', 'CType', 'shortcut', 'explicitAllow')) {
                 if ($menuItems['pasteafter']) {
                     unset($menuItems['pasteafter']);
                     $selItem = $backRef->clipObj->getSelectedRecord();
