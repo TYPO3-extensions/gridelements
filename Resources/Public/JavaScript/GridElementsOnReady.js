@@ -64,10 +64,12 @@ define(['jquery', 'TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Backend/Storag
 		var allowedGridTypes = top.pageColumnsAllowedGridTypes[colPos].replace(/ t3-allow-gridtype-/g, ',').substring(1);
 		if (allowedCTypes !== '' && allowedCTypes !== 'all' || allowedGridTypes !== '') {
 			pageColumn.find('.t3js-page-new-ce:not(".t3js-page-new-ce-allowed") a').each(function () {
-				$(this).attr('onclick', $(this).attr('onclick').replace(
-					'\\u0026uid_pid',
-					'\\u0026tx_gridelements_allowed=' + allowedCTypes + '\\u0026tx_gridelements_allowed_grid_types=' + allowedGridTypes + '\\u0026uid_pid'
-				));
+				if(typeof $(this).attr('onclick') !== 'undefined') {
+					$(this).attr('onclick', $(this).attr('onclick').replace(
+							'\\u0026uid_pid',
+							'\\u0026tx_gridelements_allowed=' + allowedCTypes + '\\u0026tx_gridelements_allowed_grid_types=' + allowedGridTypes + '\\u0026uid_pid'
+					));
+				}
 			});
 		}
 	};
