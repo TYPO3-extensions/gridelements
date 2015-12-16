@@ -1,3 +1,6 @@
+3.3.3 => 2015-12-16 Jo Hasenau <info@cybercraft.de>
+	Fixed: Issue #72147 Use correct shortcut identifier
+
 3.3.2 => 2015-12-07 Jo Hasenau <info@cybercraft.de>
 	Fixed: Issue #71875 Respect deleted state within workspaces
 	Done: Issue #66782 Disable possibility to "move" children by changing their colPos
