@@ -1,3 +1,15 @@
+7.0.1 => 2015-12-16 Jo Hasenau <info@cybercraft.de>
+    Done: Task #72203 Made modal translatable
+    Done: Task #72204 Use correct product name in xlf files
+    Fixed: Call JS initialize functions when DOM is ready
+    Fixed: Issue #72147 Use correct shortcut identifier
+    Fixed: Issue #72154 Use uid of container to be on the safe side
+    Done: Task #72125 Made setDatabaseConnection static
+    Done: Task #72157 Documentation: make image inclusion inline
+    Done: Restrict page renderer hook to page and list module only
+    Fixed: Issue #72098 Be more specific before using JS variables with global impact
+    Fixed: Issue #72100 Don't override icon identifiers, if they are already set by user
+
 7.0.0 => 2015-12-07 Jo Hasenau <info@cybercraft.de>
 	Fixed: Issue #71647 Wizard items must use icon registry to store icons
 	Done: Issue #72093 Reenabled copy from another page feature based on DragDrop.onDrop
