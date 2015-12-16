@@ -166,8 +166,29 @@
 		<trans-unit id="tx_gridelements_js.pastecopy">
 			<source>Paste copy into this column</source>
 		</trans-unit>
-		<trans-unit id="tx_gridelements_js.pasteref">
+		<trans-unit id="tx_gridelements_js.modal.pastecopy">
+			<source>How do you want to paste that clipboard content here?</source>
+		</trans-unit>
+		<trans-unit id="tx_gridelements_js.modal.button.cancel">
+			<source>Cancel</source>
+		</trans-unit>
+		<trans-unit id="tx_gridelements_js.modal.button.pastecopy">
+			<source>Paste copy</source>
+		</trans-unit>
+		<trans-unit id="tx_gridelements_js.pastereference">
 			<source>Paste reference into this column</source>
+		</trans-unit>
+		<trans-unit id="tx_gridelements_js.modal.button.pastereference">
+			<source>Paste reference</source>
+		</trans-unit>
+		<trans-unit id="tx_gridelements_js.modal.paste">
+			<source>Do you want to paste that clipboard content here?</source>
+		</trans-unit>
+		<trans-unit id="tx_gridelements_js.modal.title.paste">
+			<source>Paste record</source>
+		</trans-unit>
+		<trans-unit id="tx_gridelements_js.modal.button.paste">
+			<source>Paste</source>
 		</trans-unit>
 		<trans-unit id="tx_gridelements_collapsecontent">
 			<source>Collapse content in column</source>

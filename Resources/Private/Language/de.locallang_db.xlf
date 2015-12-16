@@ -215,6 +215,34 @@
 			<source>Paste reference into this column</source>
 			<target>Referenz in diese Spalte einfügen</target>
 		</trans-unit>
+		<trans-unit id="tx_gridelements_js.modal.pastecopy">
+			<source>How do you want to paste that clipboard content here?</source>
+			<target>Wie wollen Sie den Inhalt der Zwischenablage hier einfügen?</target>
+		</trans-unit>
+		<trans-unit id="tx_gridelements_js.modal.button.cancel">
+			<source>Cancel</source>
+			<target>Abbrechen</target>
+		</trans-unit>
+		<trans-unit id="tx_gridelements_js.modal.button.pastecopy">
+			<source>Paste copy</source>
+			<target>Kopie einfügen</target>
+		</trans-unit>
+		<trans-unit id="tx_gridelements_js.modal.button.pastereference">
+			<source>Paste reference</source>
+			<target>Referenz einfügen</target>
+		</trans-unit>
+		<trans-unit id="tx_gridelements_js.modal.paste">
+			<source>Do you want to paste that clipboard content here?</source>
+			<target>Wollen Sie den Inhalt der Zwischenablage hier einfügen?</target>
+		</trans-unit>
+		<trans-unit id="tx_gridelements_js.modal.title.paste">
+			<source>Paste record</source>
+			<target>Datensatz einfügen</target>
+		</trans-unit>
+		<trans-unit id="tx_gridelements_js.modal.button.paste">
+			<source>Paste</source>
+			<target>Einfügen</target>
+		</trans-unit>
 		<trans-unit id="tx_gridelements_collapsecontent" approved="yes">
 			<source>Collapse content in column</source>
 			<target>Inhalt dieser Spalte ausblenden</target>
