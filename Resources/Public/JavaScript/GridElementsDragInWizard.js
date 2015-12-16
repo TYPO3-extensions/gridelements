@@ -65,6 +65,7 @@ define(['jquery', 'TYPO3/CMS/Gridelements/GridElementsDragDrop', 'jquery-ui/sort
 		newIcon.click(function () {
 			top.dragInWizardActive = !top.dragInWizardActive;
 			DragInWizard.toggleWizard();
+			$(this).blur();
 			return false;
 		});
 		if (top.dragInWizardActive) {
@@ -80,7 +81,8 @@ define(['jquery', 'TYPO3/CMS/Gridelements/GridElementsDragDrop', 'jquery-ui/sort
 		if ($wizard.length) {
 			$wizard.toggle();
 		} else {
-			$('.t3js-module-docheader').append('<div id="' + DragInWizard.wizardIdentifier + '"></div>');
+			$wizard = $('<div id="' + DragInWizard.wizardIdentifier + '"></div>');
+			$('.t3js-module-docheader').append($wizard);
 			$wizard.load(DragInWizard.wizardUrl + ' .t3js-module-body div[role=\'tabpanel\']:first', function () {
 				DragInWizard.makeItemsSortable();
 				DragInWizard.rearrangeItems();
