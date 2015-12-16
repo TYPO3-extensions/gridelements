@@ -192,13 +192,13 @@ define(['jquery', 'TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Backend/Storag
 	OnReady.activatePasteModal = function (element) {
 		var $element = $(element);
 		var url = $element.data('url') || null;
-		var title = $element.data('title') || 'Paste "' + $element.data('pastetitle') + '"';
+		var title = (TYPO3.lang['tx_gridelements_js.modal.title.paste'] || 'Paste record') + ': "' + $element.data('pastetitle') + '"';
 		var severity = (typeof top.TYPO3.Severity[$element.data('severity')] !== 'undefined') ? top.TYPO3.Severity[$element.data('severity')] : top.TYPO3.Severity.info;
 		if ($element.hasClass('t3js-paste-copy')) {
-			var content = $element.data('content') || 'How do you want to paste that clipboard content here?';
+			var content = TYPO3.lang['tx_gridelements_js.modal.pastecopy'] || '1 How do you want to paste that clipboard content here?';
 			var buttons = [
 				{
-					text: $element.data('button-close-text') || 'Cancel',
+					text: TYPO3.lang['tx_gridelements_js.modal.button.cancel'] || 'Cancel',
 					active: true,
 					btnClass: 'btn-default',
 					trigger: function () {
@@ -206,7 +206,7 @@ define(['jquery', 'TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Backend/Storag
 					}
 				},
 				{
-					text: $element.data('button-paste-text') || 'Paste as copy',
+					text: TYPO3.lang['tx_gridelements_js.modal.button.pastecopy'] || 'Paste as copy',
 					btnClass: 'btn-' + Modal.getSeverityClass(severity),
 					trigger: function () {
 						Modal.currentModal.trigger('modal-dismiss');
@@ -214,7 +214,7 @@ define(['jquery', 'TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Backend/Storag
 					}
 				},
 				{
-					text: $element.data('button-reference-text') || 'Paste as reference',
+					text: TYPO3.lang['tx_gridelements_js.modal.button.pastereference'] || 'Paste as reference',
 					btnClass: 'btn-' + Modal.getSeverityClass(severity),
 					trigger: function () {
 						Modal.currentModal.trigger('modal-dismiss');
@@ -226,10 +226,10 @@ define(['jquery', 'TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Backend/Storag
 				buttons.pop();
 			}
 		} else {
-			var content = $element.data('content') || 'Do you want to paste that clipboard content here?';
+			var content = TYPO3.lang['tx_gridelements_js.modal.paste'] || 'Do you want to paste that clipboard content here?';
 			var buttons = [
 				{
-					text: $element.data('button-close-text') || 'Cancel',
+					text: TYPO3.lang['tx_gridelements_js.modal.button.cancel'] || 'Cancel',
 					active: true,
 					btnClass: 'btn-default',
 					trigger: function () {
@@ -237,7 +237,7 @@ define(['jquery', 'TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Backend/Storag
 					}
 				},
 				{
-					text: $element.data('button-paste-text') || 'Paste',
+					text: TYPO3.lang['tx_gridelements_js.modal.button.paste'] || 'Paste',
 					btnClass: 'btn-' + Modal.getSeverityClass(severity),
 					trigger: function () {
 						Modal.currentModal.trigger('modal-dismiss');
