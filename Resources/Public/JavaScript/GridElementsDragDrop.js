@@ -92,10 +92,11 @@ define(['jquery', 'jquery-ui/sortable', 'jquery-ui/droppable'], function ($) {
 		var allowedGridType = $element.find('.t3-ctype-identifier').data('gridtype');
 		$(DragDrop.dropZoneIdentifier).not($previousDropZone).each(function () {
 			var $closestColumn = $(this).closest(DragDrop.columnIdentifier);
-			if ($closestColumn.hasClass('t3-allow-all') ||
+			if (($closestColumn.hasClass('t3-allow-all') ||
 				!allowedGridType && $closestColumn.hasClass('t3-allow-' + allowedElementMimeType) ||
 				$closestColumn.hasClass('t3-allow-gridelements_pi1') && $closestColumn.hasClass('t3-allow-gridtype-' + allowedGridType) ||
-				allowedElementMimeType === 'gridelements_pi1' && $closestColumn.hasClass('t3-allow-gridelements_pi1') && !$closestColumn.hasClass('t3-allow-gridtype')
+				allowedElementMimeType === 'gridelements_pi1' && $closestColumn.hasClass('t3-allow-gridelements_pi1') && !$closestColumn.hasClass('t3-allow-gridtype')) &&
+				$(this).parent().find('.icon-actions-document-new').length
 			) {
 				$(this).addClass(DragDrop.validDropZoneClass);
 			} else {

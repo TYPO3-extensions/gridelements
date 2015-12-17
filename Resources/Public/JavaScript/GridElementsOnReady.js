@@ -64,10 +64,12 @@ define(['jquery', 'TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Backend/Storag
 		var allowedGridTypes = top.pageColumnsAllowedGridTypes[colPos].replace(/ t3-allow-gridtype-/g, ',').substring(1);
 		if (allowedCTypes !== '' && allowedCTypes !== 'all' || allowedGridTypes !== '') {
 			pageColumn.find('.t3js-page-new-ce:not(".t3js-page-new-ce-allowed") a').each(function () {
-				if(typeof $(this).attr('onclick') !== 'undefined') {
-					$(this).attr('onclick', $(this).attr('onclick').replace(
-							'\\u0026uid_pid',
-							'\\u0026tx_gridelements_allowed=' + allowedCTypes + '\\u0026tx_gridelements_allowed_grid_types=' + allowedGridTypes + '\\u0026uid_pid'
+				if(typeof $(this).attr('href') !== 'undefined') {
+					$(this).attr('href', $(this).attr('href').replace(
+							'&uid_pid',
+							( allowedCTypes ? '&tx_gridelements_allowed=' + allowedCTypes : '') +
+							( allowedGridTypes ? '&tx_gridelements_allowed_grid_types=' + allowedGridTypes : '' ) +
+							'&uid_pid'
 					));
 				}
 			});
@@ -166,6 +168,9 @@ define(['jquery', 'TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Backend/Storag
 	OnReady.activatePasteIcons = function () {
 		$('.icon-actions-document-paste-into').parent().remove();
 		$('.t3-page-ce-wrapper-new-ce').each(function () {
+			if(!$(this).find('.icon-actions-document-new').length) {
+				return true;
+			}
 			$(this).addClass('btn-group btn-group-sm');
 			$('.t3js-page-lang-column .t3-page-ce > .t3-page-ce').removeClass('t3js-page-ce');
 			if (top.pasteAfterLinkTemplate && top.pasteIntoLinkTemplate) {
