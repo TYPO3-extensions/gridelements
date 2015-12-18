@@ -29,7 +29,9 @@ use TYPO3\CMS\Core\Database\QueryGenerator;
 use TYPO3\CMS\Core\Database\ReferenceIndex;
 use TYPO3\CMS\Core\Imaging\Icon;
 use TYPO3\CMS\Core\Imaging\IconFactory;
+use TYPO3\CMS\Core\Messaging\FlashMessage;
 use TYPO3\CMS\Core\SingletonInterface;
+use TYPO3\CMS\Core\Type\Bitmask\Permission;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Versioning\VersionState;
 use TYPO3\CMS\Lang\LanguageService;
@@ -63,6 +65,13 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
      * @var LanguageService
      */
     protected $languageService;
+
+    /**
+     * Stores whether a certain language has translations in it
+     *
+     * @var array
+     */
+    protected $languageHasTranslationsCache = array();
 
     /**
      * @var QueryGenerator
@@ -426,18 +435,55 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
 
         $specificIds = $this->helper->getSpecificIds($row);
 
-        $newParameters = '';
+        $url = '';
+        $pageinfo = BackendUtility::readPageAccess($this->id, '');
         if ($colPos < 32768) {
-            $newParameters = $parentObject->newContentElementOnClick($parentObject->id,
-                '-1' . '&tx_gridelements_allowed=' . $values['allowed'] . '&tx_gridelements_allowed_grid_types=' . $values['allowedGridTypes'] . '&tx_gridelements_container=' . $specificIds['uid'] . '&tx_gridelements_columns=' . $colPos,
-                $row['sys_language_uid']);
+            if ($this->getPageLayoutController()->pageIsNotLockedForEditors()
+                && $this->getBackendUser()->doesUserHaveAccess($pageinfo, Permission::CONTENT_EDIT)
+                && (!$this->checkIfTranslationsExistInLanguage($items, $row['sys_language_uid'], $parentObject))
+            ) {
+                if ($parentObject->option_newWizard) {
+                    $urlParameters = [
+                        'id' => $parentObject->id,
+                        'colPos' => -1,
+                        'tx_gridelements_allowed' => $values['allowed'],
+                        'tx_gridelements_allowed_grid_types' => $values['allowedGridTypes'],
+                        'tx_gridelements_container' => $specificIds['uid'],
+                        'tx_gridelements_columns' => $colPos,
+                        'uid_pid' => $parentObject->id,
+                        'sys_language_uid' => $row['sys_language_uid'],
+                        'returnUrl' => GeneralUtility::getIndpEnv('REQUEST_URI')
+                    ];
+                    $url = BackendUtility::getModuleUrl('new_content_element', $urlParameters);
+                } else {
+                    $urlParameters = [
+                        'edit' => [
+                            'tt_content' => [
+                                $parentObject->id => 'new'
+                            ]
+                        ],
+                        'defVals' => [
+                            'tt_content' => [
+                                'colPos' => -1,
+                                'tx_gridelements_allowed' => $values['allowed'],
+                                'tx_gridelements_allowed_grid_types' => $values['allowedGridTypes'],
+                                'tx_gridelements_container' => $specificIds['uid'],
+                                'tx_gridelements_columns' => $colPos,
+                                'sys_language_uid' => $row['sys_language_uid']
+                            ]
+                        ],
+                        'returnUrl' => GeneralUtility::getIndpEnv('REQUEST_URI')
+                    ];
+                    $url = BackendUtility::getModuleUrl('record_edit', $urlParameters);
+                }
+            }
         }
 
         $iconsArray = array();
 
-        if($colPos !== '' && $colPos !== null && $colPos < 32768) {
+        if($colPos !== '' && $colPos !== null && $colPos < 32768 && $url) {
             $iconsArray = array(
-                'new' => '<a href="#" onclick="' . htmlspecialchars($newParameters) . '" title="' . $this->languageService->getLL('newContentElement',
+                'new' => '<a href="' . htmlspecialchars($url) . '" title="' . $this->languageService->getLL('newContentElement',
                         true) . '" class="btn btn-default btn-sm">' . $this->iconFactory->getIcon('actions-document-new',
                         'small') . ' ' . $this->languageService->getLL('content', true) . '</a>'
             );
@@ -466,17 +512,48 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
 				<div class="t3-page-ce t3js-page-ce t3js-page-ce-sortable' . $statusHidden . '" data-table="tt_content" data-uid="' . $itemRow['uid'] . '" data-container="' . $itemRow['tx_gridelements_container'] . '" data-ctype="' . $itemRow['CType'] . '"><div class="t3-page-ce-dragitem" id="' . str_replace('.',
                             '', uniqid('', true)) . '">' . $this->renderSingleElementHTML($parentObject,
                             $itemRow) . '</div></div>';
-                    // New content element:
-                    if ($parentObject->option_newWizard) {
-                        $onClick = 'window.location.href=' . GeneralUtility::quoteJSvalue(BackendUtility::getModuleUrl('new_content_element') . '&id=' . $itemRow['pid'] . '&colPos=-1&sys_language_uid=' . $itemRow['sys_language_uid'] . '&tx_gridelements_allowed=' . $values['allowed'] . '&tx_gridelements_allowed_grid_types=' . $values['allowedGridTypes'] . '&uid_pid=-' . $itemRow['uid'] . '&returnUrl=' . rawurlencode(GeneralUtility::getIndpEnv('REQUEST_URI'))) . ';';
-                    } else {
-                        $onClick = BackendUtility::editOnClick('&edit[tt_content][' . $itemRow['uid'] . ']=new&defVals[tt_content][colPos]=' . $colPos . '&defVals[tt_content][sys_language_uid]=' . $itemRow['sys_language_uid']);
+                    $url = '';
+                    if ($this->getPageLayoutController()->pageIsNotLockedForEditors()
+                        && $this->getBackendUser()->doesUserHaveAccess($pageinfo, Permission::CONTENT_EDIT)
+                        && (!$this->checkIfTranslationsExistInLanguage($items, $row['sys_language_uid'], $parentObject))
+                    ) {
+                        // New content element:
+                        if ($parentObject->option_newWizard) {
+                            $urlParameters = [
+                                'id' => $itemRow['pid'],
+                                'sys_language_uid' => $itemRow['sys_language_uid'],
+                                'tx_gridelements_allowed' => $values['allowed'],
+                                'tx_gridelements_allowed_grid_types' => $values['allowedGridTypes'],
+                                'colPos' => -1,
+                                'uid_pid' => $itemRow['uid'],
+                                'returnUrl' => GeneralUtility::getIndpEnv('REQUEST_URI')
+                            ];
+                            $url = BackendUtility::getModuleUrl('new_content_element', $urlParameters);
+                        } else {
+                            $urlParameters = [
+                                'edit' => [
+                                    'tt_content' => [
+                                        -$itemRow['uid'] => 'new'
+                                    ]
+                                ],
+                                'defVals' => [
+                                    'tt_content' => [
+                                        'sys_language_uid' => $itemRow['sys_language_uid'],
+                                        'colPos' => -1,
+                                        'tx_gridelements_allowed' => $values['allowed'],
+                                        'tx_gridelements_allowed_grid_types' => $values['allowedGridTypes']
+                                    ]
+                                ],
+                                'returnUrl' => GeneralUtility::getIndpEnv('REQUEST_URI')
+                            ];
+                            $url = BackendUtility::getModuleUrl('record_edit', $urlParameters);
+                        }
+                        $iconsArray = array(
+                            'new' => '<a href="' . htmlspecialchars($url) . '" title="' . $this->languageService->getLL('newContentElement',
+                                    true) . '" class="btn btn-default btn-sm">' . $this->iconFactory->getIcon('actions-document-new',
+                                    'small') . ' ' . $this->languageService->getLL('content', true) . '</a>'
+                        );
                     }
-                    $iconsArray = array(
-                        'new' => '<a href="#" onclick="' . htmlspecialchars($onClick) . '" title="' . $this->languageService->getLL('newContentElement',
-                                true) . '" class="btn btn-default btn-sm">' . $this->iconFactory->getIcon('actions-document-new',
-                                'small') . ' ' . $this->languageService->getLL('content', true) . '</a>'
-                    );
 
                     $gridContent[$colPos] .= '
 				<div class="t3js-page-new-ce t3js-page-new-ce-allowed t3-page-ce-wrapper-new-ce btn-group btn-group-sm" id="colpos-' . $itemRow['tx_gridelements_columns'] . '-page-' . $itemRow['pid'] . '-gridcontainer-' . $itemRow['tx_gridelements_container'] . '-' . str_replace('.',
@@ -524,7 +601,6 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
      */
     public function tt_content_drawColHeader($colName, $editParams, PageLayoutView $parentObject, $expanded = true)
     {
-        $icons = '';
         $iconsArr = array();
         // Create command links:
         if ($parentObject->tt_contentConfig['showCommands']) {
@@ -822,6 +898,59 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
     protected function getBackendUser()
     {
         return $GLOBALS['BE_USER'];
+    }
+
+    /**
+     * Checks whether translated Content Elements exist in the desired language
+     * If so, deny creating new ones via the UI
+     *
+     * @param array $contentElements
+     * @param int $language
+     * @param PageLayoutView $parentObject
+     *
+     * @return bool
+     */
+    protected function checkIfTranslationsExistInLanguage(array $contentElements, $language, PageLayoutView $parentObject)
+    {
+        // If in default language, you may always create new entries
+        // Also, you may override this strict behavior via user TS Config
+        // If you do so, you're on your own and cannot rely on any support by the TYPO3 core
+        // We jump out here since we don't need to do the expensive loop operations
+        $allowInconsistentLanguageHandling = BackendUtility::getModTSconfig($parentObject->id, 'mod.web_layout.allowInconsistentLanguageHandling');
+        if ($language === 0 || $allowInconsistentLanguageHandling['value'] === '1') {
+            return false;
+        }
+        /**
+         * Build up caches
+         */
+        if (!isset($this->languageHasTranslationsCache[$language])) {
+            foreach ($contentElements as $contentElement) {
+                if ((int)$contentElement['l18n_parent'] === 0) {
+                    $this->languageHasTranslationsCache[$language]['hasStandAloneContent'] = true;
+                }
+                if ((int)$contentElement['l18n_parent'] > 0) {
+                    $this->languageHasTranslationsCache[$language]['hasTranslations'] = true;
+                }
+            }
+            // Check whether we have a mix of both
+            if ($this->languageHasTranslationsCache[$language]['hasStandAloneContent']
+                && $this->languageHasTranslationsCache[$language]['hasTranslations']
+            ) {
+                $message = GeneralUtility::makeInstance(
+                    FlashMessage::class,
+                    sprintf($this->getLanguageService()->getLL('staleTranslationWarning'), $parentObject->languageIconTitles[$language]['title']),
+                    sprintf($this->getLanguageService()->getLL('staleTranslationWarningTitle'), $parentObject->languageIconTitles[$language]['title']),
+                    FlashMessage::WARNING
+                );
+                $service = GeneralUtility::makeInstance(FlashMessageService::class);
+                $queue = $service->getMessageQueueByIdentifier();
+                $queue->addMessage($message);
+            }
+        }
+        if ($this->languageHasTranslationsCache[$language]['hasTranslations']) {
+            return true;
+        }
+        return false;
     }
 
 }
