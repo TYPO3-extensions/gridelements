@@ -525,7 +525,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
                                 'tx_gridelements_allowed' => $values['allowed'],
                                 'tx_gridelements_allowed_grid_types' => $values['allowedGridTypes'],
                                 'colPos' => -1,
-                                'uid_pid' => $itemRow['uid'],
+                                'uid_pid' => -$itemRow['uid'],
                                 'returnUrl' => GeneralUtility::getIndpEnv('REQUEST_URI')
                             ];
                             $url = BackendUtility::getModuleUrl('new_content_element', $urlParameters);
