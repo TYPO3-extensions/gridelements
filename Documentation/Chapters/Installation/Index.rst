@@ -72,7 +72,7 @@ There might be more in future releases.
 
 .. figure:: ../../Images/Installation/IncludeStaticTemplate.png
    :alt: Include static template
-   :width: 800
+   :width: 600
 .. :align: center
 .. :name: Include static template
 
@@ -165,7 +165,7 @@ new Grid Element in your page module.
 
 .. figure:: ../../Images/Installation/ChangeExistingElements.png
    :alt: Change existing elements
-   :width: 800
+   :width: 600
 .. :align: center
 .. :name: Change existing elements
 

@@ -192,6 +192,6 @@ directly dragging and dropping them in the page module.
 
 .. figure:: ../../Images/GridTsSyntax/EditPageContent.png
    :alt: Edit page content
-   :width: 600
+   :width: 800
 .. :align: center
 .. :name: Edit page content

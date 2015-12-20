@@ -34,7 +34,7 @@ will look like this:
 
 .. figure:: ../../Images/GridWizard/CreateBasicGridStructureStep1.png
    :alt: Create basic grid structure step 1
-   :width: 400
+   :width: 600
 .. :align: center
 .. :name: Create basic grid structure step 1
 
@@ -50,7 +50,7 @@ the basic grid would be looking like this:
 
 .. figure:: ../../Images/GridWizard/CreateBasicGridStructureStep2.png
    :alt: Create basic grid structure step 2
-   :width: 400
+   :width: 600
 .. :align: center
 .. :name: Create basic grid structure step 2
 
@@ -77,14 +77,14 @@ should be looking like this:
 
 .. figure:: ../../Images/GridWizard/CreateBasicGridStructureStep3.png
    :alt: Create basic grid structure step 3
-   :width: 400
+   :width: 600
 .. :align: center
 .. :name: Create basic grid structure step 3
 
 
 .. figure:: ../../Images/GridWizard/CreateBasicGridStructureStep4.png
    :alt: Create basic grid structure step 4
-   :width: 400
+   :width: 600
 .. :align: center
 .. :name: Create basic grid structure step 4
 
@@ -107,7 +107,7 @@ looking like this:
 
 .. figure:: ../../Images/GridWizard/CreateBasicGridStructureStep5.png
    :alt: Create basic grid structure step 5
-   :width: 400
+   :width: 600
 .. :align: center
 .. :name: Create basic grid structure step 5
 
