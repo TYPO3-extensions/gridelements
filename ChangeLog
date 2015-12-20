@@ -1,3 +1,11 @@
+7.0.3 > 2015-12-20 Jo Hasenau <info@cybercraft.de>
+	Fixed: Issue #72346 negative values for content elements / positive values for pages
+
+7.0.2 > 2015-12-18 Jo Hasenau <info@cybercraft.de>
+	Fixed: Issue #72266 Respect latest core changes and core language handling
+	Fixed: Issue #72275 Check for existing onclick attribute before trying a replace
+	Fixed: wizard must be fetched twice since it's generated dynamically
+
 7.0.1 => 2015-12-16 Jo Hasenau <info@cybercraft.de>
     Done: Task #72203 Made modal translatable
     Done: Task #72204 Use correct product name in xlf files
