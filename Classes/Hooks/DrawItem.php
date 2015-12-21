@@ -436,7 +436,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
         $specificIds = $this->helper->getSpecificIds($row);
 
         $url = '';
-        $pageinfo = BackendUtility::readPageAccess($this->id, '');
+        $pageinfo = BackendUtility::readPageAccess($parentObject->id, '');
         if ($colPos < 32768) {
             if ($this->getPageLayoutController()->pageIsNotLockedForEditors()
                 && $this->getBackendUser()->doesUserHaveAccess($pageinfo, Permission::CONTENT_EDIT)
