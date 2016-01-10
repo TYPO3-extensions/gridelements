@@ -270,7 +270,6 @@ class LayoutSetup
      * @param string $layoutId : The selected layout ID of the grid container
      *
      * @return array
-     * @author Jo Hasenau <info@cybercraft.de>
      */
     public function getLayoutColumnsSelectItems($layoutId)
     {

@@ -888,7 +888,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
     /**
      * @return PageLayoutController
      */
-    protected function getPageLayoutController()
+    public function getPageLayoutController()
     {
         return $GLOBALS['SOBE'];
     }
@@ -896,7 +896,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
     /**
      * @return BackendUserAuthentication
      */
-    protected function getBackendUser()
+    public function getBackendUser()
     {
         return $GLOBALS['BE_USER'];
     }
