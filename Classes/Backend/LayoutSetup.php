@@ -73,6 +73,13 @@ class LayoutSetup
     {
         $this->setDatabaseConnection($GLOBALS['TYPO3_DB']);
         $this->setLanguageService($GLOBALS['LANG']);
+
+        // new element inserted after existing one
+        if(\TYPO3\CMS\Core\Utility\MathUtility::canBeInterpretedAsInteger($pageId) &&  $pageId < 0) {
+            $pidRec = BackendUtility::getRecord('tt_content', abs($pageId), 'pid');
+            $pageId = is_array($pidRec) ? (int)$pidRec['pid'] : 0;
+        }
+
         $pageId = (strpos($pageId, 'NEW') === 0) ? 0 : (int)$pageId;
         $this->loadLayoutSetup($pageId);
         foreach ($this->layoutSetup as $key => $setup) {
@@ -86,6 +93,7 @@ class LayoutSetup
 
         return $this;
     }
+
 
     /**
      * setter for layout setup
