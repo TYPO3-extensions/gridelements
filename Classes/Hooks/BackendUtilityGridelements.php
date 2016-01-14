@@ -69,9 +69,7 @@ class BackendUtilityGridelements
         $this->setDatabaseConnection($GLOBALS['TYPO3_DB']);
         if (!$this->layoutSetup instanceof LayoutSetup) {
             if ($pageUid < 0) {
-                $triggerElement = $this->databaseConnection->exec_SELECTgetSingleRow('pid', 'tt_content',
-                    'uid = ' . -$pageUid);
-                $pageUid = (int)$triggerElement['pid'];
+                $pageUid = GeneralUtility::makeInstance(Helper::class)->getPidFromNegativeUid($pageUid);
             }
             $this->injectLayoutSetup(GeneralUtility::makeInstance(LayoutSetup::class)->init($pageUid));
         }
