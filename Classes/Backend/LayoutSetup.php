@@ -74,10 +74,6 @@ class LayoutSetup
         $this->setDatabaseConnection($GLOBALS['TYPO3_DB']);
         $this->setLanguageService($GLOBALS['LANG']);
         $pageId = (strpos($pageId, 'NEW') === 0) ? 0 : (int)$pageId;
-        if ($pageId < 0) {
-            $pidRecord = BackendUtility::getRecord('tt_content', abs($pageId), 'pid');
-            $pageId = is_array($pidRecord) ? (int)$pidRecord['pid'] : 0;
-        }
         $this->loadLayoutSetup($pageId);
         foreach ($this->layoutSetup as $key => $setup) {
             $columns = $this->getLayoutColumns($key);

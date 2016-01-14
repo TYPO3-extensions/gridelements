@@ -112,6 +112,25 @@ class Helper implements SingletonInterface
     }
 
     /**
+     * converts a negative tt_content uid into a positive pid
+     *
+     * @param int $negativeUid the negative uid value of a tt_content record
+     *
+     * @return int
+     */
+    public function getPidFromNegativeUid($negativeUid = 0)
+    {
+        if ($negativeUid >= 0) {
+            return $negativeUid;
+        } else {
+            $triggerElement = self::$databaseConnection->exec_SELECTgetSingleRow('pid', 'tt_content',
+                'uid = ' . abs($negativeUid));
+            $pid = (int)$triggerElement['pid'];
+            return is_array($triggerElement) && $pid ? $pid : 0;
+        }
+    }
+
+    /**
      * getter for databaseConnection
      *
      * @return DatabaseConnection databaseConnection

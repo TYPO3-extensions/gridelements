@@ -33,6 +33,15 @@ class HelperTest extends UnitTestCase
     }
 
     /**
+     * test get PID from negative UID
+     *
+     * @test
+     */
+    public function testGetPidFromNegativeUid()
+    {
+    }
+
+    /**
      * test get specific ids
      *
      * @test
