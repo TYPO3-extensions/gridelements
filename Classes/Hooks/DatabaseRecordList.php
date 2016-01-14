@@ -209,6 +209,7 @@ class DatabaseRecordList implements RecordListHookInterface, SingletonInterface
      *
      * @return void
      */
+
     public function setLanguageService(LanguageService $languageService)
     {
         $this->languageService = $languageService;
@@ -217,7 +218,7 @@ class DatabaseRecordList implements RecordListHookInterface, SingletonInterface
     /**
      * @return BackendUserAuthentication
      */
-    protected function getBackendUser()
+    public function getBackendUser()
     {
         return $GLOBALS['BE_USER'];
     }
@@ -225,7 +226,7 @@ class DatabaseRecordList implements RecordListHookInterface, SingletonInterface
     /**
      * @return IconFactory
      */
-    protected function getIconFactory()
+    public function getIconFactory()
     {
         if ($this->iconFactory === null) {
             $this->iconFactory = GeneralUtility::makeInstance(IconFactory::class);

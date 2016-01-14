@@ -588,7 +588,7 @@ class Gridelements extends ContentObjectRenderer
      *
      * @return array
      */
-    protected function getFlexformSectionsRecursively($dataArr, $valueKey = 'vDEF')
+    public function getFlexformSectionsRecursively($dataArr, $valueKey = 'vDEF')
     {
         $out = array();
         foreach ($dataArr as $k => $el) {
@@ -609,7 +609,7 @@ class Gridelements extends ContentObjectRenderer
     /**
      * @return DatabaseConnection
      */
-    protected function getDatabaseConnection()
+    public function getDatabaseConnection()
     {
         return $GLOBALS['TYPO3_DB'];
     }
@@ -617,7 +617,7 @@ class Gridelements extends ContentObjectRenderer
     /**
      * @return PageRenderer
      */
-    protected function getPageRenderer()
+    public function getPageRenderer()
     {
         if ($this->pageRenderer === null) {
             $this->pageRenderer = GeneralUtility::makeInstance(PageRenderer::class);

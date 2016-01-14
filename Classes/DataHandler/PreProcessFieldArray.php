@@ -296,7 +296,7 @@ class PreProcessFieldArray extends AbstractDataHandler
     /**
      * @return BackendUserAuthentication
      */
-    protected function getBackendUser()
+    public function getBackendUser()
     {
         return $GLOBALS['BE_USER'];
     }

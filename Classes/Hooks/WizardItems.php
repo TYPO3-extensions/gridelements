@@ -307,7 +307,7 @@ class WizardItems implements NewContentElementWizardHookInterface
     /**
      * @return LanguageService
      */
-    protected function getLanguageService()
+    public function getLanguageService()
     {
         return $GLOBALS['LANG'];
     }
@@ -315,7 +315,7 @@ class WizardItems implements NewContentElementWizardHookInterface
     /**
      * @return DatabaseConnection
      */
-    protected function getDatabase()
+    public function getDatabase()
     {
         return $GLOBALS['TYPO3_DB'];
     }

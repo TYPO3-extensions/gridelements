@@ -247,7 +247,7 @@ class BackendLayoutWizardController extends \TYPO3\CMS\Backend\Controller\Backen
      *
      * @return \TYPO3\CMS\Core\Authentication\BackendUserAuthentication
      */
-    protected function getBackendUser()
+    public function getBackendUser()
     {
         return $GLOBALS['BE_USER'];
     }
