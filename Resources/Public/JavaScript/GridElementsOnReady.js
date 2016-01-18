@@ -279,7 +279,7 @@ define(['jquery', 'TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Backend/Storag
 	if (!$('.typo3-TCEforms').length) {
 		OnReady.setSelectOptionFromExternalSource = setFormValueFromBrowseWin = function(elementId, tableUid){
 			tableUid = tableUid.replace('tt_content_', '') * 1;
-			DragDrop.onDrop(tableUid, $('#' + elementId).find('.t3js-paste-new'), null);
+			DragDrop.onDrop(tableUid, $('#' + elementId).find('.t3js-paste-new'), 'copyFromAnotherPage');
 		}
 	}
 
