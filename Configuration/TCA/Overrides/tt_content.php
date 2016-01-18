@@ -115,11 +115,9 @@ $GLOBALS['TCA']['tt_content']['types']['gridelements_pi1']['showitem'] = '
 	--div--;LLL:EXT:cms/locallang_ttc.xlf:tabs.access,
 	--palette--;LLL:EXT:cms/locallang_ttc.xlf:palette.visibility;visibility,
 	--palette--;LLL:EXT:cms/locallang_ttc.xlf:palette.access;access,
-	--div--;LLL:EXT:cms/locallang_ttc.xlf:tabs.extended,
 	--div--;LLL:EXT:lang/locallang_tca.xlf:sys_category.tabs.category,
 	categories
 	';
 \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addToAllTCAtypes('tt_content', 'recursive', 'shortcut',
     'after:records');
-\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addToAllTCAtypes('tt_content',
-    'tx_gridelements_container, tx_gridelements_columns');
+\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addToAllTCAtypes('tt_content', '--div--;LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xlf:gridElements, tx_gridelements_container, tx_gridelements_columns');
