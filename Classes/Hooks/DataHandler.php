@@ -107,6 +107,7 @@ class DataHandler implements SingletonInterface
      * @param string $value : The value that has been sent with the copy command
      * @param boolean $commandIsProcessed : A switch to tell the parent object, if the record has been copied
      * @param \TYPO3\CMS\Core\DataHandling\DataHandler $parentObj : The parent object that triggered this hook
+     * @param array|boolean $pasteUpdate : Values to be updated after the record is pasted
      *
      * @return    void
      */
@@ -116,12 +117,13 @@ class DataHandler implements SingletonInterface
         $id,
         $value,
         &$commandIsProcessed,
-        \TYPO3\CMS\Core\DataHandling\DataHandler &$parentObj
+        \TYPO3\CMS\Core\DataHandling\DataHandler &$parentObj,
+        $pasteUpdate
     ) {
         /** @var $hook \GridElementsTeam\Gridelements\DataHandler\ProcessCmdmap */
         if (!$parentObj->isImporting) {
             $hook = GeneralUtility::makeInstance('GridElementsTeam\\Gridelements\\DataHandler\\ProcessCmdmap');
-            $hook->execute_processCmdmap($command, $table, $id, $value, $commandIsProcessed, $parentObj);
+            $hook->execute_processCmdmap($command, $table, $id, $value, $commandIsProcessed, $parentObj, $pasteUpdate);
         }
     }
 

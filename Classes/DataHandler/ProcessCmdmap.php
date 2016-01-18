@@ -40,6 +40,7 @@ class ProcessCmdmap extends AbstractDataHandler
      * @param string $value : The value that has been sent with the copy command
      * @param boolean $commandIsProcessed : A switch to tell the parent object, if the record has been copied
      * @param \TYPO3\CMS\Core\DataHandling\DataHandler $parentObj : The parent object that triggered this hook
+     * @param array|boolean $pasteUpdate : Values to be updated after the record is pasted
      *
      * @return    void
      */
@@ -49,7 +50,8 @@ class ProcessCmdmap extends AbstractDataHandler
         $id,
         $value,
         &$commandIsProcessed,
-        \TYPO3\CMS\Core\DataHandling\DataHandler &$parentObj = null
+        \TYPO3\CMS\Core\DataHandling\DataHandler &$parentObj = null,
+        $pasteUpdate
     ) {
 
         $this->init($table, $id, $parentObj);
@@ -65,6 +67,11 @@ class ProcessCmdmap extends AbstractDataHandler
                 'records' => $id,
                 'header' => 'Reference',
             );
+
+            // used for overriding container and column with real target values
+            if (is_array($pasteUpdate) && !empty($pasteUpdate)) {
+                $overrideArray = array_merge($overrideArray, $pasteUpdate);
+            }
 
             $clipBoard = GeneralUtility::_GET('CB');
             if (!empty($clipBoard)) {
