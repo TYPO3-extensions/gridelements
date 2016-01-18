@@ -1314,12 +1314,11 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
      *
      * @param string $table The table
      * @param mixed[] $row The record for which to make the control panel.
-     * @param string $level
      *
      * @throws \UnexpectedValueException
      * @return string HTML table with the control panel (unless disabled)
      */
-    public function makeControl($table, $row, $level)
+    public function makeControl($table, $row)
     {
         $module = $this->getModule();
         $rowUid = $row['uid'];
