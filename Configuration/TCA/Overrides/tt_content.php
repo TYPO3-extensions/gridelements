@@ -7,11 +7,13 @@ $tempColumns = array(
         'label' => 'LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tt_content.tx_gridelements_backend_layout',
         'config' => array(
             'type' => 'select',
+            'renderType' => 'selectSingle',
             'itemsProcFunc' => 'GridElementsTeam\Gridelements\Backend\TtContent->layoutItemsProcFunc',
             'size' => 1,
             'selicon_cols' => 9,
             'maxitems' => 1,
             'default' => '',
+            'showIconTable' => true
         )
     ),
     'tx_gridelements_children' => array(
@@ -57,6 +59,7 @@ $tempColumns = array(
         'label' => 'LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tt_content.tx_gridelements_container',
         'config' => array(
             'type' => 'select',
+            'renderType' => 'selectSingle',
             'items' => array(
                 array(
                     '',
@@ -77,6 +80,7 @@ $tempColumns = array(
         'label' => 'LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tt_content.tx_gridelements_columns',
         'config' => array(
             'type' => 'select',
+            'renderType' => 'selectSingle',
             'itemsProcFunc' => 'GridElementsTeam\Gridelements\Backend\TtContent->columnsItemsProcFunc',
             'size' => 1,
             'maxitems' => 1,
