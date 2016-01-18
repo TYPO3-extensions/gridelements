@@ -21,7 +21,7 @@ return array(
         'enablecolumns' => array(
             'disabled' => 'hidden',
         ),
-        'iconfile' => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath('gridelements') . 'Resources/Public/Icons/backend_layout.gif',
+        'iconfile' => 'EXT:gridelements/Resources/Public/Icons/backend_layout.gif',
     ),
     'interface' => array(
         'showRecordFieldList' => 'title,frame,config,pi_flexform_ds,description,hidden,icon'
@@ -106,6 +106,7 @@ return array(
             'label' => $l10n . ':tx_gridelements_backend_layout.frame',
             'config' => array(
                 'type' => 'select',
+                'renderType' => 'selectSingle',
                 'items' => array(
                     array(
                         $l10n . ':tx_gridelements_backend_layout.frame.I.0',
