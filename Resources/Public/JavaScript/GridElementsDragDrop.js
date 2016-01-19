@@ -223,7 +223,7 @@ define(['jquery', 'jquery-ui/sortable', 'jquery-ui/droppable'], function ($) {
 						}
 					});
 				});
-			} else if ((evt && evt !== 'reference' && evt.originalEvent.ctrlKey) || $droppableElement.hasClass('t3js-paste-copy')) {
+			} else if ((evt && evt !== 'reference' && evt !== 'copyFromAnotherPage' && evt.originalEvent.ctrlKey) || $droppableElement.hasClass('t3js-paste-copy') || evt === 'copyFromAnotherPage') {
 				parameters['cmd']['tt_content'][contentElementUid] = {
 					copy: {
 						action: 'paste',
