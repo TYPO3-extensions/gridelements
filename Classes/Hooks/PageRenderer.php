@@ -111,13 +111,16 @@ class PageRenderer implements SingletonInterface
                                     foreach ($allowedGridTypes as $gridTypes) {
                                         $gridTypes = trim($gridTypes);
                                         if ($gridTypes !== '*') {
+                                            if (empty($gridClasses)) {
+                                                $gridClasses .= 't3-allow-gridtype ';
+                                            }
                                             $gridTypes = explode(',', $gridTypes);
                                             foreach ($gridTypes as $gridType) {
-                                                $gridClasses .= 't3-allow-gridtype t3-allow-gridtype-' . $gridType . ' ';
+                                                $gridClasses .= 't3-allow-gridtype-' . $gridType . ' ';
                                             }
                                         }
                                     }
-                                    if ($classes !== 't3-allow-all') {
+                                    if ($classes !== 't3-allow-all' && !empty($gridClasses)) {
                                         $classes .= 't3-allow-gridelements_pi1 ';
                                     }
                                 }

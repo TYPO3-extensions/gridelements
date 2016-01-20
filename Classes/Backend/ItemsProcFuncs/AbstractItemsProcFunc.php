@@ -59,8 +59,10 @@ abstract class AbstractItemsProcFunc implements SingletonInterface
 
     /**
      * initializes this class
+     *
+     * @param int $pageUid
      */
-    public function init()
+    public function init($pageUid = 0)
     {
         $this->setDatabaseConnection($GLOBALS['TYPO3_DB']);
         $this->setLanguageService($GLOBALS['LANG']);
