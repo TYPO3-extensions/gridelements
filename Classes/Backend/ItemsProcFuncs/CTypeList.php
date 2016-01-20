@@ -115,7 +115,7 @@ class CTypeList extends AbstractItemsProcFunc
      *
      * @param int $pageUid
      */
-    public function init($pageUid)
+    public function init($pageUid = 0)
     {
         parent::init();
         if (!$this->layoutSetup instanceof LayoutSetup) {
