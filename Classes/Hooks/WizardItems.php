@@ -20,6 +20,7 @@ namespace GridElementsTeam\Gridelements\Hooks;
  ***************************************************************/
 
 use GridElementsTeam\Gridelements\Backend\LayoutSetup;
+use GridElementsTeam\Gridelements\Helper\Helper;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Backend\Wizard\NewContentElementWizardHookInterface;
 use TYPO3\CMS\Core\Database\DatabaseConnection;
@@ -63,7 +64,7 @@ class WizardItems implements NewContentElementWizardHookInterface
     {
         if (!$this->layoutSetup instanceof LayoutSetup) {
             if ($pageUid < 0) {
-                $pageUid = GeneralUtility::makeInstance(Helper::class)->getPidFromNegativeUid($pageUid);
+                $pageUid = Helper::getInstance()->getPidFromNegativeUid($pageUid);
             }
             $this->layoutSetup = GeneralUtility::makeInstance(LayoutSetup::class)->init($pageUid);
         }

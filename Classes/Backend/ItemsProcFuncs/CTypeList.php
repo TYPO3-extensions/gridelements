@@ -20,6 +20,7 @@ namespace GridElementsTeam\Gridelements\Backend\ItemsProcFuncs;
  ***************************************************************/
 
 use GridElementsTeam\Gridelements\Backend\LayoutSetup;
+use GridElementsTeam\Gridelements\Helper\Helper;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -120,7 +121,7 @@ class CTypeList extends AbstractItemsProcFunc
         parent::init();
         if (!$this->layoutSetup instanceof LayoutSetup) {
             if ($pageUid < 0) {
-                $pageUid = GeneralUtility::makeInstance(Helper::class)->getPidFromNegativeUid($pageUid);
+                $pageUid = Helper::getInstance()->getPidFromNegativeUid($pageUid);
             }
             $this->injectLayoutSetup(GeneralUtility::makeInstance(LayoutSetup::class)->init($pageUid));
         }
