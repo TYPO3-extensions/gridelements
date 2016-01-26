@@ -16,11 +16,11 @@ class HelperTest extends UnitTestCase
      */
     public function testGetDatabaseConnection()
     {
-        $helper = GeneralUtility::makeInstance(Helper::class);
-        $databaseConnection = GeneralUtility::makeInstance(DatabaseConnection::class);
-        $helper->setDatabaseConnection($databaseConnection);
+        $GLOBALS['TYPO3_DB'] = GeneralUtility::makeInstance(DatabaseConnection::class);
+        $helper = Helper::getInstance();
+        $helper->setDatabaseConnection($GLOBALS['TYPO3_DB']);
         $result = $helper->getDatabaseConnection();
-        $this->assertEquals($databaseConnection, $result);
+        $this->assertEquals($GLOBALS['TYPO3_DB'], $result);
     }
 
     /**
@@ -48,7 +48,8 @@ class HelperTest extends UnitTestCase
      */
     public function testGetSpecificIdsWithoutWorkspaceAndOriginalId()
     {
-        $helper = GeneralUtility::makeInstance(Helper::class);
+        $GLOBALS['TYPO3_DB'] = GeneralUtility::makeInstance(DatabaseConnection::class);
+        $helper = Helper::getInstance();
         $record = array(
             'uid' => '1',
             'pid' => '2',
@@ -69,7 +70,8 @@ class HelperTest extends UnitTestCase
      */
     public function testGetSpecificIdsWithoutWorkspaceButWithOriginalId()
     {
-        $helper = GeneralUtility::makeInstance(Helper::class);
+        $GLOBALS['TYPO3_DB'] = GeneralUtility::makeInstance(DatabaseConnection::class);
+        $helper = Helper::getInstance();
         $record = array(
             'uid' => '1',
             'pid' => '2',
@@ -90,7 +92,8 @@ class HelperTest extends UnitTestCase
      */
     public function testGetSpecificIdsWithWorkspaceAndWithOriginalId()
     {
-        $helper = GeneralUtility::makeInstance(Helper::class);
+        $GLOBALS['TYPO3_DB'] = GeneralUtility::makeInstance(DatabaseConnection::class);
+        $helper = Helper::getInstance();
         $GLOBALS['BE_USER'] = $this->getMock(BackendUserAuthentication::class);
         $GLOBALS['BE_USER']->workspace = 1;
         $record = array(
@@ -113,7 +116,8 @@ class HelperTest extends UnitTestCase
      */
     public function testGetSpecificIdsWithWorkspaceButWithoutOriginalId()
     {
-        $helper = GeneralUtility::makeInstance(Helper::class);
+        $GLOBALS['TYPO3_DB'] = GeneralUtility::makeInstance(DatabaseConnection::class);
+        $helper = Helper::getInstance();
         $GLOBALS['BE_USER'] = $this->getMock(BackendUserAuthentication::class);
         $GLOBALS['BE_USER']->workspace = 1;
         $record = array(

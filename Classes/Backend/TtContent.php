@@ -68,7 +68,7 @@ class TtContent
         $this->setDatabaseConnection($GLOBALS['TYPO3_DB']);
         if (!$this->layoutSetup instanceof LayoutSetup) {
             if ($pageUid < 0) {
-                $pageUid = GeneralUtility::makeInstance(Helper::class)->getPidFromNegativeUid($pageUid);
+                $pageUid = Helper::getInstance()->getPidFromNegativeUid($pageUid);
             }
             $this->injectLayoutSetup(GeneralUtility::makeInstance(LayoutSetup::class)->init($pageUid));
         }
