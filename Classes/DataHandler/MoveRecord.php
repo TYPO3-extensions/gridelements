@@ -96,7 +96,7 @@ class MoveRecord extends AbstractDataHandler {
 	public function execute_moveRecord_firstElementPostProcess($table, $uid, $destPid, $moveRec, $updateFields, \TYPO3\CMS\Core\DataHandling\DataHandler &$parentObj) {
 		if ($table === 'tt_content') {
 			$cmd = GeneralUtility::_GET('cmd');
-			$commandUid = key($cmd['tt_content']);
+			$commandUid = is_array($cmd['tt_content']) ? key($cmd['tt_content']) : 0;
 			if($commandUid !== $uid) {
 				return;
 			}
@@ -153,7 +153,7 @@ class MoveRecord extends AbstractDataHandler {
 			$cmd = GeneralUtility::_GET('cmd');
 
 			$originalUid = (int)($movedRecord['_ORIG_uid'] ? $movedRecord['_ORIG_uid'] : $uid);
-			$commandUid = key($cmd['tt_content']);
+			$commandUid = is_array($cmd['tt_content']) ? key($cmd['tt_content']) : 0;
 			$placeholderUid = (int)($movedRecord['t3ver_move_id'] ? $movedRecord['t3ver_move_id'] : $uid);
 
 			if (strpos($cmd['tt_content'][$commandUid]['move'], 'x') !== FALSE) {
