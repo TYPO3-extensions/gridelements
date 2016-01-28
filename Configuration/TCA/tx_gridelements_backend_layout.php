@@ -21,7 +21,7 @@ return array(
         'enablecolumns' => array(
             'disabled' => 'hidden',
         ),
-        'iconfile' => 'EXT:gridelements/Resources/Public/Icons/backend_layout.gif',
+        'iconfile' => 'EXT:gridelements/Resources/Public/Icons/gridelements.svg',
     ),
     'interface' => array(
         'showRecordFieldList' => 'title,frame,config,pi_flexform_ds,description,hidden,icon'
