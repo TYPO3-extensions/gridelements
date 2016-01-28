@@ -158,7 +158,7 @@ class Gridelements extends ContentObjectRenderer
                 } else {
                     if ($element) {
                         $where .= '  OR (
-						tx_gridelements_container = ' . $element . $this->cObj->enableFields('tt_content') . ' AND sys_language_uid IN (-1,' . $GLOBALS['TSFE']->sys_language_content . ')
+						tx_gridelements_container = ' . (int)$element . $this->cObj->enableFields('tt_content') . ' AND sys_language_uid IN (-1,' . $GLOBALS['TSFE']->sys_language_content . ')
 					)';
                     }
                 }

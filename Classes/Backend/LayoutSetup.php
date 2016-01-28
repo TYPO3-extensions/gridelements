@@ -222,14 +222,15 @@ class LayoutSetup
                         if (isset($row['columns.']) && is_array($row['columns.'])) {
                             foreach ($row['columns.'] as $column) {
                                 if (isset($column['colPos'])) {
-                                    $availableColumns['CSV'] .= ',' . $column['colPos'];
-                                    $availableColumns[$column['colPos']] = $column['allowed'] ? $column['allowed'] : '*';
+                                    $colPos = (int)$column['colPos'];
+                                    $availableColumns['CSV'] .= ',' . $colPos;
+                                    $availableColumns[$colPos] = $column['allowed'] ? $column['allowed'] : '*';
                                     if ($column['allowedGridTypes']) {
-                                        $availableGridColumns[$column['colPos']] = $column['allowedGridTypes'];
+                                        $availableGridColumns[$colPos] = $column['allowedGridTypes'];
                                     }
-                                    $availableColumns['allowed'] .= $availableColumns['allowed'] ? ',' . $availableColumns[$column['colPos']] : $availableColumns[$column['colPos']];
-                                    if ($availableGridColumns[$column['colPos']]) {
-                                        $availableColumns['allowedGridTypes'] .= $availableColumns['allowedGridTypes'] ? ',' . $availableGridColumns[$column['colPos']] : $availableGridColumns[$column['colPos']];
+                                    $availableColumns['allowed'] .= $availableColumns['allowed'] ? ',' . $availableColumns[$colPos] : $availableColumns[$colPos];
+                                    if ($availableGridColumns[$colPos]) {
+                                        $availableColumns['allowedGridTypes'] .= $availableColumns['allowedGridTypes'] ? ',' . $availableGridColumns[$colPos] : $availableGridColumns[$colPos];
                                     }
                                 }
                             }

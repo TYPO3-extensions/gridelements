@@ -267,7 +267,7 @@ class PreProcessFieldArray extends AbstractDataHandler
         } else if (!isset($fieldArray['sys_language_uid']) && isset($fieldArray['tx_gridelements_container']) && (int)$fieldArray['tx_gridelements_container'] > 0 && (int)$fieldArray['colPos'] === -1) {
             $originalContainer = $this->databaseConnection->exec_SELECTgetSingleRow('sys_language_uid', 'tt_content',
                 'uid=' . (int)$fieldArray['tx_gridelements_container']);
-            $fieldArray['sys_language_uid'] = $originalContainer['sys_language_uid'];
+            $fieldArray['sys_language_uid'] = (int)$originalContainer['sys_language_uid'];
         }
     }
 

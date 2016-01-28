@@ -317,7 +317,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
 
         // @todo $parentObject->showLanguage was appended in this where clause, but this property does not exist anymore
         $queryParts = $parentObject->makeQueryArray('tt_content', $specificIds['pid'],
-            'AND colPos = -1 AND tx_gridelements_container IN (' . $row['uid'] . ',' . $specificIds['uid'] . ') ' . $showHidden . $deleteClause);
+            'AND colPos = -1 AND tx_gridelements_container IN (' . (int)$row['uid'] . ',' . $specificIds['uid'] . ') ' . $showHidden . $deleteClause);
 
         // Due to the pid being "NOT USED" in makeQueryArray we have to reset pidSelect here
         $parentObject->pidSelect = $originalPidSelect;
@@ -399,9 +399,9 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
 
         $where = '';
         if ($this->helper->getBackendUser()->workspace > 0 && $row['t3ver_wsid'] > 0) {
-            $where .= 'AND t3ver_wsid = ' . $row['t3ver_wsid'];
+            $where .= 'AND t3ver_wsid = ' . (int)$row['t3ver_wsid'];
         }
-        $where .= ' AND colPos = -1 AND tx_gridelements_container IN (' . $row['uid'] . ',' . $specificIds['uid'] . ') AND tx_gridelements_columns = ' . $colPos . $showHidden . $deleteClause . $showLanguage;
+        $where .= ' AND colPos = -1 AND tx_gridelements_container IN (' . (int)$row['uid'] . ',' . $specificIds['uid'] . ') AND tx_gridelements_columns = ' . $colPos . $showHidden . $deleteClause . $showLanguage;
 
         $queryParts = $parentObject->makeQueryArray('tt_content', $row['pid'], $where);
 
@@ -790,7 +790,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
         $shortcutItem = str_replace('tt_content_', '', $shortcutItem);
         if ((int)$shortcutItem !== (int)$parentUid) {
             $itemRow = $this->databaseConnection->exec_SELECTgetSingleRow('*', 'tt_content',
-                'uid=' . $shortcutItem . $showHidden . $deleteClause);
+                'uid=' . (int)$shortcutItem . $showHidden . $deleteClause);
             if ($this->helper->getBackendUser()->workspace > 0) {
                 BackendUtility::workspaceOL('tt_content', $itemRow, $this->helper->getBackendUser()->workspace);
             }
