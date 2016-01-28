@@ -250,7 +250,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
                         $shortcutContent .= $this->renderSingleElementHTML($parentObject, $itemRow);
                         // NOTE: this is the end tag for <div class="t3-page-ce-body">
                         // because of bad (historic) conception, starting tag has to be placed inside tt_content_drawHeader()
-                        $shortcutContent .= '<div class="reference-overlay"></div></div></div><br />';
+                        $shortcutContent .= '<div class="reference-overlay"></div></div></div>';
                     }
                 }
             }
