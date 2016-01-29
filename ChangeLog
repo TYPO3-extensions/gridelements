@@ -1,3 +1,6 @@
+3.3.4 => 2016-01-29 Jo Hasenau <info@cybercraft.de>
+	Fixed: Issue #72565 Make sure the move action was triggered by tt_content
+
 3.3.3 => 2015-12-16 Jo Hasenau <info@cybercraft.de>
 	Fixed: Issue #72147 Use correct shortcut identifier
 
