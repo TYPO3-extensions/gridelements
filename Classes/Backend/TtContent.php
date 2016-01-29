@@ -173,6 +173,7 @@ class TtContent
         $ContentType = is_array($params['row']['CType']) ? $params['row']['CType'][0] : $params['row']['CType'];
         $layoutSetups = $this->layoutSetup->getLayoutSetup();
         if ($itemUidList) {
+            $itemUidList = implode(',', GeneralUtility::intExplode(',', $itemUidList));
             $containerRecords = $this->databaseConnection->exec_SELECTgetRows('uid,tx_gridelements_backend_layout',
                 'tt_content', 'uid IN (' . $itemUidList . ')', '', '', '', 'uid');
 
@@ -218,6 +219,7 @@ class TtContent
         if (!$containerIds) {
             return;
         }
+        $containerIds = implode(',', GeneralUtility::intExplode(',', $containerIds));
         $childrenOnNextLevel = $this->databaseConnection->exec_SELECTgetRows('uid, tx_gridelements_container',
             'tt_content', 'CType=\'gridelements_pi1\' AND tx_gridelements_container IN (' . $containerIds . ')');
 

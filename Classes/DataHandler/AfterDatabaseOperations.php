@@ -248,7 +248,7 @@ class AfterDatabaseOperations extends AbstractDataHandler
     public function getSubpagesRecursively($pageUid, &$subpages)
     {
         $childPages = $this->databaseConnection->exec_SELECTgetRows('uid, backend_layout, backend_layout_next_level',
-            'pages', 'pid = ' . $pageUid);
+            'pages', 'pid = ' . (int)$pageUid);
 
         if (!empty($childPages)) {
             foreach ($childPages as $page) {

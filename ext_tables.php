@@ -70,16 +70,6 @@ $TBE_STYLES['skins']['gridelements']['stylesheetDirectories']['structure'] = 'EX
 
 $GLOBALS['TBE_MODULES_EXT']['xMOD_alt_clickmenu']['extendCMclasses'][] = array('name' => 'GridElementsTeam\\Gridelements\\Backend\\ClickMenuOptions',);
 
-// add custom sprite icons
-$geIcons = array(
-    'extensions-gridelements-copyfrompage',
-    'extensions-gridelements-pastecopy',
-    'extensions-gridelements-pasteref',
-);
-
-\TYPO3\CMS\Backend\Sprite\SpriteManager::addIconSprite($geIcons,
-    \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::siteRelPath('gridelements') . 'Resources/Public/Backend/Css/Skin/t3skin_override.css');
-
 $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['typo3/template.php']['preHeaderRenderHook'][] = 'GridElementsTeam\\Gridelements\\Hooks\\PreHeaderRenderHook->main';
 
 $iconRegistry = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Imaging\IconRegistry::class);

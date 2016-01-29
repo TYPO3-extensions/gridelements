@@ -222,14 +222,15 @@ class LayoutSetup
                         if (isset($row['columns.']) && is_array($row['columns.'])) {
                             foreach ($row['columns.'] as $column) {
                                 if (isset($column['colPos'])) {
-                                    $availableColumns['CSV'] .= ',' . $column['colPos'];
-                                    $availableColumns[$column['colPos']] = $column['allowed'] ? $column['allowed'] : '*';
+                                    $colPos = (int)$column['colPos'];
+                                    $availableColumns['CSV'] .= ',' . $colPos;
+                                    $availableColumns[$colPos] = $column['allowed'] ? $column['allowed'] : '*';
                                     if ($column['allowedGridTypes']) {
-                                        $availableGridColumns[$column['colPos']] = $column['allowedGridTypes'];
+                                        $availableGridColumns[$colPos] = $column['allowedGridTypes'];
                                     }
-                                    $availableColumns['allowed'] .= $availableColumns['allowed'] ? ',' . $availableColumns[$column['colPos']] : $availableColumns[$column['colPos']];
-                                    if ($availableGridColumns[$column['colPos']]) {
-                                        $availableColumns['allowedGridTypes'] .= $availableColumns['allowedGridTypes'] ? ',' . $availableGridColumns[$column['colPos']] : $availableGridColumns[$column['colPos']];
+                                    $availableColumns['allowed'] .= $availableColumns['allowed'] ? ',' . $availableColumns[$colPos] : $availableColumns[$colPos];
+                                    if ($availableGridColumns[$colPos]) {
+                                        $availableColumns['allowedGridTypes'] .= $availableColumns['allowedGridTypes'] ? ',' . $availableGridColumns[$colPos] : $availableGridColumns[$colPos];
                                     }
                                 }
                             }
@@ -415,12 +416,14 @@ class LayoutSetup
             }
         }
 
-        $storagePid = isset($pageTSconfig['TCEFORM.']['pages.']['_STORAGE_PID']) ? $pageTSconfig['TCEFORM.']['pages.']['_STORAGE_PID'] : 0;
-        $pageTSconfigId = isset($pageTSconfig['TCEFORM.']['tt_content.']['tx_gridelements_backend_layout.']['PAGE_TSCONFIG_ID']) ? $pageTSconfig['TCEFORM.']['tt_content.']['tx_gridelements_backend_layout.']['PAGE_TSCONFIG_ID'] : 0;
+        $storagePid = isset($pageTSconfig['TCEFORM.']['pages.']['_STORAGE_PID']) ?
+            (int)$pageTSconfig['TCEFORM.']['pages.']['_STORAGE_PID'] : 0;
+        $pageTSconfigId = isset($pageTSconfig['TCEFORM.']['tt_content.']['tx_gridelements_backend_layout.']['PAGE_TSCONFIG_ID']) ?
+            implode(',', GeneralUtility::intExplode(',', $pageTSconfig['TCEFORM.']['tt_content.']['tx_gridelements_backend_layout.']['PAGE_TSCONFIG_ID'])) : 0;
 
         // Load records.
         $result = $this->databaseConnection->exec_SELECTgetRows('*', 'tx_gridelements_backend_layout',
-            '(( ' . $pageTSconfigId . ' = 0 AND ' . (int)$storagePid . ' = 0 ) OR ( tx_gridelements_backend_layout.pid = ' . (int)$pageTSconfigId . ' OR tx_gridelements_backend_layout.pid = ' . (int)$storagePid . ' ) OR ( ' . $pageTSconfigId . ' = 0 AND tx_gridelements_backend_layout.pid = ' . (int)$pageId . ' )) AND tx_gridelements_backend_layout.hidden = 0 AND tx_gridelements_backend_layout.deleted = 0',
+            '(( ' . $pageTSconfigId . ' = 0 AND ' . $storagePid . ' = 0 ) OR ( tx_gridelements_backend_layout.pid IN (' . $pageTSconfigId . ') OR tx_gridelements_backend_layout.pid = ' . $storagePid . ' ) OR ( ' . $pageTSconfigId . ' = 0 AND tx_gridelements_backend_layout.pid = ' . (int)$pageId . ' )) AND tx_gridelements_backend_layout.hidden = 0 AND tx_gridelements_backend_layout.deleted = 0',
             '', 'sorting ASC', '', 'uid');
 
         $gridLayoutRecords = array();
