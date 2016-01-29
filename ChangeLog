@@ -1,3 +1,19 @@
+7.0.5 > 2016-01-29 Jo Hasenau <info@cybercraft.de>
+	Done: Task #60220 Escaped variables in SQL queries
+	Added: Feature #47294 Make PAGE_TSCONFIG_ID aware of CSV lists of IDs
+	Done: Task #72807 removed deprecated usage of icons and sprites
+	Done: Task #72181 Updated icon from GIF to SVG
+	Fixed: Issue #72569 Assign t3-allowed-gridtype only once
+	Fixed: Issue #72660 Hand over additional parameters when pasting references
+	Done: Task #72624 Moved Grid Container and Column to own tab in editing form
+	Fixed: Issue #72838 PHP Warning: incompatibility with parent method
+	Fixed: Issue #72791 Add evt information to trigger copy action
+	Fixed: Issue #72630 Removed unused parameter $level
+	Done: Task #72668 Resolved problems mentioned in deprecation messages
+	Fixed: Issue #72403 Get correct PID since negative IDs point to content records
+	Done: Prepared new classes for unit testing
+	Fixed: Issue #72499 Adds "use" declaration for FlashMessageService
+
 7.0.4 > 2015-12-24 Jo Hasenau <info@cybercraft.de>
 	Fixed: Issue #72356 Use parentObject instead of $this to get correct page ID
 	Done: Task #65016 Documentation: create new screenshots in TYPO3 CMS 7 - Thanks to Michael Schams and his team

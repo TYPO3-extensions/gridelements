@@ -5,12 +5,12 @@
   "keywords": ["TYPO3 CMS", "Grids", "Gridelements"],
   "homepage": "https://git.typo3.org/TYPO3CMS/Extensions/gridelements.git",
   "license": "GPL-2.0+",
-  "version": "7.0.4",
+  "version": "7.0.5",
   "support": {
     "issues": "https://forge.typo3.org/"
   },
   "require": {
-    "typo3/cms-core": ">=7.6.0,<8.0"
+    "typo3/cms-core": ">=7.6.2,<8.0"
   },
   "autoload": {
     "psr-4": {
@@ -19,7 +19,7 @@
   },
   "extra": {
     "branch-alias": {
-      "dev-master": "7.0.4"
+      "dev-master": "7.0.5"
     }
   }
 }
