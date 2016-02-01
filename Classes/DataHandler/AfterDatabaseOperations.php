@@ -54,6 +54,14 @@ class AfterDatabaseOperations extends AbstractDataHandler
             $this->init($table, $id, $parentObj);
             if (!$this->getTceMain()->isImporting) {
                 $this->saveCleanedUpFieldArray($fieldArray);
+                if (is_array($parentObj->cmdmap['tt_content'])) {
+                    $movedUid = key($parentObj->cmdmap['tt_content']);
+                    if ($movedUid > 0) {
+                        if (isset($parentObj->cmdmap['tt_content'][$movedUid]['move'])) {
+                            $this->checkAndUpdateTranslatedElements($movedUid);
+                        }
+                    }
+                }
             }
         }
     }
