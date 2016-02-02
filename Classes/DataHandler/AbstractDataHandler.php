@@ -198,31 +198,51 @@ abstract class AbstractDataHandler
     }
 
     /**
-     * Function to handle record actions for children of translated grid containers
+     * Function to handle record actions for current or former children of translated grid containers
      *
-     * @param array $containerUpdateArray
-     *
-     * @return void
+     * @param int $uid
      */
-    public function checkAndUpdateTranslatedChildren($containerUpdateArray = array())
+    public function checkAndUpdateTranslatedElements($uid)
     {
-        if (is_array($containerUpdateArray) && !empty($containerUpdateArray)) {
-            foreach ($containerUpdateArray as $containerUid => $newElement) {
-                if ((int)$containerUid > 0) {
-                    $translatedContainers = $this->databaseConnection->exec_SELECTgetRows('uid,sys_language_uid',
-                        'tt_content',
-                        'l18n_parent = ' . (int)$containerUid . BackendUtility::deleteClause('tt_content'));
-                    if (!empty($translatedContainers)) {
-                        foreach ($translatedContainers as $languageArray) {
-                            $targetContainer = BackendUtility::getRecordWSOL('tt_content', $languageArray['uid']);
-                            $fieldArray['tx_gridelements_container'] = $targetContainer['uid'];
-                            $where = 'tx_gridelements_container = ' . (int)$containerUid . ' AND sys_language_uid = ' . (int)$targetContainer['sys_language_uid'];
-                            $this->databaseConnection->exec_UPDATEquery('tt_content', $where, $fieldArray,
-                                'tx_gridelements_container');
-                            $this->getTceMain()->updateRefIndex('tt_content', (int)$targetContainer['uid']);
-                        }
-                    }
+        if ($uid > 0) {
+            $translatedElements = $this->databaseConnection->exec_SELECTgetRows(
+                'uid,tx_gridelements_container,tx_gridelements_columns,sys_language_uid,colPos',
+                'tt_content', 'l18n_parent=' . (int)$uid , '', '', '', 'uid'
+            );
+            if (empty($translatedElements)) {
+                return;
+            }
+            $currentValues = $this->databaseConnection->exec_SELECTgetSingleRow(
+                'tx_gridelements_container,tx_gridelements_columns,colPos',
+                'tt_content', 'uid=' . (int)$uid
+            );
+            if ($currentValues['tx_gridelements_container'] > 0) {
+                $translatedContainers = $this->databaseConnection->exec_SELECTgetRows(
+                    'uid,sys_language_uid',
+                    'tt_content', 'l18n_parent=' . (int)$currentValues['tx_gridelements_container'], '', '', '', 'sys_language_uid'
+                );
+            }
+            $containerUpdateArray = array();
+            foreach ($translatedElements as $translatedUid => $translatedElement) {
+                $updateArray = array();
+                $updateArray['tx_gridelements_container'] = isset($translatedContainers[$translatedElement['sys_language_uid']]) ?
+                    (int)$translatedContainers[$translatedElement['sys_language_uid']]['uid'] : 0;
+                $updateArray['tx_gridelements_columns'] = isset($translatedContainers[$translatedElement['sys_language_uid']]) ?
+                    (int)$currentValues['tx_gridelements_columns'] : 0;
+                $updateArray['colPos'] = (int)$currentValues['colPos'];
+
+                $this->databaseConnection->exec_UPDATEquery('tt_content', 'uid=' . (int)$translatedUid, $updateArray,
+                    'tx_gridelements_container,tx_gridelements_columns.colPos');
+
+                if ($translatedElement['tx_gridelements_container'] !== $updateArray['tx_gridelements_container']) {
+                    $containerUpdateArray[$translatedElement['tx_gridelements_container']] -= 1;
+                    $containerUpdateArray[$updateArray['tx_gridelements_container']] += 1;
+                    $this->getTceMain()->updateRefIndex('tt_content', $translatedElement['tx_gridelements_container']);
+                    $this->getTceMain()->updateRefIndex('tt_content', $updateArray['tx_gridelements_container']);
                 }
+            }
+            if (!empty($containerUpdateArray)) {
+                $this->doGridContainerUpdate($containerUpdateArray);
             }
         }
     }

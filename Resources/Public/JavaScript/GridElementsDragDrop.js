@@ -278,6 +278,9 @@ define(['jquery', 'jquery-ui/sortable', 'jquery-ui/droppable'], function ($) {
 									$draggableElement.detach().css({top: 0, left: 0})
 										.insertAfter($droppableElement.closest(DragDrop.contentIdentifier));
 								}
+								if ($('.t3js-page-lang-column').length) {
+									self.location.reload(true);
+								}
 							} else {
 								self.location.reload(true);
 							}

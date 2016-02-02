@@ -73,7 +73,6 @@ class PreProcessFieldArray extends AbstractDataHandler
      */
     public function processFieldArrayForTtContent(array &$fieldArray)
     {
-        $pid = 0;
         if ($this->getTable() === 'tt_content') {
             $pid = (int)GeneralUtility::_GET('DDinsertNew');
 
