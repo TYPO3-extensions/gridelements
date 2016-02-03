@@ -43,24 +43,19 @@ class AfterDatabaseOperations extends AbstractDataHandler
      *
      * @param array $fieldArray : The array of fields and values that have been saved to the datamap
      * @param string $table : The name of the table the data should be saved to
-     * @param integer $id : The parent uid of either the page or the container we are currently working on
+     * @param integer $uid : the ID of the record
      * @param \TYPO3\CMS\Core\DataHandling\DataHandler $parentObj : The parent object that triggered this hook
      *
      * @return void
      */
-    public function execute_afterDatabaseOperations(&$fieldArray, $table, $id, &$parentObj)
+    public function execute_afterDatabaseOperations(&$fieldArray, $table, $uid, &$parentObj)
     {
         if ($table === 'tt_content') {
-            $this->init($table, $id, $parentObj);
+            $this->init($table, $uid, $parentObj);
             if (!$this->getTceMain()->isImporting) {
                 $this->saveCleanedUpFieldArray($fieldArray);
-                if (is_array($parentObj->cmdmap['tt_content'])) {
-                    $movedUid = key($parentObj->cmdmap['tt_content']);
-                    if ($movedUid > 0) {
-                        if (isset($parentObj->cmdmap['tt_content'][$movedUid]['move'])) {
-                            $this->checkAndUpdateTranslatedElements($movedUid);
-                        }
-                    }
+                if ((int)$uid > 0) {
+                    $this->checkAndUpdateTranslatedElements($uid);
                 }
             }
         }
