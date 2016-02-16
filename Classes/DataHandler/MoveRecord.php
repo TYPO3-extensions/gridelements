@@ -105,15 +105,23 @@ class MoveRecord extends AbstractDataHandler {
 			$originalUid = (int)($movedRecord['_ORIG_uid'] ? $movedRecord['_ORIG_uid'] : $uid);
 
 			$target = explode('x', $cmd['tt_content'][$commandUid]['move']);
-			$column = (int)$target[1];
-			$GLOBALS['TCA']['tt_content']['ctrl']['copyAfterDuplFields'] = str_replace('colPos,', '', $GLOBALS['TCA']['tt_content']['ctrl']['copyAfterDuplFields']);
-			$updateArray = array(
-					'colPos' => $column,
-					'sorting' => $updateFields['sorting'],
-					'tx_gridelements_container' => 0,
-					'tx_gridelements_columns' => 0,
-			);
-
+			if ((int)$target[0] < 0) {
+				$GLOBALS['TCA']['tt_content']['ctrl']['copyAfterDuplFields'] = str_replace('colPos,', '', $GLOBALS['TCA']['tt_content']['ctrl']['copyAfterDuplFields']);
+				$updateArray = array(
+						'colPos' => -1,
+						'sorting' => 0,
+						'tx_gridelements_container' => abs($target[0]),
+						'tx_gridelements_columns' => (int)$target[1],
+				);
+			} else {
+				$GLOBALS['TCA']['tt_content']['ctrl']['copyAfterDuplFields'] = str_replace('colPos,', '', $GLOBALS['TCA']['tt_content']['ctrl']['copyAfterDuplFields']);
+				$updateArray = array(
+						'colPos' => (int)$target[1],
+						'sorting' => 0,
+						'tx_gridelements_container' => 0,
+						'tx_gridelements_columns' => 0,
+				);
+			}
 			$where = '';
 			if (isset($GLOBALS['TCA'][$table]['ctrl']['versioningWS']) && $GLOBALS['TCA'][$table]['ctrl']['versioningWS']) {
 				$where = ' AND t3ver_oid=0';
@@ -146,8 +154,8 @@ class MoveRecord extends AbstractDataHandler {
 	public function execute_moveRecord_afterAnotherElementPostProcess($table, $uid, $destPid, $origDestPid, $moveRec, $updateFields, \TYPO3\CMS\Core\DataHandling\DataHandler &$parentObj) {
 		if ($table === 'tt_content') {
 			$movedRecord = BackendUtility::getRecordWSOL('tt_content', $uid, 'uid,t3ver_oid,t3ver_move_id,l18n_parent');
-			$targetElement = BackendUtility::getRecordWSOL('tt_content', -$origDestPid, 'uid,pid,colPos,tx_gridelements_container,tx_gridelements_columns');
-			$targetContainer = (int)($targetElement['t3ver_oid'] ? $targetElement['t3ver_oid'] : $targetElement['uid']);
+				$targetElement = BackendUtility::getRecordWSOL('tt_content', -$origDestPid, 'uid,pid,colPos,tx_gridelements_container,tx_gridelements_columns');
+				$targetContainer = (int)($targetElement['t3ver_oid'] ? $targetElement['t3ver_oid'] : $targetElement['uid']);
 
 			$this->init($table, $uid, $parentObj);
 			$cmd = GeneralUtility::_GET('cmd');
@@ -160,10 +168,18 @@ class MoveRecord extends AbstractDataHandler {
 				$target = explode('x', $cmd['tt_content'][$commandUid]['move']);
 				$column = (int)$target[1];
 				$GLOBALS['TCA']['tt_content']['ctrl']['copyAfterDuplFields'] = str_replace('colPos,', '', $GLOBALS['TCA']['tt_content']['ctrl']['copyAfterDuplFields']);
+				$sortNumberArray = $this->dataHandler->getSortNumber('tt_content', $originalUid, $targetElement['pid']);
+				if (is_array($sortNumberArray)) {
+					$sortNumber = $sortNumberArray['sortNumber'];
+				} else if (!empty($sortNumberArray)) {
+					$sortNumber = $sortNumberArray;
+				} else {
+					$sortNumber = 0;
+				}
 				if ($uid === -$origDestPid || $commandUid === -$origDestPid || $placeholderUid === -$origDestPid) {
 					$updateArray = array(
 							'colPos' => $column,
-							'sorting' => $updateFields['sorting'],
+							'sorting' => $sortNumber,
 							'tx_gridelements_container' => 0,
 							'tx_gridelements_columns' => 0
 					);
@@ -172,7 +188,7 @@ class MoveRecord extends AbstractDataHandler {
 					$GLOBALS['TCA']['tt_content']['ctrl']['copyAfterDuplFields'] = str_replace('colPos,', '', $GLOBALS['TCA']['tt_content']['ctrl']['copyAfterDuplFields']);
 					$updateArray = array(
 							'colPos' => -1,
-							'sorting' => $updateFields['sorting'],
+							'sorting' => $sortNumber,
 							'tx_gridelements_container' => $targetContainer,
 							'tx_gridelements_columns' => $column
 					);
