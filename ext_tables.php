@@ -17,7 +17,7 @@ if (TYPO3_MODE === 'BE') {
 \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addPlugin(array(
     'LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tt_content.CType_pi1',
     $_EXTKEY . '_pi1',
-    \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath($_EXTKEY) . 'ext_icon.gif'
+    'gridelements-default'
 ), 'CType');
 
 // Hooks
@@ -73,6 +73,7 @@ $GLOBALS['TBE_MODULES_EXT']['xMOD_alt_clickmenu']['extendCMclasses'][] = array('
 $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['typo3/template.php']['preHeaderRenderHook'][] = 'GridElementsTeam\\Gridelements\\Hooks\\PreHeaderRenderHook->main';
 
 $iconRegistry = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Imaging\IconRegistry::class);
-$iconRegistry->registerIcon('gridelements-default', \TYPO3\CMS\Core\Imaging\IconProvider\BitmapIconProvider::class, array(
-    'source' => 'EXT:gridelements/Resources/Public/Backend/Images/new_content_el.gif'
+$iconRegistry->registerIcon('gridelements-default', \TYPO3\CMS\Core\Imaging\IconProvider\SvgIconProvider::class, array(
+    'source' => 'EXT:gridelements/Resources/Public/Icons/gridelements.svg'
 ));
+
