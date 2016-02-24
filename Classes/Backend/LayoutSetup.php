@@ -24,6 +24,7 @@ use TYPO3\CMS\Core\Database\DatabaseConnection;
 use TYPO3\CMS\Core\TypoScript\Parser\TypoScriptParser;
 use TYPO3\CMS\Core\Utility\ArrayUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\Utility\StringUtility;
 use TYPO3\CMS\Lang\LanguageService;
 
 /**
@@ -257,8 +258,19 @@ class LayoutSetup
             if ((int)$colPos === -1 && $item['top_level_layout']) {
                 continue;
             }
-            $icon = $item['iconIdentifier'] ? $item['iconIdentifier'] : 'gridelements-default';
-            $icon = $item['icon'][0] ? $item['icon'][0] : $icon;
+            $icon = 'gridelements-default';
+            if ($item['iconIdentifier']) {
+                $icon = $item['iconIdentifier'];
+            } elseif (!empty($item['icon'])) {
+                if (is_array($item['icon']) && !empty($item['icon'][0])) {
+                    $icon = $item['icon'][0];
+                } else {
+                    $icon = $item['icon'];
+                }
+                if (!StringUtility::beginsWith($icon, '../')) {
+                    $icon = '../' . $icon;
+                }
+            }
             $selectItems[] = array($this->languageService->sL($item['title']), $layoutId, $icon);
         }
 
