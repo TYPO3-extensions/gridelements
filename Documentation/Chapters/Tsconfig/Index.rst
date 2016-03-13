@@ -87,7 +87,7 @@ Grid Elements completely without grid records:
          tx\_gridelements.excludeLayoutIds
 
    Data type
-         List of integers
+         List of strings
 
    Description
          A list of IDs of layouts that should not be available in this branch
