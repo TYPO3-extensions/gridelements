@@ -180,7 +180,7 @@ class Gridelements extends ContentObjectRenderer
                             $child = $GLOBALS['TSFE']->sys_page->getRecordOverlay('tt_content', $child,
                                 $GLOBALS['TSFE']->sys_language_content, $GLOBALS['TSFE']->sys_language_contentOL);
                         }
-                        if ($child !== false) {
+                        if (!empty($child)) {
                             $this->cObj->data['tx_gridelements_view_children'][] = $child;
                             unset($child);
                         }

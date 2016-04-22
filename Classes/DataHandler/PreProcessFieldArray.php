@@ -22,6 +22,7 @@ namespace GridElementsTeam\Gridelements\DataHandler;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Configuration\FlexForm\FlexFormTools;
+use TYPO3\CMS\Core\Utility\ArrayUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -59,7 +60,7 @@ class PreProcessFieldArray extends AbstractDataHandler
         if ($table === 'tt_content') {
             $this->init($table, $id, $parentObj);
             if (!$this->getTceMain()->isImporting) {
-                $this->processFieldArrayForTtContent($fieldArray);
+                $this->processFieldArrayForTtContent($fieldArray, $id);
             }
         }
     }
@@ -68,10 +69,9 @@ class PreProcessFieldArray extends AbstractDataHandler
      * process field array for table tt_content
      *
      * @param array $fieldArray
-     *
-     * @return void
+     * @param int $id
      */
-    public function processFieldArrayForTtContent(array &$fieldArray)
+    public function processFieldArrayForTtContent(array &$fieldArray, $id = 0)
     {
         if ($this->getTable() === 'tt_content') {
             $pid = (int)GeneralUtility::_GET('DDinsertNew');
@@ -81,7 +81,7 @@ class PreProcessFieldArray extends AbstractDataHandler
                 $this->getDefaultFlexformValues($fieldArray);
             }
         }
-        $this->setFieldEntries($fieldArray);
+        $this->setFieldEntries($fieldArray, $id);
     }
 
     /**
@@ -229,10 +229,9 @@ class PreProcessFieldArray extends AbstractDataHandler
      * set initial entries to field array
      *
      * @param array $fieldArray
-     *
-     * @return void
+     * @param int $id
      */
-    public function setFieldEntries(array &$fieldArray)
+    public function setFieldEntries(array &$fieldArray, $id = 0)
     {
         if ((int)$fieldArray['tx_gridelements_container'] > 0 && strpos(key($this->getTceMain()->datamap['tt_content']),
                 'NEW') !== false
@@ -240,33 +239,43 @@ class PreProcessFieldArray extends AbstractDataHandler
             $containerUpdateArray[(int)$fieldArray['tx_gridelements_container']] = 1;
             $this->doGridContainerUpdate($containerUpdateArray);
         }
-        $this->setFieldEntriesForGridContainers($fieldArray);
+        $this->setFieldEntriesForGridContainers($fieldArray, $id);
     }
 
     /**
      * set/override entries to gridelements container
      *
      * @param array $fieldArray
-     *
-     * @return void
+     * @param int $id
      */
-    public function setFieldEntriesForGridContainers(array &$fieldArray)
+    public function setFieldEntriesForGridContainers(array &$fieldArray, $id = 0)
     {
         if ((int)$fieldArray['tx_gridelements_container'] > 0 && isset($fieldArray['colPos']) && (int)$fieldArray['colPos'] !== -1) {
             $fieldArray['colPos'] = -1;
             $fieldArray['tx_gridelements_columns'] = 0;
+            $targetContainer = $this->databaseConnection->exec_SELECTgetSingleRow('sys_language_uid', 'tt_content',
+                'uid=' . (int)$fieldArray['tx_gridelements_container']);
+            if ((int)$targetContainer['sys_language_uid'] > -1) {
+                $fieldArray['sys_language_uid'] = (int)$targetContainer['sys_language_uid'];
+            }
         } else if (isset($fieldArray['tx_gridelements_container']) && (int)$fieldArray['tx_gridelements_container'] === 0 && (int)$fieldArray['colPos'] === -1) {
             $originalContainer = $this->databaseConnection->exec_SELECTgetSingleRow('tx_gridelements_container, sys_language_uid',
-                'tt_content', 'uid=' . $this->getPageUid());
+                'tt_content', 'uid=' . $id);
             $containerUpdateArray[$originalContainer['tx_gridelements_container']] = -1;
             $this->doGridContainerUpdate($containerUpdateArray);
-            $fieldArray['sys_language_uid'] = $originalContainer['sys_language_uid'];
             $fieldArray['colPos'] = $this->checkForRootColumn((int)$this->getPageUid());
             $fieldArray['tx_gridelements_columns'] = 0;
         } else if (!isset($fieldArray['sys_language_uid']) && isset($fieldArray['tx_gridelements_container']) && (int)$fieldArray['tx_gridelements_container'] > 0 && (int)$fieldArray['colPos'] === -1) {
-            $originalContainer = $this->databaseConnection->exec_SELECTgetSingleRow('sys_language_uid', 'tt_content',
+            $targetContainer = $this->databaseConnection->exec_SELECTgetSingleRow('sys_language_uid', 'tt_content',
                 'uid=' . (int)$fieldArray['tx_gridelements_container']);
-            $fieldArray['sys_language_uid'] = (int)$originalContainer['sys_language_uid'];
+            if ((int)$targetContainer['sys_language_uid'] > -1) {
+                $fieldArray['sys_language_uid'] = (int)$targetContainer['sys_language_uid'];
+            }
+        }
+        if ((int)$targetContainer['sys_language_uid'] === -1) {
+            $list = array_flip(GeneralUtility::trimExplode(',', $GLOBALS['TCA']['tt_content']['ctrl']['copyAfterDuplFields'], true));
+            unset($list['sys_language_uid']);
+            $GLOBALS['TCA']['tt_content']['ctrl']['copyAfterDuplFields'] = implode(',', array_flip($list));
         }
     }
 

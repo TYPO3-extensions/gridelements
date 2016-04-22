@@ -115,7 +115,7 @@ define(['jquery', 'TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Backend/Storag
 				$(this).addClass(collapsed ? 'collapsed' : 'expanded');
 			});
 
-			$.extend(true, storedModuleDataPage, collapseConfig);
+			storedModuleDataPage = $.extend(true, storedModuleDataPage, collapseConfig);
 			Storage.Persistent.set('moduleData.page.gridelementsCollapsedColumns', storedModuleDataPage);
 
 		});
@@ -143,7 +143,7 @@ define(['jquery', 'TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Backend/Storag
 			var expandConfig = {};
 			expandConfig[columnKey] = isExpanded ? 1 : 0;
 
-			$.extend(true, storedModuleDataPage, expandConfig);
+			storedModuleDataPage = $.extend(true, storedModuleDataPage, expandConfig);
 			Storage.Persistent.set('moduleData.page.gridelementsCollapsedColumns', storedModuleDataPage).done(function () {
 				$me.data('state', isExpanded ? 'collapsed' : 'expanded');
 			});
@@ -316,7 +316,7 @@ define(['jquery', 'TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Backend/Storag
 				}
 			});
 
-			$.extend(true, storedModuleDataList, expandConfig);
+			storedModuleDataList = $.extend(true, storedModuleDataList, expandConfig);
 			Storage.Persistent.set('moduleData.list.gridelementsExpanded', storedModuleDataList);
 
 		});
@@ -344,7 +344,7 @@ define(['jquery', 'TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Backend/Storag
 			var expandConfig = {};
 			expandConfig[container] = isExpanded ? 0 : 1;
 
-			$.extend(true, storedModuleDataList, expandConfig);
+			storedModuleDataList = $.extend(true, storedModuleDataList, expandConfig);
 			Storage.Persistent.set('moduleData.list.gridelementsExpanded', storedModuleDataList).done(function () {
 				$me.data('state', isExpanded ? 'collapsed' : 'expanded');
 			});

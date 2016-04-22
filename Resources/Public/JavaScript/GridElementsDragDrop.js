@@ -201,9 +201,11 @@ define(['jquery', 'jquery-ui/sortable', 'jquery-ui/droppable'], function ($) {
 					tx_gridelements_container: container,
 					tx_gridelements_columns: gridColumn,
 					tx_gridelements_backend_layout: txGridelementsBackendLayout,
-					sys_language_uid: language,
 					header: TYPO3.l10n.localize('tx_gridelements_js.newcontentelementheader')
 				};
+				if (language > -1) {
+					parameters['data']['tt_content']['NEW234134']['sys_language_uid'] = language;
+				}
 				parameters['DDinsertNew'] = 1;
 				// fire the request, and show a message if it has failed
 				require(['TYPO3/CMS/Backend/AjaxDataHandler'], function (DataHandler) {
@@ -231,11 +233,13 @@ define(['jquery', 'jquery-ui/sortable', 'jquery-ui/droppable'], function ($) {
 						update: {
 							colPos: colPos,
 							tx_gridelements_container: container,
-							tx_gridelements_columns: gridColumn,
-							sys_language_uid: language
+							tx_gridelements_columns: gridColumn
 						}
 					}
 				};
+				if (language > -1) {
+					parameters['cmd']['tt_content'][contentElementUid]['copy']['update']['sys_language_uid'] = language;
+				}
 				if (evt === 'reference') {
 					parameters['reference'] = 1;
 				}
@@ -261,9 +265,11 @@ define(['jquery', 'jquery-ui/sortable', 'jquery-ui/droppable'], function ($) {
 				parameters['data']['tt_content'][contentElementUid] = {
 					colPos: colPos,
 					tx_gridelements_container: container,
-					tx_gridelements_columns: gridColumn,
-					sys_language_uid: language
+					tx_gridelements_columns: gridColumn
 				};
+				if (language > -1) {
+					parameters['data']['tt_content'][contentElementUid]['sys_language_uid'] = language;
+				}
 				parameters['cmd']['tt_content'][contentElementUid] = {move: targetPid};
 				// fire the request, and show a message if it has failed
 				require(['TYPO3/CMS/Backend/AjaxDataHandler'], function (DataHandler) {

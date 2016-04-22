@@ -1,5 +1,3 @@
-
-
 .. ==================================================
 .. FOR YOUR INFORMATION
 .. --------------------------------------------------
@@ -34,21 +32,6 @@ These are the other TSconfig option you will get to even configure
 Grid Elements completely without grid records:
 
 .. ### BEGIN~OF~TABLE ###
-
-.. container:: table-row
-
-   Property
-         Property:
-
-   Data type
-         Data type:
-
-   Description
-         Description:
-
-   Default
-         N/A
-
 
 .. container:: table-row
 
@@ -104,7 +87,7 @@ Grid Elements completely without grid records:
          tx\_gridelements.excludeLayoutIds
 
    Data type
-         List of integers
+         List of strings
 
    Description
          A list of IDs of layouts that should not be available in this branch
@@ -131,5 +114,3 @@ Grid Elements completely without grid records:
 
 
 .. ###### END~OF~TABLE ######
-
-
