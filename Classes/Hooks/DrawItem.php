@@ -237,7 +237,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
                 $shortcutItem = trim($shortcutItem);
                 if (strpos($shortcutItem, 'pages_') !== false) {
                     $this->collectContentDataFromPages($shortcutItem, $collectedItems, $row['recursive'], $showHidden,
-                        $deleteClaus, $row['uid']);
+                        $deleteClause, $row['uid']);
                 } else if (strpos($shortcutItem, '_') === false || strpos($shortcutItem, 'tt_content_') !== false) {
                     $this->collectContentData($shortcutItem, $collectedItems, $showHidden, $deleteClause, $row['uid']);
                 }
