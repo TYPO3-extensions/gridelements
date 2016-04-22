@@ -164,13 +164,26 @@ define(['jquery', 'jquery-ui/sortable', 'jquery-ui/droppable'], function ($) {
 
 		// send an AJAX requst via the AjaxDataHandler
 		var contentElementUid = $pasteAction ? $draggableElement : parseInt($draggableElement.data('uid'));
-		var newContentElementType = '';
-		var txGridelementsBackendLayout = '';
+		var newContentElementOnclick = '';
+		var newContentElementDefaultValues = {};
 		if (!$pasteAction && $draggableElement.closest(DragDrop.newContentElementWizardIdentifier).length) {
-			newContentElementType = $draggableElement.find(DragDrop.newCTypeIdentifier).data('ctype');
-			txGridelementsBackendLayout = $draggableElement.find(DragDrop.newCTypeIdentifier).data('gridtype');
+			// all information about CType, list_type and other default values has to be fetched from onclick
+			newContentElementOnclick = $draggableElement.find('a:first').attr('onclick');
+			if (typeof newContentElementOnclick !== undefined) {
+				// this is the relevant part defining the default values for tt_content
+				// while creating content with the new element wizard the usual way
+				newContentElementOnclick = unescape(newContentElementOnclick.split('document.editForm.defValues.value=unescape(\'%26')[1].split('\');')[0]);
+				if (newContentElementOnclick.length) {
+					// if there are any default values, they have to be reformatted to an object/array
+					// this can be passed on as parameters during the onDrop action after dragging in new content
+					// CType is available for each element in the wizard, so this will be the identifier later on
+					newContentElementDefaultValues = $.parseJSON(
+						'{' + newContentElementOnclick.replace(/\&/g, '",').replace(/defVals\[tt_content\]\[/g, '"').replace(/\]\=/g, '":"') + '"}'
+					);
+				}
+			}
 		}
-		if (contentElementUid > 0 || newContentElementType.length) {
+		if (contentElementUid > 0 || newContentElementDefaultValues.CType) {
 			var parameters = {};
 			// add the information about a possible column position change
 			var targetFound = $droppableElement.closest(DragDrop.contentIdentifier).data('uid');
@@ -193,20 +206,23 @@ define(['jquery', 'jquery-ui/sortable', 'jquery-ui/droppable'], function ($) {
 			}
 			parameters['cmd'] = {tt_content: {}};
 			parameters['data'] = {tt_content: {}};
-			if (newContentElementType.length) {
-				parameters['data']['tt_content']['NEW234134'] = {
-					pid: targetPid,
-					colPos: colPos,
-					CType: newContentElementType,
-					tx_gridelements_container: container,
-					tx_gridelements_columns: gridColumn,
-					tx_gridelements_backend_layout: txGridelementsBackendLayout,
-					header: TYPO3.l10n.localize('tx_gridelements_js.newcontentelementheader')
-				};
+			if (newContentElementDefaultValues.CType) {
+				parameters['data']['tt_content']['NEW234134'] = newContentElementDefaultValues;
+				parameters['data']['tt_content']['NEW234134']['pid'] = targetPid;
+				parameters['data']['tt_content']['NEW234134']['colPos'] = colPos;
+				parameters['data']['tt_content']['NEW234134']['tx_gridelements_container'] = container;
+				parameters['data']['tt_content']['NEW234134']['tx_gridelements_columns'] = gridColumn;
+				parameters['data']['tt_content']['NEW234134']['sys_language_uid'] = language;
+
+				if (!parameters['data']['tt_content']['NEW234134']['header']) {
+					parameters['data']['tt_content']['NEW234134']['header'] = TYPO3.l10n.localize('tx_gridelements_js.newcontentelementheader');
+				}
+
 				if (language > -1) {
 					parameters['data']['tt_content']['NEW234134']['sys_language_uid'] = language;
 				}
 				parameters['DDinsertNew'] = 1;
+
 				// fire the request, and show a message if it has failed
 				require(['TYPO3/CMS/Backend/AjaxDataHandler'], function (DataHandler) {
 					DataHandler.process(parameters).done(function (result) {
