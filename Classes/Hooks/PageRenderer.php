@@ -180,7 +180,7 @@ class PageRenderer {
 						top.DDtoken = '" . $formprotection->generateToken('editRecord') . "';
 						top.DDpid = '" . (int)GeneralUtility::_GP('id') . "';
 						top.DDclipboardfilled = '" . ($clipBoardHasContent ? $clipBoardHasContent : 'false') . "';
-						top.pasteReferenceAllowed = '" . ($GLOBALS['BE_USER']->checkAuthMode('tt_content', 'CType', 'shortcut', 'explicitAllow') ? 'true' : 'false') . "';
+						top.pasteReferenceAllowed = '" . ($GLOBALS['BE_USER']->checkAuthMode('tt_content', 'CType', 'shortcut', $GLOBALS['TYPO3_CONF_VARS']['BE']['explicitADmode']) ? 'true' : 'false') . "';
 						top.newElementWizard = '" . ($modTSconfig['properties']['disableNewContentElementWizard'] ? 'false' : 'true') . "';
 						top.DDclipboardElId = '" . $intFirstCBEl . "';
 					" . // replace placeholder for detail info on draggables

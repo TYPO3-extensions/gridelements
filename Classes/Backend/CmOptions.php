@@ -34,7 +34,7 @@ class CmOptions {
 		}
 
 		// add "paste reference after" if user is allowed to use CType shortcut
-		if ($GLOBALS['BE_USER']->checkAuthMode('tt_content', 'CType', 'shortcut', 'explicitAllow')) {
+		if ($GLOBALS['BE_USER']->checkAuthMode('tt_content', 'CType', 'shortcut', $GLOBALS['TYPO3_CONF_VARS']['BE']['explicitADmode'])) {
 			$parkItem = $menuItems['pasteafter'];
 			if ($parkItem) {
 				unset($menuItems['pasteafter']);
