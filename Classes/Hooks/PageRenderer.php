@@ -139,7 +139,7 @@ class PageRenderer implements SingletonInterface
             top.pageColumnsAllowedCTypes = " . json_encode($allowedContentTypesClassesByColPos) . ";
             top.pageColumnsAllowedGridTypes = " . json_encode($allowedGridTypesClassesByColPos) . ";
             top.pasteReferenceAllowed = " . ($this->getBackendUser()->checkAuthMode('tt_content', 'CType', 'shortcut',
-                    'explicitAllow') ? 'true' : 'false') . ";
+                    $GLOBALS['TYPO3_CONF_VARS']['BE']['explicitADmode']) ? 'true' : 'false') . ";
             top.skipDraggableDetails = " . ($this->getBackendUser()->uc['dragAndDropHideNewElementWizardInfoOverlay'] ? 'true' : 'false') . ";
             top.backPath = '" . $GLOBALS['BACK_PATH'] . "';
             top.browserUrl = '" . BackendUtility::getModuleUrl('wizard_element_browser') . "'";
@@ -155,7 +155,7 @@ class PageRenderer implements SingletonInterface
                             Icon::SIZE_SMALL)->render() . '</a>') . ";
                     top.pasteAfterLinkTemplate = " . json_encode('<a data-pasteitem="' . $pasteItem . '" data-pastetitle="' . $pasteTitle . '"  class="t3js-paste t3js-paste' . $copyMode . ' t3js-paste-after btn btn-default" title="' . $this->getLanguageService()->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tx_gridelements_js.pasteafter') . '">' . $iconFactory->getIcon('actions-document-paste-into',
                             Icon::SIZE_SMALL)->render() . '</a>') . ";";
-                if ($this->getBackendUser()->checkAuthMode('tt_content', 'CType', 'shortcut', 'explicitAllow')) {
+                if ($this->getBackendUser()->checkAuthMode('tt_content', 'CType', 'shortcut', $GLOBALS['TYPO3_CONF_VARS']['BE']['explicitADmode'])) {
                     $pAddExtOnReadyCode .= "
                         top.pasteReferencesAllowed = true;";
                 }
