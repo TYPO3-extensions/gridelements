@@ -59,34 +59,33 @@ class ProcessCmdmap extends AbstractDataHandler
 
         if ($command === 'copy' && $reference === 1 && !$commandIsProcessed && $table === 'tt_content' && !$this->getTceMain()->isImporting) {
 
-            $copyAfterDuplicationFields = $GLOBALS['TCA']['tt_content']['ctrl']['copyAfterDuplFields'];
-            $GLOBALS['TCA']['tt_content']['ctrl']['copyAfterDuplFields'] .= ',tx_gridelements_container,tx_gridelements_columns';
-
-            $overrideArray = array(
+            $dataArray = array(
+                'pid' => $value,
                 'CType' => 'shortcut',
                 'records' => $id,
-                'header' => 'Reference',
+                'header' => 'Reference'
             );
 
             // used for overriding container and column with real target values
             if (is_array($pasteUpdate) && !empty($pasteUpdate)) {
-                $overrideArray = array_merge($overrideArray, $pasteUpdate);
+                $dataArray = array_merge($dataArray, $pasteUpdate);
             }
 
             $clipBoard = GeneralUtility::_GET('CB');
             if (!empty($clipBoard)) {
                 $updateArray = $clipBoard['update'];
                 if (!empty($updateArray)) {
-                    $overrideArray = array_merge($overrideArray, $updateArray);
+                    $dataArray = array_merge($dataArray, $updateArray);
                 }
             }
 
+            $data = array();
+            $data['tt_content']['NEW234134'] = $dataArray;
 
-            $this->getTceMain()->copyRecord($table, $id, $value, 1, $overrideArray);
+            $this->getTceMain()->start($data, array());
+            $this->getTceMain()->process_datamap();
 
             $commandIsProcessed = true;
-
-            $GLOBALS['TCA']['tt_content']['ctrl']['copyAfterDuplFields'] = $copyAfterDuplicationFields;
 
         }
 
