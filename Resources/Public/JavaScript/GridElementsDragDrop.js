@@ -157,6 +157,8 @@ define(['jquery', 'jquery-ui/sortable', 'jquery-ui/droppable'], function ($) {
 			gridColumn = DragDrop.getGridColumnPositionForElement($droppableElement);
 		if (gridColumn !== false && gridColumn !== '') {
 			newColumn = -1;
+		} else {
+			gridColumn = 0;
 		}
 
 		$droppableElement.removeClass(DragDrop.dropPossibleHoverClass);
