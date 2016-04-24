@@ -21,6 +21,7 @@ namespace GridElementsTeam\Gridelements\Helper;
 
 use TYPO3\CMS\Core\Database\DatabaseConnection;
 use TYPO3\CMS\Core\SingletonInterface;
+use TYPO3\CMS\Core\Utility\DebugUtility;
 
 /**
  * Gridelements helper class
