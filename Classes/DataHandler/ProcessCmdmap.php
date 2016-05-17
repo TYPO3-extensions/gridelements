@@ -90,5 +90,13 @@ class ProcessCmdmap extends AbstractDataHandler
 
         }
 
+        if ($command === 'delete' && $table === 'tt_content') {
+            $containerUpdateArray = array();
+            $originalContainer = $this->databaseConnection->exec_SELECTgetSingleRow('tx_gridelements_container, sys_language_uid',
+                'tt_content', 'uid=' . $id);
+            $containerUpdateArray[$originalContainer['tx_gridelements_container']] = -1;
+            $this->doGridContainerUpdate($containerUpdateArray);
+        }
+
     }
 }

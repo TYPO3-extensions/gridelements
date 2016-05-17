@@ -387,7 +387,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
         $originalPidSelect = $parentObject->pidSelect;
         $specificIds = $this->helper->getSpecificIds($row);
 
-        $parentObject->pidSelect = 'pid = ' . $row['pid'];
+        $parentObject->pidSelect = 'pid = ' . $specificIds['pid'];
 
         if (!$parentObject->tt_contentConfig['languageMode']) {
             $showLanguage = ' AND (sys_language_uid = -1 OR sys_language_uid=' . $parentObject->tt_contentConfig['sys_language_uid'] . ')';
@@ -519,14 +519,15 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
                         && (!$this->checkIfTranslationsExistInLanguage($items, $row['sys_language_uid'], $parentObject))
                     ) {
                         // New content element:
+                        $specificIds = $this->helper->getSpecificIds($itemRow);
                         if ($parentObject->option_newWizard) {
                             $urlParameters = [
-                                'id' => $itemRow['pid'],
+                                'id' => $parentObject->id,
                                 'sys_language_uid' => $itemRow['sys_language_uid'],
                                 'tx_gridelements_allowed' => $values['allowed'],
                                 'tx_gridelements_allowed_grid_types' => $values['allowedGridTypes'],
                                 'colPos' => -1,
-                                'uid_pid' => -$itemRow['uid'],
+                                'uid_pid' => -$specificIds['uid'],
                                 'returnUrl' => GeneralUtility::getIndpEnv('REQUEST_URI')
                             ];
                             $url = BackendUtility::getModuleUrl('new_content_element', $urlParameters);
@@ -534,7 +535,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
                             $urlParameters = [
                                 'edit' => [
                                     'tt_content' => [
-                                        -$itemRow['uid'] => 'new'
+                                        -$specificIds['uid'] => 'new'
                                     ]
                                 ],
                                 'defVals' => [

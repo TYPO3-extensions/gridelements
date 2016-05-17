@@ -233,22 +233,29 @@ class PreProcessFieldArray extends AbstractDataHandler
      */
     public function setFieldEntries(array &$fieldArray, $id = 0)
     {
-        if ((int)$fieldArray['tx_gridelements_container'] > 0 && strpos(key($this->getTceMain()->datamap['tt_content']),
-                'NEW') !== false
-        ) {
-            $containerUpdateArray[(int)$fieldArray['tx_gridelements_container']] = 1;
+        $containerUpdateArray = array();
+        if (isset($fieldArray['tx_gridelements_container'])) {
+            if ((int)$fieldArray['tx_gridelements_container'] > 0) {
+                $containerUpdateArray[(int)$fieldArray['tx_gridelements_container']] = 1;
+            }
+            if ((int)$fieldArray['tx_gridelements_container'] === 0) {
+                $originalContainer = $this->databaseConnection->exec_SELECTgetSingleRow('tx_gridelements_container, sys_language_uid',
+                    'tt_content', 'uid=' . $id);
+                $containerUpdateArray[$originalContainer['tx_gridelements_container']] = -1;
+            }
+        }
+        if (!empty($containerUpdateArray)) {
             $this->doGridContainerUpdate($containerUpdateArray);
         }
-        $this->setFieldEntriesForGridContainers($fieldArray, $id);
+        $this->setFieldEntriesForGridContainers($fieldArray);
     }
 
     /**
      * set/override entries to gridelements container
      *
      * @param array $fieldArray
-     * @param int $id
      */
-    public function setFieldEntriesForGridContainers(array &$fieldArray, $id = 0)
+    public function setFieldEntriesForGridContainers(array &$fieldArray)
     {
         if ((int)$fieldArray['tx_gridelements_container'] > 0 && isset($fieldArray['colPos']) && (int)$fieldArray['colPos'] !== -1) {
             $fieldArray['colPos'] = -1;
@@ -259,10 +266,6 @@ class PreProcessFieldArray extends AbstractDataHandler
                 $fieldArray['sys_language_uid'] = (int)$targetContainer['sys_language_uid'];
             }
         } else if (isset($fieldArray['tx_gridelements_container']) && (int)$fieldArray['tx_gridelements_container'] === 0 && (int)$fieldArray['colPos'] === -1) {
-            $originalContainer = $this->databaseConnection->exec_SELECTgetSingleRow('tx_gridelements_container, sys_language_uid',
-                'tt_content', 'uid=' . $id);
-            $containerUpdateArray[$originalContainer['tx_gridelements_container']] = -1;
-            $this->doGridContainerUpdate($containerUpdateArray);
             $fieldArray['colPos'] = $this->checkForRootColumn((int)$this->getPageUid());
             $fieldArray['tx_gridelements_columns'] = 0;
         } else if (!isset($fieldArray['sys_language_uid']) && isset($fieldArray['tx_gridelements_container']) && (int)$fieldArray['tx_gridelements_container'] > 0 && (int)$fieldArray['colPos'] === -1) {
