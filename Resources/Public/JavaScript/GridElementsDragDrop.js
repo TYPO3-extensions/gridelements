@@ -255,11 +255,11 @@ define(['jquery', 'jquery-ui/sortable', 'jquery-ui/droppable'], function ($) {
 						}
 					}
 				};
-				if (language > -1) {
-					parameters['cmd']['tt_content'][contentElementUid]['copy']['update']['sys_language_uid'] = language;
-				}
 				if (evt === 'reference') {
 					parameters['reference'] = 1;
+				}
+				if (language > -1) {
+					parameters['cmd']['tt_content'][contentElementUid]['copy']['update']['sys_language_uid'] = language;
 				}
 				// fire the request, and show a message if it has failed
 				require(['TYPO3/CMS/Backend/AjaxDataHandler'], function (DataHandler) {

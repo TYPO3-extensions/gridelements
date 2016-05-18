@@ -199,6 +199,7 @@ abstract class AbstractDataHandler
 
     /**
      * Function to handle record actions for current or former children of translated grid containers
+     * as well as translated references
      *
      * @param int $uid
      */
@@ -206,7 +207,7 @@ abstract class AbstractDataHandler
     {
         if ($uid > 0) {
             $translatedElements = $this->databaseConnection->exec_SELECTgetRows(
-                'uid,tx_gridelements_container,tx_gridelements_columns,sys_language_uid,colPos',
+                'uid,tx_gridelements_container,tx_gridelements_columns,sys_language_uid,colPos,l18n_parent',
                 'tt_content', 'l18n_parent=' . (int)$uid , '', '', '', 'uid'
             );
             if (empty($translatedElements)) {
@@ -231,13 +232,15 @@ abstract class AbstractDataHandler
                     (int)$currentValues['tx_gridelements_columns'] : 0;
                 $updateArray['colPos'] = (int)$currentValues['colPos'];
 
-                $this->databaseConnection->exec_UPDATEquery('tt_content', 'uid=' . (int)$translatedUid, $updateArray,
+                $this->databaseConnection->exec_UPDATEquery('tt_content', 'uid=' . (int)$translatedUid,
+                    $updateArray,
                     'tx_gridelements_container,tx_gridelements_columns.colPos');
 
                 if ($translatedElement['tx_gridelements_container'] !== $updateArray['tx_gridelements_container']) {
                     $containerUpdateArray[$translatedElement['tx_gridelements_container']] -= 1;
                     $containerUpdateArray[$updateArray['tx_gridelements_container']] += 1;
-                    $this->getTceMain()->updateRefIndex('tt_content', $translatedElement['tx_gridelements_container']);
+                    $this->getTceMain()->updateRefIndex('tt_content',
+                        $translatedElement['tx_gridelements_container']);
                     $this->getTceMain()->updateRefIndex('tt_content', $updateArray['tx_gridelements_container']);
                 }
             }
