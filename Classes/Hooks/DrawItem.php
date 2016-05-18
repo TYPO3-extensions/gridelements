@@ -354,11 +354,17 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
         $showHidden,
         $deleteClause
     ) {
+        $collectedItems = $this->collectItemsForColumns($parentObject, $colPosValues, $row, $showHidden, $deleteClause);
         foreach ($colPosValues as $colPos => $values) {
             // first we have to create the column content separately for each column
             // so we can check for the first and the last element to provide proper sorting
             if ($singleColumn === false) {
-                $items = $this->collectItemsForColumn($parentObject, $colPos, $row, $showHidden, $deleteClause);
+                $items = array();
+                foreach ($collectedItems as $item) {
+                    if ((int)$item['tx_gridelements_columns'] === $colPos) {
+                        $items[] = $item;
+                    }
+                }
             } else {
                 $items = array();
             }
@@ -374,15 +380,16 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
      * Collects tt_content data from a single tt_content element
      *
      * @param PageLayoutView $parentObject : The paren object that triggered this hook
-     * @param int $colPos : The column position to collect the items for
+     * @param array $colPosValues : The column position to collect the items for
      * @param array $row : The current data row for the container item
      * @param string $showHidden : query String containing enable fields
      * @param string $deleteClause : query String to check for deleted items
      *
      * @return array collected items for the given column
      */
-    public function collectItemsForColumn(PageLayoutView $parentObject, &$colPos, &$row, &$showHidden, &$deleteClause)
+    public function collectItemsForColumns(PageLayoutView $parentObject, &$colPosValues, &$row, &$showHidden, &$deleteClause)
     {
+        $colPosList = implode(',', array_keys($colPosValues));
         // Due to the pid being "NOT USED" in makeQueryArray we have to set pidSelect here
         $originalPidSelect = $parentObject->pidSelect;
         $specificIds = $this->helper->getSpecificIds($row);
@@ -401,7 +408,9 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
         if ($this->helper->getBackendUser()->workspace > 0 && $row['t3ver_wsid'] > 0) {
             $where .= 'AND t3ver_wsid = ' . (int)$row['t3ver_wsid'];
         }
-        $where .= ' AND colPos = -1 AND tx_gridelements_container IN (' . (int)$row['uid'] . ',' . $specificIds['uid'] . ') AND tx_gridelements_columns = ' . $colPos . $showHidden . $deleteClause . $showLanguage;
+        $where .= ' AND colPos = -1 
+        AND tx_gridelements_container IN (' . (int)$row['uid'] . ',' . $specificIds['uid'] . ') 
+        AND tx_gridelements_columns IN (' . $colPosList . ')' . $showHidden . $deleteClause . $showLanguage;
 
         $queryParts = $parentObject->makeQueryArray('tt_content', $row['pid'], $where);
 
