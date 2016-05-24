@@ -240,8 +240,10 @@ class PreProcessFieldArray extends AbstractDataHandler
             }
             if ((int)$fieldArray['tx_gridelements_container'] === 0) {
                 $originalContainer = $this->databaseConnection->exec_SELECTgetSingleRow('tx_gridelements_container, sys_language_uid',
-                    'tt_content', 'uid=' . $id);
-                $containerUpdateArray[$originalContainer['tx_gridelements_container']] = -1;
+                    'tt_content', 'uid=' . (int)$id);
+                if (!empty($originalContainer)) {
+                    $containerUpdateArray[$originalContainer['tx_gridelements_container']] = -1;
+                }
             }
         }
         if (!empty($containerUpdateArray)) {
