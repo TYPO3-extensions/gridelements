@@ -25,6 +25,7 @@ use GridElementsTeam\Gridelements\DataHandler\PreProcessFieldArray;
 use TYPO3\CMS\Core\Database\DatabaseConnection;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Backend\Utility\BackendUtility;
 
 /**
  * Class/Function which offers TCE main hook functions.
@@ -147,6 +148,121 @@ class DataHandler implements SingletonInterface
     public function getDatabaseConnection()
     {
         return $this->databaseConnection;
+    }
+
+    /**
+     * fixing translation bug at grid elements
+     *
+     * @param \TYPO3\CMS\Core\DataHandling\DataHandler $tcemainObj
+     */
+    public function processCmdmap_afterFinish	(\TYPO3\CMS\Core\DataHandling\DataHandler $tcemainObj){
+
+	$getArray = GeneralUtility::_GET();
+	// we need only action 'copyFromLanguage' and 'localize' (not from default language)
+	if ($getArray['action'] == "copyFromLanguage" ||
+		($getArray['action'] == "localize" && $getArray['srcLanguageId'] > 0)){
+
+	    if (count($getArray['uidList']) > 0){
+
+		// check all CE at list, that were localized
+		foreach ($getArray['uidList'] as $origCeUid){
+
+		    // get uid of localized records
+		    $localizedCeUid = $tcemainObj->copyMappingArray_merged['tt_content'][$origCeUid];
+		    if (empty($localizedCeUid)){
+			continue;
+		    }
+		    $this->localizeChildrenRecordsForGridElement($getArray['action'],
+			    $origCeUid,
+			    $localizedCeUid,
+			    $tcemainObj->copyMappingArray_merged['tt_content'],
+			    $getArray['srcLanguageId']);
+		}
+	    }
+	}
+    }
+
+    /**
+     * localize children records for grid element and fix headers for other CE
+     *
+     * @param string	$action - name of action, like 'localize' or 'copyFromLanguage'
+     * @param integer	$origCeUid - uid of original CE
+     * @param integer	$localizedCeUid - uid of localized CE
+     * @param array	$localizeMapping - array with relations between CE original --> localized
+     * @param integer	$sourceLanguageUid - uid of original language
+     *
+     * @return void
+     */
+    private function localizeChildrenRecordsForGridElement (
+	    $action,
+	    $origCeUid,
+	    $localizedCeUid,
+	    $localizeMapping,
+	    $sourceLanguageUid){
+
+	$localizedRecord = BackendUtility::getRecord('tt_content', $localizedCeUid,
+		'uid,pid,Ctype,sys_language_uid,tx_gridelements_children,tx_gridelements_container,l18n_parent');
+
+	// check if this record is gridelement and has related records (childrens)
+	if ($localizedRecord['Ctype'] == "gridelements_pi1" && $localizedRecord['tx_gridelements_children'] > 0){
+
+	    // try to find childrens of this record
+	    $childrens = BackendUtility::getRecordsByField('tt_content',
+		    'tx_gridelements_container',
+		    $localizedRecord['uid'],'','','',
+		    $localizedRecord['tx_gridelements_children']);
+
+	    if (count($childrens) > 0){
+		foreach($childrens as $record){
+		    // $key - 'original' record, for children
+		    $key = array_search($record['uid'], $localizeMapping);
+		    if ($key == FALSE){
+			continue;
+		    }
+
+		    // define l18n_parent for children records
+		    $l18nparent = 0;
+		    if ($action == 'localize'){
+			if ($sourceLanguageUid > 0){
+			    $tmpRecord = BackendUtility::getRecord('tt_content', $record['uid'], 'l18n_parent');
+			    $l18nparent = $tmpRecord['l18n_parent'];
+			} else {
+			    $l18nparent = $key;
+			}
+		    }
+
+		    // update children records
+		    $this->getDatabaseConnection()->sql_query('UPDATE tt_content '
+			    . 'SET sys_language_uid = '. $localizedRecord['sys_language_uid']. ', t3_origuid = '. $key
+			    . ', l18n_parent = '. $l18nparent
+			    . ' WHERE uid = '. $record['uid']
+			);
+
+		    $this->localizeChildrenRecordsForGridElement($action,
+			    $key,
+			    $record['uid'],
+			    $localizeMapping,
+			    $sourceLanguageUid);
+		}
+	    }
+
+	    // define l18n_parent for grid container record
+	    $l18nparent = 0;
+	    if ($action == 'localize'){
+		if ($sourceLanguageUid > 0){
+		    $tmpRecord = BackendUtility::getRecord('tt_content', $origCeUid, 'l18n_parent');
+		    $l18nparent = $tmpRecord['l18n_parent'];
+		} else {
+		    $l18nparent = $origCeUid;
+		}
+	    }
+
+	    // update grid container record
+	    $this->getDatabaseConnection()->sql_query('UPDATE tt_content SET '
+		    . 'l18n_parent = '. $l18nparent . ', t3_origuid = '. $origCeUid
+		    . ' WHERE uid = '. $localizedRecord['uid']
+		);
+	}
     }
 
 }
