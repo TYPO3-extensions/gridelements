@@ -21,7 +21,9 @@ use TYPO3\CMS\Backend\Template\DocumentTemplate;
 use TYPO3\CMS\Backend\Template\ModuleTemplate;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Backend\View\BackendLayoutView;
+use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Database\DatabaseConnection;
+use TYPO3\CMS\Core\FormProtection\FormProtectionFactory;
 use TYPO3\CMS\Core\Imaging\Icon;
 use TYPO3\CMS\Core\Imaging\IconFactory;
 use TYPO3\CMS\Core\Messaging\FlashMessage;
@@ -29,6 +31,7 @@ use TYPO3\CMS\Core\Messaging\FlashMessageService;
 use TYPO3\CMS\Core\Type\Bitmask\Permission;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\Utility\HttpUtility;
 use TYPO3\CMS\Frontend\Page\PageRepository;
 use TYPO3\CMS\Recordlist\RecordList\RecordListHookInterface;
 
@@ -1817,7 +1820,7 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
             } elseif ($fCol == '_REF_') {
                 $theData[$fCol] = $this->createReferenceHtml($table, $row['uid']);
             } elseif ($fCol == '_CONTROL_') {
-                $theData[$fCol] = $this->makeControl($table, $row, $level);
+                $theData[$fCol] = $this->makeControl($table, $row);
             } elseif ($fCol == '_CLIPBOARD_') {
                 $theData[$fCol] = $this->makeClip($table, $row);
             } elseif ($fCol == '_LOCALIZATION_') {
@@ -2100,10 +2103,11 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
      */
     public function pasteUrl($table, $uid, $setRedirect = true, array $update = null)
     {
+        $formProtection = FormProtectionFactory::get();
         return ($table == '_FILE' ? BackendUtility::getModuleUrl('tce_file',
             array()) : BackendUtility::getModuleUrl('tce_db',
             array())) . ($setRedirect ? '&redirect=' . rawurlencode(GeneralUtility::linkThisScript(array('CB' => ''))) : '') . '&vC=' . $this->getBackendUserAuthentication()->veriCode() . '&prErr=1&uPT=1' . '&CB[paste]=' . rawurlencode($table . '|' . $uid) . '&CB[pad]=' . $this->clipObj->current . (is_array($update) ? GeneralUtility::implodeArrayForUrl('CB[update]',
-            $update) : '') . BackendUtility::getUrlToken('tceAction');
+            $update) : '') . '&formToken=' . $formProtection->generateToken('tceAction');
     }
 
     /**
@@ -2612,7 +2616,7 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
     }
 
     /**
-     * @return DocumentTemplate
+     * @return \int[]
      */
     public function getExpandedGridelements()
     {
