@@ -26,7 +26,10 @@ use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Backend\View\PageLayoutView;
 use TYPO3\CMS\Backend\View\PageLayoutViewDrawItemHookInterface;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
+use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\DatabaseConnection;
+use TYPO3\CMS\Core\Database\Query\Restriction\BackendWorkspaceRestriction;
+use TYPO3\CMS\Core\Database\Query\Restriction\DefaultRestrictionContainer;
 use TYPO3\CMS\Core\Database\QueryGenerator;
 use TYPO3\CMS\Core\Database\ReferenceIndex;
 use TYPO3\CMS\Core\Imaging\Icon;
@@ -129,7 +132,6 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
     {
         if ($row['CType']) {
             $showHidden = $parentObject->tt_contentConfig['showHidden'] ? '' : BackendUtility::BEenableFields('tt_content');
-            $deleteClause = BackendUtility::deleteClause('tt_content');
 
             if ($this->helper->getBackendUser()->uc['hideContentPreview']) {
                 $itemContent = '';
@@ -139,14 +141,14 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
             switch ($row['CType']) {
                 case 'gridelements_pi1':
                     $drawItem = false;
-                    $itemContent .= $this->renderCTypeGridelements($parentObject, $row, $showHidden, $deleteClause);
+                    $itemContent .= $this->renderCTypeGridelements($parentObject, $row, $showHidden);
                     $refIndexObj = GeneralUtility::makeInstance(ReferenceIndex::class);
                     /* @var $refIndexObj \TYPO3\CMS\Core\Database\ReferenceIndex */
                     $refIndexObj->updateRefIndexTable('tt_content', $row['uid']);
                     break;
                 case 'shortcut':
                     $drawItem = false;
-                    $itemContent .= $this->renderCTypeShortcut($parentObject, $row, $showHidden, $deleteClause);
+                    $itemContent .= $this->renderCTypeShortcut($parentObject, $row, $showHidden, BackendUtility::deleteClause('tt_content'));
                     break;
             }
         }
@@ -160,11 +162,10 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
      * @param PageLayoutView $parentObject : The parent object that triggered this hook
      * @param array $row : The current data row for this item
      * @param string $showHidden : query String containing enable fields
-     * @param string $deleteClause : query String to check for deleted items
      *
      * @return string $itemContent: The HTML output for elements of the CType gridelements_pi1
      */
-    public function renderCTypeGridelements(PageLayoutView $parentObject, &$row, &$showHidden, &$deleteClause)
+    public function renderCTypeGridelements(PageLayoutView $parentObject, &$row, &$showHidden)
     {
         $head = array();
         $gridContent = array();
@@ -195,14 +196,14 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
             $this->setMultipleColPosValues($parserRows, $colPosValues);
         } else {
             $singleColumn = true;
-            $this->setSingleColPosItems($parentObject, $colPosValues, $gridElement, $showHidden, $deleteClause);
+            $this->setSingleColPosItems($parentObject, $colPosValues, $gridElement, $showHidden);
         }
 
         // if there are any columns, lets build the content for them
         $outerTtContentDataArray = $parentObject->tt_contentData['nextThree'];
         if (!empty($colPosValues)) {
             $this->renderGridColumns($parentObject, $colPosValues, $gridContent, $gridElement, $editUidList,
-                $singleColumn, $head, $showHidden, $deleteClause);
+                $singleColumn, $head, $showHidden);
         }
         $parentObject->tt_contentData['nextThree'] = $outerTtContentDataArray;
 
@@ -300,8 +301,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
      * @param PageLayoutView $parentObject : The parent object that triggered this hook
      * @param array $colPosValues : The column positions that have been found for that layout
      * @param array $row : The current data row for the container item
-     * @param string $showHidden : query String containing enable fields
-     * @param string $deleteClause : query String to check for deleted items
+     * @param string $showHidden : Is evaluated only in boolean context
      *
      * @return array collected items for this column
      */
@@ -309,25 +309,32 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
         PageLayoutView $parentObject,
         &$colPosValues,
         &$row,
-        $showHidden,
-        $deleteClause
+        $showHidden
     ) {
-        // Due to the pid being "NOT USED" in makeQueryArray we have to set pidSelect here
-        $originalPidSelect = $parentObject->pidSelect;
         $specificIds = $this->helper->getSpecificIds($row);
-        $parentObject->pidSelect = 'pid = ' . $specificIds['pid'];
+        $parentObject->setOverridePageIdList([$specificIds['pid']]);
 
-        // @todo $parentObject->showLanguage was appended in this where clause, but this property does not exist anymore
-        $queryParts = $parentObject->makeQueryArray('tt_content', $specificIds['pid'],
-            'AND colPos = -1 AND tx_gridelements_container IN (' . (int)$row['uid'] . ',' . $specificIds['uid'] . ') ' . $showHidden . $deleteClause);
+        $expressionBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
+                                           ->getQueryBuilderForTable('tt_content')
+                                           ->expr();
+        $queryBuilder = $parentObject->getQueryBuilder(
+            'tt_content',
+            $specificIds['pid'], [
+                $expressionBuilder->eq('colPos', -1),
+                $expressionBuilder->in('tx_gridelements_container', [(int)$row['uid'], $specificIds['uid']]),
+            ]
+        );
 
-        // Due to the pid being "NOT USED" in makeQueryArray we have to reset pidSelect here
-        $parentObject->pidSelect = $originalPidSelect;
+        if (!$showHidden) {
+            $restrictions = GeneralUtility::makeInstance(DefaultRestrictionContainer::class);
+            $restrictions->add(GeneralUtility::makeInstance(BackendWorkspaceRestriction::class));
+            $queryBuilder->setRestrictions($restrictions);
+        }
+        $parentObject->setOverridePageIdList([]);
 
-        $result = $this->databaseConnection->exec_SELECT_queryArray($queryParts);
         $colPosValues[] = array(0, '');
 
-        return $parentObject->getResult($result);
+        return $parentObject->getResult($queryBuilder->execute());
     }
 
     /**
@@ -341,7 +348,6 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
      * @param boolean $singleColumn : Determines if we are in single column mode or not
      * @param array $head : An array of headers for each of the columns
      * @param string $showHidden : query String containing enable fields
-     * @param string $deleteClause : query String to check for deleted items
      *
      * @return void
      */
@@ -353,10 +359,9 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
         &$editUidList,
         &$singleColumn,
         &$head,
-        $showHidden,
-        $deleteClause
+        $showHidden
     ) {
-        $collectedItems = $this->collectItemsForColumns($parentObject, $colPosValues, $row, $showHidden, $deleteClause);
+        $collectedItems = $this->collectItemsForColumns($parentObject, $colPosValues, $row, $showHidden);
         foreach ($colPosValues as $colPos => $values) {
             // first we have to create the column content separately for each column
             // so we can check for the first and the last element to provide proper sorting
@@ -384,44 +389,48 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
      * @param PageLayoutView $parentObject : The paren object that triggered this hook
      * @param array $colPosValues : The column position to collect the items for
      * @param array $row : The current data row for the container item
-     * @param string $showHidden : query String containing enable fields
-     * @param string $deleteClause : query String to check for deleted items
+     * @param string $showHidden : Is evaluated only in boolean context
      *
      * @return array collected items for the given column
      */
-    public function collectItemsForColumns(PageLayoutView $parentObject, &$colPosValues, &$row, &$showHidden, &$deleteClause)
+    public function collectItemsForColumns(PageLayoutView $parentObject, &$colPosValues, &$row, &$showHidden)
     {
         $colPosList = implode(',', array_keys($colPosValues));
-        // Due to the pid being "NOT USED" in makeQueryArray we have to set pidSelect here
-        $originalPidSelect = $parentObject->pidSelect;
+
         $specificIds = $this->helper->getSpecificIds($row);
+        $parentObject->setOverridePageIdList([$specificIds['pid']]);
 
-        $parentObject->pidSelect = 'pid = ' . $specificIds['pid'];
-
+        $expressionBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
+                                           ->getQueryBuilderForTable('tt_content')
+                                           ->expr();
+        $constraints = [
+            $expressionBuilder->eq('colPos', -1),
+            $expressionBuilder->in('tx_gridelements_container', [(int)$row['uid'], $specificIds['uid']]),
+            $expressionBuilder->in('tx_gridelements_columns', $colPosList),
+        ];
         if (!$parentObject->tt_contentConfig['languageMode']) {
-            $showLanguage = ' AND (sys_language_uid = -1 OR sys_language_uid=' . $parentObject->tt_contentConfig['sys_language_uid'] . ')';
-        } else if ($row['sys_language_uid'] > 0) {
-            $showLanguage = ' AND sys_language_uid = ' . $row['sys_language_uid'];
-        } else {
-            $showLanguage = '';
+            $constraints[] = $expressionBuilder->orX(
+                $expressionBuilder->eq('sys_language_uid', -1),
+                $expressionBuilder->eq('sys_language_uid', (int)$parentObject->tt_contentConfig['sys_language_uid'])
+            );
+        } elseif ($row['sys_language_uid'] > 0) {
+            $constraints[] = $expressionBuilder->eq('sys_language_uid', (int)$row['sys_language_uid']);
         }
-
-        $where = '';
         if ($this->helper->getBackendUser()->workspace > 0 && $row['t3ver_wsid'] > 0) {
-            $where .= 'AND t3ver_wsid = ' . (int)$row['t3ver_wsid'];
+            $constraints[] = $expressionBuilder->eq('t3ver_wsid', (int)$row['t3ver_wsid']);
         }
-        $where .= ' AND colPos = -1 
-        AND tx_gridelements_container IN (' . (int)$row['uid'] . ',' . $specificIds['uid'] . ') 
-        AND tx_gridelements_columns IN (' . $colPosList . ')' . $showHidden . $deleteClause . $showLanguage;
 
-        $queryParts = $parentObject->makeQueryArray('tt_content', $row['pid'], $where);
+        $queryBuilder = $parentObject->getQueryBuilder('tt_content', $row['pid'], $constraints);
 
-        // Due to the pid being "NOT USED" in makeQueryArray we have to reset pidSelect here
-        $parentObject->pidSelect = $originalPidSelect;
+        if (!$showHidden) {
+            $restrictions = GeneralUtility::makeInstance(DefaultRestrictionContainer::class);
+            $restrictions->add(GeneralUtility::makeInstance(BackendWorkspaceRestriction::class));
+            $queryBuilder->setRestrictions($restrictions);
+        }
 
-        $result = $this->databaseConnection->exec_SELECT_queryArray($queryParts);
+        $parentObject->setOverridePageIdList([]);
 
-        return $parentObject->getResult($result);
+        return $parentObject->getResult($queryBuilder->execute());
     }
 
     /**
