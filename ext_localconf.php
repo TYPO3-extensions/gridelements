@@ -14,5 +14,5 @@ $_EXTCONF = unserialize($_EXTCONF);
 
 // XCLASS
 if ($_EXTCONF['nestingInListModule']) {
-    $GLOBALS['TYPO3_CONF_VARS']['SYS']['Objects']['TYPO3\\CMS\\Recordlist\\RecordList\\DatabaseRecordList'] = array('className' => 'GridElementsTeam\\Gridelements\\Xclass\\DatabaseRecordList',);
+    $GLOBALS['TYPO3_CONF_VARS']['SYS']['Objects'][\TYPO3\CMS\Recordlist\RecordList\DatabaseRecordList::class] = array('className' => \GridElementsTeam\Gridelements\Xclass\DatabaseRecordList::class);
 }
