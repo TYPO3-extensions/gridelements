@@ -276,7 +276,23 @@ class PreProcessFieldArray extends AbstractDataHandler
             if ((int)$targetContainer['sys_language_uid'] > -1) {
                 $fieldArray['sys_language_uid'] = (int)$targetContainer['sys_language_uid'];
             }
+        } else if((int)$fieldArray['tx_gridelements_container'] > 0 && isset($fieldArray['colPos']) && (int)$fieldArray['colPos'] === -1) {
+            $originalContainer = (array)$this->databaseConnection->exec_SELECTgetSingleRow('t1.*', 'tt_content as t1, tt_content as t2',
+                't2.uid=' . intval($fieldArray['l18n_parent']) . ' AND t1.uid = t2.tx_gridelements_container');
+            if(isset($originalContainer['uid']) && isset($originalContainer['sys_language_uid']) && isset($fieldArray['sys_language_uid'])
+                && $originalContainer['uid'] == $fieldArray['tx_gridelements_container']
+                && $originalContainer['sys_language_uid'] != $fieldArray['sys_language_uid']
+            ) {
+                $correctContainer = (array)$this->databaseConnection->exec_SELECTgetSingleRow('tt.uid', 'tt_content as tt',
+                    'tt.l18n_parent=' . intval($originalContainer['uid']) . ' AND tt.sys_language_uid= ' . intval($fieldArray['sys_language_uid']));
+                if(!isset($correctContainer['uid'])) {
+                    return;
+                }
+
+                $fieldArray['tx_gridelements_container'] = $correctContainer['uid'];
+            }
         }
+        
         if ((int)$targetContainer['sys_language_uid'] === -1) {
             $list = array_flip(GeneralUtility::trimExplode(',', $GLOBALS['TCA']['tt_content']['ctrl']['copyAfterDuplFields'], true));
             unset($list['sys_language_uid']);
