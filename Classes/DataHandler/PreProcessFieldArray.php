@@ -59,9 +59,11 @@ class PreProcessFieldArray extends AbstractDataHandler
     {
         if ($table === 'tt_content') {
             $this->init($table, $id, $parentObj);
-            if (!$this->getTceMain()->isImporting) {
-                $this->processFieldArrayForTtContent($fieldArray, $id);
+            if ($this->getTceMain()->isImporting) {
+                return;
             }
+            $this->processFieldArrayForTtContent($fieldArray);
+            $this->adjustPosition($fieldArray, $id);
         }
     }
 
@@ -312,5 +314,54 @@ class PreProcessFieldArray extends AbstractDataHandler
     public function getBackendUser()
     {
         return $GLOBALS['BE_USER'];
+    }
+
+    /**
+     * Adjusts elements position
+     *
+     * @param array $fieldArray : The array of fields and values that have been saved to the datamap
+     * @param integer $id : The parent uid of either the page or the container we are currently working on
+     * */
+    protected function adjustPosition(array &$fieldArray, $id)
+    {
+        if ( ! isset($fieldArray['tx_gridelements_container']) || ! isset($fieldArray['tx_gridelements_columns'])
+            || ! isset($fieldArray['sys_language_uid']) || intval($id) === 0)
+        {
+            return;
+        }
+
+        $originalElement = (array)$this->databaseConnection->exec_SELECTgetSingleRow('tt.*', 'tt_content as tt',
+            'tt.uid=' . intval($id) . ' AND tt.deleted=0');
+        if ( ! $originalElement) {
+            return;
+        }
+        $originalContainer = (array)$this->databaseConnection->exec_SELECTgetSingleRow('tt.*', 'tt_content as tt',
+            'tt.uid=' . intval($originalElement['tx_gridelements_container']) . ' AND tt.deleted=0');
+        if ( ! $originalContainer) {
+            return;
+        }
+
+        // if element's position or container has not changed
+        if ($originalElement['tx_gridelements_container'] == $fieldArray['tx_gridelements_container'] &&
+            $originalElement['tx_gridelements_columns'] == $fieldArray['tx_gridelements_columns'])
+        {
+            return;
+        }
+
+        $translatedChildElements = (array)$this->databaseConnection->exec_SELECTgetRows('tt_el.uid as el_uid, tt_cont.uid as cont_uid',
+            'tt_content as tt_el, tt_content as tt_cont',
+            'tt_el.l18n_parent=' . intval($id) . ' AND tt_el.deleted=0' .
+            ' AND tt_cont.l18n_parent=' . intval($fieldArray['tx_gridelements_container']) .
+            ' AND tt_el.sys_language_uid=tt_cont.sys_language_uid AND tt_cont.deleted=0');
+
+        foreach($translatedChildElements as $element) {
+            $this->databaseConnection->exec_UPDATEquery('tt_content',
+                'uid='.$element['el_uid'],
+                [
+                    'tx_gridelements_container' => $element['cont_uid'],
+                    'tx_gridelements_columns' => $fieldArray['tx_gridelements_columns']
+                ]
+            );
+        }
     }
 }
