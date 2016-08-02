@@ -103,17 +103,17 @@ $GLOBALS['TCA']['tt_content']['columns']['pi_flexform']['config']['ds']['*,gride
 $GLOBALS['TCA']['tt_content']['columns']['records']['config']['allowed'] .= ',pages';
 
 $GLOBALS['TCA']['tt_content']['types']['gridelements_pi1']['showitem'] = '
-	--palette--;LLL:EXT:cms/locallang_ttc.xlf:palette.general;general,
-	--palette--;LLL:EXT:cms/locallang_ttc.xlf:palette.header;header,
+	--palette--;LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:palette.general;general,
+	--palette--;LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:palette.header;header,
 	tx_gridelements_backend_layout,
 	pi_flexform,
 	tx_gridelements_children,
-	--div--;LLL:EXT:cms/locallang_ttc.xlf:tabs.appearance,
+	--div--;LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:tabs.appearance,
 	--palette--;LLL:EXT:cms/locallang_ttc.xlf:palette.frames;frames,
 	media,
-	--div--;LLL:EXT:cms/locallang_ttc.xlf:tabs.access,
-	--palette--;LLL:EXT:cms/locallang_ttc.xlf:palette.visibility;visibility,
-	--palette--;LLL:EXT:cms/locallang_ttc.xlf:palette.access;access,
+	--div--;LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:tabs.access,
+	--palette--;LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:palette.visibility;visibility,
+	--palette--;LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:palette.access;access,
 	--div--;LLL:EXT:lang/locallang_tca.xlf:sys_category.tabs.category,
 	categories
 	';
