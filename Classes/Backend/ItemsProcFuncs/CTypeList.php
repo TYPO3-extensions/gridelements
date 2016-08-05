@@ -21,6 +21,7 @@ namespace GridElementsTeam\Gridelements\Backend\ItemsProcFuncs;
 
 use GridElementsTeam\Gridelements\Backend\LayoutSetup;
 use GridElementsTeam\Gridelements\Helper\Helper;
+use TYPO3\CMS\Core\Database\DatabaseConnection;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -46,7 +47,7 @@ class CTypeList extends AbstractItemsProcFunc
     /**
      * injects layout setup
      *
-     * @param \GridElementsTeam\Gridelements\Backend\LayoutSetup $layoutSetup
+     * @param LayoutSetup $layoutSetup
      */
     public function injectLayoutSetup(LayoutSetup $layoutSetup)
     {
@@ -54,26 +55,37 @@ class CTypeList extends AbstractItemsProcFunc
     }
 
     /**
+     * initializes this class
+     *
+     * @param int $pageUid
+     */
+    public function init($pageUid = 0)
+    {
+        parent::init();
+        if (!$this->layoutSetup) {
+            if ($pageUid < 0) {
+                $pageUid = Helper::getInstance()->getPidFromNegativeUid($pageUid);
+            }
+            $this->injectLayoutSetup(GeneralUtility::makeInstance(LayoutSetup::class)->init($pageUid));
+        }
+    }
+
+    /**
      * ItemProcFunc for CType items
      *
-     * @param array $params : The array of parameters that is used to render the item list
-     *
-     * @return void
+     * @param array $params The array of parameters that is used to render the item list
      */
-    public function itemsProcFunc(&$params)
+    public function itemsProcFunc(array &$params)
     {
         if ((int)$params['row']['pid'] > 0) {
-            $this->checkForAllowedCTypes($params['items'], $params['row']['pid'], $params['row']['colPos'],
-                $params['row']['tx_gridelements_container'], $params['row']['tx_gridelements_columns']);
+            $this->checkForAllowedCTypes($params['items'], $params['row']['pid'], $params['row']['colPos'], $params['row']['tx_gridelements_container'], $params['row']['tx_gridelements_columns']);
         } else {
             $this->init((int)$params['row']['pid']);
             // negative uid_pid values indicate that the element has been inserted after an existing element
             // so there is no pid to get the backendLayout for and we have to get that first
-            $existingElement = $this->databaseConnection->exec_SELECTgetSingleRow('pid, CType, colPos, tx_gridelements_container, tx_gridelements_columns',
-                'tt_content', 'uid=' . -((int)$params['row']['pid']));
+            $existingElement = $this->databaseConnection->exec_SELECTgetSingleRow('pid, CType, colPos, tx_gridelements_container, tx_gridelements_columns', 'tt_content', 'uid=' . -((int)$params['row']['pid']));
             if ((int)$existingElement['pid'] > 0) {
-                $this->checkForAllowedCTypes($params['items'], $existingElement['pid'], $existingElement['colPos'],
-                    $existingElement['tx_gridelements_container'], $existingElement['tx_gridelements_columns']);
+                $this->checkForAllowedCTypes($params['items'], $existingElement['pid'], $existingElement['colPos'], $existingElement['tx_gridelements_container'], $existingElement['tx_gridelements_columns']);
             }
         }
     }
@@ -81,15 +93,13 @@ class CTypeList extends AbstractItemsProcFunc
     /**
      * Checks if a CType is allowed in this particular page or grid column - only this one column defines the allowed CTypes regardless of any parent column
      *
-     * @param array $items : The items of the current CType list
-     * @param integer $pid : The id of the page we are currhently working on
-     * @param integer $pageColumn : The page column the element is a child of
-     * @param integer $gridContainerId : The ID of the current container
-     * @param integer $gridColumn : The grid column the element is a child of
-     *
-     * @return array|null $backendLayout: An array containing the data of the selected backend layout as well as a parsed version of the layout configuration
+     * @param array $items The items of the current CType list
+     * @param int $pid The id of the page we are currently working on
+     * @param int $pageColumn The page column the element is a child of
+     * @param int $gridContainerId The ID of the current container
+     * @param int $gridColumn The grid column the element is a child of
      */
-    public function checkForAllowedCTypes(&$items, $pid, $pageColumn, $gridContainerId, $gridColumn)
+    public function checkForAllowedCTypes(array &$items, $pid, $pageColumn, $gridContainerId, $gridColumn)
     {
         if ((int)$pageColumn >= 0 || (int)$pageColumn === -2) {
             $column = $pageColumn ? $pageColumn : 0;
@@ -102,28 +112,10 @@ class CTypeList extends AbstractItemsProcFunc
         }
         if (isset($backendLayout)) {
             foreach ($items as $key => $item) {
-                if (!(GeneralUtility::inList($backendLayout['columns'][$column],
-                        $item[1]) || GeneralUtility::inList($backendLayout['columns'][$column], '*'))
-                ) {
+                if (!GeneralUtility::inList($backendLayout['columns'][$column], $item[1]) && !GeneralUtility::inList($backendLayout['columns'][$column], '*')) {
                     unset($items[$key]);
                 }
             }
-        }
-    }
-
-    /**
-     * initializes this class
-     *
-     * @param int $pageUid
-     */
-    public function init($pageUid = 0)
-    {
-        parent::init();
-        if (!$this->layoutSetup instanceof LayoutSetup) {
-            if ($pageUid < 0) {
-                $pageUid = Helper::getInstance()->getPidFromNegativeUid($pageUid);
-            }
-            $this->injectLayoutSetup(GeneralUtility::makeInstance(LayoutSetup::class)->init($pageUid));
         }
     }
 }

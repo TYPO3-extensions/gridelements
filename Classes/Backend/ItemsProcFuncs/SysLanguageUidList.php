@@ -30,17 +30,14 @@ use TYPO3\CMS\Backend\Utility\BackendUtility;
  */
 class SysLanguageUidList extends AbstractItemsProcFunc
 {
-
     /**
      * ItemProcFunc for CType items
      *
-     * @param array $params : The array of parameters that is used to render the item list
-     *
-     * @return void
+     * @param array $params The array of parameters that is used to render the item list
      */
-    public function itemsProcFunc(&$params)
+    public function itemsProcFunc(array &$params)
     {
-        if ((int)$params['row']['pid'] > 0 && (int)$params['row']['tx_gridelements_container'] > 0) {
+        if ((int)$params['row']['pid'] > 0 && (int)$params['row']['tx_gridelements_container'] > 0 && isset($params['items'])) {
             $this->checkForAllowedLanguages($params['items'], $params['row']['tx_gridelements_container']);
         }
     }
@@ -48,22 +45,21 @@ class SysLanguageUidList extends AbstractItemsProcFunc
     /**
      * Checks if a language is allowed in this particular container - only this one container defines the allowed languages regardless of any parent
      *
-     * @param array $items : The items of the current language list
-     * @param  integer $gridContainerId : The ID of the current container
-     *
-     * @return  void
+     * @param array $items The items of the current language list
+     * @param int $gridContainerId The ID of the current container
      */
-    public function checkForAllowedLanguages(&$items, $gridContainerId)
+    public function checkForAllowedLanguages(array &$items, $gridContainerId)
     {
-        if ((int)$gridContainerId > 0) {
-            $parentContainer = BackendUtility::getRecordWSOL('tt_content', $gridContainerId);
-            if (is_array($items) && !empty($items) && (int)$parentContainer['uid'] > 0) {
-                foreach ($items as $item => $valueArray) {
-                    if ((int)$parentContainer['sys_language_uid'] > -1 && (int)$valueArray[1] !== (int)$parentContainer['sys_language_uid']) {
-                        unset($items[$item]);
-                    }
-                }
-            };
+        if (!$gridContainerId) {
+            return;
         }
+        $parentContainer = BackendUtility::getRecordWSOL('tt_content', $gridContainerId);
+        if (!empty($items) && (int)$parentContainer['uid'] > 0) {
+            foreach ($items as $item => $valueArray) {
+                if ((int)$parentContainer['sys_language_uid'] > -1 && (int)$valueArray[1] !== (int)$parentContainer['sys_language_uid']) {
+                    unset($items[$item]);
+                }
+            }
+        };
     }
 }

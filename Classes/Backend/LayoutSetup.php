@@ -36,7 +36,6 @@ use TYPO3\CMS\Lang\LanguageService;
  */
 class LayoutSetup
 {
-
     /**
      * @var DatabaseConnection
      */
@@ -65,12 +64,12 @@ class LayoutSetup
     /**
      * Load page TSconfig
      *
-     * @param integer $pageId : The current page ID
-     * @param array $typoScriptSetup : The PlugIn configuration
+     * @param int $pageId The current page ID
+     * @param array $typoScriptSetup The PlugIn configuration
      *
-     * @return \GridElementsTeam\Gridelements\Backend\LayoutSetup
+     * @return LayoutSetup
      */
-    public function init($pageId, $typoScriptSetup = array())
+    public function init($pageId, array $typoScriptSetup = array())
     {
         $this->setDatabaseConnection($GLOBALS['TYPO3_DB']);
         $this->setLanguageService($GLOBALS['LANG']);
@@ -93,7 +92,7 @@ class LayoutSetup
      *
      * @param array $layoutSetup
      */
-    public function setLayoutSetup($layoutSetup)
+    public function setLayoutSetup(array $layoutSetup)
     {
         $this->layoutSetup = $layoutSetup;
     }
@@ -103,15 +102,15 @@ class LayoutSetup
      *
      * @param array $typoScriptSetup
      */
-    public function setTypoScriptSetup($typoScriptSetup)
+    public function setTypoScriptSetup(array $typoScriptSetup)
     {
         $this->typoScriptSetup = $typoScriptSetup;
     }
 
     /**
-     * Returns the grid layout setup.
+     * Returns the grid layout setup
      *
-     * @param string $layoutId : If set only requested layout setup, else all layout setups will be returned.
+     * @param string $layoutId If set only requested layout setup, else all layout setups will be returned.
      *
      * @return array
      */
@@ -120,19 +119,18 @@ class LayoutSetup
         // Continue only if setup for given layout ID found.
         if (isset($this->layoutSetup[$layoutId])) {
             return $this->layoutSetup[$layoutId];
-        } else {
-            return $this->layoutSetup;
         }
+
+        return $this->layoutSetup;
     }
 
     /**
      * fetches the setup for each of the columns
      * assigns a default setup if there is none available
      *
-     * @param string $layoutId : The selected backend layout of the grid container
+     * @param string $layoutId The selected backend layout of the grid container
      *
-     * @return array $setup: The adjusted TypoScript setup for the container or a default setup
-     * @author Jo Hasenau <info@cybercraft.de>
+     * @return array The adjusted TypoScript setup for the container or a default setup
      */
     public function getTypoScriptSetup($layoutId)
     {
@@ -140,9 +138,9 @@ class LayoutSetup
 
         if ($layoutId == '0' && isset($this->typoScriptSetup['setup.']['default.'])) {
             $typoScriptSetup = $this->typoScriptSetup['setup.']['default.'];
-        } else if ($layoutId && isset($this->typoScriptSetup['setup.'][$layoutId . '.'])) {
+        } elseif ($layoutId && isset($this->typoScriptSetup['setup.'][$layoutId . '.'])) {
             $typoScriptSetup = $this->typoScriptSetup['setup.'][$layoutId . '.'];
-        } else if ($layoutId) {
+        } elseif ($layoutId) {
             $typoScriptSetup = $this->typoScriptSetup['setup.']['default.'];
         }
 
@@ -183,14 +181,13 @@ class LayoutSetup
      * @param int $gridContainerId The ID of the current grid container
      * @param bool $doReturn
      *
-     * @return NULL | array
+     * @return null|array
      */
     public function cacheCurrentParent($gridContainerId = 0, $doReturn = false)
     {
         if ($gridContainerId > 0) {
             if (empty($GLOBALS['tx_gridelements']['parentElement'][$gridContainerId])) {
-                $GLOBALS['tx_gridelements']['parentElement'][$gridContainerId] = BackendUtility::getRecordWSOL('tt_content',
-                    $gridContainerId);
+                $GLOBALS['tx_gridelements']['parentElement'][$gridContainerId] = BackendUtility::getRecordWSOL('tt_content', $gridContainerId);
             }
         }
         if ($doReturn) {
@@ -203,39 +200,41 @@ class LayoutSetup
     /**
      * fetches all available columns for a certain grid container
      *
-     * @param string $layoutId : The selected backend layout of the grid container
+     * @param string $layoutId The selected backend layout of the grid container
      *
-     * @return array $availableColumns: first key is 'CSV' The columns available for the selected layout as CSV list and the allowed elements for each of the columns
+     * @return array first key is 'CSV' The columns available for the selected layout as CSV list and the allowed elements for each of the columns
      */
     public function getLayoutColumns($layoutId)
     {
-        $availableColumns = array();
-        if (isset($this->layoutSetup[$layoutId])) {
+        if (!isset($this->layoutSetup[$layoutId])) {
+            return [];
+        }
 
-            $availableColumns['CSV'] = '-2,-1';
-            $setup = $this->layoutSetup[$layoutId];
-
-            if (isset($setup['config']) && $setup['config']) {
-
-                // create colPosList
-                if ($setup['config']['rows.']) {
-                    foreach ($setup['config']['rows.'] as $row) {
-                        if (isset($row['columns.']) && is_array($row['columns.'])) {
-                            foreach ($row['columns.'] as $column) {
-                                if (isset($column['colPos'])) {
-                                    $colPos = (int)$column['colPos'];
-                                    $availableColumns['CSV'] .= ',' . $colPos;
-                                    $availableColumns[$colPos] = $column['allowed'] ? $column['allowed'] : '*';
-                                    if ($column['allowedGridTypes']) {
-                                        $availableGridColumns[$colPos] = $column['allowedGridTypes'];
-                                    }
-                                    $availableColumns['allowed'] .= $availableColumns['allowed'] ? ',' . $availableColumns[$colPos] : $availableColumns[$colPos];
-                                    if ($availableGridColumns[$colPos]) {
-                                        $availableColumns['allowedGridTypes'] .= $availableColumns['allowedGridTypes'] ? ',' . $availableGridColumns[$colPos] : $availableGridColumns[$colPos];
-                                    }
-                                }
-                            }
-                        }
+        // create colPosList
+        $availableColumns = ['CSV' => '-2,-1'];
+        if (!empty($this->layoutSetup[$layoutId]['config']['rows.'])) {
+            foreach ($this->layoutSetup[$layoutId]['config']['rows.'] as $row) {
+                if (!isset($row['columns.']) || !is_array($row['columns.'])) {
+                    continue;
+                }
+                foreach ($row['columns.'] as $column) {
+                    if (!isset($column['colPos'])) {
+                        continue;
+                    }
+                    $colPos = (int)$column['colPos'];
+                    $availableColumns['CSV'] .= ',' . $colPos;
+                    $availableColumns[$colPos] = $column['allowed'] ? $column['allowed'] : '*';
+                    $availableGridColumns = [];
+                    if ($column['allowedGridTypes']) {
+                        $availableGridColumns[$colPos] = $column['allowedGridTypes'];
+                    }
+                    $availableColumns['allowed'] .= $availableColumns['allowed']
+                        ? ',' . $availableColumns[$colPos]
+                        : $availableColumns[$colPos];
+                    if (!empty($availableGridColumns[$colPos])) {
+                        $availableColumns['allowedGridTypes'] .= $availableColumns['allowedGridTypes']
+                            ? ',' . $availableGridColumns[$colPos]
+                            : $availableGridColumns[$colPos];
                     }
                 }
             }
@@ -247,7 +246,7 @@ class LayoutSetup
     /**
      * Returns the item array for form field selection.
      *
-     * @param integer $colPos : The selected content column position.
+     * @param int $colPos The selected content column position.
      *
      * @return array
      */
@@ -278,7 +277,7 @@ class LayoutSetup
     }
 
     /**
-     * Returns the item array for form field selection.
+     * Returns the item array for form field selection
      *
      * @param string $layoutId : The selected layout ID of the grid container
      *
@@ -286,21 +285,23 @@ class LayoutSetup
      */
     public function getLayoutColumnsSelectItems($layoutId)
     {
-        $selectItems = array();
         $setup = $this->getLayoutSetup($layoutId);
+        if (empty($setup['config']['rows.'])) {
+            return [];
+        }
 
-        if ($setup['config']['rows.']) {
-            foreach ($setup['config']['rows.'] as $row) {
-                if (isset($row['columns.']) && is_array($row['columns.'])) {
-                    foreach ($row['columns.'] as $column) {
-                        $selectItems[] = array(
-                            $this->languageService->sL($column['name']),
-                            $column['colPos'],
-                            null,
-                            $column['allowed'] ? $column['allowed'] : '*'
-                        );
-                    }
-                }
+        $selectItems = [];
+        foreach ($setup['config']['rows.'] as $row) {
+            if (empty($row['columns.'])) {
+                continue;
+            }
+            foreach ($row['columns.'] as $column) {
+                $selectItems[] = array(
+                    $this->languageService->sL($column['name']),
+                    $column['colPos'],
+                    null,
+                    $column['allowed'] ? $column['allowed'] : '*'
+                );
             }
         }
 
@@ -308,7 +309,7 @@ class LayoutSetup
     }
 
     /**
-     * Returns the item array for form field selection.
+     * Returns the item array for form field selection
      *
      * @param int $colPos
      * @param array $excludeLayouts
@@ -316,7 +317,7 @@ class LayoutSetup
      *
      * @return array
      */
-    public function getLayoutWizardItems($colPos, $excludeLayouts = array(), $allowedGridTypes = array())
+    public function getLayoutWizardItems($colPos, array $excludeLayouts = array(), array $allowedGridTypes = array())
     {
         $wizardItems = array();
         $excludeLayouts = array_flip(explode(',', $excludeLayouts));
@@ -324,7 +325,7 @@ class LayoutSetup
             if (!empty($allowedGridTypes) && !isset($allowedGridTypes[$layoutId])) {
                 continue;
             }
-            if (((int)$colPos === -1 && $item['top_level_layout']) || isset($excludeLayouts[$item['uid']])) {
+            if (isset($excludeLayouts[$item['uid']]) || (int)$colPos === -1 && $item['top_level_layout']) {
                 continue;
             }
 
@@ -343,9 +344,9 @@ class LayoutSetup
     }
 
     /**
-     * Returns the FlexForm configuration of a grid layout.
+     * Returns the FlexForm configuration of a grid layout
      *
-     * @param string $layoutId : The current layout ID of the grid container
+     * @param string $layoutId The current layout ID of the grid container
      *
      * @return string
      */
@@ -354,40 +355,37 @@ class LayoutSetup
         $layoutSetup = $this->getLayoutSetup($layoutId);
         // Get flexform file from pi_flexform_ds if pi_flexform_ds_file not set and "FILE:" found in pi_flexform_ds for backward compatibility.
         if ($layoutSetup['pi_flexform_ds_file']) {
-            $flexformConfiguration = GeneralUtility::getURL(GeneralUtility::getFileAbsFileName($layoutSetup['pi_flexform_ds_file']));
-        } else if (strpos($layoutSetup['pi_flexform_ds'], 'FILE:') === 0) {
-            $flexformConfiguration = GeneralUtility::getURL(GeneralUtility::getFileAbsFileName(substr($layoutSetup['pi_flexform_ds'],
-                5)));
-        } else if ($layoutSetup['pi_flexform_ds']) {
+            $flexformConfiguration = GeneralUtility::getUrl(GeneralUtility::getFileAbsFileName($layoutSetup['pi_flexform_ds_file']));
+        } elseif (strpos($layoutSetup['pi_flexform_ds'], 'FILE:') === 0) {
+            $flexformConfiguration = GeneralUtility::getUrl(GeneralUtility::getFileAbsFileName(substr($layoutSetup['pi_flexform_ds'], 5)));
+        } elseif ($layoutSetup['pi_flexform_ds']) {
             $flexformConfiguration = $layoutSetup['pi_flexform_ds'];
         } else {
-            $flexformConfiguration = GeneralUtility::getURL(GeneralUtility::getFileAbsFileName($this->flexformConfigurationPathAndFileName));
+            $flexformConfiguration = GeneralUtility::getUrl(GeneralUtility::getFileAbsFileName($this->flexformConfigurationPathAndFileName));
         }
 
         return $flexformConfiguration;
     }
 
     /**
-     * Returns the page TSconfig merged with the grid layout records.
+     * Returns the page TSconfig merged with the grid layout records
      *
-     * @param integer $pageId : The uid of the page we are currently working on
-     *
-     * @return void
+     * @param int $pageId The uid of the page we are currently working on
      */
     protected function loadLayoutSetup($pageId)
     {
         // Load page TSconfig.
         $pageTSconfig = BackendUtility::getPagesTSconfig($pageId);
 
-        $excludeLayoutIds = isset($pageTSconfig['tx_gridelements.']['excludeLayoutIds']) && !empty($pageTSconfig['tx_gridelements.']['excludeLayoutIds']) ? array_flip(GeneralUtility::trimExplode(',',
-            $pageTSconfig['tx_gridelements.']['excludeLayoutIds'])) : array();
+        $excludeLayoutIds = !empty($pageTSconfig['tx_gridelements.']['excludeLayoutIds'])
+            ? array_flip(GeneralUtility::trimExplode(',', $pageTSconfig['tx_gridelements.']['excludeLayoutIds']))
+            : array();
 
-        $overruleRecords = (isset($pageTSconfig['tx_gridelements.']['overruleRecords']) && (int)$pageTSconfig['tx_gridelements.']['overruleRecords'] === 1);
+        $overruleRecords = isset($pageTSconfig['tx_gridelements.']['overruleRecords'])
+                           && (int)$pageTSconfig['tx_gridelements.']['overruleRecords'] === 1;
 
         $gridLayoutConfig = array();
-
-        if (isset($pageTSconfig['tx_gridelements.']['setup.'])) {
-
+        if (!empty($pageTSconfig['tx_gridelements.']['setup.'])) {
             foreach ($pageTSconfig['tx_gridelements.']['setup.'] as $layoutId => $item) {
                 // remove tailing dot of layout ID
                 $layoutId = rtrim($layoutId, '.');
@@ -424,19 +422,22 @@ class LayoutSetup
                 unset($item['flexformDS']);
 
                 $gridLayoutConfig[$layoutId] = $item;
-
             }
         }
 
-        $storagePid = isset($pageTSconfig['TCEFORM.']['pages.']['_STORAGE_PID']) ?
-            (int)$pageTSconfig['TCEFORM.']['pages.']['_STORAGE_PID'] : 0;
-        $pageTSconfigId = isset($pageTSconfig['TCEFORM.']['tt_content.']['tx_gridelements_backend_layout.']['PAGE_TSCONFIG_ID']) ?
-            implode(',', GeneralUtility::intExplode(',', $pageTSconfig['TCEFORM.']['tt_content.']['tx_gridelements_backend_layout.']['PAGE_TSCONFIG_ID'])) : 0;
+        $storagePid = isset($pageTSconfig['TCEFORM.']['pages.']['_STORAGE_PID'])
+            ? (int)$pageTSconfig['TCEFORM.']['pages.']['_STORAGE_PID']
+            : 0;
+        $pageTSconfigId = isset($pageTSconfig['TCEFORM.']['tt_content.']['tx_gridelements_backend_layout.']['PAGE_TSCONFIG_ID'])
+            ? implode(',', GeneralUtility::intExplode(',', $pageTSconfig['TCEFORM.']['tt_content.']['tx_gridelements_backend_layout.']['PAGE_TSCONFIG_ID']))
+            : 0;
 
         // Load records.
-        $result = $this->databaseConnection->exec_SELECTgetRows('*', 'tx_gridelements_backend_layout',
-            '(( ' . $pageTSconfigId . ' = 0 AND ' . $storagePid . ' = 0 ) OR ( tx_gridelements_backend_layout.pid IN (' . $pageTSconfigId . ') OR tx_gridelements_backend_layout.pid = ' . $storagePid . ' ) OR ( ' . $pageTSconfigId . ' = 0 AND tx_gridelements_backend_layout.pid = ' . (int)$pageId . ' )) AND tx_gridelements_backend_layout.hidden = 0 AND tx_gridelements_backend_layout.deleted = 0',
-            '', 'sorting ASC', '', 'uid');
+        $where_clause = '(( ' . $pageTSconfigId . ' = 0 AND ' . $storagePid . ' = 0 )'
+                        . ' OR ( tx_gridelements_backend_layout.pid IN (' . $pageTSconfigId . ') OR tx_gridelements_backend_layout.pid = ' . $storagePid . ' ) '
+                        . ' OR ( ' . $pageTSconfigId . ' = 0 AND tx_gridelements_backend_layout.pid = ' . (int)$pageId . ' ))'
+                        . ' AND tx_gridelements_backend_layout.hidden = 0 AND tx_gridelements_backend_layout.deleted = 0';
+        $result = $this->databaseConnection->exec_SELECTgetRows('*', 'tx_gridelements_backend_layout', $where_clause, '', 'sorting ASC', '', 'uid');
 
         $gridLayoutRecords = array();
 
@@ -484,8 +485,6 @@ class LayoutSetup
      * setter for databaseConnection object
      *
      * @param DatabaseConnection $databaseConnection
-     *
-     * @return void
      */
     public function setDatabaseConnection(DatabaseConnection $databaseConnection)
     {
@@ -505,11 +504,9 @@ class LayoutSetup
     /**
      * setter for databaseConnection object
      *
-     * @param mixed $languageService
-     *
-     * @return void
+     * @param LanguageService $languageService
      */
-    public function setLanguageService($languageService)
+    public function setLanguageService(LanguageService $languageService = null)
     {
         $this->languageService = $languageService instanceof LanguageService ? $languageService : GeneralUtility::makeInstance(LanguageService::class);
         if ($this->getBackendUser()) {

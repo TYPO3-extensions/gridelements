@@ -37,7 +37,6 @@ use TYPO3\CMS\Lang\LanguageService;
  */
 class ClickMenuOptions implements SingletonInterface
 {
-
     /**
      * @var LanguageService
      */
@@ -51,41 +50,36 @@ class ClickMenuOptions implements SingletonInterface
     /**
      * Main method
      *
-     * @param CLickMenu $backRef
+     * @param ClickMenu $backRef
      * @param array $menuItems
      * @param string $table
      * @param int $uid
      *
      * @return array
      */
-    public function main($backRef, array $menuItems, $table = '', $uid = 0)
+    public function main(ClickMenu $backRef, array $menuItems, $table = '', $uid = 0)
     {
+        if ($table !== 'tt_content') {
+            return $menuItems;
+        }
 
-        if ($table === 'tt_content') {
-            $this->setLanguageService($GLOBALS['LANG']);
+        $this->setLanguageService($GLOBALS['LANG']);
 
-            // add "paste reference after" if user is allowed to use CType shortcut
-            if ($this->getBackendUser()->checkAuthMode('tt_content', 'CType', 'shortcut', $GLOBALS['TYPO3_CONF_VARS']['BE']['explicitADmode'])) {
-                if ($menuItems['pasteafter']) {
-                    unset($menuItems['pasteafter']);
-                    $selItem = $backRef->clipObj->getSelectedRecord();
-                    $targetItem = BackendUtility::getRecordRaw('tt_content', 'uid = ' . $uid,
-                        'colPos,tx_gridelements_container,tx_gridelements_columns');
-                    $elInfo = array(
-                        GeneralUtility::fixed_lgd_cs($selItem['_RECORD_TITLE'],
-                            $this->getBackendUser()->uc['titleLen']),
-                        $backRef->root ? $GLOBALS['TYPO3_CONF_VARS']['SYS']['sitename'] : GeneralUtility::fixed_lgd_cs(BackendUtility::getRecordTitle($table,
-                            $backRef->rec), $this->getBackendUser()->uc['titleLen']),
-                        $backRef->clipObj->currentMode()
-                    );
-                    $menuItems['pasteafter'] = $this->DB_paste($backRef, $table, -$uid, 'after', $elInfo, $targetItem,
-                        false);
-                    if ($backRef->clipObj->currentMode() === 'copy') {
-                        $menuItems['pastereference'] = $this->DB_paste($backRef, $table, -$uid, 'after', $elInfo,
-                            $targetItem, true);
-                    }
-                }
+        // add "paste reference after" if user is allowed to use CType shortcut
+        if ($menuItems['pasteafter'] && $this->getBackendUser()->checkAuthMode('tt_content', 'CType', 'shortcut', $GLOBALS['TYPO3_CONF_VARS']['BE']['explicitADmode'])) {
+            unset($menuItems['pasteafter']);
+            $selItem = $backRef->clipObj->getSelectedRecord();
+            $targetItem = BackendUtility::getRecordRaw('tt_content', 'uid = ' . $uid, 'colPos,tx_gridelements_container,tx_gridelements_columns');
+            $elInfo = array(
+                GeneralUtility::fixed_lgd_cs($selItem['_RECORD_TITLE'], $this->getBackendUser()->uc['titleLen']),
+                GeneralUtility::fixed_lgd_cs(BackendUtility::getRecordTitle($table, $backRef->rec), $this->getBackendUser()->uc['titleLen']),
+                $backRef->clipObj->currentMode()
+            );
+            $menuItems['pasteafter'] = $this->DB_paste($backRef, $table, -$uid, 'after', $elInfo, $targetItem, false);
+            if ($backRef->clipObj->currentMode() === 'copy') {
+                $menuItems['pastereference'] = $this->DB_paste($backRef, $table, -$uid, 'after', $elInfo, $targetItem, true);
             }
+
         }
 
         return $menuItems;
@@ -95,17 +89,17 @@ class ClickMenuOptions implements SingletonInterface
      * Adding CM element for Clipboard "paste into"/"paste after"
      * NOTICE: $table and $uid should follow the special syntax for paste, see clipboard-class :: pasteUrl();
      *
-     * @param CLickMenu $backRef
+     * @param ClickMenu $backRef
      * @param string $table Table name
      * @param int $uid UID for the current record. NOTICE: Special syntax!
-     * @param string $type Type: "into" or "after
+     * @param string $type Type "into" or "after
      * @param array $elInfo Contains instructions about whether to copy or cut an element.
      * @param array $targetItem
      * @param bool $reference
      *
      * @return array Item array, element in $menuItems
      */
-    public function DB_paste(&$backRef, $table, $uid, $type, $elInfo, $targetItem, $reference)
+    public function DB_paste(ClickMenu $backRef, $table, $uid, $type, array $elInfo, array  $targetItem, $reference)
     {
         $this->iconFactory = GeneralUtility::makeInstance(IconFactory::class);
         $updateArray = array(
@@ -115,22 +109,29 @@ class ClickMenuOptions implements SingletonInterface
         );
         $loc = 'top.content.list_frame';
         if ($this->getBackendUser()->jsConfirmation(JsConfirmation::COPY_MOVE_PASTE)) {
-            $conf = $loc . ' && confirm(' . GeneralUtility::quoteJSvalue(sprintf($this->getLanguageService()->sL(('LLL:EXT:lang/locallang_core.xlf:mess.' . ($elInfo[2] === 'copy' ? 'copy' : 'move') . '_' . $type)),
-                    $elInfo[0], $elInfo[1])) . ')';
+            $conf = $loc . ' && confirm(' . GeneralUtility::quoteJSvalue(
+                sprintf($this->getLanguageService()->sL('LLL:EXT:lang/locallang_core.xlf:mess.' . ($elInfo[2] === 'copy' ? 'copy' : 'move') . '_' . $type), $elInfo[0], $elInfo[1])
+                ) . ')';
         } else {
             $conf = $loc;
         }
-        $editOnClick = 'if(' . $conf . '){' . $loc . '.location.href=' . GeneralUtility::quoteJSvalue($backRef->clipObj->pasteUrl($table,
-                    $uid, 0,
-                    $updateArray) . ($reference ? '&reference=1' : '') . '&redirect=') . '+top.rawurlencode(' . $backRef->frameLocation(($loc . '.document')) . '.pathname+' . $backRef->frameLocation(($loc . '.document')) . '.search);}';
+        $editOnClick = 'if(' . $conf . '){' . $loc . '.location.href='
+                       . GeneralUtility::quoteJSvalue($backRef->clipObj->pasteUrl($table, $uid, 0, $updateArray)
+                       . ($reference ? '&reference=1' : '') . '&redirect=') . '+top.rawurlencode('
+                       . $backRef->frameLocation(($loc . '.document')) . '.pathname+'
+                       . $backRef->frameLocation(($loc . '.document')) . '.search);}';
 
-        return $backRef->linkItem($reference ? $this->getLanguageService()->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tx_gridelements_clickmenu_pastereference') : $backRef->label('paste' . $type),
+        return $backRef->linkItem(
+            $reference
+                ? $this->getLanguageService()->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tx_gridelements_ClickMenu_pastereference')
+                : $backRef->label('paste' . $type),
             $this->iconFactory->getIcon('actions-document-paste-' . $type, Icon::SIZE_SMALL)->render(),
-            $editOnClick . 'return false;');
+            $editOnClick . 'return false;'
+        );
     }
 
     /**
-     * Gets the current backend user.
+     * Gets the current backend user
      *
      * @return \TYPO3\CMS\Core\Authentication\BackendUserAuthentication
      */
@@ -153,12 +154,9 @@ class ClickMenuOptions implements SingletonInterface
      * setter for databaseConnection object
      *
      * @param LanguageService $languageService
-     *
-     * @return void
      */
     public function setLanguageService(LanguageService $languageService)
     {
         $this->languageService = $languageService;
     }
-
 }
