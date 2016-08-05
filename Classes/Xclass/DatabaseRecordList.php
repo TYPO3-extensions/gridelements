@@ -14,15 +14,12 @@ namespace GridElementsTeam\Gridelements\Xclass;
  * The TYPO3 project - inspiring people to share!
  */
 
-use TYPO3\CMS\Backend\Module\BaseScriptClass;
 use TYPO3\CMS\Backend\RecordList\RecordListGetTableHookInterface;
 use TYPO3\CMS\Backend\Template\Components\ButtonBar;
-use TYPO3\CMS\Backend\Template\DocumentTemplate;
 use TYPO3\CMS\Backend\Template\ModuleTemplate;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Backend\View\BackendLayoutView;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
-use TYPO3\CMS\Core\Database\DatabaseConnection;
 use TYPO3\CMS\Core\FormProtection\FormProtectionFactory;
 use TYPO3\CMS\Core\Imaging\Icon;
 use TYPO3\CMS\Core\Imaging\IconFactory;
@@ -40,7 +37,6 @@ use TYPO3\CMS\Recordlist\RecordList\RecordListHookInterface;
  */
 class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecordList
 {
-
     /**
      * @var int
      */
@@ -312,17 +308,17 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
             if (!in_array($this->pageRow['doktype'], $noViewDokTypes)) {
                 $onClick = htmlspecialchars(BackendUtility::viewOnClick($this->id, '',
                     BackendUtility::BEgetRootLine($this->id)));
-                $buttons['view'] = '<a href="#" onclick="' . $onClick . '" title="' . $lang->sL('LLL:EXT:lang/locallang_core.xlf:labels.showPage',
-                        true) . '">' . $this->iconFactory->getIcon('actions-document-view',
-                        Icon::SIZE_SMALL)->render() . '</a>';
+                $buttons['view'] = '<a href="#" onclick="' . $onClick . '" title="'
+                                   . $lang->sL('LLL:EXT:lang/locallang_core.xlf:labels.showPage', true) . '">'
+                                   . $this->iconFactory->getIcon('actions-document-view', Icon::SIZE_SMALL)->render() . '</a>';
             }
             // New record on pages that are not locked by editlock
             if (!$module->modTSconfig['properties']['noCreateRecordsLink'] && $this->editLockPermissions()) {
-                $onClick = htmlspecialchars('return jumpExt(' . GeneralUtility::quoteJSvalue(BackendUtility::getModuleUrl('db_new',
-                        ['id' => $this->id])) . ');');
-                $buttons['new_record'] = '<a href="#" onclick="' . $onClick . '" title="' . $lang->getLL('newRecordGeneral',
-                        true) . '">' . $this->iconFactory->getIcon('actions-document-new',
-                        Icon::SIZE_SMALL)->render() . '</a>';
+                $onClick = htmlspecialchars('return jumpExt(' .
+                                            GeneralUtility::quoteJSvalue(BackendUtility::getModuleUrl('db_new', ['id' => $this->id])) . ');');
+                $buttons['new_record'] = '<a href="#" onclick="' . $onClick . '" title="'
+                                         . $lang->getLL('newRecordGeneral', true) . '">'
+                                         . $this->iconFactory->getIcon('actions-document-new', Icon::SIZE_SMALL)->render() . '</a>';
             }
             // If edit permissions are set, see
             // \TYPO3\CMS\Core\Authentication\BackendUserAuthentication
@@ -330,53 +326,55 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
                 // Edit
                 $params = '&edit[pages][' . $this->pageRow['uid'] . ']=edit';
                 $onClick = htmlspecialchars(BackendUtility::editOnClick($params, '', -1));
-                $buttons['edit'] = '<a href="#" onclick="' . $onClick . '" title="' . $lang->getLL('editPage',
-                        true) . '">' . $this->iconFactory->getIcon('actions-page-open',
-                        Icon::SIZE_SMALL)->render() . '</a>';
+                $buttons['edit'] = '<a href="#" onclick="' . $onClick . '" title="'
+                                   . $lang->getLL('editPage', true) . '">'
+                                   . $this->iconFactory->getIcon('actions-page-open', Icon::SIZE_SMALL)->render() . '</a>';
             }
             // Paste
             if ($this->showClipboard && ($localCalcPerms & Permission::PAGE_NEW || $localCalcPerms & Permission::CONTENT_EDIT) && $this->editLockPermissions()) {
                 $elFromTable = $this->clipObj->elFromTable('');
                 if (!empty($elFromTable)) {
-                    $onClick = htmlspecialchars(('return ' . $this->clipObj->confirmMsg('pages', $this->pageRow, 'into',
-                            $elFromTable)));
-                    $buttons['paste'] = '<a href="' . htmlspecialchars($this->clipObj->pasteUrl('',
-                            $this->id)) . '" onclick="' . $onClick . '" title="' . $lang->getLL('clip_paste',
-                            true) . '">' . $this->iconFactory->getIcon('actions-document-paste-after',
-                            Icon::SIZE_SMALL)->render() . '</a>';
+                    $onClick = htmlspecialchars(('return ' . $this->clipObj->confirmMsg('pages', $this->pageRow, 'into', $elFromTable)));
+                    $buttons['paste'] = '<a href="' . htmlspecialchars($this->clipObj->pasteUrl('', $this->id))
+                                        . '" onclick="' . $onClick . '" title="' . $lang->getLL('clip_paste', true) . '">'
+                                        . $this->iconFactory->getIcon('actions-document-paste-after', Icon::SIZE_SMALL)->render() . '</a>';
                 }
             }
             // Cache
-            $buttons['cache'] = '<a href="' . htmlspecialchars(($this->listURL() . '&clear_cache=1')) . '" title="' . $lang->sL('LLL:EXT:lang/locallang_core.xlf:labels.clear_cache',
-                    true) . '">' . $this->iconFactory->getIcon('actions-system-cache-clear',
-                    Icon::SIZE_SMALL)->render() . '</a>';
+            $buttons['cache'] = '<a href="' . htmlspecialchars(($this->listURL() . '&clear_cache=1')) . '" title="'
+                                . $lang->sL('LLL:EXT:lang/locallang_core.xlf:labels.clear_cache', true) . '">'
+                                . $this->iconFactory->getIcon('actions-system-cache-clear', Icon::SIZE_SMALL)->render() . '</a>';
             if ($this->table && (!isset($module->modTSconfig['properties']['noExportRecordsLinks']) || (isset($module->modTSconfig['properties']['noExportRecordsLinks']) && !$module->modTSconfig['properties']['noExportRecordsLinks']))) {
                 // CSV
-                $buttons['csv'] = '<a href="' . htmlspecialchars(($this->listURL() . '&csv=1')) . '" title="' . $lang->sL('LLL:EXT:lang/locallang_core.xlf:labels.csv',
-                        true) . '">' . $this->iconFactory->getIcon('actions-document-export-csv',
-                        Icon::SIZE_SMALL)->render() . '</a>';
+                $buttons['csv'] = '<a href="' . htmlspecialchars(($this->listURL() . '&csv=1')) . '" title="'
+                                  . $lang->sL('LLL:EXT:lang/locallang_core.xlf:labels.csv', true) . '">'
+                                  . $this->iconFactory->getIcon('actions-document-export-csv', Icon::SIZE_SMALL)->render() . '</a>';
                 // Export
                 if (ExtensionManagementUtility::isLoaded('impexp')) {
                     $url = BackendUtility::getModuleUrl('xMOD_tximpexp', array('tx_impexp[action]' => 'export'));
-                    $buttons['export'] = '<a href="' . htmlspecialchars($url . '&tx_impexp[list][]=' . rawurlencode($this->table . ':' . $this->id)) . '" title="' . $lang->sL('LLL:EXT:lang/locallang_core.xlf:rm.export',
-                            true) . '">' . $this->iconFactory->getIcon('actions-document-export-t3d',
-                            Icon::SIZE_SMALL)->render() . '</a>';
+                    $buttons['export'] = '<a href="' . htmlspecialchars($url . '&tx_impexp[list][]='
+                                         . rawurlencode($this->table . ':' . $this->id))
+                                         . '" title="' . $lang->sL('LLL:EXT:lang/locallang_core.xlf:rm.export', true) . '">'
+                                         . $this->iconFactory->getIcon('actions-document-export-t3d', Icon::SIZE_SMALL)->render() . '</a>';
                 }
             }
             // Reload
-            $buttons['reload'] = '<a href="' . htmlspecialchars($this->listURL()) . '" title="' . $lang->sL('LLL:EXT:lang/locallang_core.xlf:labels.reload',
-                    true) . '">' . $this->iconFactory->getIcon('actions-refresh', Icon::SIZE_SMALL)->render() . '</a>';
+            $buttons['reload'] = '<a href="' . htmlspecialchars($this->listURL()) . '" title="'
+                                 . $lang->sL('LLL:EXT:lang/locallang_core.xlf:labels.reload', true) . '">'
+                                 . $this->iconFactory->getIcon('actions-refresh', Icon::SIZE_SMALL)->render() . '</a>';
             // Shortcut
             if ($this->backendUser->mayMakeShortcut()) {
-                $buttons['shortcut'] = $this->getDocumentTemplate()->makeShortcutIcon('id, M, imagemode, pointer, table, search_field, search_levels, showLimit, sortField, sortRev',
-                    implode(',', array_keys($this->MOD_MENU)), 'web_list');
+                $buttons['shortcut'] = $this->getDocumentTemplate()->makeShortcutIcon(
+                    'id, M, imagemode, pointer, table, search_field, search_levels, showLimit, sortField, sortRev',
+                    implode(',', array_keys($this->MOD_MENU)), 'web_list'
+                );
             }
             // Back
             if ($this->returnUrl) {
                 $href = htmlspecialchars(GeneralUtility::linkThisUrl($this->returnUrl, array('id' => $this->id)));
-                $buttons['back'] = '<a href="' . $href . '" class="typo3-goBack" title="' . $lang->sL('LLL:EXT:lang/locallang_core.xlf:labels.goBack',
-                        true) . '">' . $this->iconFactory->getIcon('actions-view-go-back',
-                        Icon::SIZE_SMALL)->render() . '</a>';
+                $buttons['back'] = '<a href="' . $href . '" class="typo3-goBack" title="'
+                                   . $lang->sL('LLL:EXT:lang/locallang_core.xlf:labels.goBack', true) . '">'
+                                   . $this->iconFactory->getIcon('actions-view-go-back', Icon::SIZE_SMALL)->render() . '</a>';
             }
         }
 
@@ -424,12 +422,16 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
             if (!$module->modTSconfig['properties']['noCreateRecordsLink'] && $this->editLockPermissions()) {
                 $onClick = 'return jumpExt(' . GeneralUtility::quoteJSvalue(BackendUtility::getModuleUrl('db_new',
                         ['id' => $this->id])) . ');';
-                $newRecordButton = $buttonBar->makeLinkButton()->setHref('#')->setOnClick($onClick)->setTitle($lang->getLL('newRecordGeneral'))->setIcon($this->iconFactory->getIcon('actions-document-new', Icon::SIZE_SMALL));
+                $newRecordButton = $buttonBar->makeLinkButton()->setHref('#')->setOnClick($onClick)
+                    ->setTitle($lang->getLL('newRecordGeneral'))
+                    ->setIcon($this->iconFactory->getIcon('actions-document-new', Icon::SIZE_SMALL));
                 $buttonBar->addButton($newRecordButton, ButtonBar::BUTTON_POSITION_LEFT, 10);
             }
             if (!in_array($this->pageRow['doktype'], $noViewDokTypes)) {
                 $onClick = BackendUtility::viewOnClick($this->id, '', BackendUtility::BEgetRootLine($this->id));
-                $viewButton = $buttonBar->makeLinkButton()->setHref('#')->setOnClick($onClick)->setTitle($lang->sL('LLL:EXT:lang/locallang_core.xlf:labels.showPage'))->setIcon($this->iconFactory->getIcon('actions-document-view', Icon::SIZE_SMALL));
+                $viewButton = $buttonBar->makeLinkButton()->setHref('#')->setOnClick($onClick)
+                    ->setTitle($lang->sL('LLL:EXT:lang/locallang_core.xlf:labels.showPage'))
+                    ->setIcon($this->iconFactory->getIcon('actions-document-view', Icon::SIZE_SMALL));
                 $buttonBar->addButton($viewButton, ButtonBar::BUTTON_POSITION_LEFT, 20);
             }
             // If edit permissions are set, see
@@ -438,7 +440,9 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
                 // Edit
                 $params = '&edit[pages][' . $this->pageRow['uid'] . ']=edit';
                 $onClick = BackendUtility::editOnClick($params, '', -1);
-                $editButton = $buttonBar->makeLinkButton()->setHref('#')->setOnClick($onClick)->setTitle($lang->getLL('editPage'))->setIcon($this->iconFactory->getIcon('actions-page-open', Icon::SIZE_SMALL));
+                $editButton = $buttonBar->makeLinkButton()->setHref('#')->setOnClick($onClick)
+                    ->setTitle($lang->getLL('editPage'))
+                    ->setIcon($this->iconFactory->getIcon('actions-page-open', Icon::SIZE_SMALL));
                 $buttonBar->addButton($editButton, ButtonBar::BUTTON_POSITION_LEFT, 20);
             }
             // Paste
@@ -453,21 +457,33 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
                 }
             }
             // Cache
-            $clearCacheButton = $buttonBar->makeLinkButton()->setHref($this->listURL() . '&clear_cache=1')->setTitle($lang->sL('LLL:EXT:lang/locallang_core.xlf:labels.clear_cache'))->setIcon($this->iconFactory->getIcon('actions-system-cache-clear', Icon::SIZE_SMALL));
+            $clearCacheButton = $buttonBar->makeLinkButton()->setHref($this->listURL() . '&clear_cache=1')
+                ->setTitle($lang->sL('LLL:EXT:lang/locallang_core.xlf:labels.clear_cache'))
+                ->setIcon($this->iconFactory->getIcon('actions-system-cache-clear', Icon::SIZE_SMALL));
             $buttonBar->addButton($clearCacheButton, ButtonBar::BUTTON_POSITION_RIGHT);
-            if ($this->table && (!isset($module->modTSconfig['properties']['noExportRecordsLinks']) || (isset($module->modTSconfig['properties']['noExportRecordsLinks']) && !$module->modTSconfig['properties']['noExportRecordsLinks']))) {
+            if ($this->table
+                && (!isset($module->modTSconfig['properties']['noExportRecordsLinks'])
+                    || !$module->modTSconfig['properties']['noExportRecordsLinks'])
+            ) {
                 // CSV
-                $csvButton = $buttonBar->makeLinkButton()->setHref($this->listURL() . '&csv=1')->setTitle($lang->sL('LLL:EXT:lang/locallang_core.xlf:labels.csv'))->setIcon($this->iconFactory->getIcon('actions-document-export-csv', Icon::SIZE_SMALL));
+                $csvButton = $buttonBar->makeLinkButton()->setHref($this->listURL() . '&csv=1')
+                    ->setTitle($lang->sL('LLL:EXT:lang/locallang_core.xlf:labels.csv'))
+                    ->setIcon($this->iconFactory->getIcon('actions-document-export-csv', Icon::SIZE_SMALL));
                 $buttonBar->addButton($csvButton, ButtonBar::BUTTON_POSITION_LEFT, 40);
                 // Export
                 if (ExtensionManagementUtility::isLoaded('impexp')) {
                     $url = BackendUtility::getModuleUrl('xMOD_tximpexp', array('tx_impexp[action]' => 'export'));
-                    $exportButton = $buttonBar->makeLinkButton()->setHref($url . '&tx_impexp[list][]=' . rawurlencode($this->table . ':' . $this->id))->setTitle($lang->sL('LLL:EXT:lang/locallang_core.xlf:rm.export'))->setIcon($this->iconFactory->getIcon('actions-document-export-t3d', Icon::SIZE_SMALL));
+                    $exportButton = $buttonBar->makeLinkButton()
+                        ->setHref($url . '&tx_impexp[list][]=' . rawurlencode($this->table . ':' . $this->id))
+                        ->setTitle($lang->sL('LLL:EXT:lang/locallang_core.xlf:rm.export'))
+                        ->setIcon($this->iconFactory->getIcon('actions-document-export-t3d', Icon::SIZE_SMALL));
                     $buttonBar->addButton($exportButton, ButtonBar::BUTTON_POSITION_LEFT, 40);
                 }
             }
             // Reload
-            $reloadButton = $buttonBar->makeLinkButton()->setHref($this->listURL())->setTitle($lang->sL('LLL:EXT:lang/locallang_core.xlf:labels.reload'))->setIcon($this->iconFactory->getIcon('actions-refresh', Icon::SIZE_SMALL));
+            $reloadButton = $buttonBar->makeLinkButton()->setHref($this->listURL())
+                ->setTitle($lang->sL('LLL:EXT:lang/locallang_core.xlf:labels.reload'))
+                ->setIcon($this->iconFactory->getIcon('actions-refresh', Icon::SIZE_SMALL));
             $buttonBar->addButton($reloadButton, ButtonBar::BUTTON_POSITION_RIGHT);
             // Shortcut
             if ($this->backendUser->mayMakeShortcut()) {
@@ -488,8 +504,9 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
             // Back
             if ($this->returnUrl) {
                 $href = htmlspecialchars(GeneralUtility::linkThisUrl($this->returnUrl, array('id' => $this->id)));
-                $buttons['back'] = '<a href="' . $href . '" class="typo3-goBack" title="' . $lang->sL('LLL:EXT:lang/locallang_core.xlf:labels.goBack',
-                        true) . '">' . $this->iconFactory->getIcon('actions-view-go-back', Icon::SIZE_SMALL) . '</a>';
+                $buttons['back'] = '<a href="' . $href . '" class="typo3-goBack" title="'
+                                   . $lang->sL('LLL:EXT:lang/locallang_core.xlf:labels.goBack', true) . '">'
+                                   . $this->iconFactory->getIcon('actions-view-go-back', Icon::SIZE_SMALL) . '</a>';
             }
         }
     }
@@ -524,12 +541,14 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
         // Init
         $addWhere = '';
         $titleCol = $GLOBALS['TCA'][$table]['ctrl']['label'];
-        $thumbsCol = $GLOBALS['TCA'][$table]['ctrl']['thumbnail'];
-        $this->l10nEnabled = $GLOBALS['TCA'][$table]['ctrl']['languageField'] && $GLOBALS['TCA'][$table]['ctrl']['transOrigPointerField'] && !$GLOBALS['TCA'][$table]['ctrl']['transOrigPointerTable'];
+        $thumbsCol = !empty($GLOBALS['TCA'][$table]['ctrl']['thumbnail']) ? $GLOBALS['TCA'][$table]['ctrl']['thumbnail'] : '';
+        $this->l10nEnabled = !empty($GLOBALS['TCA'][$table]['ctrl']['languageField'])
+                             && !empty($GLOBALS['TCA'][$table]['ctrl']['transOrigPointerField'])
+                             && empty($GLOBALS['TCA'][$table]['ctrl']['transOrigPointerTable']);
         $tableCollapsed = (bool)$this->tablesCollapsed[$table];
         // prepare space icon
-        $this->spaceIcon = '<span class="btn btn-default disabled">' . $this->iconFactory->getIcon('empty-empty',
-                Icon::SIZE_SMALL)->render() . '</span>';
+        $this->spaceIcon = '<span class="btn btn-default disabled">'
+                           . $this->iconFactory->getIcon('empty-empty', Icon::SIZE_SMALL)->render() . '</span>';
         // Cleaning rowlist for duplicates and place the $titleCol as the first column always!
         $this->fieldArray = array();
         // title Column
@@ -636,8 +655,10 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
             foreach ($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['typo3/class.db_list_extra.inc']['getTable'] as $classData) {
                 $hookObject = GeneralUtility::getUserObj($classData);
                 if (!$hookObject instanceof RecordListGetTableHookInterface) {
-                    throw new \UnexpectedValueException('$hookObject must implement interface ' . RecordListGetTableHookInterface::class,
-                        1195114460);
+                    throw new \UnexpectedValueException(
+                        '$hookObject must implement interface ' . RecordListGetTableHookInterface::class,
+                        1195114460
+                    );
                 }
                 $hookObject->getDBlistQuery($table, $id, $addWhere, $this->selFieldList, $this);
             }
@@ -697,16 +718,18 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
             // Header line is drawn
             $theData = array();
             if ($this->disableSingleTableView) {
-                $theData[$titleCol] = '<span class="c-table">' . BackendUtility::wrapInHelp($table, '',
-                        $tableTitle) . '</span> (<span class="t3js-table-total-items">' . $this->totalItems . '</span>)';
+                $theData[$titleCol] = '<span class="c-table">' . BackendUtility::wrapInHelp($table, '', $tableTitle)
+                                      . '</span> (<span class="t3js-table-total-items">' . $this->totalItems . '</span>)';
             } else {
-                $icon = $this->table ? '<span title="' . $lang->getLL('contractView',
-                        true) . '">' . $this->iconFactory->getIcon('actions-view-table-collapse',
-                        Icon::SIZE_SMALL)->render() . '</span>' : '<span title="' . $lang->getLL('expandView',
-                        true) . '">' . $this->iconFactory->getIcon('actions-view-table-expand',
-                        Icon::SIZE_SMALL)->render() . '</span>';
-                $theData[$titleCol] = $this->linkWrapTable($table,
-                    $tableTitle . ' (<span class="t3js-table-total-items">' . $this->totalItems . '</span>) ' . $icon);
+                $icon = $this->table
+                    ? '<span title="' . $lang->getLL('contractView', true) . '">'
+                      . $this->iconFactory->getIcon('actions-view-table-collapse', Icon::SIZE_SMALL)->render() . '</span>'
+                    : '<span title="' . $lang->getLL('expandView', true) . '">'
+                      . $this->iconFactory->getIcon('actions-view-table-expand', Icon::SIZE_SMALL)->render() . '</span>';
+                $theData[$titleCol] = $this->linkWrapTable(
+                    $table,
+                    $tableTitle . ' (<span class="t3js-table-total-items">' . $this->totalItems . '</span>) ' . $icon
+                );
             }
             if ($listOnlyInSingleTableMode) {
                 $tableHeader .= BackendUtility::wrapInHelp($table, '', $theData[$titleCol]);
@@ -715,11 +738,17 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
                 $collapseIcon = '';
                 if (!$this->table) {
                     $href = htmlspecialchars(($this->listURL() . '&collapse[' . $table . ']=' . ($tableCollapsed ? '0' : '1')));
-                    $title = $tableCollapsed ? $lang->sL('LLL:EXT:lang/locallang_core.xlf:labels.expandTable',
-                        true) : $lang->sL('LLL:EXT:lang/locallang_core.xlf:labels.collapseTable', true);
-                    $icon = '<span class="collapseIcon">' . $this->iconFactory->getIcon(($tableCollapsed ? 'actions-view-list-expand' : 'actions-view-list-collapse'),
-                            Icon::SIZE_SMALL)->render() . '</span>';
-                    $collapseIcon = '<a href="' . $href . '" title="' . $title . '" class="pull-right t3js-toggle-recordlist" data-table="' . htmlspecialchars($table) . '" data-toggle="collapse" data-target="#recordlist-' . htmlspecialchars($table) . '">' . $icon . '</a>';
+                    $title = $tableCollapsed
+                        ? $lang->sL('LLL:EXT:lang/locallang_core.xlf:labels.expandTable', true)
+                        : $lang->sL('LLL:EXT:lang/locallang_core.xlf:labels.collapseTable', true);
+                    $icon = '<span class="collapseIcon">' . $this->iconFactory->getIcon(
+                        $tableCollapsed ? 'actions-view-list-expand' : 'actions-view-list-collapse',
+                        Icon::SIZE_SMALL
+                        )->render() . '</span>';
+                    $collapseIcon = '<a href="' . $href . '" title="' . $title
+                                    . '" class="pull-right t3js-toggle-recordlist" data-table="'
+                                    . htmlspecialchars($table) . '" data-toggle="collapse" data-target="#recordlist-'
+                                    . htmlspecialchars($table) . '">' . $icon . '</a>';
                 }
                 $tableHeader .= $theData[$titleCol] . $collapseIcon;
             }
@@ -812,17 +841,16 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
                                     <td colspan="2"></td>
                                     <td colspan="' . (count($this->fieldArray) - 1 + $this->maxDepth) . '" style="padding:5px;">
                                         <br />
-                                        <strong>' . $this->getLanguageService()->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:list.columnName') . ' ' . ($backendLayoutColumns[$row['colPos']] ? $backendLayoutColumns[$row['colPos']] : (int)$row['colPos']) . '</strong>
+                                        <strong>'
+                                          . $this->getLanguageService()->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:list.columnName')
+                                          . ' ' . ($backendLayoutColumns[$row['colPos']] ? $backendLayoutColumns[$row['colPos']] : (int)$row['colPos']) . '</strong>
                                     </td>
                                 </tr>';
                         } else {
                             $this->showMoveUp = true;
                         }
-                        if (isset($row['colPos']) && isset($accRows[$key + 1]) && $row['colPos'] != $accRows[$key + 1]['colPos']) {
-                            $this->showMoveDown = false;
-                        } else {
-                            $this->showMoveDown = true;
-                        }
+                        $this->showMoveDown = !isset($row['colPos']) && isset($accRows[$key + 1])
+                                              && $row['colPos'] != $accRows[$key + 1]['colPos'];
                         $rowOutput .= $this->renderListRow($table, $row, $cc, $titleCol, $thumbsCol);
                         // If localization view is enabled it means that the selected records are
                         // either default or All language and here we will not select translations
@@ -838,11 +866,18 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
                 } else {
                     // Show that there are more records than shown
                     if ($this->totalItems > $this->itemsLimitPerTable) {
-                        $countOnFirstPage = $this->totalItems > $this->itemsLimitSingleTable ? $this->itemsLimitSingleTable : $this->totalItems;
+                        $countOnFirstPage = $this->totalItems > $this->itemsLimitSingleTable
+                            ? $this->itemsLimitSingleTable
+                            : $this->totalItems;
                         $hasMore = $this->totalItems > $this->itemsLimitSingleTable;
-                        $colspan = $this->showIcon ? count($this->fieldArray) + 1 + $this->maxDepth : count($this->fieldArray);
+                        $colspan = $this->showIcon
+                            ? count($this->fieldArray) + 1 + $this->maxDepth
+                            : count($this->fieldArray);
                         $rowOutput .= '<tr><td colspan="' . $colspan . '">
-								<a href="' . htmlspecialchars(($this->listURL() . '&table=' . rawurlencode($table))) . '" class="btn btn-default">' . '<span class="t3-icon fa fa-chevron-down"></span> <i>[1 - ' . $countOnFirstPage . ($hasMore ? '+' : '') . ']</i></a>
+								<a href="' . htmlspecialchars(($this->listURL() . '&table=' . rawurlencode($table)))
+                                      . '" class="btn btn-default">'
+                                      . '<span class="t3-icon fa fa-chevron-down"></span> <i>[1 - '
+                                      . $countOnFirstPage . ($hasMore ? '+' : '') . ']</i></a>
 								</td></tr>';
                     }
                 }
@@ -914,8 +949,7 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
     {
         $db = $this->getDatabaseConnection();
         if (!isset($this->referenceCount[$tableName][$uid])) {
-            $where = 'ref_table = ' . $db->fullQuoteStr($tableName,
-                    'sys_refindex') . ' AND ref_uid = ' . $uid . ' AND deleted = 0';
+            $where = 'ref_table = ' . $db->fullQuoteStr($tableName, 'sys_refindex') . ' AND ref_uid = ' . $uid . ' AND deleted = 0';
             $numberOfReferences = $db->exec_SELECTcountRows('*', 'sys_refindex', $where);
             $this->referenceCount[$tableName][$uid] = $numberOfReferences;
         }
@@ -943,22 +977,19 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
         // Traverse the fields:
         foreach ($this->fieldArray as $fCol) {
             // Calculate users permissions to edit records in the table:
-            $permsEdit = $this->calcPerms & ($table == 'pages' ? 2 : 16) && $this->overlayEditLockPermissions($table);
+            $permsEdit = $this->calcPerms & ($table === 'pages' ? 2 : 16) && $this->overlayEditLockPermissions($table);
             switch ((string)$fCol) {
                 case '_PATH_':
                     // Path
-                    $theData[$fCol] = '<i>[' . $lang->sL('LLL:EXT:lang/locallang_core.xlf:labels._PATH_',
-                            true) . ']</i>';
+                    $theData[$fCol] = '<i>[' . $lang->sL('LLL:EXT:lang/locallang_core.xlf:labels._PATH_', true) . ']</i>';
                     break;
                 case '_REF_':
                     // References
-                    $theData[$fCol] = '<i>[' . $lang->sL('LLL:EXT:lang/locallang_mod_file_list.xlf:c__REF_',
-                            true) . ']</i>';
+                    $theData[$fCol] = '<i>[' . $lang->sL('LLL:EXT:lang/locallang_mod_file_list.xlf:c__REF_', true) . ']</i>';
                     break;
                 case '_LOCALIZATION_':
                     // Path
-                    $theData[$fCol] = '<i>[' . $lang->sL('LLL:EXT:lang/locallang_core.xlf:labels._LOCALIZATION_',
-                            true) . ']</i>';
+                    $theData[$fCol] = '<i>[' . $lang->sL('LLL:EXT:lang/locallang_core.xlf:labels._LOCALIZATION_', true) . ']</i>';
                     break;
                 case '_LOCALIZATION_b':
                     // Path
@@ -975,14 +1006,13 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
                     $elFromTable = $this->clipObj->elFromTable($table);
                     if (!empty($elFromTable) && $this->overlayEditLockPermissions($table)) {
                         $href = htmlspecialchars($this->clipObj->pasteUrl($table, $this->id));
-                        $onClick = htmlspecialchars('return ' . $this->clipObj->confirmMsg('pages', $this->pageRow,
-                                'into', $elFromTable));
-                        $cells['pasteAfter'] = '<a class="btn btn-default" href="' . $href . '" onclick="' . $onClick . '" title="' . $lang->getLL('clip_paste',
-                                true) . '">' . $this->iconFactory->getIcon('actions-document-paste-after',
-                                Icon::SIZE_SMALL)->render() . '</a>';
+                        $onClick = htmlspecialchars('return ' . $this->clipObj->confirmMsg('pages', $this->pageRow, 'into', $elFromTable));
+                        $cells['pasteAfter'] = '<a class="btn btn-default" href="' . $href . '" onclick="' . $onClick
+                                               . '" title="' . $lang->getLL('clip_paste', true) . '">'
+                                               . $this->iconFactory->getIcon('actions-document-paste-after', Icon::SIZE_SMALL)->render() . '</a>';
                     }
                     // If the numeric clipboard pads are enabled, display the control icons for that:
-                    if ($this->clipObj->current != 'normal') {
+                    if ($this->clipObj->current !== 'normal') {
                         // The "select" link:
                         $spriteIcon = $this->iconFactory->getIcon('actions-edit-copy', Icon::SIZE_SMALL)->render();
                         $cells['copyMarked'] = $this->linkClipboardHeaderIcon($spriteIcon, $table, 'setCB', '', $lang->getLL('clip_selectMarked'));
@@ -995,9 +1025,9 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
                         $lastElement = array_pop($onClickArray);
                         array_push($onClickArray, $params . '&' . $lastElement);
                         $onClick = implode('?', $onClickArray);
-                        $cells['edit'] = '<a class="btn btn-default" href="#" onclick="' . htmlspecialchars($onClick) . '" title="' . $lang->getLL('clip_editMarked',
-                                true) . '">' . $this->iconFactory->getIcon('actions-document-open',
-                                Icon::SIZE_SMALL)->render() . '</a>';
+                        $cells['edit'] = '<a class="btn btn-default" href="#" onclick="' . htmlspecialchars($onClick)
+                                         . '" title="' . $lang->getLL('clip_editMarked', true) . '">'
+                                         . $this->iconFactory->getIcon('actions-document-open', Icon::SIZE_SMALL)->render() . '</a>';
                         // The "Delete marked" link:
                         $cells['delete'] = $this->linkClipboardHeaderIcon(
                             $this->iconFactory->getIcon('actions-edit-delete', Icon::SIZE_SMALL)->render(),
@@ -1008,8 +1038,9 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
                         );
                         // The "Select all" link:
                         $onClick = htmlspecialchars(('checkOffCB(' . GeneralUtility::quoteJSvalue(implode(',', $this->CBnames)) . ', this); return false;'));
-                        $cells['markAll'] = '<a class="btn btn-default" rel="" href="#" onclick="' . $onClick . '" title="' . $lang->getLL('clip_markRecords', true) . '">'
-                            . $this->iconFactory->getIcon('actions-document-select', Icon::SIZE_SMALL)->render() . '</a>';
+                        $cells['markAll'] = '<a class="btn btn-default" rel="" href="#" onclick="' . $onClick .
+                                            '" title="' . $lang->getLL('clip_markRecords', true) . '">'
+                                            . $this->iconFactory->getIcon('actions-document-select', Icon::SIZE_SMALL)->render() . '</a>';
                     } else {
                         $cells['empty'] = '';
                     }
@@ -1036,9 +1067,8 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
                     // Control panel:
                     if ($this->isEditable($table)) {
                         // If new records can be created on this page, add links:
-                        $permsAdditional = ($table === 'pages' ? 8 : 16);
+                        $permsAdditional = $table === 'pages' ? 8 : 16;
                         if ($table === 'tt_content') {
-
                             $expandTitle = $lang->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xlf:list.expandAllElements');
                             $collapseTitle = $lang->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xlf:list.collapseAllElements');
                             $containerIds = implode(',', array_flip(array_flip($this->currentContainerIdList)));
@@ -1059,29 +1089,30 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
                                 // If mod.web_list.newContentWiz.overrideWithExtension is set, use that extension's create new content wizard instead:
                                 $tmpTSc = BackendUtility::getModTSconfig($this->pageinfo['uid'], 'mod.web_list');
                                 $tmpTSc = $tmpTSc['properties']['newContentWiz.']['overrideWithExtension'];
-                                $newContentWizScriptPath = ExtensionManagementUtility::isLoaded($tmpTSc) ? ExtensionManagementUtility::extRelPath($tmpTSc) . 'mod1/db_new_content_el.php?id=' . $this->id : BackendUtility::getModuleUrl('new_content_element',
-                                    array('id' => $this->id));
+                                $newContentWizScriptPath = ExtensionManagementUtility::isLoaded($tmpTSc)
+                                    ? ExtensionManagementUtility::extRelPath($tmpTSc) . 'mod1/db_new_content_el.php?id=' . $this->id
+                                    : BackendUtility::getModuleUrl('new_content_element', array('id' => $this->id));
 
                                 $onClick = 'return jumpExt(' . GeneralUtility::quoteJSvalue($newContentWizScriptPath) . ');';
-                                $icon = '<a class="btn btn-default" href="#" onclick="' . htmlspecialchars($onClick) . '" title="' . $lang->getLL('new',
-                                        true) . '">' . $spriteIcon->render() . '</a>';
-                            } elseif ($table == 'pages' && $this->newWizards) {
+                                $icon = '<a class="btn btn-default" href="#" onclick="' . htmlspecialchars($onClick)
+                                        . '" title="' . $lang->getLL('new', true) . '">' . $spriteIcon->render() . '</a>';
+                            } elseif ($table === 'pages' && $this->newWizards) {
                                 $parameters = [
                                     'id' => $this->id,
                                     'pagesOnly' => 1,
                                     'returnUrl' => GeneralUtility::getIndpEnv('REQUEST_URI')
                                 ];
                                 $href = BackendUtility::getModuleUrl('db_new', $parameters);
-                                $icon .= '<a class="btn btn-default" href="' . htmlspecialchars($href) . '" title="' . $lang->getLL('new',
-                                        true) . '">' . $spriteIcon->render() . '</a>';
+                                $icon .= '<a class="btn btn-default" href="' . htmlspecialchars($href)
+                                         . '" title="' . $lang->getLL('new', true) . '">' . $spriteIcon->render() . '</a>';
                             } else {
                                 $params = '&edit[' . $table . '][' . $this->id . ']=new';
-                                if ($table == 'pages_language_overlay') {
+                                if ($table === 'pages_language_overlay') {
                                     $params .= '&overrideVals[pages_language_overlay][doktype]=' . (int)$this->pageRow['doktype'];
                                 }
-                                $icon .= '<a class="btn btn-default" href="#" onclick="' . htmlspecialchars(BackendUtility::editOnClick($params,
-                                        '', -1)) . '" title="' . $lang->getLL('new',
-                                        true) . '">' . $spriteIcon->render() . '</a>';
+                                $icon .= '<a class="btn btn-default" href="#" onclick="' .
+                                         htmlspecialchars(BackendUtility::editOnClick($params, '', -1))
+                                         . '" title="' . $lang->getLL('new', true) . '">' . $spriteIcon->render() . '</a>';
                             }
                         }
                         // If the table can be edited, add link for editing ALL SHOWN fields for all listed records:
@@ -1090,17 +1121,16 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
                             if ($this->clipNumPane()) {
                                 $editIdList = '\'+editList(' . GeneralUtility::quoteJSvalue($table) . ',' . GeneralUtility::quoteJSvalue($editIdList) . ')+\'';
                             }
-                            $params = 'edit[' . $table . '][' . $editIdList . ']=edit&columnsOnly=' . implode(',',
-                                    $this->fieldArray);
+                            $params = 'edit[' . $table . '][' . $editIdList . ']=edit&columnsOnly=' . implode(',', $this->fieldArray);
                             // we need to build this uri differently, otherwise GeneralUtility::quoteJSvalue messes up the edit list function
                             $onClick = BackendUtility::editOnClick('', '', -1);
                             $onClickArray = explode('?', $onClick, 2);
                             $lastElement = array_pop($onClickArray);
                             array_push($onClickArray, $params . '&' . $lastElement);
                             $onClick = implode('?', $onClickArray);
-                            $icon .= '<a class="btn btn-default" href="#" onclick="' . htmlspecialchars($onClick) . '" title="' . $lang->getLL('editShownColumns',
-                                    true) . '">' . $this->iconFactory->getIcon('actions-document-open',
-                                    Icon::SIZE_SMALL)->render() . '</a>';
+                            $icon .= '<a class="btn btn-default" href="#" onclick="' . htmlspecialchars($onClick)
+                                     . '" title="' . $lang->getLL('editShownColumns', true) . '">'
+                                     . $this->iconFactory->getIcon('actions-document-open', Icon::SIZE_SMALL)->render() . '</a>';
                             $icon = '<div class="btn-group" role="group">' . $icon . '</div>';
                         }
                         // Add an empty entry, so column count fits again after moving this into $icon
@@ -1126,9 +1156,10 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
                     if ($this->table && is_array($currentIdList)) {
                         // If the numeric clipboard pads are selected, show duplicate sorting link:
                         if ($this->clipNumPane()) {
-                            $theData[$fCol] .= '<a class="btn btn-default" href="' . htmlspecialchars($this->listURL('', '-1') . '&duplicateField=' . $fCol)
-                                . '" title="' . $lang->getLL('clip_duplicates', true) . '">'
-                                . $this->iconFactory->getIcon('actions-document-duplicates-select', Icon::SIZE_SMALL)->render() . '</a>';
+                            $theData[$fCol] .= '<a class="btn btn-default" href="'
+                                               . htmlspecialchars($this->listURL('', '-1') . '&duplicateField=' . $fCol)
+                                               . '" title="' . $lang->getLL('clip_duplicates', true) . '">'
+                                               . $this->iconFactory->getIcon('actions-document-duplicates-select', Icon::SIZE_SMALL)->render() . '</a>';
                         }
                         // If the table can be edited, add link for editing THIS field for all
                         // listed records:
@@ -1145,8 +1176,9 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
                             array_push($onClickArray, $params . '&' . $lastElement);
                             $onClick = implode('?', $onClickArray);
                             $iTitle = sprintf($lang->getLL('editThisColumn'), $sortLabel);
-                            $theData[$fCol] .= '<a class="btn btn-default" href="#" onclick="' . htmlspecialchars($onClick) . '" title="' . htmlspecialchars($iTitle) . '">' . $this->iconFactory->getIcon('actions-document-open',
-                                    Icon::SIZE_SMALL)->render() . '</a>';
+                            $theData[$fCol] .= '<a class="btn btn-default" href="#" onclick="' . htmlspecialchars($onClick)
+                                               . '" title="' . htmlspecialchars($iTitle) . '">'
+                                               . $this->iconFactory->getIcon('actions-document-open', Icon::SIZE_SMALL)->render() . '</a>';
                         }
                         if (strlen($theData[$fCol]) > 0) {
                             $theData[$fCol] = '<div class="btn-group" role="group">' . $theData[$fCol] . '</div> ';
@@ -1174,8 +1206,8 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
             foreach ($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['typo3/class.db_list_extra.inc']['actions'] as $classData) {
                 $hookObject = GeneralUtility::getUserObj($classData);
                 if (!$hookObject instanceof RecordListHookInterface) {
-                    throw new \UnexpectedValueException('$hookObject must implement interface ' . RecordListHookInterface::class,
-                        1195567855);
+                    throw new \UnexpectedValueException(
+                        '$hookObject must implement interface ' . RecordListHookInterface::class, 1195567855);
                 }
                 $theData = $hookObject->renderListHeader($table, $currentIdList, $theData, $this);
             }
@@ -1183,21 +1215,8 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
 
         $headerOutput .= '<thead>' . $this->addElement(1, $icon, $theData, '', '', '', 'th') . '</thead>';
 
-
         // Create and return header table row:
         return $headerOutput;
-    }
-
-    /**
-     * Get pointer for first element on the page
-     *
-     * @param int $page Page number starting with 1
-     *
-     * @return int Pointer to first element on the page (starting with 0)
-     */
-    protected function getPointerForPage($page)
-    {
-        return ($page - 1) * $this->iLimit;
     }
 
     /**
@@ -1223,34 +1242,31 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
         if ($currentPage > 1) {
             $labelFirst = $this->getLanguageService()->sL('LLL:EXT:lang/locallang_common.xlf:first', true);
             $labelPrevious = $this->getLanguageService()->sL('LLL:EXT:lang/locallang_common.xlf:previous', true);
-            $first = '<li><a href="' . $listURL . '&pointer=' . $this->getPointerForPage(1) . '" title="' . $labelFirst . '">' . $this->iconFactory->getIcon('actions-view-paging-first',
-                    Icon::SIZE_SMALL)->render() . '</a></li>';
-            $previous = '<li><a href="' . $listURL . '&pointer=' . $this->getPointerForPage($currentPage - 1) . '" title="' . $labelPrevious . '">' . $this->iconFactory->getIcon('actions-view-paging-previous',
-                    Icon::SIZE_SMALL)->render() . '</a></li>';
+            $first = '<li><a href="' . $listURL . '&pointer=' . $this->getPointerForPage(1) . '" title="' . $labelFirst . '">'
+                     . $this->iconFactory->getIcon('actions-view-paging-first', Icon::SIZE_SMALL)->render() . '</a></li>';
+            $previous = '<li><a href="' . $listURL . '&pointer=' . $this->getPointerForPage($currentPage - 1)
+                        . '" title="' . $labelPrevious . '">'
+                        . $this->iconFactory->getIcon('actions-view-paging-previous', Icon::SIZE_SMALL)->render() . '</a></li>';
         } else {
-            $first = '<li class="disabled"><span>' . $this->iconFactory->getIcon('actions-view-paging-first',
-                    Icon::SIZE_SMALL)->render() . '</span></li>';
-            $previous = '<li class="disabled"><span>' . $this->iconFactory->getIcon('actions-view-paging-previous',
-                    Icon::SIZE_SMALL)->render() . '</span></li>';
+            $first = '<li class="disabled"><span>' . $this->iconFactory->getIcon('actions-view-paging-first', Icon::SIZE_SMALL)->render() . '</span></li>';
+            $previous = '<li class="disabled"><span>' . $this->iconFactory->getIcon('actions-view-paging-previous', Icon::SIZE_SMALL)->render() . '</span></li>';
         }
         if ($currentPage < $totalPages) {
             $labelNext = $this->getLanguageService()->sL('LLL:EXT:lang/locallang_common.xlf:next', true);
             $labelLast = $this->getLanguageService()->sL('LLL:EXT:lang/locallang_common.xlf:last', true);
-            $next = '<li><a href="' . $listURL . '&pointer=' . $this->getPointerForPage($currentPage + 1) . '" title="' . $labelNext . '">' . $this->iconFactory->getIcon('actions-view-paging-next',
-                    Icon::SIZE_SMALL)->render() . '</a></li>';
-            $last = '<li><a href="' . $listURL . '&pointer=' . $this->getPointerForPage($totalPages) . '" title="' . $labelLast . '">' . $this->iconFactory->getIcon('actions-view-paging-last',
-                    Icon::SIZE_SMALL)->render() . '</a></li>';
+            $next = '<li><a href="' . $listURL . '&pointer=' . $this->getPointerForPage($currentPage + 1) . '" title="' . $labelNext . '">'
+                    . $this->iconFactory->getIcon('actions-view-paging-next', Icon::SIZE_SMALL)->render() . '</a></li>';
+            $last = '<li><a href="' . $listURL . '&pointer=' . $this->getPointerForPage($totalPages) . '" title="' . $labelLast . '">'
+                    . $this->iconFactory->getIcon('actions-view-paging-last', Icon::SIZE_SMALL)->render() . '</a></li>';
         } else {
-            $next = '<li class="disabled"><span>' . $this->iconFactory->getIcon('actions-view-paging-next',
-                    Icon::SIZE_SMALL)->render() . '</span></li>';
-            $last = '<li class="disabled"><span>' . $this->iconFactory->getIcon('actions-view-paging-last',
-                    Icon::SIZE_SMALL)->render() . '</span></li>';
+            $next = '<li class="disabled"><span>' . $this->iconFactory->getIcon('actions-view-paging-next', Icon::SIZE_SMALL)->render() . '</span></li>';
+            $last = '<li class="disabled"><span>' . $this->iconFactory->getIcon('actions-view-paging-last', Icon::SIZE_SMALL)->render() . '</span></li>';
         }
-        $reload = '<li><a href="#" onclick="document.dblistForm.action=' . GeneralUtility::quoteJSvalue($listURL
-            . '&pointer=') . '+calculatePointer(document.getElementById(' . GeneralUtility::quoteJSvalue('jumpPage-' . $renderPart)
-            . ').value); document.dblistForm.submit(); return true;" title="'
-            . $this->getLanguageService()->sL('LLL:EXT:lang/locallang_common.xlf:reload', true) . '">'
-            . $this->iconFactory->getIcon('actions-refresh', Icon::SIZE_SMALL)->render() . '</a></li>';
+        $reload = '<li><a href="#" onclick="document.dblistForm.action=' . GeneralUtility::quoteJSvalue($listURL . '&pointer=')
+                  . '+calculatePointer(document.getElementById(' . GeneralUtility::quoteJSvalue('jumpPage-' . $renderPart)
+                  . ').value); document.dblistForm.submit(); return true;" title="'
+                  . $this->getLanguageService()->sL('LLL:EXT:lang/locallang_common.xlf:reload', true) . '">'
+                  . $this->iconFactory->getIcon('actions-refresh', Icon::SIZE_SMALL)->render() . '</a></li>';
         if ($renderPart === 'top') {
             // Add js to traverse a page select input to a pointer value
             $content = '
@@ -1270,20 +1286,26 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
 ';
         }
         $pageNumberInput = '
-			<input type="text" value="' . $currentPage . '" size="3" class="form-control input-sm paginator-input" id="jumpPage-' . $renderPart . '" name="jumpPage-'
-            . $renderPart . '" onkeyup="if (event.keyCode == 13) { document.dblistForm.action=' . GeneralUtility::quoteJSvalue($listURL
-            . '&pointer=') . '+calculatePointer(this.value); document.dblistForm.submit(); } return true;" />
+			<input type="text" value="' . $currentPage . '" size="3" class="form-control input-sm paginator-input" id="jumpPage-'
+           . $renderPart . '" name="jumpPage-' . $renderPart . '" onkeyup="if (event.keyCode == 13) { document.dblistForm.action='
+           . GeneralUtility::quoteJSvalue($listURL . '&pointer=') . '+calculatePointer(this.value); document.dblistForm.submit(); } return true;" />
 			';
-        $pageIndicatorText = sprintf($this->getLanguageService()->sL('LLL:EXT:lang/locallang_mod_web_list.xlf:pageIndicator'),
-            $pageNumberInput, $totalPages);
+        $pageIndicatorText = sprintf(
+            $this->getLanguageService()->sL('LLL:EXT:lang/locallang_mod_web_list.xlf:pageIndicator'),
+            $pageNumberInput,
+            $totalPages
+        );
         $pageIndicator = '<li><span>' . $pageIndicatorText . '</span></li>';
         if ($this->totalItems > $this->firstElementNumber + $this->iLimit) {
             $lastElementNumber = $this->firstElementNumber + $this->iLimit;
         } else {
             $lastElementNumber = $this->totalItems;
         }
-        $rangeIndicator = '<li><span>' . sprintf($this->getLanguageService()->sL('LLL:EXT:lang/locallang_mod_web_list.xlf:rangeIndicator'),
-                ($this->firstElementNumber + 1), $lastElementNumber) . '</span></li>';
+        $rangeIndicator = '<li><span>' . sprintf(
+                $this->getLanguageService()->sL('LLL:EXT:lang/locallang_mod_web_list.xlf:rangeIndicator'),
+                $this->firstElementNumber + 1,
+                $lastElementNumber
+            ) . '</span></li>';
 
         $titleColumn = $this->fieldArray[0];
         $data = array(
@@ -1331,9 +1353,8 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
         );
         // If the listed table is 'pages' we have to request the permission settings for each page:
         $localCalcPerms = 0;
-        if ($table == 'pages') {
-            $localCalcPerms = $this->getBackendUserAuthentication()->calcPerms(BackendUtility::getRecord('pages',
-                $row['uid']));
+        if ($table === 'pages') {
+            $localCalcPerms = $this->getBackendUserAuthentication()->calcPerms(BackendUtility::getRecord('pages', $row['uid']));
         }
         $permsEdit = $table === 'pages'
             && $this->getBackendUserAuthentication()->checkLanguageAccess(0)
@@ -1342,14 +1363,13 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
             && $this->calcPerms & Permission::CONTENT_EDIT;
         $permsEdit = $this->overlayEditLockPermissions($table, $row, $permsEdit);
         // hides the move, copy, cut and paste icons for localized records - doesn't make much sense to perform these options for them
-        $isL10nOverlay = $table != 'pages_language_overlay' && $row[$GLOBALS['TCA'][$table]['ctrl']['transOrigPointerField']] != 0;
+        $isL10nOverlay = $table !== 'pages_language_overlay' && $row[$GLOBALS['TCA'][$table]['ctrl']['transOrigPointerField']] != 0;
         // "Show" link (only pages and tt_content elements)
-        if ($table == 'pages' || $table == 'tt_content') {
-            $viewAction = '<a class="btn btn-default" href="#" onclick="' . htmlspecialchars(BackendUtility::viewOnClick(($table === 'tt_content' ? $this->id : $row['uid']),
-                    '', '',
-                    ($table === 'tt_content' ? '#' . $row['uid'] : ''))) . '" title="' . $this->getLanguageService()->sL('LLL:EXT:lang/locallang_core.xlf:labels.showPage',
-                    true) . '">' . $this->iconFactory->getIcon('actions-document-view',
-                    Icon::SIZE_SMALL)->render() . '</a>';
+        if ($table === 'pages' || $table === 'tt_content') {
+            $viewAction = '<a class="btn btn-default" href="#" onclick="'
+                          . htmlspecialchars(BackendUtility::viewOnClick($table === 'tt_content' ? $this->id : $row['uid'], '', '', $table === 'tt_content' ? '#' . $row['uid'] : ''))
+                          . '" title="' . $this->getLanguageService()->sL('LLL:EXT:lang/locallang_core.xlf:labels.showPage', true) . '">'
+                          . $this->iconFactory->getIcon('actions-document-view', Icon::SIZE_SMALL)->render() . '</a>';
             $this->addActionToCellGroup($cells, $viewAction, 'view');
         }
         // "Edit" link: ( Only if permissions to edit the page-record of the content of the parent page ($this->id)
@@ -1357,27 +1377,27 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
             $params = '&edit[' . $table . '][' . $row['uid'] . ']=edit';
             $iconIdentifier = 'actions-document-open';
             $overlayIdentifier = !$this->isEditable($table) ? 'overlay-readonly' : null;
-            $editAction = '<a class="btn btn-default" href="#" onclick="' . htmlspecialchars(BackendUtility::editOnClick($params,
-                    '', -1)) . '" title="' . $this->getLanguageService()->getLL('edit',
-                    true) . '">' . $this->iconFactory->getIcon($iconIdentifier, Icon::SIZE_SMALL,
-                    $overlayIdentifier)->render() . '</a>';
+            $editAction = '<a class="btn btn-default" href="#" onclick="'
+                          . htmlspecialchars(BackendUtility::editOnClick($params, '', -1))
+                          . '" title="' . $this->getLanguageService()->getLL('edit', true) . '">'
+                          . $this->iconFactory->getIcon($iconIdentifier, Icon::SIZE_SMALL, $overlayIdentifier)->render() . '</a>';
         } else {
             $editAction = $this->spaceIcon;
         }
         $this->addActionToCellGroup($cells, $editAction, 'edit');
         // "Info": (All records)
         $onClick = 'top.launchView(' . GeneralUtility::quoteJSvalue($table) . ', ' . (int)$row['uid'] . '); return false;';
-        $viewBigAction = '<a class="btn btn-default" href="#" onclick="' . htmlspecialchars($onClick) . '" title="' . $this->getLanguageService()->getLL('showInfo',
-                true) . '">' . $this->iconFactory->getIcon('actions-document-info',
-                Icon::SIZE_SMALL)->render() . '</a>';
+        $viewBigAction = '<a class="btn btn-default" href="#" onclick="' . htmlspecialchars($onClick)
+                         . '" title="' . $this->getLanguageService()->getLL('showInfo', true) . '">'
+                         . $this->iconFactory->getIcon('actions-document-info', Icon::SIZE_SMALL)->render() . '</a>';
         $this->addActionToCellGroup($cells, $viewBigAction, 'viewBig');
         // "Move" wizard link for pages/tt_content elements:
         if ($permsEdit && ($table === 'tt_content' || $table === 'pages') && !$isL10nOverlay) {
             $onClick = 'return jumpExt(\'' . BackendUtility::getModuleUrl('move_element') . '&table=' . $table . '&uid=' . $row['uid'] . '\');';
-            $linkTitleLL = $this->getLanguageService()->getLL('move_' . ($table === 'tt_content' ? 'record' : 'page'),
-                true);
-            $icon = ($table == 'pages' ? $this->iconFactory->getIcon('actions-page-move',
-                Icon::SIZE_SMALL) : $this->iconFactory->getIcon('actions-document-move', Icon::SIZE_SMALL));
+            $linkTitleLL = $this->getLanguageService()->getLL('move_' . ($table === 'tt_content' ? 'record' : 'page'), true);
+            $icon = $table === 'pages'
+                ? $this->iconFactory->getIcon('actions-page-move', Icon::SIZE_SMALL)
+                : $this->iconFactory->getIcon('actions-document-move', Icon::SIZE_SMALL);
             $moveAction = '<a class="btn btn-default" href="#" onclick="' . htmlspecialchars($onClick) . '" title="' . $linkTitleLL . '">' . $icon->render() . '</a>';
         } else {
             $moveAction = $this->spaceIcon;
@@ -1388,9 +1408,9 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
             // "Revert" link (history/undo)
             $moduleUrl = BackendUtility::getModuleUrl('record_history', array('element' => $table . ':' . $row['uid']));
             $onClick = 'return jumpExt(' . GeneralUtility::quoteJSvalue($moduleUrl) . ',\'#latest\');';
-            $historyAction = '<a class="btn btn-default" href="#" onclick="' . htmlspecialchars($onClick) . '" title="' . $this->getLanguageService()->getLL('history',
-                    true) . '">' . $this->iconFactory->getIcon('actions-document-history-open',
-                    Icon::SIZE_SMALL)->render() . '</a>';
+            $historyAction = '<a class="btn btn-default" href="#" onclick="' . htmlspecialchars($onClick)
+                             . '" title="' . $this->getLanguageService()->getLL('history', true) . '">'
+                             . $this->iconFactory->getIcon('actions-document-history-open', Icon::SIZE_SMALL)->render() . '</a>';
             $this->addActionToCellGroup($cells, $historyAction, 'history');
             // Versioning:
             if (ExtensionManagementUtility::isLoaded('version') && !ExtensionManagementUtility::isLoaded('workspaces')) {
@@ -1402,36 +1422,35 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
                         'table' => $table,
                         'uid' => $row['uid']
                     ));
-                    $versionAction = '<a class="btn btn-default" href="' . htmlspecialchars($href) . '" title="' . $this->getLanguageService()->getLL('displayVersions',
-                            true) . '">' . $this->iconFactory->getIcon('actions-version-open',
-                            Icon::SIZE_SMALL)->render() . '</a>';
+                    $versionAction = '<a class="btn btn-default" href="' . htmlspecialchars($href) . '" title="'
+                                     . $this->getLanguageService()->getLL('displayVersions', true) . '">'
+                                     . $this->iconFactory->getIcon('actions-version-open', Icon::SIZE_SMALL)->render() . '</a>';
                     $this->addActionToCellGroup($cells, $versionAction, 'version');
                 }
             }
             // "Edit Perms" link:
-            if ($table === 'pages' && $this->getBackendUserAuthentication()->check('modules',
-                    'system_BeuserTxPermission') && ExtensionManagementUtility::isLoaded('beuser')
-            ) {
+            if ($table === 'pages' && $this->getBackendUserAuthentication()->check('modules', 'system_BeuserTxPermission') && ExtensionManagementUtility::isLoaded('beuser')) {
                 $href = BackendUtility::getModuleUrl('system_BeuserTxPermission') . '&id=' . $row['uid'] . '&return_id=' . $row['uid'] . '&edit=1';
-                $permsAction = '<a class="btn btn-default" href="' . htmlspecialchars($href) . '" title="' . $this->getLanguageService()->getLL('permissions',
-                        true) . '">' . $this->iconFactory->getIcon('status-status-locked',
-                        Icon::SIZE_SMALL)->render() . '</a>';
+                $permsAction = '<a class="btn btn-default" href="' . htmlspecialchars($href)
+                               . '" title="' . $this->getLanguageService()->getLL('permissions', true) . '">'
+                               . $this->iconFactory->getIcon('status-status-locked', Icon::SIZE_SMALL)->render() . '</a>';
                 $this->addActionToCellGroup($cells, $permsAction, 'perms');
             }
             // "New record after" link (ONLY if the records in the table are sorted by a "sortby"-row
             // or if default values can depend on previous record):
-            if (($GLOBALS['TCA'][$table]['ctrl']['sortby'] || $GLOBALS['TCA'][$table]['ctrl']['useColumnsForDefaultValues']) && $permsEdit) {
-                if ($table !== 'pages' && $this->calcPerms & Permission::CONTENT_EDIT || $table === 'pages' && $this->calcPerms & Permission::PAGE_NEW) {
+            if ($permsEdit && (!empty($GLOBALS['TCA'][$table]['ctrl']['sortby']) || !empty($GLOBALS['TCA'][$table]['ctrl']['useColumnsForDefaultValues']))) {
+                if ($table !== 'pages' && $this->calcPerms & Permission::CONTENT_EDIT
+                    || $table === 'pages' && $this->calcPerms & Permission::PAGE_NEW
+                ) {
                     if ($this->showNewRecLink($table)) {
                         $params = '&edit[' . $table . '][' . -($row['_MOVE_PLH'] ? $row['_MOVE_PLH_uid'] : $row['uid']) . ']=new';
-                        $icon = ($table == 'pages' ? $this->iconFactory->getIcon('actions-page-new', Icon::SIZE_SMALL) : $this->iconFactory->getIcon('actions-add', Icon::SIZE_SMALL));
+                        $icon = ($table === 'pages' ? $this->iconFactory->getIcon('actions-page-new', Icon::SIZE_SMALL) : $this->iconFactory->getIcon('actions-add', Icon::SIZE_SMALL));
                         $titleLabel = 'new';
                         if ($GLOBALS['TCA'][$table]['ctrl']['sortby']) {
                             $titleLabel .= ($table === 'pages' ? 'Page' : 'Record');
                         }
                         $newAction = '<a class="btn btn-default" href="#" onclick="' . htmlspecialchars(BackendUtility::editOnClick($params, '', -1))
-                            . '" title="' . htmlspecialchars($this->getLanguageService()->getLL($titleLabel)) . '">'
-                            . $icon->render() . '</a>';
+                            . '" title="' . htmlspecialchars($this->getLanguageService()->getLL($titleLabel)) . '">' . $icon->render() . '</a>';
                         $this->addActionToCellGroup($cells, $newAction, 'new');
                     }
                 }
@@ -1441,10 +1460,10 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
                 if (isset($this->currentTable['prev'][$row['uid']]) && $this->showMoveUp === true && !$isL10nOverlay) {
                     // Up
                     $params = '&cmd[' . $table . '][' . $row['uid'] . '][move]=' . $this->currentTable['prev'][$row['uid']];
-                    $moveUpAction = '<a class="btn btn-default" href="#" onclick="' . htmlspecialchars('return jumpToUrl(' . BackendUtility::getLinkToDataHandlerAction($params,
-                                -1) . ');') . '" title="' . $this->getLanguageService()->getLL('moveUp',
-                            true) . '">' . $this->iconFactory->getIcon('actions-move-up',
-                            Icon::SIZE_SMALL)->render() . '</a>';
+                    $moveUpAction = '<a class="btn btn-default" href="#" onclick="'
+                                    . htmlspecialchars('return jumpToUrl(' . BackendUtility::getLinkToDataHandlerAction($params, -1) . ');')
+                                    . '" title="' . $this->getLanguageService()->getLL('moveUp', true) . '">'
+                                    . $this->iconFactory->getIcon('actions-move-up', Icon::SIZE_SMALL)->render() . '</a>';
                 } else {
                     $moveUpAction = $this->spaceIcon;
                 }
@@ -1453,52 +1472,64 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
                 if ($this->currentTable['next'][$row['uid']] && $this->showMoveDown === true && !$isL10nOverlay) {
                     // Down
                     $params = '&cmd[' . $table . '][' . $row['uid'] . '][move]=' . $this->currentTable['next'][$row['uid']];
-                    $moveDownAction = '<a class="btn btn-default" href="#" onclick="' . htmlspecialchars('return jumpToUrl(' . BackendUtility::getLinkToDataHandlerAction($params,
-                                -1) . ');') . '" title="' . $this->getLanguageService()->getLL('moveDown',
-                            true) . '">' . $this->iconFactory->getIcon('actions-move-down',
-                            Icon::SIZE_SMALL)->render() . '</a>';
+                    $moveDownAction = '<a class="btn btn-default" href="#" onclick="'
+                                      . htmlspecialchars('return jumpToUrl(' . BackendUtility::getLinkToDataHandlerAction($params, -1) . ');')
+                                      . '" title="' . $this->getLanguageService()->getLL('moveDown', true) . '">'
+                                      . $this->iconFactory->getIcon('actions-move-down', Icon::SIZE_SMALL)->render() . '</a>';
                 } else {
                     $moveDownAction = $this->spaceIcon;
                 }
                 $this->addActionToCellGroup($cells, $moveDownAction, 'moveDown');
             }
+
             // "Hide/Unhide" links:
             $hiddenField = $GLOBALS['TCA'][$table]['ctrl']['enablecolumns']['disabled'];
-
-            if ($permsEdit && $hiddenField && $GLOBALS['TCA'][$table]['columns'][$hiddenField] && (!$GLOBALS['TCA'][$table]['columns'][$hiddenField]['exclude'] || $this->getBackendUserAuthentication()->check('non_exclude_fields',
-                        $table . ':' . $hiddenField))
+            if ($permsEdit && $hiddenField && $GLOBALS['TCA'][$table]['columns'][$hiddenField]
+                && (!$GLOBALS['TCA'][$table]['columns'][$hiddenField]['exclude']
+                    || $this->getBackendUserAuthentication()->check('non_exclude_fields', $table . ':' . $hiddenField))
             ) {
                 if ($this->isRecordCurrentBackendUser($table, $row)) {
                     $hideAction = $this->spaceIcon;
                 } else {
-                    $hideTitle = $this->getLanguageService()->getLL('hide' . ($table == 'pages' ? 'Page' : ''), true);
-                    $unhideTitle = $this->getLanguageService()->getLL('unHide' . ($table == 'pages' ? 'Page' : ''),
+                    $hideTitle = $this->getLanguageService()->getLL('hide' . ($table === 'pages' ? 'Page' : ''), true);
+                    $unhideTitle = $this->getLanguageService()->getLL('unHide' . ($table === 'pages' ? 'Page' : ''),
                         true);
                     if ($row[$hiddenField]) {
                         $params = 'data[' . $table . '][' . $rowUid . '][' . $hiddenField . ']=0';
-                        $hideAction = '<a class="btn btn-default t3js-record-hide" data-state="hidden" href="#"' . ' data-params="' . htmlspecialchars($params) . '"' . ' title="' . $unhideTitle . '"' . ' data-toggle-title="' . $hideTitle . '">' . $this->iconFactory->getIcon('actions-edit-unhide',
-                                Icon::SIZE_SMALL)->render() . '</a>';
+                        $hideAction = '<a class="btn btn-default t3js-record-hide" data-state="hidden" href="#"' . ' data-params="'
+                                      . htmlspecialchars($params) . '"' . ' title="' . $unhideTitle . '"'
+                                      . ' data-toggle-title="' . $hideTitle . '">'
+                                      . $this->iconFactory->getIcon('actions-edit-unhide', Icon::SIZE_SMALL)->render() . '</a>';
                     } else {
                         $params = 'data[' . $table . '][' . $rowUid . '][' . $hiddenField . ']=1';
-                        $hideAction = '<a class="btn btn-default t3js-record-hide" data-state="visible" href="#"' . ' data-params="' . htmlspecialchars($params) . '"' . ' title="' . $hideTitle . '"' . ' data-toggle-title="' . $unhideTitle . '">' . $this->iconFactory->getIcon('actions-edit-hide',
-                                Icon::SIZE_SMALL)->render() . '</a>';
+                        $hideAction = '<a class="btn btn-default t3js-record-hide" data-state="visible" href="#"'
+                                      . ' data-params="' . htmlspecialchars($params) . '"' . ' title="' . $hideTitle . '"'
+                                      . ' data-toggle-title="' . $unhideTitle . '">'
+                                      . $this->iconFactory->getIcon('actions-edit-hide', Icon::SIZE_SMALL)->render() . '</a>';
                     }
                 }
                 $this->addActionToCellGroup($cells, $hideAction, 'hide');
             }
             // "Delete" link:
-            if ($permsEdit && ($table === 'pages' && $localCalcPerms & Permission::PAGE_DELETE || $table !== 'pages' && $this->calcPerms & Permission::CONTENT_EDIT)) {
+            if ($permsEdit && ($table === 'pages' && $localCalcPerms & Permission::PAGE_DELETE
+                               || $table !== 'pages' && $this->calcPerms & Permission::CONTENT_EDIT)
+            ) {
                 // Check if the record version is in "deleted" state, because that will switch the action to "restore"
                 if ($this->getBackendUserAuthentication()->workspace > 0 && isset($row['t3ver_state']) && (int)$row['t3ver_state'] === 2) {
                     $actionName = 'restore';
                     $refCountMsg = '';
                 } else {
                     $actionName = 'delete';
-                    $refCountMsg = BackendUtility::referenceCount($table, $row['uid'],
-                            ' ' . $this->getLanguageService()->sL('LLL:EXT:lang/locallang_core.xlf:labels.referencesToRecord'),
-                            $this->getReferenceCount($table, $row['uid'])) . BackendUtility::translationCount($table,
-                            $row['uid'],
-                            ' ' . $this->getLanguageService()->sL('LLL:EXT:lang/locallang_core.xlf:labels.translationsOfRecord'));
+                    $refCountMsg = BackendUtility::referenceCount(
+                        $table,
+                        $row['uid'],
+                        ' ' . $this->getLanguageService()->sL('LLL:EXT:lang/locallang_core.xlf:labels.referencesToRecord'),
+                        $this->getReferenceCount($table, $row['uid'])
+                    ) . BackendUtility::translationCount(
+                        $table,
+                        $row['uid'],
+                        ' ' . $this->getLanguageService()->sL('LLL:EXT:lang/locallang_core.xlf:labels.translationsOfRecord')
+                    );
                 }
 
                 if ($this->isRecordCurrentBackendUser($table, $row)) {
@@ -1518,14 +1549,14 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
             }
             $this->addActionToCellGroup($cells, $deleteAction, 'delete');
             // "Levels" links: Moving pages into new levels...
-            if ($permsEdit && $table == 'pages' && !$this->searchLevels) {
+            if ($permsEdit && $table === 'pages' && !$this->searchLevels) {
                 // Up (Paste as the page right after the current parent page)
                 if ($this->calcPerms & Permission::PAGE_NEW) {
                     $params = '&cmd[' . $table . '][' . $row['uid'] . '][move]=' . -$this->id;
-                    $moveLeftAction = '<a class="btn btn-default" href="#" onclick="' . htmlspecialchars('return jumpToUrl(' . BackendUtility::getLinkToDataHandlerAction($params,
-                                -1) . ');') . '" title="' . $this->getLanguageService()->getLL('prevLevel',
-                            true) . '">' . $this->iconFactory->getIcon('actions-move-left',
-                            Icon::SIZE_SMALL)->render() . '</a>';
+                    $moveLeftAction = '<a class="btn btn-default" href="#" onclick="'
+                                      . htmlspecialchars('return jumpToUrl(' . BackendUtility::getLinkToDataHandlerAction($params, -1) . ');')
+                                      . '" title="' . $this->getLanguageService()->getLL('prevLevel', true) . '">'
+                                      . $this->iconFactory->getIcon('actions-move-left', Icon::SIZE_SMALL)->render() . '</a>';
                     $this->addActionToCellGroup($cells, $moveLeftAction, 'moveLeft');
                 }
                 // Down (Paste as subpage to the page right above)
@@ -1534,10 +1565,10 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
                         $this->currentTable['prevUid'][$row['uid']]));
                     if ($localCalcPerms & Permission::PAGE_NEW) {
                         $params = '&cmd[' . $table . '][' . $row['uid'] . '][move]=' . $this->currentTable['prevUid'][$row['uid']];
-                        $moveRightAction = '<a class="btn btn-default" href="#" onclick="' . htmlspecialchars('return jumpToUrl(' . BackendUtility::getLinkToDataHandlerAction($params,
-                                    -1) . ');') . '" title="' . $this->getLanguageService()->getLL('nextLevel',
-                                true) . '">' . $this->iconFactory->getIcon('actions-move-right',
-                                Icon::SIZE_SMALL)->render() . '</a>';
+                        $moveRightAction = '<a class="btn btn-default" href="#" onclick="'
+                                           . htmlspecialchars('return jumpToUrl(' . BackendUtility::getLinkToDataHandlerAction($params, -1) . ');')
+                                           . '" title="' . $this->getLanguageService()->getLL('nextLevel', true) . '">'
+                                           . $this->iconFactory->getIcon('actions-move-right', Icon::SIZE_SMALL)->render() . '</a>';
                     } else {
                         $moveRightAction = $this->spaceIcon;
                     }
@@ -1576,8 +1607,10 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
             foreach ($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['typo3/class.db_list_extra.inc']['actions'] as $classData) {
                 $hookObject = GeneralUtility::getUserObj($classData);
                 if (!$hookObject instanceof RecordListHookInterface) {
-                    throw new \UnexpectedValueException('$hookObject must implement interface ' . RecordListHookInterface::class,
-                        1195567840);
+                    throw new \UnexpectedValueException(
+                        '$hookObject must implement interface ' . RecordListHookInterface::class,
+                        1195567840
+                    );
                 }
                 $cells = $hookObject->makeControl($table, $row, $cells, $this);
             }
@@ -1599,7 +1632,11 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
                 foreach ($actions as $action) {
                     $cellOutput .= $action;
                 }
-                $output .= ' <div class="btn-group">' . '<span id="actions_' . $table . '_' . $row['uid'] . '" class="btn-group collapse collapse-horizontal width">' . $cellOutput . '</span>' . '<a href="#actions_' . $table . '_' . $row['uid'] . '" class="btn btn-default collapsed" data-toggle="collapse" aria-expanded="false"><span class="t3-icon fa fa-ellipsis-h"></span></a>' . '</div>';
+                $output .= ' <div class="btn-group">' . '<span id="actions_' . $table . '_' . $row['uid']
+                           . '" class="btn-group collapse collapse-horizontal width">' . $cellOutput . '</span>'
+                           . '<a href="#actions_' . $table . '_' . $row['uid']
+                           . '" class="btn btn-default collapsed" data-toggle="collapse" aria-expanded="false">'
+                           . '<span class="t3-icon fa fa-ellipsis-h"></span></a>' . '</div>';
             } else {
                 $output .= ' <div class="btn-group" role="group">' . implode('', $actions) . '</div>';
             }
@@ -1626,7 +1663,7 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
         $cells = array();
         $cells['pasteAfter'] = ($cells['pasteInto'] = $this->spaceIcon);
         // hides the move, copy, cut and paste icons for localized records - doesn't make much sense to perform these options for them
-        $isL10nOverlay = $table != 'pages_language_overlay' && $row[$GLOBALS['TCA'][$table]['ctrl']['transOrigPointerField']] != 0;
+        $isL10nOverlay = $table !== 'pages_language_overlay' && $row[$GLOBALS['TCA'][$table]['ctrl']['transOrigPointerField']] != 0;
         // Return blank, if disabled:
         // Whether a numeric clipboard pad is active or the normal pad we will see different content of the panel:
         // For the "Normal" pad:
@@ -1647,7 +1684,7 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
                 }
 
                 $cells['copy'] = '<a class="btn btn-default" href="#" onclick="'
-                    . htmlspecialchars('return jumpSelf(' . GeneralUtility::quoteJSvalue($this->clipObj->selUrlDB($table, $row['uid'], 1, ($isSel === 'copy'), array('returnUrl' => ''))) . ');')
+                    . htmlspecialchars('return jumpSelf(' . GeneralUtility::quoteJSvalue($this->clipObj->selUrlDB($table, $row['uid'], 1, $isSel === 'copy', array('returnUrl' => ''))) . ');')
                     . '" title="' . $this->getLanguageService()->sL('LLL:EXT:lang/locallang_core.xlf:cm.copy', true) . '">'
                     . $copyIcon->render() . '</a>';
                 if (true) {
@@ -1675,29 +1712,29 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
                 $this->duplicateStack[] = $row[$this->duplicateField];
             }
             // Adding the checkbox to the panel:
-            $cells['select'] = $isL10nOverlay ? $this->spaceIcon : '<input type="hidden" name="CBH[' . $n . ']" value="0" /><label class="btn btn-default btn-checkbox"><input type="checkbox"' . ' name="CBC[' . $n . ']" value="1" ' . $checked . '/><span class="t3-icon fa"></span></label>';
+            $cells['select'] = $isL10nOverlay
+                ? $this->spaceIcon
+                : '<input type="hidden" name="CBH[' . $n . ']" value="0" /><label class="btn btn-default btn-checkbox">'
+                  . '<input type="checkbox" name="CBC[' . $n . ']" value="1" ' . $checked . '/><span class="t3-icon fa"></span></label>';
         }
         // Now, looking for selected elements from the current table:
         $elFromTable = $this->clipObj->elFromTable($table);
         if (!empty($elFromTable) && $GLOBALS['TCA'][$table]['ctrl']['sortby']) {
             // IF elements are found, they can be individually ordered and are not locked by editlock, then add a "paste after" icon:
-            $cells['pasteAfter'] = $isL10nOverlay || !$this->overlayEditLockPermissions($table,
-                $row) ? $this->spaceIcon : '<a class="btn btn-default" href="' . htmlspecialchars($this->clipObj->pasteUrl($table,
-                    -$row['uid'])) . '" onclick="' . htmlspecialchars(('return ' . $this->clipObj->confirmMsg($table,
-                        $row, 'after',
-                        $elFromTable))) . '" title="' . $this->getLanguageService()->getLL('clip_pasteAfter',
-                    true) . '">' . $this->iconFactory->getIcon('actions-document-paste-after',
-                    Icon::SIZE_SMALL)->render() . '</a>';
+            $cells['pasteAfter'] = $isL10nOverlay || !$this->overlayEditLockPermissions($table, $row)
+                ? $this->spaceIcon
+                : '<a class="btn btn-default" href="' . htmlspecialchars($this->clipObj->pasteUrl($table, -$row['uid']))
+                  . '" onclick="' . htmlspecialchars('return ' . $this->clipObj->confirmMsg($table, $row, 'after', $elFromTable))
+                  . '" title="' . $this->getLanguageService()->getLL('clip_pasteAfter', true) . '">'
+                  . $this->iconFactory->getIcon('actions-document-paste-after', Icon::SIZE_SMALL)->render() . '</a>';
         }
         // Now, looking for elements in general:
         $elFromTable = $this->clipObj->elFromTable('');
-        if ($table == 'pages' && !empty($elFromTable)) {
-            $cells['pasteInto'] = '<a class="btn btn-default" href="' . htmlspecialchars($this->clipObj->pasteUrl('',
-                    $row['uid'])) . '" onclick="' . htmlspecialchars('return ' . $this->clipObj->confirmMsg($table,
-                        $row, 'into',
-                        $elFromTable)) . '" title="' . $this->getLanguageService()->getLL('clip_pasteInto',
-                    true) . '">' . $this->iconFactory->getIcon('actions-document-paste-into',
-                    Icon::SIZE_SMALL)->render() . '</a>';
+        if ($table === 'pages' && !empty($elFromTable)) {
+            $cells['pasteInto'] = '<a class="btn btn-default" href="' . htmlspecialchars($this->clipObj->pasteUrl('', $row['uid']))
+                                  . '" onclick="' . htmlspecialchars('return ' . $this->clipObj->confirmMsg($table, $row, 'into', $elFromTable))
+                                  . '" title="' . $this->getLanguageService()->getLL('clip_pasteInto', true) . '">'
+                                  . $this->iconFactory->getIcon('actions-document-paste-into', Icon::SIZE_SMALL)->render() . '</a>';
         }
         /**
          * @hook makeClip: Allows to change clip-icons of records in list-module
@@ -1710,8 +1747,10 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
             foreach ($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['typo3/class.db_list_extra.inc']['actions'] as $classData) {
                 $hookObject = GeneralUtility::getUserObj($classData);
                 if (!$hookObject instanceof RecordListHookInterface) {
-                    throw new \UnexpectedValueException('$hookObject must implement interface ' . RecordListHookInterface::class,
-                        1195567845);
+                    throw new \UnexpectedValueException(
+                        '$hookObject must implement interface ' . RecordListHookInterface::class,
+                        1195567845
+                    );
                 }
                 $cells = $hookObject->makeClip($table, $row, $cells, $this);
             }
@@ -1731,7 +1770,7 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
      * @param string $titleCol Table field (column) where header value is found
      * @param string $thumbsCol Table field (column) where (possible) thumbnails can be found
      * @param int $indent Indent from left.
-     * @param integer $level
+     * @param int $level
      * @param string $expanded
      *
      * @return string Table row for the element
@@ -1768,10 +1807,9 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
         // The icon with link
         $altText = BackendUtility::getRecordIconAltText($row, $table);
         $additionalStyle = $indent ? ' style="margin-left: ' . $indent . 'px;"' : '';
-        $iconImg = '<span title="' . $altText . '" ' . $additionalStyle . '>' . $this->iconFactory->getIconForRecord($table,
-                $row, Icon::SIZE_SMALL)->render() . '</span>';
-        $theIcon = $this->clickMenuEnabled ? BackendUtility::wrapClickMenuOnIcon($iconImg, $table,
-            $row['uid']) : $iconImg;
+        $iconImg = '<span title="' . $altText . '" ' . $additionalStyle . '>'
+                   . $this->iconFactory->getIconForRecord($table, $row, Icon::SIZE_SMALL)->render() . '</span>';
+        $theIcon = $this->clickMenuEnabled ? BackendUtility::wrapClickMenuOnIcon($iconImg, $table, $row['uid']) : $iconImg;
         // Preparing and getting the data-array
         $theData = array();
         $localizationMarkerClass = '';
@@ -1783,11 +1821,11 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
                 // If the record is edit-locked	by another user, we will show a little warning sign:
                 $lockInfo = BackendUtility::isRecordLocked($table, $row['uid']);
                 if ($lockInfo) {
-                    $warning = '<a href="#" onclick="alert(' . GeneralUtility::quoteJSvalue($lockInfo['msg']) . '); return false;" title="' . htmlspecialchars($lockInfo['msg']) . '">' . $this->iconFactory->getIcon('status-warning-in-use',
-                            Icon::SIZE_SMALL)->render() . '</a>';
+                    $warning = '<a href="#" onclick="alert(' . GeneralUtility::quoteJSvalue($lockInfo['msg'])
+                               . '); return false;" title="' . htmlspecialchars($lockInfo['msg']) . '">'
+                               . $this->iconFactory->getIcon('status-warning-in-use', Icon::SIZE_SMALL)->render() . '</a>';
                 }
-                $theData[$fCol] = $theData['__label'] = $warning . $this->linkWrapItems($table, $row['uid'], $recTitle,
-                        $row);
+                $theData[$fCol] = $theData['__label'] = $warning . $this->linkWrapItems($table, $row['uid'], $recTitle, $row);
                 // Render thumbnails, if:
                 // - a thumbnail column exists
                 // - there is content in it
@@ -1804,39 +1842,41 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
                 }
                 $visibleColumns = $GLOBALS['TCA'][$table]['types'][$type]['showitem'];
 
-                if ($this->thumbs && trim($row[$thumbsCol]) && preg_match('/(^|(.*(;|,)?))' . $thumbsCol . '(((;|,).*)|$)/',
-                        $visibleColumns) === 1
+                if ($this->thumbs && trim($row[$thumbsCol])
+                    && preg_match('/(^|(.*(;|,)?))' . $thumbsCol . '(((;|,).*)|$)/', $visibleColumns) === 1
                 ) {
                     $theData[$fCol] .= '<br />' . $this->thumbCode($row, $table, $thumbsCol);
                 }
-                if (isset($GLOBALS['TCA'][$table]['ctrl']['languageField']) && $row[$GLOBALS['TCA'][$table]['ctrl']['languageField']] != 0 && $row[$GLOBALS['TCA'][$table]['ctrl']['transOrigPointerField']] != 0) {
+                if (isset($GLOBALS['TCA'][$table]['ctrl']['languageField'])
+                    && $row[$GLOBALS['TCA'][$table]['ctrl']['languageField']]
+                    && $row[$GLOBALS['TCA'][$table]['ctrl']['transOrigPointerField']]
+                ) {
                     // It's a translated record with a language parent
                     $localizationMarkerClass = ' localization';
                 }
-            } elseif ($fCol == 'pid') {
+            } elseif ($fCol === 'pid') {
                 $theData[$fCol] = $row[$fCol];
-            } elseif ($fCol == '_PATH_') {
+            } elseif ($fCol === '_PATH_') {
                 $theData[$fCol] = $this->recPath($row['pid']);
-            } elseif ($fCol == '_REF_') {
+            } elseif ($fCol === '_REF_') {
                 $theData[$fCol] = $this->createReferenceHtml($table, $row['uid']);
-            } elseif ($fCol == '_CONTROL_') {
+            } elseif ($fCol === '_CONTROL_') {
                 $theData[$fCol] = $this->makeControl($table, $row);
-            } elseif ($fCol == '_CLIPBOARD_') {
+            } elseif ($fCol === '_CLIPBOARD_') {
                 $theData[$fCol] = $this->makeClip($table, $row);
-            } elseif ($fCol == '_LOCALIZATION_') {
+            } elseif ($fCol === '_LOCALIZATION_') {
                 list($lC1, $lC2) = $this->makeLocalizationPanel($table, $row);
                 $theData[$fCol] = $lC1;
-            } elseif ($fCol != '_LOCALIZATION_b') {
+            } elseif ($fCol !== '_LOCALIZATION_b') {
                 $tmpProc = BackendUtility::getProcessedValueExtra($table, $fCol, $row[$fCol], 100, $row['uid']);
                 $theData[$fCol] = $this->linkUrlMail(htmlspecialchars($tmpProc), $row[$fCol]);
                 if ($this->csvOutput) {
                     $row[$fCol] = BackendUtility::getProcessedValueExtra($table, $fCol, $row[$fCol], 0, $row['uid']);
                 }
-            } elseif ($fCol == '_LOCALIZATION_b') {
+            } elseif ($fCol === '_LOCALIZATION_b') {
                 $theData[$fCol] = $lC2;
             } else {
-                $theData[$fCol] = htmlspecialchars(BackendUtility::getProcessedValueExtra($table, $fCol, $row[$fCol], 0,
-                    $row['uid']));
+                $theData[$fCol] = htmlspecialchars(BackendUtility::getProcessedValueExtra($table, $fCol, $row[$fCol], 0, $row['uid']));
             }
         }
         // Reset the ID if it was overwritten
@@ -1874,7 +1914,10 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
         if ($table === 'tt_content') {
             $theData['tx_gridelements_container'] = $row['tx_gridelements_container'];
         }
-        if (isset($GLOBALS['TCA'][$table]['ctrl']['languageField']) && isset($GLOBALS['TCA'][$table]['ctrl']['transOrigPointerField']) && !isset($GLOBALS['TCA'][$table]['ctrl']['transOrigPointerTable'])) {
+        if (isset($GLOBALS['TCA'][$table]['ctrl']['languageField'])
+            && isset($GLOBALS['TCA'][$table]['ctrl']['transOrigPointerField'])
+            && !isset($GLOBALS['TCA'][$table]['ctrl']['transOrigPointerTable'])
+        ) {
             $theData['parent'] = $row[$GLOBALS['TCA'][$table]['ctrl']['transOrigPointerField']];
         }
         $rowOutput .= $this->addElement(1, $theIcon, $theData, $row_bgColor, '', '', '', $level);
@@ -1886,7 +1929,8 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
                     // $lRow isn't always what we want - if record was moved we've to work with the
                     // placeholder records otherwise the list is messed up a bit
                     if ($row['_MOVE_PLH_uid'] && $row['_MOVE_PLH_pid']) {
-                        $where = 't3ver_move_id="' . (int)$lRow['uid'] . '" AND pid="' . $row['_MOVE_PLH_pid'] . '" AND t3ver_wsid=' . $row['t3ver_wsid'] . BackendUtility::deleteClause($table);
+                        $where = 't3ver_move_id="' . (int)$lRow['uid'] . '" AND pid="' . $row['_MOVE_PLH_pid']
+                                 . '" AND t3ver_wsid=' . $row['t3ver_wsid'] . BackendUtility::deleteClause($table);
                         $tmpRow = BackendUtility::getRecordRaw($table, $where, $this->selFieldList);
                         $lRow = is_array($tmpRow) ? $tmpRow : $lRow;
                     }
@@ -1903,55 +1947,53 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
             }
         }
 
-        if ($theData['_EXPANDABLE_'] && $level < 8 && ($row['l18n_parent'] == 0 || !$this->localizationView)) {
-            if (!empty($theData['_CHILDREN_'])) {
-                $expanded = $this->expandedGridelements[$row['uid']] ? '" style="display: table-row;' : '';
-                $lastGridColumn = '';
-                $originalMoveUp = $this->showMoveUp;
-                $originalMoveDown = $this->showMoveDown;
-                $prevPrevUid = (int)$theData['_CHILDREN_'][0]['uid'];
-                $prevUid = (int)$theData['_CHILDREN_'][1]['uid'];
-                foreach ($theData['_CHILDREN_'] as $key => $child) {
-                    if ($key > 1) {
-                        if ($prevUid) {
-                            $this->currentTable['prev'][$child['uid']] = $prevPrevUid;
-                            $this->currentTable['next'][$prevUid] = -(int)$child['uid'];
-                            $this->currentTable['prevUid'][$child['uid']] = $prevUid;
-                        }
-                        $prevPrevUid = isset($this->currentTable['prev'][$child['uid']]) ? -$prevUid : $row['pid'];
-                        $prevUid = $child['uid'];
+        if ($theData['_EXPANDABLE_'] && $level < 8 && ($row['l18n_parent'] == 0 || !$this->localizationView) && !empty($theData['_CHILDREN_'])) {
+            $expanded = $this->expandedGridelements[$row['uid']] ? '" style="display: table-row;' : '';
+            $lastGridColumn = '';
+            $originalMoveUp = $this->showMoveUp;
+            $originalMoveDown = $this->showMoveDown;
+            $prevPrevUid = (int)$theData['_CHILDREN_'][0]['uid'];
+            $prevUid = (int)$theData['_CHILDREN_'][1]['uid'];
+            foreach ($theData['_CHILDREN_'] as $key => $child) {
+                if ($key > 1) {
+                    if ($prevUid) {
+                        $this->currentTable['prev'][$child['uid']] = $prevPrevUid;
+                        $this->currentTable['next'][$prevUid] = -(int)$child['uid'];
+                        $this->currentTable['prevUid'][$child['uid']] = $prevUid;
                     }
+                    $prevPrevUid = isset($this->currentTable['prev'][$child['uid']]) ? -$prevUid : $row['pid'];
+                    $prevUid = $child['uid'];
                 }
-                foreach ($theData['_CHILDREN_'] as $key => $child) {
-                    if (isset($child['tx_gridelements_columns']) && ($child['tx_gridelements_columns'] != $lastGridColumn)) {
-                        $lastGridColumn = $child['tx_gridelements_columns'];
-                        $this->showMoveUp = false;
-                        $rowOutput .= '<tr class="t3-gridelements-child" data-trigger-container="' . ($this->localizationView && $row['l18n_parent'] ? $row['l18n_parent'] : $row['uid']) . $expanded . '" data-grid-container="' . $row['uid'] . '">
-                                    <td colspan="2"></td>
-                                    <td colspan="' . (count($this->fieldArray) - 1 + $this->maxDepth) . '" style="padding:5px;">
-                                        <br />
-                                        <strong>' . $this->getLanguageService()->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:list.columnName') . ' ' . ($backendLayoutColumns[$child['tx_gridelements_columns']] ? $backendLayoutColumns[$child['tx_gridelements_columns']] : (int)$child['tx_gridelements_columns']) . '</strong>
-                                    </td>
-                                </tr>';
-                    } else {
-                        $this->showMoveUp = true;
-                    }
-                    if (isset($child['tx_gridelements_columns']) && isset($theData['_CHILDREN_'][$key + 1]) && $child['tx_gridelements_columns'] != $theData['_CHILDREN_'][$key + 1]['tx_gridelements_columns']) {
-                        $this->showMoveDown = false;
-                    } else {
-                        $this->showMoveDown = true;
-                    }
-                    $this->currentIdList[] = $child['uid'];
-                    if ($row['CType'] === 'gridelements_pi1') {
-                        $this->currentContainerIdList[] = $row['uid'];
-                    }
-                    $child['_CSSCLASS'] = 't3-gridelements-child" data-trigger-container="' . ($this->localizationView && $row['l18n_parent'] ? $row['l18n_parent'] : $row['uid']) . $expanded;
-                    $rowOutput .= $this->renderListRow($table, $child, $cc, $titleCol, $thumbsCol, 0, $level + 1,
-                        $expanded);
-                }
-                $this->showMoveUp = $originalMoveUp;
-                $this->showMoveDown = $originalMoveDown;
             }
+            foreach ($theData['_CHILDREN_'] as $key => $child) {
+                if (isset($child['tx_gridelements_columns']) && ($child['tx_gridelements_columns'] != $lastGridColumn)) {
+                    $lastGridColumn = $child['tx_gridelements_columns'];
+                    $this->showMoveUp = false;
+                    $rowOutput .= '<tr class="t3-gridelements-child" data-trigger-container="'
+                                  . ($this->localizationView && $row['l18n_parent'] ? $row['l18n_parent'] : $row['uid'])
+                                  . $expanded . '" data-grid-container="' . $row['uid'] . '">
+                                <td colspan="2"></td>
+                                <td colspan="' . (count($this->fieldArray) - 1 + $this->maxDepth) . '" style="padding:5px;">
+                                    <br />
+                                    <strong>' . $this->getLanguageService()->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:list.columnName')
+                                  . ' ' . (int)$child['tx_gridelements_columns'] . '</strong>
+                                </td>
+                            </tr>';
+                } else {
+                    $this->showMoveUp = true;
+                }
+                $this->showMoveDown = !isset($child['tx_gridelements_columns']) || !isset($theData['_CHILDREN_'][$key + 1])
+                                      || $child['tx_gridelements_columns'] == $theData['_CHILDREN_'][$key + 1]['tx_gridelements_columns'];
+                $this->currentIdList[] = $child['uid'];
+                if ($row['CType'] === 'gridelements_pi1') {
+                    $this->currentContainerIdList[] = $row['uid'];
+                }
+                $child['_CSSCLASS'] = 't3-gridelements-child" data-trigger-container="'
+                                      . ($this->localizationView && $row['l18n_parent'] ? $row['l18n_parent'] : $row['uid']) . $expanded;
+                $rowOutput .= $this->renderListRow($table, $child, $cc, $titleCol, $thumbsCol, 0, $level + 1, $expanded);
+            }
+            $this->showMoveUp = $originalMoveUp;
+            $this->showMoveDown = $originalMoveDown;
         }
 
         // Finally, return table row element:
@@ -1962,12 +2004,12 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
      * Returns a table-row with the content from the fields in the input data array.
      * OBS: $this->fieldArray MUST be set! (represents the list of fields to display)
      *
-     * @param int $h Is an integer >=0 and denotes how tall an element is. Set to '0' makes a halv line, -1 = full line, set to 1 makes a 'join' and above makes 'line'
+     * @param int $h Is an int >=0 and denotes how tall an element is. Set to '0' makes a halv line, -1 = full line, set to 1 makes a 'join' and above makes 'line'
      * @param string $icon Is the <img>+<a> of the record. If not supplied the first 'join'-icon will be a 'line' instead
      * @param array $data Is the dataarray, record with the fields. Notice: These fields are (currently) NOT htmlspecialchar'ed before being wrapped in <td>-tags
      * @param string $rowParams Is insert in the <tr>-tags. Must carry a ' ' as first character
      * @param string $_ OBSOLETE - NOT USED ANYMORE. $lMargin is the leftMargin (int)
-     * @param string $_ OBSOLETE - NOT USED ANYMORE. Is the HTML <img>-tag for an alternative 'gfx/ol/line.gif'-icon (used in the top)
+     * @param string $_2 OBSOLETE - NOT USED ANYMORE. Is the HTML <img>-tag for an alternative 'gfx/ol/line.gif'-icon (used in the top)
      * @param string $colType Defines the tag being used for the columns. Default is td.
      * @param int $level
      *
@@ -1981,7 +2023,8 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
         $parent = isset($data['parent']) ? (int)$data['parent'] : 0;
         $out = '
 		<!-- Element, begin: -->
-		<tr ' . $rowParams . ' data-uid="' . (int)$data['uid'] . '" data-l10nparent="' . $parent . '"' . ((int)$data['tx_gridelements_container'] > 0 ? ' data-grid-container="' . $data['tx_gridelements_container'] . '"' : '') . '>';
+		<tr ' . $rowParams . ' data-uid="' . (int)$data['uid'] . '" data-l10nparent="' . $parent . '"' .
+               ((int)$data['tx_gridelements_container'] > 0 ? ' data-grid-container="' . $data['tx_gridelements_container'] . '"' : '') . '>';
         if (count($data) > 1) {
             for ($i = 0; $i < $level; $i++) {
                 $out .= '<' . $colType . '></' . $colType . '>';
@@ -2053,7 +2096,8 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
                             array($this->addElement_tdCssClass[$lastKey], $this->oddColumnsCssClass));
                     }
                     $out .= '
-						<' . $colType . $noWrap . ' class="' . $cssClass . '"' . $colsp . $this->addElement_tdParams[$lastKey] . '>' . $data[$lastKey] . '</' . $colType . '>';
+						<' . $colType . $noWrap . ' class="' . $cssClass . '"' . $colsp
+                            . $this->addElement_tdParams[$lastKey] . '>' . $data[$lastKey] . '</' . $colType . '>';
                 }
                 $lastKey = $vKey;
                 $c = 1;
@@ -2079,7 +2123,8 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
                 $cssClass = implode(' ', array($this->addElement_tdCssClass[$lastKey], $this->oddColumnsCssClass));
             }
             $out .= '
-				<' . $colType . $noWrap . ' class="' . $cssClass . '"' . $colsp . $this->addElement_tdParams[$lastKey] . '>' . $data[$lastKey] . '</' . $colType . '>';
+				<' . $colType . $noWrap . ' class="' . $cssClass . '"' . $colsp
+                    . $this->addElement_tdParams[$lastKey] . '>' . $data[$lastKey] . '</' . $colType . '>';
         }
         // End row
         $out .= '
@@ -2104,10 +2149,12 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
     public function pasteUrl($table, $uid, $setRedirect = true, array $update = null)
     {
         $formProtection = FormProtectionFactory::get();
-        return ($table == '_FILE' ? BackendUtility::getModuleUrl('tce_file',
-            array()) : BackendUtility::getModuleUrl('tce_db',
-            array())) . ($setRedirect ? '&redirect=' . rawurlencode(GeneralUtility::linkThisScript(array('CB' => ''))) : '') . '&vC=' . $this->getBackendUserAuthentication()->veriCode() . '&prErr=1&uPT=1' . '&CB[paste]=' . rawurlencode($table . '|' . $uid) . '&CB[pad]=' . $this->clipObj->current . (is_array($update) ? GeneralUtility::implodeArrayForUrl('CB[update]',
-            $update) : '') . '&formToken=' . $formProtection->generateToken('tceAction');
+        return ($table === '_FILE' ? BackendUtility::getModuleUrl('tce_file', array()) : BackendUtility::getModuleUrl('tce_db', array()))
+               . ($setRedirect ? '&redirect=' . rawurlencode(GeneralUtility::linkThisScript(array('CB' => ''))) : '')
+               . '&vC=' . $this->getBackendUserAuthentication()->veriCode() . '&prErr=1&uPT=1' . '&CB[paste]='
+               . rawurlencode($table . '|' . $uid) . '&CB[pad]=' . $this->clipObj->current
+               . (is_array($update) ? GeneralUtility::implodeArrayForUrl('CB[update]', $update) : '')
+               . '&formToken=' . $formProtection->generateToken('tceAction');
     }
 
     /**
@@ -2144,8 +2191,12 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
     protected function createReferenceHtml($tableName, $uid)
     {
         $db = $this->getDatabaseConnection();
-        $referenceCount = $db->exec_SELECTcountRows('*', 'sys_refindex', 'ref_table = ' . $db->fullQuoteStr($tableName,
-                'sys_refindex') . ' AND ref_uid = ' . $uid . ' AND deleted = 0');
+        $referenceCount = $db->exec_SELECTcountRows(
+            '*',
+            'sys_refindex',
+            'ref_table = ' . $db->fullQuoteStr($tableName, 'sys_refindex')
+                . ' AND ref_uid = ' . $uid . ' AND deleted = 0'
+        );
 
         return $this->generateReferenceToolTip($referenceCount, GeneralUtility::quoteJSvalue($tableName) . ', ' . GeneralUtility::quoteJSvalue($uid));
     }
@@ -2176,10 +2227,14 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
             // Traverse page translations and add icon for each language that does NOT yet exist:
             $lNew = '';
             foreach ($this->pageOverlays as $lUid_OnPage => $lsysRec) {
-                if ($this->isEditable($table) && !isset($translations['translations'][$lUid_OnPage]) && $this->getBackendUserAuthentication()->checkLanguageAccess($lUid_OnPage)) {
+                if ($this->isEditable($table) && !isset($translations['translations'][$lUid_OnPage])
+                    && $this->getBackendUserAuthentication()->checkLanguageAccess($lUid_OnPage)
+                ) {
                     $url = $this->listURL();
-                    $href = BackendUtility::getLinkToDataHandlerAction('&cmd[' . $table . '][' . $row['uid'] . '][localize]=' . $lUid_OnPage,
-                        $url . '&justLocalized=' . rawurlencode($table . ':' . $row['uid'] . ':' . $lUid_OnPage));
+                    $href = BackendUtility::getLinkToDataHandlerAction(
+                        '&cmd[' . $table . '][' . $row['uid'] . '][localize]=' . $lUid_OnPage,
+                        $url . '&justLocalized=' . rawurlencode($table . ':' . $row['uid'] . ':' . $lUid_OnPage)
+                    );
                     $language = BackendUtility::getRecord('sys_language', $lUid_OnPage, 'title');
                     if ($this->languageIconTitles[$lUid_OnPage]['flagIcon']) {
                         $lC = $this->iconFactory->getIcon($this->languageIconTitles[$lUid_OnPage]['flagIcon'],
@@ -2242,9 +2297,15 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
                 $checked = '';
             }
             // Field label
-            $fieldLabel = is_array($GLOBALS['TCA'][$table]['columns'][$fieldName]) ? rtrim($lang->sL($GLOBALS['TCA'][$table]['columns'][$fieldName]['label']),
-                ':') : '';
-            $checkboxes[] = '<tr><td class="col-checkbox"><input type="checkbox" id="check-' . $fieldName . '" name="displayFields[' . $table . '][]" value="' . $fieldName . '" ' . $checked . ($fieldName === $this->fieldArray[0] ? ' disabled="disabled"' : '') . '></td><td class="col-title">' . '<label class="label-block" for="check-' . $fieldName . '">' . htmlspecialchars($fieldLabel) . ' <span class="text-muted text-monospace">[' . htmlspecialchars($fieldName) . ']</span></label></td></tr>';
+            $fieldLabel = is_array($GLOBALS['TCA'][$table]['columns'][$fieldName])
+                ? rtrim($lang->sL($GLOBALS['TCA'][$table]['columns'][$fieldName]['label']), ':')
+                : '';
+            $checkboxes[] = '<tr><td class="col-checkbox"><input type="checkbox" id="check-' . $fieldName
+                            . '" name="displayFields[' . $table . '][]" value="' . $fieldName . '" ' . $checked
+                            . ($fieldName === $this->fieldArray[0] ? ' disabled="disabled"' : '')
+                            . '></td><td class="col-title">' . '<label class="label-block" for="check-' . $fieldName . '">'
+                            . htmlspecialchars($fieldLabel) . ' <span class="text-muted text-monospace">['
+                            . htmlspecialchars($fieldName) . ']</span></label></td></tr>';
         }
         // Table with the field selector::
         $content = $formElements[0] . '
@@ -2287,15 +2348,17 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
      */
     public function linkClipboardHeaderIcon($string, $table, $cmd, $warning = '', $title = '')
     {
-        $onClickEvent = 'document.dblistForm.cmd.value=' . GeneralUtility::quoteJSvalue($cmd) . ';document.dblistForm.cmd_table.value='
-            . GeneralUtility::quoteJSvalue($table) . ';document.dblistForm.submit();';
+        $onClickEvent = 'document.dblistForm.cmd.value=' . GeneralUtility::quoteJSvalue($cmd)
+                        . ';document.dblistForm.cmd_table.value=' . GeneralUtility::quoteJSvalue($table)
+                        . ';document.dblistForm.submit();';
         if ($warning) {
             $onClickEvent = 'if (confirm(' . GeneralUtility::quoteJSvalue($warning) . ')){' . $onClickEvent . '}';
         }
         if ($title !== '') {
             $title = 'title="' . htmlspecialchars($title) . '" ';
         }
-        return '<a class="btn btn-default" href="#" ' . $title . ' onclick="' . htmlspecialchars(($onClickEvent . 'return false;')) . '">' . $string . '</a>';
+        return '<a class="btn btn-default" href="#" ' . $title
+               . ' onclick="' . htmlspecialchars(($onClickEvent . 'return false;')) . '">' . $string . '</a>';
     }
 
     /**
@@ -2305,7 +2368,7 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
      */
     public function clipNumPane()
     {
-        return in_array('_CLIPBOARD_', $this->fieldArray) && $this->clipObj->current != 'normal';
+        return in_array('_CLIPBOARD_', $this->fieldArray) && $this->clipObj->current !== 'normal';
     }
 
     /**
@@ -2322,18 +2385,19 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
     public function addSortLink($code, $field, $table)
     {
         // Certain circumstances just return string right away (no links):
-        if ($field == '_CONTROL_' || $field == '_LOCALIZATION_' || $field == '_CLIPBOARD_' || $field == '_REF_' || $this->disableSingleTableView) {
+        if ($field === '_CONTROL_' || $field === '_LOCALIZATION_' || $field === '_CLIPBOARD_' || $field === '_REF_' || $this->disableSingleTableView) {
             return $code;
         }
         // If "_PATH_" (showing record path) is selected, force sorting by pid field (will at least group the records!)
-        if ($field == '_PATH_') {
+        if ($field === '_PATH_') {
             $field = 'pid';
         }
         //	 Create the sort link:
         $sortUrl = $this->listURL('', '-1', 'sortField,sortRev,table,firstElementNumber') . '&table=' . $table
-            . '&sortField=' . $field . '&sortRev=' . ($this->sortRev || $this->sortField != $field ? 0 : 1);
-        $sortArrow = $this->sortField === $field ? $this->iconFactory->getIcon('status-status-sorting-' . ($this->sortRev ? 'desc' : 'asc'),
-            Icon::SIZE_SMALL)->render() : '';
+                   . '&sortField=' . $field . '&sortRev=' . ($this->sortRev || $this->sortField != $field ? 0 : 1);
+        $sortArrow = $this->sortField === $field
+            ? $this->iconFactory->getIcon('status-status-sorting-' . ($this->sortRev ? 'desc' : 'asc'), Icon::SIZE_SMALL)->render()
+            : '';
 
         // Return linked field:
         return '<a href="' . htmlspecialchars($sortUrl) . '">' . $code . $sortArrow . '</a>';
@@ -2372,8 +2436,8 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
             return true;
         }
 
-        return !in_array($table, $this->deniedNewTables) && (empty($this->allowedNewTables) || in_array($table,
-                $this->allowedNewTables));
+        return !in_array($table, $this->deniedNewTables)
+               && (empty($this->allowedNewTables) || in_array($table, $this->allowedNewTables));
     }
 
     /**
@@ -2581,41 +2645,6 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
     }
 
     /**
-     * Check whether or not the current backend user is an admin or the current page is
-     * locked by editlock.
-     *
-     * @return bool
-     */
-    protected function editLockPermissions()
-    {
-        return $this->getBackendUserAuthentication()->isAdmin() || !$this->pageRow['editlock'];
-    }
-
-    /**
-     * @return DatabaseConnection
-     */
-    protected function getDatabaseConnection()
-    {
-        return $GLOBALS['TYPO3_DB'];
-    }
-
-    /**
-     * @return BaseScriptClass
-     */
-    protected function getModule()
-    {
-        return $GLOBALS['SOBE'];
-    }
-
-    /**
-     * @return DocumentTemplate
-     */
-    protected function getDocumentTemplate()
-    {
-        return $GLOBALS['TBE_TEMPLATE'];
-    }
-
-    /**
      * @return \int[]
      */
     public function getExpandedGridelements()
@@ -2630,5 +2659,4 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
     {
         return GeneralUtility::makeInstance(BackendLayoutView::class);
     }
-
 }

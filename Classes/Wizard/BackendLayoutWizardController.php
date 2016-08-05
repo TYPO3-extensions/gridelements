@@ -19,8 +19,6 @@ namespace GridElementsTeam\Gridelements\Wizard;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Imaging\IconFactory;
 use TYPO3\CMS\Core\Page\PageRenderer;
@@ -33,7 +31,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class BackendLayoutWizardController extends \TYPO3\CMS\Backend\Controller\BackendLayoutWizardController
 {
-
     /**
      * @var string
      */
@@ -56,7 +53,6 @@ class BackendLayoutWizardController extends \TYPO3\CMS\Backend\Controller\Backen
     /**
      * Initialises the Class
      *
-     * @return void
      * @throws \InvalidArgumentException
      */
     public function init()
@@ -140,7 +136,8 @@ class BackendLayoutWizardController extends \TYPO3\CMS\Backend\Controller\Backen
 
         // select record
         $record = $this->getDatabaseConnection()->exec_SELECTgetRows($this->P['field'], $this->P['table'],
-            'uid=' . (int)$this->P['uid']);
+            'uid=' . (int)$this->P['uid']
+        );
         if (trim($record[0][$this->P['field']]) == '') {
             $rows = array(array(array('colspan' => 1, 'rowspan' => 1, 'spanned' => false, 'name' => '')));
             $colCount = 1;
@@ -240,15 +237,5 @@ class BackendLayoutWizardController extends \TYPO3\CMS\Backend\Controller\Backen
     public function getIconFactory()
     {
         return $this->iconFactory;
-    }
-
-    /**
-     * Gets the current backend user.
-     *
-     * @return \TYPO3\CMS\Core\Authentication\BackendUserAuthentication
-     */
-    public function getBackendUser()
-    {
-        return $GLOBALS['BE_USER'];
     }
 }
