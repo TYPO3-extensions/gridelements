@@ -21,7 +21,6 @@ namespace GridElementsTeam\Gridelements\Helper;
 
 use TYPO3\CMS\Core\Database\DatabaseConnection;
 use TYPO3\CMS\Core\SingletonInterface;
-use TYPO3\CMS\Core\Utility\DebugUtility;
 
 /**
  * Gridelements helper class
@@ -32,12 +31,6 @@ use TYPO3\CMS\Core\Utility\DebugUtility;
  */
 class Helper implements SingletonInterface
 {
-
-    /**
-     * @var DatabaseConnection
-     */
-    protected static $databaseConnection;
-
     /**
      * Local instance of the helper
      *
@@ -46,17 +39,21 @@ class Helper implements SingletonInterface
     protected static $instance = null;
 
     /**
+     * @var DatabaseConnection
+     */
+    protected $databaseConnection;
+
+    /**
      * Get instance from the class.
      *
-     * @static
-     * @return    Helper
+     * @return Helper
      */
     public static function getInstance()
     {
         if (!self::$instance instanceof Helper) {
             self::$instance = new self();
+            self::$instance->setDatabaseConnection($GLOBALS['TYPO3_DB']);
         }
-        self::setDatabaseConnection($GLOBALS['TYPO3_DB']);
 
         return self::$instance;
     }
@@ -65,12 +62,10 @@ class Helper implements SingletonInterface
      * setter for databaseConnection object
      *
      * @param DatabaseConnection $databaseConnection
-     *
-     * @return void
      */
-    public static function setDatabaseConnection(DatabaseConnection $databaseConnection)
+    public function setDatabaseConnection(DatabaseConnection $databaseConnection)
     {
-        self::$databaseConnection = $databaseConnection;
+        $this->databaseConnection = $databaseConnection;
     }
 
     /**
@@ -87,9 +82,7 @@ class Helper implements SingletonInterface
         $retVal = array();
 
         if (trim($table) === 'tt_content' && $uid > 0) {
-
-            $children = self::getDatabaseConnection()->exec_SELECTgetRows($selectFieldList, 'tt_content',
-                'tx_gridelements_container = ' . (int)$uid . ' AND deleted = 0', '');
+            $children = self::getDatabaseConnection()->exec_SELECTgetRows($selectFieldList, 'tt_content', 'tx_gridelements_container = ' . (int)$uid . ' AND deleted = 0', '');
 
             foreach ($children as $child) {
                 if (trim($sortingField) && isset($child[$sortingField]) && $sortingField !== 'sorting') {
@@ -97,8 +90,7 @@ class Helper implements SingletonInterface
                 } else {
                     $sortField = sprintf('%1$011d', $child['sorting']);
                 }
-                $sortKey = sprintf('%1$011d',
-                        $child['tx_gridelements_columns']) . '.' . $sortField . ':' . sprintf('%1$011d', $child['uid']);
+                $sortKey = sprintf('%1$011d', $child['tx_gridelements_columns']) . '.' . $sortField . ':' . sprintf('%1$011d', $child['uid']);
 
                 $retVal[$sortKey] = $child;
             }
@@ -123,22 +115,10 @@ class Helper implements SingletonInterface
     {
         if ($negativeUid >= 0) {
             return $negativeUid;
-        } else {
-            $triggerElement = self::$databaseConnection->exec_SELECTgetSingleRow('pid', 'tt_content',
-                'uid = ' . abs($negativeUid));
-            $pid = (int)$triggerElement['pid'];
-            return is_array($triggerElement) && $pid ? $pid : 0;
         }
-    }
-
-    /**
-     * getter for databaseConnection
-     *
-     * @return DatabaseConnection databaseConnection
-     */
-    public function getDatabaseConnection()
-    {
-        return self::$databaseConnection;
+        $triggerElement = $this->databaseConnection->exec_SELECTgetSingleRow('pid', 'tt_content', 'uid = ' . abs($negativeUid));
+        $pid = (int)$triggerElement['pid'];
+        return is_array($triggerElement) && $pid ? $pid : 0;
     }
 
     /**
@@ -148,7 +128,7 @@ class Helper implements SingletonInterface
      *
      * @param array $record Overlaid record data
      *
-     * @return integer
+     * @return int[]
      */
     public function getSpecificIds(array $record)
     {
@@ -165,6 +145,16 @@ class Helper implements SingletonInterface
     }
 
     /**
+     * getter for databaseConnection
+     *
+     * @return DatabaseConnection databaseConnection
+     */
+    public function getDatabaseConnection()
+    {
+        return $this->databaseConnection;
+    }
+
+    /**
      * Gets the current backend user.
      *
      * @return \TYPO3\CMS\Core\Authentication\BackendUserAuthentication
@@ -173,5 +163,4 @@ class Helper implements SingletonInterface
     {
         return $GLOBALS['BE_USER'];
     }
-
 }

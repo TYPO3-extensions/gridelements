@@ -29,14 +29,13 @@ use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
  */
 class PreHeaderRenderHook implements SingletonInterface
 {
-
     /**
      * @param array $arg
      */
-    function main($arg)
+    function main(array $arg)
     {
-        /** @var $pagerenderer \TYPO3\CMS\Core\Page\PageRenderer */
+        /** @var \TYPO3\CMS\Core\Page\PageRenderer $pagerenderer */
         $pagerenderer = $arg['pageRenderer'];
-        $pagerenderer->addCssFile($GLOBALS['BACK_PATH'] . ExtensionManagementUtility::extRelPath('gridelements') . 'Resources/Public/Backend/Css/Skin/t3skin_override.css');
+        $pagerenderer->addCssFile(ExtensionManagementUtility::extRelPath('gridelements') . 'Resources/Public/Backend/Css/Skin/t3skin_override.css');
     }
 }

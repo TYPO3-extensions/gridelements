@@ -35,7 +35,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class BackendUtilityGridelements
 {
-
     /**
      * @var DatabaseConnection
      */
@@ -50,8 +49,6 @@ class BackendUtilityGridelements
      * inject layout setup
      *
      * @param LayoutSetup $layoutSetup
-     *
-     * @return void
      */
     public function injectLayoutSetup(LayoutSetup $layoutSetup)
     {
@@ -61,9 +58,7 @@ class BackendUtilityGridelements
     /**
      * initializes this class
      *
-     * @param integer $pageUid
-     *
-     * @return void
+     * @param int $pageUid
      */
     public function init($pageUid)
     {
@@ -85,10 +80,8 @@ class BackendUtilityGridelements
      * @param array $row
      * @param string $table
      * @param string $fieldName
-     *
-     * @return void
      */
-    public function getFlexFormDS_postProcessDS(&$dataStructureArray, $conf, $row, $table, $fieldName)
+    public function getFlexFormDS_postProcessDS(array &$dataStructureArray, array $conf, array $row, $table, $fieldName)
     {
         if ($table === 'tt_content' && $fieldName === 'pi_flexform' && $row['CType'] === 'gridelements_pi1' && $row['tx_gridelements_backend_layout']) {
             $this->init($row['pid']);
@@ -117,5 +110,4 @@ class BackendUtilityGridelements
     {
         return $this->databaseConnection;
     }
-
 }
