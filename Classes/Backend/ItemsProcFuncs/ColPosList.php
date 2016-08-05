@@ -30,29 +30,23 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class ColPosList extends AbstractItemsProcFunc
 {
-
     /**
      * ItemProcFunc for colpos items
      *
-     * @param array $params : The array of parameters that is used to render the item list
-     *
-     * @return void
+     * @param array $params The array of parameters that is used to render the item list
      */
-    public function itemsProcFunc(&$params)
+    public function itemsProcFunc(array &$params)
     {
-        parent::init();
+        $this->init();
         if ($params['row']['pid'] > 0) {
             $ContentType = is_array($params['row']['CType']) ? $params['row']['CType'][0] : $params['row']['CType'];
-            $params['items'] = $this->addColPosListLayoutItems($params['row']['pid'], $params['items'], $ContentType,
-                $params['row']['tx_gridelements_container']);
+            $params['items'] = $this->addColPosListLayoutItems($params['row']['pid'], $params['items'], $ContentType, $params['row']['tx_gridelements_container']);
         } else {
             // negative uid_pid values indicate that the element has been inserted after an existing element
             // so there is no pid to get the backendLayout for and we have to get that first
-            $existingElement = $this->databaseConnection->exec_SELECTgetSingleRow('pid, CType, tx_gridelements_container', 'tt_content',
-                'uid=' . -((int)$params['row']['pid']));
+            $existingElement = $this->databaseConnection->exec_SELECTgetSingleRow('pid, CType, tx_gridelements_container', 'tt_content', 'uid=' . -((int)$params['row']['pid']));
             if ($existingElement['pid'] > 0) {
-                $params['items'] = $this->addColPosListLayoutItems($existingElement['pid'], $params['items'],
-                    $existingElement['CType'], $existingElement['tx_gridelements_container']);
+                $params['items'] = $this->addColPosListLayoutItems($existingElement['pid'], $params['items'], $existingElement['CType'], $existingElement['tx_gridelements_container']);
             }
         }
     }
@@ -60,12 +54,12 @@ class ColPosList extends AbstractItemsProcFunc
     /**
      * Adds items to a colpos list
      *
-     * @param integer $pageId : The uid of the page we are currently working on
-     * @param array $items : The array of items before the action
-     * @param string $CType : The content type of the item holding the colPosList
-     * @param integer $container
+     * @param int $pageId The uid of the page we are currently working on
+     * @param array $items The array of items before the action
+     * @param string $CType The content type of the item holding the colPosList
+     * @param int $container
      *
-     * @return array $items: The ready made array of items
+     * @return array $items The ready made array of items
      */
     protected function addColPosListLayoutItems($pageId, array $items, $CType = '', $container = 0)
     {
@@ -75,9 +69,7 @@ class ColPosList extends AbstractItemsProcFunc
             if ($layout) {
                 if ($CType !== '' && !empty($layout['__items'])) {
                     foreach ($layout['__items'] as $itemKey => $itemArray) {
-                        if ($itemArray[3] !== '' && !GeneralUtility::inList($itemArray[3],
-                                $CType) && !GeneralUtility::inList($itemArray[3], '*')
-                        ) {
+                        if ($itemArray[3] !== '' && !GeneralUtility::inList($itemArray[3], $CType) && !GeneralUtility::inList($itemArray[3], '*')) {
                             unset($layout['__items'][$itemKey]);
                         }
                     }
@@ -98,5 +90,4 @@ class ColPosList extends AbstractItemsProcFunc
 
         return $items;
     }
-
 }
