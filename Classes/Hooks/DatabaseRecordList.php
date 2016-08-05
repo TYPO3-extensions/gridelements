@@ -20,6 +20,7 @@ namespace GridElementsTeam\Gridelements\Hooks;
  ***************************************************************/
 
 use GridElementsTeam\Gridelements\Helper\Helper;
+use GridElementsTeam\Gridelements\Xclass\DatabaseRecordList as DatabaseRecordListXclass;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Imaging\IconFactory;
 use TYPO3\CMS\Core\SingletonInterface;
@@ -37,7 +38,6 @@ use TYPO3\CMS\Recordlist\RecordList\RecordListHookInterface;
  */
 class DatabaseRecordList implements RecordListHookInterface, SingletonInterface
 {
-
     /**
      * @var Iconfactory
      */
@@ -48,11 +48,13 @@ class DatabaseRecordList implements RecordListHookInterface, SingletonInterface
      */
     protected $languageService;
 
+    /**
+     * DatabaseRecordList constructor.
+     */
     public function __construct()
     {
         $this->setLanguageService($GLOBALS['LANG']);
     }
-
 
     /**
      * modifies Web>List clip icons (copy, cut, paste, etc.) of a displayed row
@@ -60,19 +62,12 @@ class DatabaseRecordList implements RecordListHookInterface, SingletonInterface
      * @param string $table the current database table
      * @param array $row the current record row
      * @param array $cells the default clip-icons to get modified
-     * @param object $parentObject Instance of calling object
+     * @param DatabaseRecordList $parentObject Instance of calling object (by ref due to interface)
      *
      * @return array the modified clip-icons
      */
     public function makeClip($table, $row, $cells, &$parentObject)
     {
-
-        /*if ($table == 'tt_content' && get_class($parentObject) == 'localRecordList') {
-            if((int)$row['colPos'] < 0)) {
-                $cells['pasteInto'] = $parentObject->spaceIcon;
-                $cells['pasteAfter'] = $parentObject->spaceIcon;
-            }
-        }*/
         if ($table === 'tt_content') {
             $cells['moveUp'] = '';
         }
@@ -86,21 +81,12 @@ class DatabaseRecordList implements RecordListHookInterface, SingletonInterface
      * @param string $table the current database table
      * @param array $row the current record row
      * @param array $cells the default control-icons to get modified
-     * @param object $parentObject Instance of calling object
+     * @param DatabaseRecordList $parentObject Instance of calling object (by ref due to interface)
      *
      * @return array the modified control-icons
      */
     public function makeControl($table, $row, $cells, &$parentObject)
     {
-        /*if ($table == 'tt_content' && get_class($parentObject) == 'localRecordList') {
-            if((int)$row['colPos'] < 0) {
-                $cells['move'] = $parentObject->spaceIcon;
-                $cells['new'] = $parentObject->spaceIcon;
-                $cells['moveUp'] = $parentObject->spaceIcon;
-                $cells['moveDown'] = $parentObject->spaceIcon;
-            }
-        }*/
-
         return $cells;
     }
 
@@ -110,7 +96,7 @@ class DatabaseRecordList implements RecordListHookInterface, SingletonInterface
      * @param string $table the current database table
      * @param array $currentIdList Array of the currently displayed uids of the table
      * @param array $headerColumns An array of rendered cells/columns
-     * @param object $parentObject Instance of calling (parent) object
+     * @param DatabaseRecordList $parentObject Instance of calling object (by ref due to interface)
      *
      * @return array Array of modified cells/columns
      */
@@ -125,7 +111,7 @@ class DatabaseRecordList implements RecordListHookInterface, SingletonInterface
      * @param string $table the current database table
      * @param array $currentIdList Array of the currently displayed uids of the table
      * @param array $cells An array of the current clipboard/action icons
-     * @param object $parentObject Instance of calling (parent) object
+     * @param DatabaseRecordList $parentObject Instance of calling object (by ref due to interface)
      *
      * @return array Array of modified clipboard/action icons
      */
@@ -141,9 +127,9 @@ class DatabaseRecordList implements RecordListHookInterface, SingletonInterface
      * @param array $row
      * @param int $level
      * @param array $theData
-     * @param \GridElementsTeam\Gridelements\Xclass\DatabaseRecordList $parentObj
+     * @param DatabaseRecordListXclass $parentObj
      */
-    public function checkChildren($table, $row, $level, &$theData, $parentObj)
+    public function checkChildren($table, array $row, $level, array &$theData, DatabaseRecordListXclass $parentObj)
     {
         if ($table === 'tt_content' && $row['CType'] === 'gridelements_pi1') {
             $elementChildren = Helper::getInstance()->getChildren($table, $row['uid'], '', 0, $parentObj->selFieldList);
@@ -164,9 +150,9 @@ class DatabaseRecordList implements RecordListHookInterface, SingletonInterface
      * @param string $sortField
      * @param int $level
      * @param string $contentCollapseIcon
-     * @param DatabaseRecordList $parentObj
+     * @param DatabaseRecordListXclass $parentObj
      */
-    public function contentCollapseIcon(&$data, $sortField, $level, &$contentCollapseIcon, $parentObj)
+    public function contentCollapseIcon(array &$data, $sortField, $level, &$contentCollapseIcon, DatabaseRecordListXclass $parentObj)
     {
         if ($data['_EXPAND_TABLE_'] === 'tt_content') {
             $expandTitle = $this->languageService->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xlf:list.expandElement');
@@ -174,20 +160,18 @@ class DatabaseRecordList implements RecordListHookInterface, SingletonInterface
             $expandedGridelements = $parentObj->getExpandedGridelements();
             if ($expandedGridelements[$data['uid']]) {
                 $href = htmlspecialchars(($parentObj->listURL() . '&gridelementsExpand[' . (int)$data['uid'] . ']=0'));
-                $contentCollapseIcon = '<a
-                class="btn btn-default t3js-toggle-gridelements-list open-gridelements-container" data-state="expanded" href="' . $href . '" id="t3-gridelements-' . $data['uid'] . '"
-                title="' . $collapseTitle . '"
-                data-toggle-title="' . $expandTitle . '">' . $this->getIconFactory()->getIcon('actions-view-list-expand',
-                        'small')->render() . $this->getIconFactory()->getIcon('actions-view-list-collapse',
-                        'small')->render() . '</a>';
+                $contentCollapseIcon = '<a class="btn btn-default t3js-toggle-gridelements-list open-gridelements-container" data-state="expanded" href="' . $href .
+                                       '" id="t3-gridelements-' . $data['uid'] . '" title="' . $collapseTitle
+                                       . '" data-toggle-title="' . $expandTitle . '">'
+                                       . $this->getIconFactory()->getIcon('actions-view-list-expand', 'small')->render()
+                                       . $this->getIconFactory()->getIcon('actions-view-list-collapse', 'small')->render() . '</a>';
             } else {
                 $href = htmlspecialchars(($parentObj->listURL() . '&gridelementsExpand[' . (int)$data['uid'] . ']=1'));
-                $contentCollapseIcon = '<a
-                class="btn btn-default t3js-toggle-gridelements-list" data-state="collapsed" href="' . $href . '" id="t3-gridelements-' . $data['uid'] . '"
-                title="' . $expandTitle . '"
-                data-toggle-title="' . $collapseTitle . '">' . $this->getIconFactory()->getIcon('actions-view-list-expand',
-                        'small')->render() . $this->getIconFactory()->getIcon('actions-view-list-collapse',
-                        'small')->render() . '</a>';
+                $contentCollapseIcon = '<a class="btn btn-default t3js-toggle-gridelements-list" data-state="collapsed" href="' . $href .
+                                       '" id="t3-gridelements-' . $data['uid'] . '" title="' . $expandTitle
+                                       . '" data-toggle-title="' . $collapseTitle . '">'
+                                       . $this->getIconFactory()->getIcon('actions-view-list-expand', 'small')->render()
+                                       . $this->getIconFactory()->getIcon('actions-view-list-collapse', 'small')->render() . '</a>';
             }
         }
     }
@@ -206,8 +190,6 @@ class DatabaseRecordList implements RecordListHookInterface, SingletonInterface
      * setter for databaseConnection object
      *
      * @param LanguageService $languageService
-     *
-     * @return void
      */
 
     public function setLanguageService(LanguageService $languageService)
@@ -234,5 +216,4 @@ class DatabaseRecordList implements RecordListHookInterface, SingletonInterface
 
         return $this->iconFactory;
     }
-
 }

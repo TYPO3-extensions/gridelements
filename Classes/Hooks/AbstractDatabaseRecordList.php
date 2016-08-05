@@ -33,17 +33,14 @@ use TYPO3\CMS\Recordlist\RecordList\DatabaseRecordList;
  */
 class AbstractDatabaseRecordList implements SingletonInterface
 {
-
     /**
      * ItemProcFunc for columns items
      *
-     * @param array $queryParts : The array containing the parts to build the query from
-     * @param DatabaseRecordList $parent : The parent object that triggered this hook
-     * @param string $table : The name of the table we are currently working on
-     *
-     * @return void
+     * @param array $queryParts The array containing the parts to build the query from
+     * @param DatabaseRecordList $parent The parent object that triggered this hook
+     * @param string $table The name of the table we are currently working on
      */
-    public function makeQueryArray_post(&$queryParts, &$parent, $table)
+    public function makeQueryArray_post(array &$queryParts, DatabaseRecordList $parent, $table)
     {
         if ($table === 'tt_content' && $parent instanceof \GridElementsTeam\Gridelements\Xclass\DatabaseRecordList) {
             $queryParts['ORDERBY'] = $this->addValueToList($queryParts['ORDERBY'], 'colPos');
