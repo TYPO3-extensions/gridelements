@@ -146,19 +146,20 @@ class PreProcessFieldArray extends AbstractDataHandler
         // Fetch default values if a previous record exists
         if ($pid < 0 && $GLOBALS['TCA']['tt_content']['ctrl']['useColumnsForDefaultValues']) {
             // Fetches the previous record:
-            $res = $this->databaseConnection->exec_SELECTquery('*', 'tt_content',
-                'uid=' . abs($id) . BackendUtility::deleteClause('tt_content'));
-            if ($row = $this->databaseConnection->sql_fetch_assoc($res)) {
-                // Gets the list of fields to copy from the previous record.
-                $fArr = explode(',', $GLOBALS['TCA']['tt_content']['ctrl']['useColumnsForDefaultValues']);
-                foreach ($fArr as $theF) {
-                    $theF = trim($theF);
-                    if ($theF === '') {
-                        continue;
-                    }
-                    if (isset($GLOBALS['TCA']['tt_content']['columns'][$theF])) {
-                        $newRow[$theF] = $row[$theF];
-                    }
+
+        }
+        $res = $this->databaseConnection->exec_SELECTquery('*', 'tt_content',
+        'uid=' . abs($id) . BackendUtility::deleteClause('tt_content'));
+        if ($row = $this->databaseConnection->sql_fetch_assoc($res)) {
+            // Gets the list of fields to copy from the previous record.
+            $fArr = explode(',', $GLOBALS['TCA']['tt_content']['ctrl']['useColumnsForDefaultValues']);
+            foreach ($fArr as $theF) {
+                $theF = trim($theF);
+                if ($theF === '') {
+                    continue;
+                }
+                if (isset($GLOBALS['TCA']['tt_content']['columns'][$theF])) {
+                    $newRow[$theF] = $row[$theF];
                 }
             }
         }

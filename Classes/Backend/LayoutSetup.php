@@ -312,12 +312,12 @@ class LayoutSetup
      * Returns the item array for form field selection
      *
      * @param int $colPos
-     * @param array $excludeLayouts
+     * @param string $excludeLayouts
      * @param array $allowedGridTypes
      *
      * @return array
      */
-    public function getLayoutWizardItems($colPos, array $excludeLayouts = array(), array $allowedGridTypes = array())
+    public function getLayoutWizardItems($colPos, $excludeLayouts = '', array $allowedGridTypes = array())
     {
         $wizardItems = array();
         $excludeLayouts = array_flip(explode(',', $excludeLayouts));
