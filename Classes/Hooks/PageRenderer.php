@@ -80,10 +80,8 @@ class PageRenderer implements SingletonInterface
 
             $allowedContentTypesClassesByColPos = array();
             $allowedGridTypesClassesByColPos = array();
-            $params = [
-                'id' => (int)GeneralUtility::_GP('id')
-            ];
-            $layoutSetup = GeneralUtility::callUserFunction(BackendLayoutView::class . '->getSelectedBackendLayout', $params, $this);
+            $id = (int)GeneralUtility::_GP('id');
+            $layoutSetup = GeneralUtility::callUserFunction(BackendLayoutView::class . '->getSelectedBackendLayout', $id, $this);
             if (is_array($layoutSetup) && !empty($layoutSetup['__config']['backend_layout.']['rows.'])) {
                 foreach ($layoutSetup['__config']['backend_layout.']['rows.'] as $rows) {
                     foreach ($rows as $row) {
