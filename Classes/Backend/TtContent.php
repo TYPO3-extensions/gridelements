@@ -108,6 +108,7 @@ class TtContent
     public function containerItemsProcFunc(array &$params)
     {
         $this->init($params['row']['pid']);
+        $possibleContainers = array();
         $this->removesItemsFromListOfSelectableContainers($params, $possibleContainers);
 
         if (!empty($possibleContainers)) {
