@@ -37,10 +37,10 @@ class AbstractDatabaseRecordList implements SingletonInterface
      * ItemProcFunc for columns items
      *
      * @param array $queryParts The array containing the parts to build the query from
-     * @param DatabaseRecordList $parent The parent object that triggered this hook
+     * @param $parent The parent object that triggered this hook
      * @param string $table The name of the table we are currently working on
      */
-    public function makeQueryArray_post(array &$queryParts, DatabaseRecordList $parent, $table)
+    public function makeQueryArray_post(array &$queryParts, $parent, $table)
     {
         if ($table === 'tt_content' && $parent instanceof \GridElementsTeam\Gridelements\Xclass\DatabaseRecordList) {
             $queryParts['ORDERBY'] = $this->addValueToList($queryParts['ORDERBY'], 'colPos');
