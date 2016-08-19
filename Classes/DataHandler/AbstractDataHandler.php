@@ -198,17 +198,23 @@ abstract class AbstractDataHandler
         if ($uid <= 0) {
             return;
         }
+        $currentValues = $this->databaseConnection->exec_SELECTgetSingleRow(
+            'uid,tx_gridelements_container,tx_gridelements_columns,sys_language_uid,colPos,l18n_parent',
+            'tt_content', 'uid=' . (int)$uid
+        );
+        if (!empty($currentValues['l18n_parent'])) {
+            $currentValues = $this->databaseConnection->exec_SELECTgetSingleRow(
+                'uid,tx_gridelements_container,tx_gridelements_columns,sys_language_uid,colPos,l18n_parent',
+                'tt_content', 'uid=' . (int)$currentValues['l18n_parent']
+            );
+        }
         $translatedElements = $this->databaseConnection->exec_SELECTgetRows(
             'uid,tx_gridelements_container,tx_gridelements_columns,sys_language_uid,colPos,l18n_parent',
-            'tt_content', 'l18n_parent=' . (int)$uid , '', '', '', 'uid'
+            'tt_content', 'l18n_parent=' . (int)$currentValues['uid'] , '', '', '', 'uid'
         );
         if (empty($translatedElements)) {
             return;
         }
-        $currentValues = $this->databaseConnection->exec_SELECTgetSingleRow(
-            'tx_gridelements_container,tx_gridelements_columns,colPos',
-            'tt_content', 'uid=' . (int)$uid
-        );
         if ($currentValues['tx_gridelements_container'] > 0) {
             $translatedContainers = $this->databaseConnection->exec_SELECTgetRows(
                 'uid,sys_language_uid',
@@ -226,7 +232,7 @@ abstract class AbstractDataHandler
 
             $this->databaseConnection->exec_UPDATEquery('tt_content', 'uid=' . (int)$translatedUid,
                 $updateArray,
-                'tx_gridelements_container,tx_gridelements_columns.colPos'
+                'tx_gridelements_container,tx_gridelements_columns,colPos'
             );
 
             if ($translatedElement['tx_gridelements_container'] !== $updateArray['tx_gridelements_container']) {

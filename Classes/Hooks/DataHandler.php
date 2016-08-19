@@ -90,9 +90,12 @@ class DataHandler implements SingletonInterface
         &$fieldArray,
         \TYPO3\CMS\Core\DataHandling\DataHandler $parentObj
     ) {
-        if (($table === 'tt_content' || $table === 'pages') && $status === 'update' && !$parentObj->isImporting) {
+        if (($table === 'tt_content' || $table === 'pages') && !$parentObj->isImporting) {
             /** @var AfterDatabaseOperations $hook */
             $hook = GeneralUtility::makeInstance(AfterDatabaseOperations::class);
+            if (strpos($id, 'NEW') !== false) {
+                $id = $parentObj->substNEWwithIDs[$id];
+            };
             $hook->execute_afterDatabaseOperations($fieldArray, $table, $id, $parentObj);
         }
     }
