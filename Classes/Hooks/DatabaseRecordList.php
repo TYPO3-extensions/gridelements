@@ -132,7 +132,7 @@ class DatabaseRecordList implements RecordListHookInterface, SingletonInterface
     public function checkChildren($table, array $row, $level, array &$theData, DatabaseRecordListXclass $parentObj)
     {
         if ($table === 'tt_content' && $row['CType'] === 'gridelements_pi1') {
-            $elementChildren = Helper::getInstance()->getChildren($table, $row['uid'], '', 0, $parentObj->selFieldList);
+            $elementChildren = Helper::getInstance()->getChildren($table, $row['uid'], $row['pid'], '', 0, $parentObj->selFieldList);
             if (!empty($elementChildren)) {
                 $theData['_EXPANDABLE_'] = true;
                 $theData['_EXPAND_ID_'] = $table . ':' . $row['uid'];

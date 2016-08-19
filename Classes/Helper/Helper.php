@@ -67,22 +67,22 @@ class Helper implements SingletonInterface
     {
         $this->databaseConnection = $databaseConnection;
     }
-
+    
     /**
      * @param string $table
      * @param int $uid
+     * @param int $pid
      * @param string $sortingField
      * @param int $sortRev
      * @param string $selectFieldList
-     *
      * @return array
      */
-    public function getChildren($table = '', $uid = 0, $sortingField = '', $sortRev = 0, $selectFieldList)
+    public function getChildren($table = '', $uid = 0, $pid = 0, $sortingField = '', $sortRev = 0, $selectFieldList)
     {
         $retVal = array();
 
         if (trim($table) === 'tt_content' && $uid > 0) {
-            $children = self::getDatabaseConnection()->exec_SELECTgetRows($selectFieldList, 'tt_content', 'tx_gridelements_container = ' . (int)$uid . ' AND deleted = 0', '');
+            $children = self::getDatabaseConnection()->exec_SELECTgetRows($selectFieldList, 'tt_content', 'tx_gridelements_container = ' . (int)$uid . ' AND pid = ' . (int)$pid . ' AND deleted = 0', '');
 
             foreach ($children as $child) {
                 if (trim($sortingField) && isset($child[$sortingField]) && $sortingField !== 'sorting') {
