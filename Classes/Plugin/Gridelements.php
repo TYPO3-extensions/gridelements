@@ -92,6 +92,7 @@ class Gridelements extends ContentObjectRenderer
         } else {
             $element = $this->cObj->data['uid'];
         }
+        $pid = $this->cObj->data['pid'];
         $layout = $this->cObj->data['tx_gridelements_backend_layout'];
 
         /** @var LayoutSetup $layoutSetup */
@@ -100,7 +101,7 @@ class Gridelements extends ContentObjectRenderer
 
         $availableColumns = $layoutSetup->getLayoutColumns($layout);
         $csvColumns = str_replace('-2,-1,', '', $availableColumns['CSV']);
-        $this->getChildren($element, $csvColumns);
+        $this->getChildren($element, $pid, $csvColumns);
 
         // and we have to determine the frontend setup related to the backend layout record which is assigned to this container
         $typoScriptSetup = $layoutSetup->getTypoScriptSetup($layout);
@@ -142,15 +143,16 @@ class Gridelements extends ContentObjectRenderer
      * fetches all available children for a certain grid container
      *
      * @param int $element The uid of the grid container
+     * @param int $pid
      * @param string $csvColumns A list of available column IDs
      */
-    public function getChildren($element = 0, $csvColumns = '')
+    public function getChildren($element = 0, $pid = 0, $csvColumns = '')
     {
         if (!$element || $csvColumns === '') {
             return;
         }
         $where = '(tx_gridelements_container = ' . $element . $this->cObj->enableFields('tt_content') . ' AND colPos != -2
-            AND pid > 0
+            AND pid = ' . (int)$pid . '
             AND tx_gridelements_columns IN (' . $csvColumns . ')
             AND sys_language_uid IN (-1,0)
         )';
