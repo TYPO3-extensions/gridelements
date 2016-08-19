@@ -274,7 +274,7 @@ define(['jquery', 'TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Backend/Storag
 	}
 
 	/**
-	 * gives back the data form the popup window to the copy action
+	 * gives back the data from the popup window to the copy action
 	 */
 	if (!$('.typo3-TCEforms').length) {
 		OnReady.setSelectOptionFromExternalSource = setFormValueFromBrowseWin = function(elementId, tableUid){

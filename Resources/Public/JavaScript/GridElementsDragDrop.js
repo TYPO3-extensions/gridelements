@@ -261,6 +261,9 @@ define(['jquery', 'jquery-ui/sortable', 'jquery-ui/droppable'], function ($) {
 				if (language > -1) {
 					parameters['cmd']['tt_content'][contentElementUid]['copy']['update']['sys_language_uid'] = language;
 				}
+				if (evt === 'copyFromAnotherPage') {
+					parameters['CB']['setCopyMode'] = 1;
+				}
 				// fire the request, and show a message if it has failed
 				require(['TYPO3/CMS/Backend/AjaxDataHandler'], function (DataHandler) {
 					DataHandler.process(parameters).done(function (result) {
