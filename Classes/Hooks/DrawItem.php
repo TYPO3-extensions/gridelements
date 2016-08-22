@@ -722,6 +722,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
                 $columnKey = isset($columnConfig['colPos']) && $columnConfig['colPos'] !== '' ? (int)$columnConfig['colPos'] : 32768;
                 // allowed CTypes
                 $allowedContentTypes = array();
+                $allowedGridTypes = array();
                 if (!empty($columnConfig['allowed'])) {
                     $allowedContentTypes = array_flip(GeneralUtility::trimExplode(',', $columnConfig['allowed']));
                     if (!isset($allowedContentTypes['*'])) {
@@ -736,9 +737,8 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
                     $allowedGridTypes = array_flip(GeneralUtility::trimExplode(',', $columnConfig['allowedGridTypes']));
                     if (!isset($allowedGridTypes['*']) && !empty($allowedGridTypes)) {
                         foreach ($allowedGridTypes as $gridType => &$gridTypeClass) {
-                            $gridTypeClass = 't3-allow-gridtype t3-allow-gridtype-' . $gridType;
+                            $gridTypeClass = 't3-allow-gridtype-' . $gridType;
                         }
-                        $allowedContentTypes['gridelements_pi1'] = 't3-allow-gridelements_pi1';
                     } else {
                         if (!empty($allowedContentTypes)) {
                             $allowedContentTypes['gridelements_pi1'] = 't3-allow-gridelements_pi1';
@@ -752,7 +752,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
                 $expanded = $this->helper->getBackendUser()->uc['moduleData']['page']['gridelementsCollapsedColumns'][$row['uid'] . '_' . $columnKey] ? 'collapsed' : 'expanded';
                 $grid .= '<td valign="top"' . (isset($columnConfig['colspan']) ? ' colspan="' . $colSpan . '"' : '') . (isset($columnConfig['rowspan']) ? ' rowspan="' . $rowSpan . '"' : '') . 'data-colpos="' . $columnKey . '" data-columnkey="' . $specificIds['uid'] . '_' . $columnKey . '"
 					class="t3-grid-cell t3js-page-column t3-page-column t3-page-column-' . $columnKey . (!isset($columnConfig['colPos']) || $columnConfig['colPos'] === '' ? ' t3-grid-cell-unassigned' : '') . (isset($columnConfig['colspan']) && $columnConfig['colPos'] !== '' ? ' t3-grid-cell-width' . $colSpan : '') . (isset($columnConfig['rowspan']) && $columnConfig['colPos'] !== '' ? ' t3-grid-cell-height' . $rowSpan : '') . ' ' . ($layoutSetup['horizontal'] ? ' t3-grid-cell-horizontal' : '') . (!empty($allowedContentTypes) ? ' ' . join(' ',
-                            $allowedContentTypes) : ' t3-allow-all') . (!empty($allowedGridTypes) ? ' ' . join(' ',
+                            $allowedContentTypes) : ' t3-allow-all') . (!empty($allowedGridTypes) ? ' t3-allow-gridtype ' . join(' ',
                             $allowedGridTypes) : '') . ' ' . $expanded . '" data-state="' . $expanded . '">';
 
                 $grid .= ($this->helper->getBackendUser()->uc['hideColumnHeaders'] ? '' : $head[$columnKey]) . $gridContent[$columnKey];
