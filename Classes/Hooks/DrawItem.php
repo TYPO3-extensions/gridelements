@@ -30,6 +30,9 @@ use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\DatabaseConnection;
 use TYPO3\CMS\Core\Database\Query\Restriction\BackendWorkspaceRestriction;
 use TYPO3\CMS\Core\Database\Query\Restriction\DefaultRestrictionContainer;
+use TYPO3\CMS\Core\Database\Query\Restriction\EndTimeRestriction;
+use TYPO3\CMS\Core\Database\Query\Restriction\HiddenRestriction;
+use TYPO3\CMS\Core\Database\Query\Restriction\StartTimeRestriction;
 use TYPO3\CMS\Core\Database\QueryGenerator;
 use TYPO3\CMS\Core\Database\ReferenceIndex;
 use TYPO3\CMS\Core\Imaging\Icon;
@@ -131,7 +134,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
     public function preProcess(PageLayoutView &$parentObject, &$drawItem, &$headerContent, &$itemContent, array &$row)
     {
         if ($row['CType']) {
-            $showHidden = $parentObject->tt_contentConfig['showHidden'] ? '' : BackendUtility::BEenableFields('tt_content');
+            $showHidden = $parentObject->tt_contentConfig['showHidden'] ? true : false;
 
             if ($this->helper->getBackendUser()->uc['hideContentPreview']) {
                 $itemContent = '';
@@ -161,11 +164,11 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
      *
      * @param PageLayoutView $parentObject : The parent object that triggered this hook
      * @param array $row : The current data row for this item
-     * @param string $showHidden : query String containing enable fields
+     * @param bool $showHidden
      *
      * @return string $itemContent: The HTML output for elements of the CType gridelements_pi1
      */
-    public function renderCTypeGridelements(PageLayoutView $parentObject, &$row, &$showHidden)
+    public function renderCTypeGridelements(PageLayoutView $parentObject, &$row, $showHidden)
     {
         $head = array();
         $gridContent = array();
@@ -225,7 +228,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
      *
      * @param PageLayoutView $parentObject : The parent object that triggered this hook
      * @param array $row : The current data row for this item
-     * @param string $showHidden : query String containing enable fields
+     * @param bool $showHidden
      * @param string $deleteClause : query String to check for deleted items
      *
      * @return string $shortcutContent: The HTML output for elements of the CType shortcut
@@ -301,7 +304,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
      * @param PageLayoutView $parentObject : The parent object that triggered this hook
      * @param array $colPosValues : The column positions that have been found for that layout
      * @param array $row : The current data row for the container item
-     * @param string $showHidden : Is evaluated only in boolean context
+     * @param bool $showHidden
      *
      * @return array collected items for this column
      */
@@ -325,11 +328,15 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
             ]
         );
 
-        if (!$showHidden) {
-            $restrictions = GeneralUtility::makeInstance(DefaultRestrictionContainer::class);
-            $restrictions->add(GeneralUtility::makeInstance(BackendWorkspaceRestriction::class));
-            $queryBuilder->setRestrictions($restrictions);
+        $restrictions = GeneralUtility::makeInstance(DefaultRestrictionContainer::class);
+        $restrictions->add(GeneralUtility::makeInstance(BackendWorkspaceRestriction::class));
+        if ($showHidden) {
+            $restrictions->removeByType(HiddenRestriction::class);
         }
+        $restrictions->removeByType(StartTimeRestriction::class);
+        $restrictions->removeByType(EndTimeRestriction::class);
+        $queryBuilder->setRestrictions($restrictions);
+
         $parentObject->setOverridePageIdList([]);
 
         $colPosValues[] = array(0, '');
@@ -347,7 +354,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
      * @param array $editUidList : determines if we will get edit icons or not
      * @param boolean $singleColumn : Determines if we are in single column mode or not
      * @param array $head : An array of headers for each of the columns
-     * @param string $showHidden : query String containing enable fields
+     * @param bool $showHidden
      *
      * @return void
      */
@@ -389,7 +396,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
      * @param PageLayoutView $parentObject : The paren object that triggered this hook
      * @param array $colPosValues : The column position to collect the items for
      * @param array $row : The current data row for the container item
-     * @param string $showHidden : Is evaluated only in boolean context
+     * @param bool $showHidden
      *
      * @return array collected items for the given column
      */
@@ -422,11 +429,14 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
 
         $queryBuilder = $parentObject->getQueryBuilder('tt_content', $row['pid'], $constraints);
 
-        if (!$showHidden) {
-            $restrictions = GeneralUtility::makeInstance(DefaultRestrictionContainer::class);
-            $restrictions->add(GeneralUtility::makeInstance(BackendWorkspaceRestriction::class));
-            $queryBuilder->setRestrictions($restrictions);
+        $restrictions = GeneralUtility::makeInstance(DefaultRestrictionContainer::class);
+        $restrictions->add(GeneralUtility::makeInstance(BackendWorkspaceRestriction::class));
+        if ($showHidden) {
+            $restrictions->removeByType(HiddenRestriction::class);
         }
+        $restrictions->removeByType(StartTimeRestriction::class);
+        $restrictions->removeByType(EndTimeRestriction::class);
+        $queryBuilder->setRestrictions($restrictions);
 
         $parentObject->setOverridePageIdList([]);
 
@@ -761,7 +771,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
      * @param string $shortcutItem : The single page to be used as the tree root
      * @param array $collectedItems : The collected item data rows ordered by parent position, column position and sorting
      * @param int $recursive : The number of levels for the recursion
-     * @param string $showHidden : query String containing enable fields
+     * @param bool $showHidden
      * @param string $deleteClause : query String to check for deleted items
      * @param int $parentUid : uid of the referencing tt_content record
      *
@@ -771,7 +781,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
         $shortcutItem,
         &$collectedItems,
         $recursive = 0,
-        &$showHidden,
+        $showHidden,
         &$deleteClause,
         $parentUid
     ) {
@@ -799,7 +809,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
      *
      * @param string $shortcutItem : The tt_content element to fetch the data from
      * @param array $collectedItems : The collected item data row
-     * @param string $showHidden : query String containing enable fields
+     * @param bool $showHidden
      * @param string $deleteClause : query String to check for deleted items
      * @param int $parentUid : uid of the referencing tt_content record
      *
