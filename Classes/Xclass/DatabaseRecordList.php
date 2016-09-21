@@ -1912,7 +1912,7 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
         // Create element in table cells:
         $theData['uid'] = $row['uid'];
         if ($table === 'tt_content') {
-            $theData['tx_gridelements_container'] = $row['tx_gridelements_container'];
+            $theData['tx_gridelements_container'] = (int)$row['tx_gridelements_container'];
         }
         if (isset($GLOBALS['TCA'][$table]['ctrl']['languageField'])
             && isset($GLOBALS['TCA'][$table]['ctrl']['transOrigPointerField'])

@@ -313,12 +313,12 @@ class WizardItems implements NewContentElementWizardHookInterface
         foreach ($wizardItems as $key => $wizardItem) {
             if (!$wizardItems[$key]['header']) {
                 if ($container !== 0) {
-                    $wizardItems[$key]['tt_content_defValues']['tx_gridelements_container'] = $container;
-                    $wizardItems[$key]['params'] .= '&defVals[tt_content][tx_gridelements_container]=' . $container;
+                    $wizardItems[$key]['tt_content_defValues']['tx_gridelements_container'] = (int)$container;
+                    $wizardItems[$key]['params'] .= '&defVals[tt_content][tx_gridelements_container]=' . (int)$container;
                 }
                 if ($column !== 0) {
-                    $wizardItems[$key]['tt_content_defValues']['tx_gridelements_columns'] = $column;
-                    $wizardItems[$key]['params'] .= '&defVals[tt_content][tx_gridelements_columns]=' . $column;
+                    $wizardItems[$key]['tt_content_defValues']['tx_gridelements_columns'] = (int)$column;
+                    $wizardItems[$key]['params'] .= '&defVals[tt_content][tx_gridelements_columns]=' . (int)$column;
                 }
             }
         }

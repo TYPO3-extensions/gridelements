@@ -106,7 +106,7 @@ class CTypeList extends AbstractItemsProcFunc
             $backendLayout = $this->getSelectedBackendLayout($pid);
         } else {
             $this->init($pid);
-            $column = $gridColumn ? $gridColumn : 0;
+            $column = $gridColumn ? (int)$gridColumn : 0;
             $gridElement = $this->layoutSetup->cacheCurrentParent($gridContainerId, true);
             $backendLayout = $this->layoutSetup->getLayoutSetup($gridElement['tx_gridelements_backend_layout']);
         }
