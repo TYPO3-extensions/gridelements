@@ -104,8 +104,8 @@ class ClickMenuOptions implements SingletonInterface
         $this->iconFactory = GeneralUtility::makeInstance(IconFactory::class);
         $updateArray = array(
             'colPos' => $targetItem['colPos'],
-            'tx_gridelements_container' => $targetItem['tx_gridelements_container'],
-            'tx_gridelements_columns' => $targetItem['tx_gridelements_columns']
+            'tx_gridelements_container' => (int)$targetItem['tx_gridelements_container'],
+            'tx_gridelements_columns' => (int)$targetItem['tx_gridelements_columns']
         );
         $loc = 'top.content.list_frame';
         if ($this->getBackendUser()->jsConfirmation(JsConfirmation::COPY_MOVE_PASTE)) {
