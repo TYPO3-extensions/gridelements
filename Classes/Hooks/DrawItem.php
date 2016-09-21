@@ -450,7 +450,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
         $url = '';
         $pageinfo = BackendUtility::readPageAccess($parentObject->id, '');
         if ($colPos < 32768) {
-            if ($this->getPageLayoutController()->pageIsNotLockedForEditors()
+            if ($this->getPageLayoutController()->contentIsNotLockedForEditors()
                 && $this->getBackendUser()->doesUserHaveAccess($pageinfo, Permission::CONTENT_EDIT)
                 && (!$this->checkIfTranslationsExistInLanguage($items, $row['sys_language_uid'], $parentObject))
             ) {
@@ -524,7 +524,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
 				<div class="t3-page-ce t3js-page-ce t3js-page-ce-sortable' . $statusHidden . '" data-table="tt_content" data-uid="' . $itemRow['uid'] . '" data-container="' . $itemRow['tx_gridelements_container'] . '" data-ctype="' . $itemRow['CType'] . '"><div class="t3-page-ce-dragitem" id="' . str_replace('.',
                             '', uniqid('', true)) . '">' . $this->renderSingleElementHTML($parentObject,
                             $itemRow) . '</div></div>';
-                    if ($this->getPageLayoutController()->pageIsNotLockedForEditors()
+                    if ($this->getPageLayoutController()->contentIsNotLockedForEditors()
                         && $this->getBackendUser()->doesUserHaveAccess($pageinfo, Permission::CONTENT_EDIT)
                         && (!$this->checkIfTranslationsExistInLanguage($items, $row['sys_language_uid'], $parentObject))
                     ) {
