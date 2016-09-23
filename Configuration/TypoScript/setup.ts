@@ -1,4 +1,5 @@
-lib.gridelements.defaultGridSetup { // stdWrap functions being applied to each element
+// stdWrap functions being applied to each element
+lib.gridelements.defaultGridSetup {
 	columns {
 		default {
 			renderObj = COA
