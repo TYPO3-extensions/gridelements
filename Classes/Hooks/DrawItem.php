@@ -521,7 +521,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
                 if (is_array($itemRow)) {
                     $statusHidden = $parentObject->isDisabled('tt_content', $itemRow) ? ' t3-page-ce-hidden' : '';
                     $gridContent[$colPos] .= '
-				<div class="t3-page-ce t3js-page-ce t3js-page-ce-sortable' . $statusHidden . '" data-table="tt_content" data-uid="' . $itemRow['uid'] . '" data-container="' . $itemRow['tx_gridelements_container'] . '" data-ctype="' . $itemRow['CType'] . '"><div class="t3-page-ce-dragitem" id="' . str_replace('.',
+				<div class="t3-page-ce t3js-page-ce t3js-page-ce-sortable' . $statusHidden . '" data-table="tt_content" id="element-tt_content-' . $itemRow['uid'] . '" data-uid="' . $itemRow['uid'] . '" data-container="' . $itemRow['tx_gridelements_container'] . '" data-ctype="' . $itemRow['CType'] . '"><div class="t3-page-ce-dragitem" id="' . str_replace('.',
                             '', uniqid('', true)) . '">' . $this->renderSingleElementHTML($parentObject,
                             $itemRow) . '</div></div>';
                     if ($this->getPageLayoutController()->contentIsNotLockedForEditors()
