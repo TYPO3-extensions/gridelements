@@ -93,7 +93,7 @@ return array(
             'config' => array(
                 'type' => 'group',
                 'internal_type' => 'file',
-                'allowed' => 'jpg,gif,png',
+                'allowed' => 'jpg,gif,png,svg',
                 'uploadfolder' => 'uploads/tx_gridelements',
                 'show_thumbs' => 1,
                 'size' => 5,
