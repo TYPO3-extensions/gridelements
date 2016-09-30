@@ -283,8 +283,8 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 		$originalPidSelect = $parentObject->pidSelect;
 		$helper = Helper::getInstance();
 		$specificIds = $helper->getSpecificIds($row);
-
-		$parentObject->pidSelect = 'pid = ' . $row['pid'];
+        
+        $parentObject->pidSelect = 'pid = ' . $specificIds['pid'];
 
 		if (!$parentObject->tt_contentConfig['languageMode']) {
 			$showLanguage = ' AND (sys_language_uid = -1 OR sys_language_uid=' . $parentObject->tt_contentConfig['sys_language_uid'] . ')';
@@ -295,7 +295,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface {
 		}
 
 		if ($helper->getBackendUser()->workspace > 0 && $row['t3ver_wsid'] > 0) {
-			$where = 'AND t3ver_wsid = ' . $row['t3ver_wsid'];
+			$where = ' AND t3ver_wsid = ' . $row['t3ver_wsid'];
 		}
 		$where .= ' AND colPos = -1 AND tx_gridelements_container IN (' . $row['uid'] . ',' . $specificIds['uid'] . ') AND tx_gridelements_columns=' . $colPos . $showHidden . $deleteClause . $showLanguage;
 
