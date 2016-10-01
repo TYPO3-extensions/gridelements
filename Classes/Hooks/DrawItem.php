@@ -476,13 +476,13 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
                 if ($parentObject->option_newWizard) {
                     $urlParameters = [
                         'id' => $parentObject->id,
-                        'colPos' => -1,
+                        'sys_language_uid' => $row['sys_language_uid'],
                         'tx_gridelements_allowed' => $values['allowed'],
                         'tx_gridelements_allowed_grid_types' => $values['allowedGridTypes'],
                         'tx_gridelements_container' => $specificIds['uid'],
                         'tx_gridelements_columns' => $colPos,
+                        'colPos' => -1,
                         'uid_pid' => $parentObject->id,
-                        'sys_language_uid' => $row['sys_language_uid'],
                         'returnUrl' => GeneralUtility::getIndpEnv('REQUEST_URI')
                     ];
                     $url = BackendUtility::getModuleUrl('new_content_element', $urlParameters);
@@ -495,12 +495,12 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
                         ],
                         'defVals' => [
                             'tt_content' => [
-                                'colPos' => -1,
+                                'sys_language_uid' => $row['sys_language_uid'],
                                 'tx_gridelements_allowed' => $values['allowed'],
                                 'tx_gridelements_allowed_grid_types' => $values['allowedGridTypes'],
                                 'tx_gridelements_container' => $specificIds['uid'],
                                 'tx_gridelements_columns' => $colPos,
-                                'sys_language_uid' => $row['sys_language_uid']
+                                'colPos' => -1
                             ]
                         ],
                         'returnUrl' => GeneralUtility::getIndpEnv('REQUEST_URI')
@@ -555,6 +555,8 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
                                 'sys_language_uid' => $itemRow['sys_language_uid'],
                                 'tx_gridelements_allowed' => $values['allowed'],
                                 'tx_gridelements_allowed_grid_types' => $values['allowedGridTypes'],
+                                'tx_gridelements_container' => $itemRow['tx_gridelements_container'],
+                                'tx_gridelements_columns' => $itemRow['tx_gridelements_columns'],
                                 'colPos' => -1,
                                 'uid_pid' => -$specificIds['uid'],
                                 'returnUrl' => GeneralUtility::getIndpEnv('REQUEST_URI')
@@ -570,9 +572,11 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
                                 'defVals' => [
                                     'tt_content' => [
                                         'sys_language_uid' => $itemRow['sys_language_uid'],
-                                        'colPos' => -1,
                                         'tx_gridelements_allowed' => $values['allowed'],
-                                        'tx_gridelements_allowed_grid_types' => $values['allowedGridTypes']
+                                        'tx_gridelements_allowed_grid_types' => $values['allowedGridTypes'],
+                                        'tx_gridelements_container' => $itemRow['tx_gridelements_container'],
+                                        'tx_gridelements_columns' => $itemRow['tx_gridelements_columns'],
+                                        'colPos' => -1
                                     ]
                                 ],
                                 'returnUrl' => GeneralUtility::getIndpEnv('REQUEST_URI')
