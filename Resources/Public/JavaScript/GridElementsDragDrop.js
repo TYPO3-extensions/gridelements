@@ -30,7 +30,8 @@ define(['jquery', 'jquery-ui/sortable', 'jquery-ui/droppable'], function ($) {
 		gridContainerIdentifier: '.t3-grid-element-container',
 		newContentElementWizardIdentifier: '#new-element-drag-in-wizard',
 		newCTypeIdentifier: '.t3-ctype-identifier',
-		clone: true
+		clone: true,
+		originalStyles: ''
 	};
 
 	/**
@@ -76,6 +77,9 @@ define(['jquery', 'jquery-ui/sortable', 'jquery-ui/droppable'], function ($) {
 	 * @private
 	 */
 	DragDrop.onDragStart = function ($element) {
+        // Add css class for the drag shadow
+        DragDrop.originalStyles = $element.get(0).style.cssText;
+
 		// Add css class for the drag shadow
 		$element.children(DragDrop.dragIdentifier).addClass('dragitem-shadow');
 		// Hide create new element button
@@ -119,6 +123,10 @@ define(['jquery', 'jquery-ui/sortable', 'jquery-ui/droppable'], function ($) {
 		$element.parents(DragDrop.columnHolderIdentifier).find(DragDrop.addContentIdentifier).show();
 		$element.find(DragDrop.dropZoneIdentifier).show();
 		$('#new-element-drag-in-wizard').removeClass('dragged');
+
+        // Reset inline style
+        $element.get(0).style.cssText = DragDrop.originalStyles;
+
 		$(DragDrop.dropZoneIdentifier + '.' + DragDrop.validDropZoneClass).removeClass(DragDrop.validDropZoneClass);
 	};
 
@@ -305,8 +313,9 @@ define(['jquery', 'jquery-ui/sortable', 'jquery-ui/droppable'], function ($) {
 									$draggableElement.detach().css({top: 0, left: 0})
 										.insertAfter($droppableElement.closest(DragDrop.contentIdentifier));
 								}
-							}
-							self.location.reload(true);
+							} else {
+                                self.location.reload(true);
+                            }
 						}
 					});
 				});
