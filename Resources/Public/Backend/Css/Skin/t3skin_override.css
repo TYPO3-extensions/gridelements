@@ -28,7 +28,7 @@
 }
 
 .t3-page-columns .t3-page-columns {
-	width: 100%;
+	min-width: 100%;
 }
 
 .t3-page-ce:hover .t3-page-ce-header {
