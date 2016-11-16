@@ -24,6 +24,11 @@
 
 .t3-page-columns {
 	border-spacing: 10px !important;
+	width: auto;
+}
+
+.t3-page-columns .t3-page-columns {
+	min-width: 100%;
 }
 
 .t3-page-ce:hover .t3-page-ce-header {
