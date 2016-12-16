@@ -105,9 +105,13 @@ forbidden.
 
 Same goes for the **allowedGridTypes** feature which is used to determine
 those grid types the user will be allowed to use within this column. You
-can use a comma separated list of Grid names here and as soon as
+can use a comma separated list of Grid Identifiers here and as soon as
 this contains at least one value, any other Grid type will be forbidden
 and the value gridelements_pi1 will be silently added to **allowed**.
+
+n this context a "Grid Identifier" can be a GridElement's UID or alias 
+(if you use records to define your grid elements) -- or a GridElement's ID
+(if you use TSconfig to define your grid elements).
 
 The **colPos** value will be used while fetching the
 content elements from the database, since grid view and grid elements
