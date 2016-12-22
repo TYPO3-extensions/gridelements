@@ -155,7 +155,7 @@ return array(
                 'wizards' => array(
                     '_PADDING' => 4,
                     '0' => array(
-                        'title' => 'LLL:EXT:cms/locallang_tca.xml:backend_layout.wizard',
+                        'title' => 'LLL:EXT:frontend/Resources/Private/Language/locallang_tca.xlf:backend_layout.wizard',
                         'type' => 'popup',
                         'icon' => 'EXT:frontend/Resources/Public/Images/wizard_backend_layout.png',
                         'module' => array(
