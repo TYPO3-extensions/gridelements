@@ -110,7 +110,7 @@ class ClickMenuOptions implements SingletonInterface
         $loc = 'top.content.list_frame';
         if ($this->getBackendUser()->jsConfirmation(JsConfirmation::COPY_MOVE_PASTE)) {
             $conf = $loc . ' && confirm(' . GeneralUtility::quoteJSvalue(
-                sprintf($this->getLanguageService()->sL('LLL:EXT:lang/locallang_core.xlf:mess.' . ($elInfo[2] === 'copy' ? 'copy' : 'move') . '_' . $type), $elInfo[0], $elInfo[1])
+                sprintf($this->getLanguageService()->sL('LLL:EXT:lang/Resources/Private/Language/locallang_core.xlf:mess.' . ($elInfo[2] === 'copy' ? 'copy' : 'move') . '_' . $type), $elInfo[0], $elInfo[1])
                 ) . ')';
         } else {
             $conf = $loc;

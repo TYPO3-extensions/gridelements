@@ -28,7 +28,7 @@ return array(
     ),
     'columns' => array(
         't3ver_label' => array(
-            'label' => 'LLL:EXT:lang/locallang_general.xml:LGL.versionLabel',
+            'label' => 'LLL:EXT:lang/Resources/Private/Language/locallang_general.xlf:LGL.versionLabel',
             'config' => array(
                 'type' => 'input',
                 'size' => '30',
@@ -140,7 +140,7 @@ return array(
                 'type' => 'check',
                 'items' => array(
                     '1' => array(
-                        '0' => 'LLL:EXT:lang/locallang_core.xml:labels.enabled',
+                        '0' => 'LLL:EXT:lang/Resources/Private/Language/locallang_core.xlf:labels.enabled',
                     ),
                 ),
             ),

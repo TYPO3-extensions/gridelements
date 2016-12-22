@@ -58,7 +58,7 @@ class BackendLayoutWizardController extends \TYPO3\CMS\Backend\Controller\Backen
     public function init()
     {
         $lang = $this->getLanguageService();
-        $lang->includeLLFile('EXT:lang/locallang_wizards.xlf');
+        $lang->includeLLFile('EXT:lang/Resources/Private/Language/locallang_wizards.xlf');
         $this->iconFactory = GeneralUtility::makeInstance(IconFactory::class);
         // Setting GET vars (used in frameset script):
         $this->P = GeneralUtility::_GP('P');
@@ -94,16 +94,16 @@ class BackendLayoutWizardController extends \TYPO3\CMS\Backend\Controller\Backen
 			}
 			', false);
         $languageLabels = array(
-            'save' => $lang->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_labelSave', true),
-            'title' => $lang->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_windowTitle', true),
-            'editCell' => $lang->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_editCell', true),
-            'mergeCell' => $lang->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_mergeCell', true),
-            'splitCell' => $lang->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_splitCell', true),
-            'name' => $lang->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_name', true),
-            'column' => $lang->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_column', true),
-            'notSet' => $lang->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_notSet', true),
-            'nameHelp' => $lang->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_nameHelp', true),
-            'columnHelp' => $lang->sL('LLL:EXT:lang/locallang_wizards.xlf:grid_columnHelp', true),
+            'save' => $lang->sL('LLL:EXT:lang/Resources/Private/Language/locallang_wizards.xlf:grid_labelSave', true),
+            'title' => $lang->sL('LLL:EXT:lang/Resources/Private/Language/locallang_wizards.xlf:grid_windowTitle', true),
+            'editCell' => $lang->sL('LLL:EXT:lang/Resources/Private/Language/locallang_wizards.xlf:grid_editCell', true),
+            'mergeCell' => $lang->sL('LLL:EXT:lang/Resources/Private/Language/locallang_wizards.xlf:grid_mergeCell', true),
+            'splitCell' => $lang->sL('LLL:EXT:lang/Resources/Private/Language/locallang_wizards.xlf:grid_splitCell', true),
+            'name' => $lang->sL('LLL:EXT:lang/Resources/Private/Language/locallang_wizards.xlf:grid_name', true),
+            'column' => $lang->sL('LLL:EXT:lang/Resources/Private/Language/locallang_wizards.xlf:grid_column', true),
+            'notSet' => $lang->sL('LLL:EXT:lang/Resources/Private/Language/locallang_wizards.xlf:grid_notSet', true),
+            'nameHelp' => $lang->sL('LLL:EXT:lang/Resources/Private/Language/locallang_wizards.xlf:grid_nameHelp', true),
+            'columnHelp' => $lang->sL('LLL:EXT:lang/Resources/Private/Language/locallang_wizards.xlf:grid_columnHelp', true),
             'allowedElementTypes' => $lang->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:allowedElementTypes',
                 1),
             'allowedElementTypesHelp' => $lang->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:allowedElementTypesHelp',
