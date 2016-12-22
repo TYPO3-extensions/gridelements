@@ -82,7 +82,7 @@
 }
 
 .t3-grid-container {
-	margin: 0px -10px;
+	margin: 0 -10px;
 }
 
 .t3js-module-body .t3-grid-container-title-0 {
@@ -97,7 +97,7 @@
 	border-style: solid;
 	border-width: 1px;
 	border-color: #B48062;
-	margin: 5px -11px -11px -11px;
+	margin: 2px 0 0 0;
 }
 
 .t3js-module-body .t3-grid-container-title-1 {
@@ -211,7 +211,7 @@
 }
 
 #new-element-drag-in-wizard.dragged .tab-content:hover {
-	min-height: 0px !important;
+	min-height: 0 !important;
 }
 
 #new-element-drag-in-wizard .media {
@@ -243,7 +243,7 @@
 }
 
 #new-element-drag-in-wizard.dragged .panel-tab:hover {
-	min-height: 0px !important;
+	min-height: 0 !important;
 }
 
 .t3js-module-body .exampleContent > .reference {
@@ -259,8 +259,8 @@
 
 .t3js-module-body .exampleContent > .reference .reference-overlay {
 	position: absolute;
-	top: 0px;
-	left: 0px;
+	top: 0;
+	left: 0;
 	width: 100%;
 	height: 100%;
 	background: #427BAB;
