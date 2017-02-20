@@ -134,7 +134,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
     public function preProcess(PageLayoutView &$parentObject, &$drawItem, &$headerContent, &$itemContent, array &$row)
     {
         if ($row['CType']) {
-            $showHidden = $parentObject->tt_contentConfig['showHidden'] ? true : false;
+            $showHidden = $parentObject->tt_contentConfig['showHidden'] ? '' : BackendUtility::BEenableFields('tt_content');
 
             if ($this->helper->getBackendUser()->uc['hideContentPreview']) {
                 $itemContent = '';
@@ -164,7 +164,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
      *
      * @param PageLayoutView $parentObject : The parent object that triggered this hook
      * @param array $row : The current data row for this item
-     * @param bool $showHidden
+     * @param string $showHidden
      *
      * @return string $itemContent: The HTML output for elements of the CType gridelements_pi1
      */
@@ -228,7 +228,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
      *
      * @param PageLayoutView $parentObject : The parent object that triggered this hook
      * @param array $row : The current data row for this item
-     * @param bool $showHidden
+     * @param string $showHidden
      * @param string $deleteClause : query String to check for deleted items
      *
      * @return string $shortcutContent: The HTML output for elements of the CType shortcut
