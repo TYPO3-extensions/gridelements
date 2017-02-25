@@ -53,7 +53,7 @@ class TtContentFlexForm
                 if ($pageUid < 0) {
                     $pageUid = Helper::getInstance()->getPidFromNegativeUid($pageUid);
                 }
-                $layoutId = (int)$row['tx_gridelements_backend_layout'];
+                $layoutId = $row['tx_gridelements_backend_layout'];
                 $layoutSetupInstance = GeneralUtility::makeInstance(LayoutSetup::class)->init($pageUid);
                 $layoutSetup = $layoutSetupInstance->getLayoutSetup($layoutId);
                 if ($layoutSetup['pi_flexform_ds_file']) {
@@ -63,6 +63,7 @@ class TtContentFlexForm
                         'tableName' => 'tx_gridelements_backend_layout',
                         'uid' => $layoutId,
                         'fieldName' => 'pi_flexform_ds_file',
+                        'flexformDS' => 'FILE:' . $layoutSetup['pi_flexform_ds_file']
                     ];
                 } elseif ($layoutSetup['pi_flexform_ds']) {
                     $identifier = [
@@ -70,6 +71,7 @@ class TtContentFlexForm
                         'tableName' => 'tx_gridelements_backend_layout',
                         'uid' => $layoutId,
                         'fieldName' => 'pi_flexform_ds',
+                        'flexformDS' => $layoutSetup['pi_flexform_ds']
                     ];
                 } else {
                     // This could be an additional core patch that allows referencing a DS file directly.
@@ -100,6 +102,8 @@ class TtContentFlexForm
     {
         if ($identifier['type'] === 'gridelements-dummy') {
             return 'FILE:EXT:gridelements/Configuration/FlexForms/default_flexform_configuration.xml';
+        } elseif (!empty($identifier['flexformDS'])) {
+            return $identifier['flexformDS'];
         } else {
             return '';
         }
