@@ -41,6 +41,7 @@ use TYPO3\CMS\Core\Messaging\FlashMessage;
 use TYPO3\CMS\Core\Messaging\FlashMessageService;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Type\Bitmask\Permission;
+use TYPO3\CMS\Core\Utility\DebugUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Versioning\VersionState;
 use TYPO3\CMS\Lang\LanguageService;
@@ -134,7 +135,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
     public function preProcess(PageLayoutView &$parentObject, &$drawItem, &$headerContent, &$itemContent, array &$row)
     {
         if ($row['CType']) {
-            $showHidden = $parentObject->tt_contentConfig['showHidden'] ? '' : BackendUtility::BEenableFields('tt_content');
+            $enableFields = $parentObject->tt_contentConfig['showHidden'] ? '' : BackendUtility::BEenableFields('tt_content');
 
             if ($this->helper->getBackendUser()->uc['hideContentPreview']) {
                 $itemContent = '';
@@ -144,14 +145,14 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
             switch ($row['CType']) {
                 case 'gridelements_pi1':
                     $drawItem = false;
-                    $itemContent .= $this->renderCTypeGridelements($parentObject, $row, $showHidden);
+                    $itemContent .= $this->renderCTypeGridelements($parentObject, $row, $enableFields);
                     $refIndexObj = GeneralUtility::makeInstance(ReferenceIndex::class);
                     /* @var $refIndexObj \TYPO3\CMS\Core\Database\ReferenceIndex */
                     $refIndexObj->updateRefIndexTable('tt_content', $row['uid']);
                     break;
                 case 'shortcut':
                     $drawItem = false;
-                    $itemContent .= $this->renderCTypeShortcut($parentObject, $row, $showHidden, BackendUtility::deleteClause('tt_content'));
+                    $itemContent .= $this->renderCTypeShortcut($parentObject, $row, $enableFields, BackendUtility::deleteClause('tt_content'));
                     break;
             }
         }
@@ -164,11 +165,11 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
      *
      * @param PageLayoutView $parentObject : The parent object that triggered this hook
      * @param array $row : The current data row for this item
-     * @param string $showHidden
+     * @param string $enableFields
      *
      * @return string $itemContent: The HTML output for elements of the CType gridelements_pi1
      */
-    public function renderCTypeGridelements(PageLayoutView $parentObject, &$row, $showHidden)
+    protected function renderCTypeGridelements(PageLayoutView $parentObject, &$row, $enableFields)
     {
         $head = array();
         $gridContent = array();
@@ -199,14 +200,14 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
             $this->setMultipleColPosValues($parserRows, $colPosValues);
         } else {
             $singleColumn = true;
-            $this->setSingleColPosItems($parentObject, $colPosValues, $gridElement, $showHidden);
+            $this->setSingleColPosItems($parentObject, $colPosValues, $gridElement, $enableFields);
         }
 
         // if there are any columns, lets build the content for them
         $outerTtContentDataArray = $parentObject->tt_contentData['nextThree'];
         if (!empty($colPosValues)) {
             $this->renderGridColumns($parentObject, $colPosValues, $gridContent, $gridElement, $editUidList,
-                $singleColumn, $head, $showHidden);
+                $singleColumn, $head, $enableFields);
         }
         $parentObject->tt_contentData['nextThree'] = $outerTtContentDataArray;
 
@@ -228,12 +229,12 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
      *
      * @param PageLayoutView $parentObject : The parent object that triggered this hook
      * @param array $row : The current data row for this item
-     * @param string $showHidden
+     * @param string $enableFields
      * @param string $deleteClause : query String to check for deleted items
      *
      * @return string $shortcutContent: The HTML output for elements of the CType shortcut
      */
-    public function renderCTypeShortcut(PageLayoutView $parentObject, &$row, &$showHidden, &$deleteClause)
+    protected function renderCTypeShortcut(PageLayoutView $parentObject, &$row, &$enableFields, &$deleteClause)
     {
         $shortcutContent = '';
         if ($row['records']) {
@@ -242,10 +243,10 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
             foreach ($shortcutItems as $shortcutItem) {
                 $shortcutItem = trim($shortcutItem);
                 if (strpos($shortcutItem, 'pages_') !== false) {
-                    $this->collectContentDataFromPages($shortcutItem, $collectedItems, $row['recursive'], $showHidden,
+                    $this->collectContentDataFromPages($shortcutItem, $collectedItems, $row['recursive'], $enableFields,
                         $deleteClause, $row['uid']);
                 } else if (strpos($shortcutItem, '_') === false || strpos($shortcutItem, 'tt_content_') !== false) {
-                    $this->collectContentData($shortcutItem, $collectedItems, $showHidden, $deleteClause, $row['uid']);
+                    $this->collectContentData($shortcutItem, $collectedItems, $enableFields, $deleteClause, $row['uid']);
                 }
             }
             if (!empty($collectedItems)) {
@@ -273,7 +274,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
      *
      * @return void
      */
-    public function setMultipleColPosValues($parserRows, &$colPosValues)
+    protected function setMultipleColPosValues($parserRows, &$colPosValues)
     {
         if (is_array($parserRows)) {
             foreach ($parserRows as $parserRow) {
@@ -304,15 +305,15 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
      * @param PageLayoutView $parentObject : The parent object that triggered this hook
      * @param array $colPosValues : The column positions that have been found for that layout
      * @param array $row : The current data row for the container item
-     * @param bool $showHidden
+     * @param string $enableFields
      *
      * @return array collected items for this column
      */
-    public function setSingleColPosItems(
+    protected function setSingleColPosItems(
         PageLayoutView $parentObject,
         &$colPosValues,
         &$row,
-        $showHidden
+        $enableFields
     ) {
         $specificIds = $this->helper->getSpecificIds($row);
         $parentObject->setOverridePageIdList([$specificIds['pid']]);
@@ -330,7 +331,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
 
         $restrictions = GeneralUtility::makeInstance(DefaultRestrictionContainer::class);
         $restrictions->add(GeneralUtility::makeInstance(BackendWorkspaceRestriction::class));
-        if ($showHidden) {
+        if ($enableFields === '') {
             $restrictions->removeByType(HiddenRestriction::class);
         }
         $restrictions->removeByType(StartTimeRestriction::class);
@@ -354,11 +355,11 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
      * @param array $editUidList : determines if we will get edit icons or not
      * @param boolean $singleColumn : Determines if we are in single column mode or not
      * @param array $head : An array of headers for each of the columns
-     * @param bool $showHidden
+     * @param string $enableFields
      *
      * @return void
      */
-    public function renderGridColumns(
+    protected function renderGridColumns(
         PageLayoutView $parentObject,
         &$colPosValues,
         &$gridContent,
@@ -366,9 +367,9 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
         &$editUidList,
         &$singleColumn,
         &$head,
-        $showHidden
+        $enableFields
     ) {
-        $collectedItems = $this->collectItemsForColumns($parentObject, $colPosValues, $row, $showHidden);
+        $collectedItems = $this->collectItemsForColumns($parentObject, $colPosValues, $row, $enableFields);
         foreach ($colPosValues as $colPos => $values) {
             // first we have to create the column content separately for each column
             // so we can check for the first and the last element to provide proper sorting
@@ -396,11 +397,11 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
      * @param PageLayoutView $parentObject : The paren object that triggered this hook
      * @param array $colPosValues : The column position to collect the items for
      * @param array $row : The current data row for the container item
-     * @param bool $showHidden
+     * @param string $enableFields
      *
      * @return array collected items for the given column
      */
-    public function collectItemsForColumns(PageLayoutView $parentObject, &$colPosValues, &$row, &$showHidden)
+    protected function collectItemsForColumns(PageLayoutView $parentObject, &$colPosValues, &$row, &$enableFields)
     {
         $colPosList = implode(',', array_keys($colPosValues));
 
@@ -431,7 +432,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
 
         $restrictions = GeneralUtility::makeInstance(DefaultRestrictionContainer::class);
         $restrictions->add(GeneralUtility::makeInstance(BackendWorkspaceRestriction::class));
-        if ($showHidden) {
+        if ($enableFields === '') {
             $restrictions->removeByType(HiddenRestriction::class);
         }
         $restrictions->removeByType(StartTimeRestriction::class);
@@ -617,7 +618,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
      *
      * @internal param array $row : The current data row for the container item
      */
-    public function setColumnHeader(PageLayoutView $parentObject, &$head, &$colPos, &$name, &$editUidList, $expanded = true)
+    protected function setColumnHeader(PageLayoutView $parentObject, &$head, &$colPos, &$name, &$editUidList, $expanded = true)
     {
         $head[$colPos] = $this->tt_content_drawColHeader($name,
             ($parentObject->doEdit && $editUidList[$colPos]) ? '&edit[tt_content][' . $editUidList[$colPos] . ']=edit' : '',
@@ -634,7 +635,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
      *
      * @return string HTML table
      */
-    public function tt_content_drawColHeader($colName, $editParams, PageLayoutView $parentObject, $expanded = true)
+    protected function tt_content_drawColHeader($colName, $editParams, PageLayoutView $parentObject, $expanded = true)
     {
         $iconsArr = array();
         // Create command links:
@@ -681,7 +682,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
      *
      * @return string
      */
-    public function renderGridLayoutTable($layoutSetup, $row, $head, $gridContent)
+    protected function renderGridLayoutTable($layoutSetup, $row, $head, $gridContent)
     {
         $specificIds = $this->helper->getSpecificIds($row);
 
@@ -775,17 +776,17 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
      * @param string $shortcutItem : The single page to be used as the tree root
      * @param array $collectedItems : The collected item data rows ordered by parent position, column position and sorting
      * @param int $recursive : The number of levels for the recursion
-     * @param bool $showHidden
+     * @param string $enableFields
      * @param string $deleteClause : query String to check for deleted items
      * @param int $parentUid : uid of the referencing tt_content record
      *
      * @return void
      */
-    public function collectContentDataFromPages(
+    protected function collectContentDataFromPages(
         $shortcutItem,
         &$collectedItems,
         $recursive = 0,
-        $showHidden,
+        $enableFields,
         &$deleteClause,
         $parentUid
     ) {
@@ -797,7 +798,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
             $itemList = $this->tree->getTreeList($itemList, (int)$recursive, 0, 1);
         }
         $itemRows = $this->databaseConnection->exec_SELECTgetRows('*', 'tt_content',
-            'uid != ' . (int)$parentUid . ' AND pid IN (' . $itemList . ') AND colPos >= 0 ' . $showHidden . $deleteClause,
+            'uid != ' . (int)$parentUid . ' AND pid IN (' . $itemList . ') AND colPos >= 0 ' . $enableFields . $deleteClause,
             '', 'FIND_IN_SET(pid, \'' . $itemList . '\'),colPos,sorting');
         foreach ($itemRows as $itemRow) {
             if ($this->helper->getBackendUser()->workspace > 0) {
@@ -813,18 +814,18 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
      *
      * @param string $shortcutItem : The tt_content element to fetch the data from
      * @param array $collectedItems : The collected item data row
-     * @param bool $showHidden
+     * @param string $enableFields
      * @param string $deleteClause : query String to check for deleted items
      * @param int $parentUid : uid of the referencing tt_content record
      *
      * @return void
      */
-    public function collectContentData($shortcutItem, &$collectedItems, &$showHidden, &$deleteClause, $parentUid)
+    protected function collectContentData($shortcutItem, &$collectedItems, &$enableFields, &$deleteClause, $parentUid)
     {
         $shortcutItem = str_replace('tt_content_', '', $shortcutItem);
         if ((int)$shortcutItem !== (int)$parentUid) {
             $itemRow = $this->databaseConnection->exec_SELECTgetSingleRow('*', 'tt_content',
-                'uid=' . (int)$shortcutItem . $showHidden . $deleteClause);
+                'uid=' . (int)$shortcutItem . $enableFields . $deleteClause);
             if ($this->helper->getBackendUser()->workspace > 0) {
                 BackendUtility::workspaceOL('tt_content', $itemRow, $this->helper->getBackendUser()->workspace);
             }
@@ -840,7 +841,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
      *
      * @return string
      */
-    public function renderSingleElementHTML(PageLayoutView $parentObject, $itemRow)
+    protected function renderSingleElementHTML(PageLayoutView $parentObject, $itemRow)
     {
         // @todo $parentObject->lP is gone, defLangBinding is proably not enough for the third param to act correctly
         $singleElementHTML = $parentObject->tt_content_drawHeader($itemRow,
