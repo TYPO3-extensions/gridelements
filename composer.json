@@ -5,7 +5,7 @@
   "keywords": ["TYPO3 CMS", "Grids", "Gridelements"],
   "homepage": "https://git.typo3.org/TYPO3CMS/Extensions/gridelements.git",
   "license": "GPL-2.0+",
-  "version": "7.0.5",
+  "version": "7.1.0",
   "support": {
     "issues": "https://forge.typo3.org/"
   },
@@ -19,7 +19,7 @@
   },
   "extra": {
     "branch-alias": {
-      "dev-master": "7.0.5"
+      "dev-master": "7.1.0"
     }
   }
 }
