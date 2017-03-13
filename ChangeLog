@@ -1,3 +1,5 @@
+3.4.0 => See https://forge.typo3.org/projects/extension-gridelements2/repository/show?rev=3-0
+
 3.3.4 => 2016-01-29 Jo Hasenau <info@cybercraft.de>
 	Fixed: Issue #72565 Make sure the move action was triggered by tt_content
 
