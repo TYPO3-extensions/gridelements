@@ -1,3 +1,5 @@
+7.1.0 > See https://forge.typo3.org/projects/extension-gridelements2/repository/show?rev=7-0
+
 7.0.5 > 2016-01-29 Jo Hasenau <info@cybercraft.de>
 	Done: Task #60220 Escaped variables in SQL queries
 	Added: Feature #47294 Make PAGE_TSCONFIG_ID aware of CSV lists of IDs
