@@ -54,9 +54,9 @@ class PageRenderer implements SingletonInterface
         }
         if (get_class($GLOBALS['SOBE']) === PageLayoutController::class) {
             $iconFactory = GeneralUtility::makeInstance(IconFactory::class);
-            $pageRenderer->loadRequireJsModule('TYPO3/CMS/Gridelements/GridElementsOnReady');
+            // $pageRenderer->loadRequireJsModule('TYPO3/CMS/Gridelements/GridElementsOnReady');
             $pageRenderer->loadRequireJsModule('TYPO3/CMS/Gridelements/GridElementsDragDrop');
-            $pageRenderer->loadRequireJsModule('TYPO3/CMS/Gridelements/GridElementsDragInWizard');
+            // $pageRenderer->loadRequireJsModule('TYPO3/CMS/Gridelements/GridElementsDragInWizard');
 
             /** @var Clipboard $clipObj */
             $clipObj = GeneralUtility::makeInstance(Clipboard::class); // Start clipboard
@@ -141,26 +141,6 @@ class PageRenderer implements SingletonInterface
             top.skipDraggableDetails = " . ($this->getBackendUser()->uc['dragAndDropHideNewElementWizardInfoOverlay'] ? 'true' : 'false') . ";
             top.backPath = '" . $GLOBALS['BACK_PATH'] . "';
             top.browserUrl = '" . BackendUtility::getModuleUrl('wizard_element_browser') . "'";
-
-            $elFromTable = $clipObj->elFromTable('tt_content');
-            if (!empty($elFromTable)) {
-                $pasteItem = substr(key($elFromTable), 11);
-                $pasteRecord = BackendUtility::getRecord('tt_content', (int)$pasteItem);
-                $pasteTitle = $pasteRecord['header'] ? $pasteRecord['header'] : $pasteItem;
-                $copyMode = $clipObj->clipData['normal']['mode'] ? '-' . $clipObj->clipData['normal']['mode'] : '';
-                $pAddExtOnReadyCode .= "
-                    top.pasteIntoLinkTemplate = " . json_encode('<a data-pasteitem="' . $pasteItem . '" data-pastetitle="' . $pasteTitle . '" class="t3js-paste t3js-paste' . $copyMode . ' t3js-paste-into btn btn-default" title="' . $this->getLanguageService()->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tx_gridelements_js.pasteinto') . '">' . $iconFactory->getIcon('actions-document-paste-into', Icon::SIZE_SMALL)->render() . '</a>') . ";
-                    top.pasteAfterLinkTemplate = " . json_encode('<a data-pasteitem="' . $pasteItem . '" data-pastetitle="' . $pasteTitle . '"  class="t3js-paste t3js-paste' . $copyMode . ' t3js-paste-after btn btn-default" title="' . $this->getLanguageService()->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tx_gridelements_js.pasteafter') . '">' . $iconFactory->getIcon('actions-document-paste-into', Icon::SIZE_SMALL)->render() . '</a>') . ";";
-                if ($this->getBackendUser()->checkAuthMode('tt_content', 'CType', 'shortcut', $GLOBALS['TYPO3_CONF_VARS']['BE']['explicitADmode'])) {
-                    $pAddExtOnReadyCode .= "
-                        top.pasteReferencesAllowed = true;";
-                }
-
-            } else {
-                $pAddExtOnReadyCode .= "
-                    top.pasteIntoLinkTemplate = '';
-                    top.pasteAfterLinkTemplate = '';";
-            }
 
             $pAddExtOnReadyCode .= "
                     top.copyFromAnotherPageLinkTemplate = " . json_encode('<a class="t3js-paste-new btn btn-default" title="' . $this->getLanguageService()->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tx_gridelements_js.copyfrompage') . '">' . $iconFactory->getIcon('actions-insert-reference', Icon::SIZE_SMALL)->render() . '</a>') . ";";

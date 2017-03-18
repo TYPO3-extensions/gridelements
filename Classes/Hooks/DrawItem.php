@@ -541,9 +541,8 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
                 if (is_array($itemRow)) {
                     $statusHidden = $parentObject->isDisabled('tt_content', $itemRow) ? ' t3-page-ce-hidden' : '';
                     $gridContent[$colPos] .= '
-				<div class="t3-page-ce t3js-page-ce t3js-page-ce-sortable' . $statusHidden . '" data-table="tt_content" id="element-tt_content-' . $itemRow['uid'] . '" data-uid="' . $itemRow['uid'] . '" data-container="' . $itemRow['tx_gridelements_container'] . '" data-ctype="' . $itemRow['CType'] . '"><div class="t3-page-ce-dragitem" id="' . str_replace('.',
-                            '', uniqid('', true)) . '">' . $this->renderSingleElementHTML($parentObject,
-                            $itemRow) . '</div></div>';
+				<div class="t3-page-ce t3js-page-ce t3js-page-ce-sortable' . $statusHidden . '" data-table="tt_content" id="element-tt_content-' . $itemRow['uid'] . '" data-uid="' . $itemRow['uid'] . '" data-container="' . $itemRow['tx_gridelements_container'] . '" data-ctype="' . $itemRow['CType'] . '">' . $this->renderSingleElementHTML($parentObject,
+                            $itemRow) . '</div>';
                     if ($this->getPageLayoutController()->contentIsNotLockedForEditors()
                         && $this->getBackendUser()->doesUserHaveAccess($pageinfo, Permission::CONTENT_EDIT)
                         && (!$this->checkIfTranslationsExistInLanguage($items, $row['sys_language_uid'], $parentObject))
@@ -592,8 +591,10 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
                     }
 
                     $gridContent[$colPos] .= '
+                    <div class="t3-page-ce">
 				<div class="t3js-page-new-ce t3js-page-new-ce-allowed t3-page-ce-wrapper-new-ce btn-group btn-group-sm" id="colpos-' . $itemRow['tx_gridelements_columns'] . '-page-' . $itemRow['pid'] . '-gridcontainer-' . $itemRow['tx_gridelements_container'] . '-' . str_replace('.',
                             '', uniqid('', true)) . '">' . implode('', $iconsArray) . '
+				</div>
 				</div>
 				<div class="t3-page-ce-dropzone-available t3js-page-ce-dropzone-available"></div>
 				</div>
@@ -846,7 +847,11 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
         // @todo $parentObject->lP is gone, defLangBinding is proably not enough for the third param to act correctly
         $singleElementHTML = $parentObject->tt_content_drawHeader($itemRow,
             $parentObject->tt_contentConfig['showInfo'] ? 15 : 5, $parentObject->defLangBinding, true, true);
-        $singleElementHTML .= '<div ' . (!empty($itemRow['_ORIG_uid']) ? ' class="ver-element"' : '') . '><div class="t3-page-ce-body-inner t3-page-ce-body-inner-' . $itemRow['CType'] . '">' . $parentObject->tt_content_drawItem($itemRow) . '</div></div>';
+        $singleElementHTML .= (!empty($itemRow['_ORIG_uid']) ? '<div class="ver-element">' : '')
+            . '<div class="t3-page-ce-body-inner t3-page-ce-body-inner-' . $itemRow['CType'] . '">'
+            . $parentObject->tt_content_drawItem($itemRow)
+            . '</div>'
+            . (!empty($itemRow['_ORIG_uid']) ? '</div>' : '');
         $footerContent = '';
         // Get processed values:
         $info = array();
