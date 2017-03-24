@@ -150,20 +150,9 @@ return array(
             'label' => $l10n . ':tx_gridelements_backend_layout.config',
             'config' => array(
                 'type' => 'text',
+                'renderType' => 'belayoutwizard',
                 'cols' => '25',
-                'rows' => '5',
-                'wizards' => array(
-                    '_PADDING' => 4,
-                    '0' => array(
-                        'title' => 'LLL:EXT:frontend/Resources/Private/Language/locallang_tca.xlf:backend_layout.wizard',
-                        'type' => 'popup',
-                        'icon' => 'EXT:frontend/Resources/Public/Images/wizard_backend_layout.png',
-                        'module' => array(
-                            'name' => 'wizard_gridelements_backend_layout'
-                        ),
-                        'JSopenParams' => 'height=800,width=800,status=0,menubar=0,scrollbars=0',
-                    ),
-                ),
+                'rows' => '5'
             ),
             'defaultExtras' => 'fixed-font : enable-tab',
         ),

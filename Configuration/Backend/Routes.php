@@ -1,6 +1,5 @@
 <?php
-use GridElementsTeam\Gridelements\Wizard\BackendLayoutWizardController;
-use TYPO3\CMS\Backend\Controller;
+use GridElementsTeam\Gridelements\Wizard\GridelementsBackendLayoutWizardElement;
 
 /**
  * Definitions for routes provided by EXT:gridelements
@@ -16,6 +15,6 @@ return [
     // Register backend_layout wizard
     'wizard_gridelements_backend_layout' => [
         'path' => '/wizard',
-        'target' => BackendLayoutWizardController::class . '::mainAction'
+        'target' => GridelementsBackendLayoutWizardElement::class . '::mainAction'
     ]
 ];

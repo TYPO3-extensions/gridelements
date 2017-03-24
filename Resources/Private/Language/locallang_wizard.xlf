@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+	<file source-language="en" datatype="plaintext" original="messages" date="2015-09-21T18:41:55Z" product-name="gridelements">
+		<header>
+			<type>wizard</type>
+			<description>Language labels for wizard fields belonging to extension 'gridelements'</description>
+			<generator>LFEditor</generator>
+		</header>
+		<body>
+			<trans-unit id="grid_allowed">
+				<source>Allowed CE</source>
+			</trans-unit>
+			<trans-unit id="grid_allowedHelp">
+				<source>Select the content element types that may be created or moved here.</source>
+			</trans-unit>
+			<trans-unit id="grid_allowedGridType">
+				<source>Allowed Grids</source>
+			</trans-unit>
+			<trans-unit id="grid_allowedGridTypeHelp">
+				<source>Fill in the Gridelements types that may be created or moved here.</source>
+			</trans-unit>
+		</body>
+	</file>
+</xliff>
