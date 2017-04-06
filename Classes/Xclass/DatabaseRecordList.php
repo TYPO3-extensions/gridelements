@@ -863,8 +863,8 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
                         } else {
                             $this->showMoveUp = true;
                         }
-                        $this->showMoveDown = !isset($row['colPos']) && isset($accRows[$key + 1])
-                                              && $row['colPos'] != $accRows[$key + 1]['colPos'];
+                        $this->showMoveDown = !isset($row['colPos']) || !isset($accRows[$key + 1])
+                                              || $row['colPos'] == $accRows[$key + 1]['colPos'];
                         $rowOutput .= $this->renderListRow($table, $row, $cc, $titleCol, $thumbsCol);
                         // If localization view is enabled and no search happened it means that the selected
                         // records are either default or All language and here we will not select translations
