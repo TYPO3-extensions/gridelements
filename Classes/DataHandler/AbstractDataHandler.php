@@ -1,4 +1,5 @@
 <?php
+
 namespace GridElementsTeam\Gridelements\DataHandler;
 
 /***************************************************************
@@ -208,9 +209,12 @@ abstract class AbstractDataHandler
                 'tt_content', 'deleted = 0 AND uid=' . (int)$currentValues['l18n_parent']
             );
         }
+        if (empty($currentValues['uid'])) {
+            return;
+        }
         $translatedElements = $this->databaseConnection->exec_SELECTgetRows(
             'uid,tx_gridelements_container,tx_gridelements_columns,sys_language_uid,colPos,l18n_parent',
-            'tt_content', 'deleted = 0 AND l18n_parent=' . (int)$currentValues['uid'] , '', '', '', 'uid'
+            'tt_content', 'deleted = 0 AND l18n_parent=' . (int)$currentValues['uid'], '', '', '', 'uid'
         );
         if (empty($translatedElements)) {
             return;
@@ -218,7 +222,8 @@ abstract class AbstractDataHandler
         if ($currentValues['tx_gridelements_container'] > 0) {
             $translatedContainers = $this->databaseConnection->exec_SELECTgetRows(
                 'uid,sys_language_uid',
-                'tt_content', 'deleted = 0 AND l18n_parent=' . (int)$currentValues['tx_gridelements_container'], '', '', '', 'sys_language_uid'
+                'tt_content', 'deleted = 0 AND l18n_parent=' . (int)$currentValues['tx_gridelements_container'], '', '',
+                '', 'sys_language_uid'
             );
         }
         $containerUpdateArray = array();
