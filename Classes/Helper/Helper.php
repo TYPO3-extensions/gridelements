@@ -82,7 +82,7 @@ class Helper implements SingletonInterface
         $retVal = array();
 
         if (trim($table) === 'tt_content' && $uid > 0) {
-            $children = self::getDatabaseConnection()->exec_SELECTgetRows($selectFieldList, 'tt_content', 'tx_gridelements_container = ' . (int)$uid . ' AND pid = ' . (int)$pid . ' AND deleted = 0', '');
+            $children = self::getDatabaseConnection()->exec_SELECTgetRows($selectFieldList . ',sorting,tx_gridelements_columns', 'tt_content', 'tx_gridelements_container = ' . (int)$uid . ' AND pid = ' . (int)$pid . ' AND deleted = 0', '');
 
             foreach ($children as $child) {
                 if (trim($sortingField) && isset($child[$sortingField]) && $sortingField !== 'sorting') {
