@@ -319,6 +319,10 @@
 
 #recordlist-tt_content .col-icon {
 	position: relative;
+	text-align: right;
+}
+
+#recordlist-tt_content th.col-icon {
 	text-align: left;
 }
 
