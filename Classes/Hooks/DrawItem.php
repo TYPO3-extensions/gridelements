@@ -24,6 +24,7 @@ use GridElementsTeam\Gridelements\Helper\Helper;
 use TYPO3\CMS\Backend\Controller\PageLayoutController;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Backend\View\PageLayoutView;
+use TYPO3\CMS\Backend\View\PageLayoutViewDrawFooterHookInterface;
 use TYPO3\CMS\Backend\View\PageLayoutViewDrawItemHookInterface;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Database\DatabaseConnection;
@@ -827,23 +828,54 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
         $singleElementHTML = $parentObject->tt_content_drawHeader($itemRow,
             $parentObject->tt_contentConfig['showInfo'] ? 15 : 5, $parentObject->defLangBinding, true, true);
         $singleElementHTML .= '<div ' . (!empty($itemRow['_ORIG_uid']) ? ' class="ver-element"' : '') . '><div class="t3-page-ce-body-inner t3-page-ce-body-inner-' . $itemRow['CType'] . '">' . $parentObject->tt_content_drawItem($itemRow) . '</div></div>';
-        $footerContent = '';
+        $singleElementHTML .= $this->tt_content_drawFooter($parentObject, $itemRow);
+
+        return $singleElementHTML;
+    }
+
+    /**
+     * Draw the footer for a single tt_content element
+     *
+     * @param PageLayoutView $parentObject : The parent object that triggered this hook
+     * @param array $row Record array
+     * @return string HTML of the footer
+     * @throws \UnexpectedValueException
+     */
+    protected function tt_content_drawFooter(PageLayoutView $parentObject, array $row)
+    {
+        $content = '';
         // Get processed values:
-        $info = array();
-        $parentObject->getProcessedValue('tt_content', 'starttime,endtime,fe_group,spaceBefore,spaceAfter', $itemRow,
-            $info);
+        $info = [];
+        $parentObject->getProcessedValue('tt_content', 'starttime,endtime,fe_group,spaceBefore,spaceAfter', $row, $info);
+
+        // Content element annotation
+        if (!empty($GLOBALS['TCA']['tt_content']['ctrl']['descriptionColumn'])) {
+            $info[] = htmlspecialchars($row[$GLOBALS['TCA']['tt_content']['ctrl']['descriptionColumn']]);
+        }
+
+        // Call drawFooter hooks
+        $drawFooterHooks = &$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['cms/layout/class.tx_cms_layout.php']['tt_content_drawFooter'];
+        if (is_array($drawFooterHooks)) {
+            foreach ($drawFooterHooks as $hookClass) {
+                $hookObject = GeneralUtility::getUserObj($hookClass);
+                if (!$hookObject instanceof PageLayoutViewDrawFooterHookInterface) {
+                    throw new \UnexpectedValueException($hookClass . ' must implement interface ' . PageLayoutViewDrawFooterHookInterface::class, 1404378171);
+                }
+                $hookObject->preProcess($parentObject, $info, $row);
+            }
+        }
+
         // Display info from records fields:
         if (!empty($info)) {
-            $footerContent = '<div class="t3-page-ce-info">
-				' . implode('<br />', $info) . '
+            $content = '<div class="t3-page-ce-info">
+				' . implode('<br>', $info) . '
 				</div>';
         }
         // Wrap it
-        if (!empty($footerContent)) {
-            $singleElementHTML .= '<div class="t3-page-ce-footer">' . $footerContent . '</div>';
+        if (!empty($content)) {
+            $content = '<div class="t3-page-ce-footer">' . $content . '</div>';
         }
-
-        return $singleElementHTML;
+        return $content;
     }
 
     /**
