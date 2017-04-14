@@ -3,7 +3,7 @@
   "description": "This extension integrates the grid layout concept to regular content elements.",
   "type": "typo3-cms-extension",
   "keywords": ["TYPO3 CMS", "Grids", "Gridelements"],
-  "homepage": "https://git.typo3.org/TYPO3CMS/Extensions/gridelements.git",
+  "homepage": "https://forge.typo3.org/projects/extension-gridelements2",
   "license": "GPL-2.0+",
   "version": "7.1.0",
   "support": {
