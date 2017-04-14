@@ -233,7 +233,7 @@ class WizardItems implements NewContentElementWizardHookInterface
                     ) {
                         $largeIcon = GeneralUtility::resolveBackPath($item['icon'][1]);
                     }
-                    if (!empty($icon)) {
+                    if (!empty($largeIcon)) {
                         if (StringUtility::endsWith($largeIcon, '.svg')) {
                             $iconRegistry->registerIcon($item['iconIdentifierLarge'], SvgIconProvider::class, array(
                                 'source' => $largeIcon
