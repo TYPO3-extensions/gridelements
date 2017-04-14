@@ -20,6 +20,7 @@ define(['jquery', 'jquery-ui/sortable', 'jquery-ui/droppable'], function ($) {
 
 	var DragDrop = {
 		contentIdentifier: '.t3js-page-ce',
+		draggableIdentifier: '.t3js-page-ce:has(.t3-page-ce-header-draggable)',
 		dragIdentifier: '.t3-page-ce-dragitem',
 		dragHeaderIdentifier: '.t3js-page-ce-draghandle',
 		dropZoneIdentifier: '.t3js-page-ce-dropzone-available',
@@ -37,7 +38,7 @@ define(['jquery', 'jquery-ui/sortable', 'jquery-ui/droppable'], function ($) {
 	 * initializes Drag+Drop for all content elements on the page
 	 */
 	DragDrop.initialize = function () {
-		$(DragDrop.contentIdentifier).draggable({
+		$(DragDrop.draggableIdentifier).draggable({
 			handle: this.dragHeaderIdentifier,
 			scope: 'tt_content',
 			cursor: 'move',
