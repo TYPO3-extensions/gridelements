@@ -387,6 +387,11 @@
 	display: block;
 }
 
+.t3-grid-cell-horizontal {
+	white-space: nowrap;
+}
+
 .t3-grid-cell-horizontal > .t3js-sortable > .t3js-page-ce-sortable {
 	display: inline-block;
+	vertical-align: top;
 }
