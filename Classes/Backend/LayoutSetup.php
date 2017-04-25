@@ -473,10 +473,10 @@ class LayoutSetup
         }
 
         if ($overruleRecords === true) {
-            ArrayUtility::mergeRecursiveWithOverrule($gridLayoutRecords, $gridLayoutConfig);
+            ArrayUtility::mergeRecursiveWithOverrule($gridLayoutRecords, $gridLayoutConfig, true, false);
             $this->setLayoutSetup($gridLayoutRecords);
         } else {
-            ArrayUtility::mergeRecursiveWithOverrule($gridLayoutConfig, $gridLayoutRecords);
+            ArrayUtility::mergeRecursiveWithOverrule($gridLayoutConfig, $gridLayoutRecords, true, false);
             $this->setLayoutSetup($gridLayoutConfig);
         }
     }
