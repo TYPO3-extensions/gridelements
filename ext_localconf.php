@@ -12,6 +12,8 @@ $_EXTCONF = unserialize($_EXTCONF);
 \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addPItoST43($_EXTKEY, 'Classes/Plugin/Gridelements.php', '_pi1',
     'CType', 1);
 
+$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['GLOBAL']['extTablesInclusion-PostProcessing'][] = 'GridElementsTeam\\Gridelements\\Hooks\\ExtTablesInclusionPostProcessing';
+
 $GLOBALS['TYPO3_CONF_VARS']['SYS']['formEngine']['nodeRegistry'][1488914437] = [
     'nodeName' => 'belayoutwizard',
     'priority' => 50,
