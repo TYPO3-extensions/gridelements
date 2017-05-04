@@ -266,8 +266,8 @@ class LayoutSetup
                 } else {
                     $icon = $item['icon'];
                 }
-                if (!StringUtility::beginsWith($icon, '../')) {
-                    $icon = '../' . $icon;
+                if (StringUtility::beginsWith($icon, '../')) {
+                    $icon = PATH_site . str_replace('../', '', $icon);
                 }
             }
             $selectItems[] = array($this->languageService->sL($item['title']), $layoutId, $icon);
