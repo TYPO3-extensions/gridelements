@@ -827,7 +827,7 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
             if (!$listOnlyInSingleTableMode || $this->table) {
                 // Fixing an order table for sortby tables
                 $this->currentTable = [];
-                $currentIdList = [];
+                $this->currentIdList = [];
                 $doSort = $GLOBALS['TCA'][$table]['ctrl']['sortby'] && !$this->sortField;
                 $prevUid = 0;
                 $prevPrevUid = 0;
@@ -939,7 +939,7 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
                                     // In offline workspace, look for alternative record:
                                     BackendUtility::workspaceOL($table, $lRow, $backendUser->workspace, true);
                                     if (is_array($lRow) && $backendUser->checkLanguageAccess($lRow[$GLOBALS['TCA'][$table]['ctrl']['languageField']])) {
-                                        $currentIdList[] = $lRow['uid'];
+                                        $this->currentIdList[] = $lRow['uid'];
                                         $rowOutput .= $this->renderListRow($table, $lRow, $cc, $titleCol, $thumbsCol,
                                             18);
                                     }
@@ -973,7 +973,7 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
                     }
                 }
                 // The header row for the table is now created:
-                $out .= $this->renderListHeader($table, $currentIdList);
+                $out .= $this->renderListHeader($table, $this->currentIdList);
             }
 
             $collapseClass = $tableCollapsed && !$this->table ? 'collapse' : 'collapse in';
