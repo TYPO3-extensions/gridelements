@@ -122,3 +122,13 @@ $GLOBALS['TCA']['tt_content']['types']['gridelements_pi1']['showitem'] = '
 	categories,
     --div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:notes,rowDescription
 	';
+
+\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addPlugin(
+    [
+        'LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tt_content.CType_pi1',
+        'gridelements_pi1',
+        'gridelements-default'
+    ],
+    'CType',
+    'gridelements'
+);

@@ -11,14 +11,6 @@ if (TYPO3_MODE === 'BE') {
     include_once(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('gridelements') . 'Classes/Backend/TtContent.php');
 }
 
-\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addStaticFile($_EXTKEY, 'Configuration/TypoScript/', 'Gridelements');
-
-\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addPlugin(array(
-    'LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tt_content.CType_pi1',
-    $_EXTKEY . '_pi1',
-    'gridelements-default'
-), 'CType');
-
 // Hooks
 $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['cms/layout/class.tx_cms_layout.php']['tt_content_drawItem'][] = \GridElementsTeam\Gridelements\Hooks\DrawItem::class;
 
