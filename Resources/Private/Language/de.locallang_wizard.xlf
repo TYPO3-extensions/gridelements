@@ -15,11 +15,11 @@
 				<source>Select the content element types that may be created or moved here.</source>
 				<target>Wählen Sie die Content-Element-Typen aus, die innerhalb dieser Spalte angelegt oder dorthin bewegt werden dürfen.</target>
 			</trans-unit>
-			<trans-unit id="grid_allowedGridType">
+			<trans-unit id="grid_allowedGridTypes">
 				<source>Allowed Grids</source>
 				<target>Zulässige Raster-Elemente</target>
 			</trans-unit>
-			<trans-unit id="grid_allowedGridTypeHelp">
+			<trans-unit id="grid_allowedGridTypesHelp">
 				<source>Fill in the Gridelements types that may be created or moved here.</source>
 				<target>Tragen Sie die Raster-Element-Typen ein, die innerhalb dieser Spalte angelegt oder dorthin bewegt werden dürfen.</target>
 			</trans-unit>

@@ -13,10 +13,10 @@
 			<trans-unit id="grid_allowedHelp">
 				<source>Select the content element types that may be created or moved here.</source>
 			</trans-unit>
-			<trans-unit id="grid_allowedGridType">
+			<trans-unit id="grid_allowedGridTypes">
 				<source>Allowed Grids</source>
 			</trans-unit>
-			<trans-unit id="grid_allowedGridTypeHelp">
+			<trans-unit id="grid_allowedGridTypesHelp">
 				<source>Fill in the Gridelements types that may be created or moved here.</source>
 			</trans-unit>
 		</body>

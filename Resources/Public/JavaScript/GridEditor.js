@@ -14,7 +14,7 @@
 /**
  * Module: TYPO3\CMS\Gridelements\GridEditor
  */
-define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Severity', 'bootstrap'], function($, Modal, Severity) {
+define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Severity', 'TYPO3/CMS/Lang/Lang', 'bootstrap'], function($, Modal, Severity, Lang) {
 	'use strict';
 
 	/**
@@ -45,7 +45,7 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Severity', 'boot
 		nameLabel: 'name',
 		columnLabel: 'column label',
 		targetElement: null,
-		defaultCell: {spanned: 0, rowspan: 1, colspan: 1, name: '', colpos: '', allowed: '', allowedGridType: ''}
+		defaultCell: {spanned: 0, rowspan: 1, colspan: 1, name: '', colpos: '', allowed: '', allowedGridTypes: ''}
 	};
 
 	/**
@@ -138,10 +138,10 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Severity', 'boot
 			var $preview = $(GridEditor.selectorConfigPreview);
 			var $button = $(GridEditor.selectorConfigPreviewButton);
 			if ($preview.is(':visible')) {
-				$button.empty().append(TYPO3.lang['button.showPageTsConfig']);
+				$button.empty().append(Lang['button.showPageTsConfig']);
 				$(GridEditor.selectorConfigPreview).slideUp();
 			} else {
-				$button.empty().append(TYPO3.lang['button.hidePageTsConfig']);
+				$button.empty().append(Lang['button.hidePageTsConfig']);
 				$(GridEditor.selectorConfigPreview).slideDown();
 			}
 
@@ -345,14 +345,14 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Severity', 'boot
 					$anchor
 						.clone()
 						.attr('class', 't3js-grideditor-link-editor link link_editor')
-						.attr('title', TYPO3.lang['grid_editCell'])
+						.attr('title', Lang['grid_editCell'])
 				);
 				if (GridEditor.cellCanSpanRight(col, row)) {
 					$container.append(
 						$anchor
 							.clone()
 							.attr('class', 't3js-grideditor-link-expand-right link link_expand_right')
-							.attr('title', TYPO3.lang['grid_mergeCell'])
+							.attr('title', Lang['grid_mergeCell'])
 					);
 				}
 				if (GridEditor.cellCanShrinkLeft(col, row)) {
@@ -360,7 +360,7 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Severity', 'boot
 						$anchor
 							.clone()
 							.attr('class', 't3js-grideditor-link-shrink-left link link_shrink_left')
-							.attr('title', TYPO3.lang['grid_splitCell'])
+							.attr('title', Lang['grid_splitCell'])
 					);
 				}
 				if (GridEditor.cellCanSpanDown(col, row)) {
@@ -368,7 +368,7 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Severity', 'boot
 						$anchor
 							.clone()
 							.attr('class', 't3js-grideditor-link-expand-down link link_expand_down')
-							.attr('title', TYPO3.lang['grid_mergeCell'])
+							.attr('title', Lang['grid_mergeCell'])
 					);
 				}
 				if (GridEditor.cellCanShrinkUp(col, row)) {
@@ -376,23 +376,23 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Severity', 'boot
 						$anchor
 							.clone()
 							.attr('class', 't3js-grideditor-link-shrink-up link link_shrink_up')
-							.attr('title', TYPO3.lang['grid_splitCell'])
+							.attr('title', Lang['grid_splitCell'])
 					);
 				}
 				$cell.append(
 					$('<div class="cell_data">')
 						.html(
-							TYPO3.lang['grid_name'] + ': '
-							+ (cell.name ? GridEditor.stripMarkup(cell.name) : TYPO3.lang['grid_notSet'])
+							Lang['grid_name'] + ': '
+							+ (cell.name ? GridEditor.stripMarkup(cell.name) : Lang['grid_notSet'])
 							+ '<br />'
-							+ TYPO3.lang['grid_column'] + ': '
-							+ (cell.column === undefined ? TYPO3.lang['grid_notSet'] : parseInt(cell.column, 10))
+							+ Lang['grid_column'] + ': '
+							+ (cell.column === undefined || typeof(cell.column) !== 'number' ? Lang['grid_notSet'] : parseInt(cell.column, 10))
 							+ '<br />'
-							+ TYPO3.lang['grid_allowed'] + ': '
+							+ Lang['grid_allowed'] + ': '
 							+ (cell.allowed ? GridEditor.stripMarkup(cell.allowed.replace(/,/g, ', ')) : '*')
 							+ '<br />'
-							+ TYPO3.lang['grid_allowedGridType'] + ': '
-							+ (cell.allowedGridType ? GridEditor.stripMarkup(cell.allowedGridType) : '*')
+							+ Lang['grid_allowedGridTypes'] + ': '
+							+ (cell.allowedGridTypes ? GridEditor.stripMarkup(cell.allowedGridTypes) : '*')
 						)
 				);
 				if (cell.colspan > 1) {
@@ -419,10 +419,10 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Severity', 'boot
 	 */
 	GridEditor.setName = function(newName, col, row) {
 		var cell = GridEditor.getCell(col, row);
-		if (!cell) {
+		if (!cell || newName.trim() === '') {
 			return false;
 		}
-		cell.name = GridEditor.stripMarkup(newName);
+		cell.name =  GridEditor.stripMarkup(newName);
 		return true;
 	};
 
@@ -430,7 +430,7 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Severity', 'boot
 	 * Sets the column field for a certain grid element. This is NOT the column of the
 	 * element itself.
 	 *
-	 * @param {Integer} newColumn
+	 * @param {String} newColumn
 	 * @param {Integer} col
 	 * @param {Integer} row
 	 *
@@ -441,7 +441,7 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Severity', 'boot
 		if (!cell) {
 			return false;
 		}
-		cell.column = parseInt(newColumn, 10);
+		cell.column = newColumn.trim() !== '' ? parseInt(newColumn, 10) : '';
 		return true;
 	};
 
@@ -466,18 +466,18 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Severity', 'boot
 	/**
 	 * Sets the allowed grid types of a certain grid element.
 	 *
-	 * @param {String} newAllowedGridType
+	 * @param {String} newAllowedGridTypes
 	 * @param {Integer} col
 	 * @param {Integer} row
 	 *
 	 * @returns {Boolean}
 	 */
-	GridEditor.setAllowedGridType = function(newAllowedGridType, col, row) {
+	GridEditor.setAllowedGridTypes = function(newAllowedGridTypes, col, row) {
 		var cell = GridEditor.getCell(col, row);
 		if (!cell) {
 			return false;
 		}
-		cell.allowedGridType = GridEditor.stripMarkup(newAllowedGridType);
+		cell.allowedGridTypes = newAllowedGridTypes.trim() !== '' ? GridEditor.stripMarkup(newAllowedGridTypes) : '';
 		return true;
 	};
 
@@ -497,7 +497,7 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Severity', 'boot
 		}
 
 		var allowed;
-		var allowedGridType;
+		var allowedGridTypes;
 		var colPos;
 		if (cell.column === 0) {
 			colPos = 0;
@@ -519,7 +519,7 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Severity', 'boot
 				.append([
 					$label
 						.clone()
-						.text(TYPO3.lang['grid_nameHelp'])
+						.text(Lang['grid_nameHelp'])
 					,
 					$input
 						.clone()
@@ -533,7 +533,7 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Severity', 'boot
 				.append([
 					$label
 						.clone()
-						.text(TYPO3.lang['grid_columnHelp'])
+						.text(Lang['grid_columnHelp'])
 					,
 					$input
 						.clone()
@@ -547,7 +547,7 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Severity', 'boot
 				.append([
 					$label
 						.clone()
-						.text(TYPO3.lang['grid_allowedHelp'])
+						.text(Lang['grid_allowedHelp'])
 					,
 					$select
 						.clone()
@@ -561,26 +561,26 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Severity', 'boot
 				.append([
 					$label
 						.clone()
-						.text(TYPO3.lang['grid_allowedGridTypeHelp'])
+						.text(Lang['grid_allowedGridTypesHelp'])
 					,
 					$input
 						.clone()
 						.attr('type', 'text')
-						.attr('class', 't3js-grideditor-field-allowed-grid-type form-control')
-						.attr('name', 'allowedGridType')
-						.val(allowedGridType)
+						.attr('class', 't3js-grideditor-field-allowed-grid-types form-control')
+						.attr('name', 'allowedGridTypes')
+						.val(GridEditor.stripMarkup(cell.allowedGridTypes) || '')
 			])
 		]);
 
-		var $modal = Modal.show(TYPO3.lang['grid_windowTitle'], $markup, Severity.notice, [
+		var $modal = Modal.show(Lang['grid_windowTitle'], $markup, Severity.notice, [
 			{
-				text: $(this).data('button-close-text') || TYPO3.lang['button.cancel'] || 'Cancel',
+				text: $(this).data('button-close-text') || Lang['button.cancel'] || 'Cancel',
 				active: true,
 				btnClass: 'btn-default',
 				name: 'cancel'
 			},
 			{
-				text: $(this).data('button-ok-text') || TYPO3.lang['button.ok'] || 'OK',
+				text: $(this).data('button-ok-text') || Lang['button.ok'] || 'OK',
 				btnClass: 'btn-' + Severity.getCssClass(Severity.notice),
 				name: 'ok'
 			}
@@ -594,7 +594,7 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Severity', 'boot
 				GridEditor.setName($modal.find('.t3js-grideditor-field-name').val(), $modal.data('col'), $modal.data('row'));
 				GridEditor.setColumn($modal.find('.t3js-grideditor-field-colpos').val(), $modal.data('col'), $modal.data('row'));
 				GridEditor.setAllowed($modal.find('.t3js-grideditor-field-allowed').val().join(), $modal.data('col'), $modal.data('row'));
-				GridEditor.setAllowedGridType($modal.find('.t3js-grideditor-field-allowed-grid-type').val(), $modal.data('col'), $modal.data('row'));
+				GridEditor.setAllowedGridTypes($modal.find('.t3js-grideditor-field-allowed-grid-types').val(), $modal.data('col'), $modal.data('row'));
 				GridEditor.drawTable();
 				GridEditor.writeConfig(GridEditor.export2LayoutRecord());
 				Modal.currentModal.trigger('modal-dismiss');
@@ -837,11 +837,11 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Severity', 'boot
 					if (typeof(cell.column) === 'number') {
 						result += "\t\t\t\t\tcolPos = " + cell.column + "\n";
 					}
-					if (cell.allowed !== '') {
+					if (cell.allowed !== undefined && cell.allowed !== '' && cell.allowed !== '*') {
 						result += "\t\t\t\t\tallowed = " + cell.allowed + "\n";
 					}
-					if (cell.allowedGridType !== '') {
-						result += "\t\t\t\t\tallowedGridType = " + cell.allowedGridType + "\n";
+					if (cell.allowedGridTypes !== undefined && cell.allowedGridTypes !== '' && cell.allowedGridTypes !== '*') {
+						result += "\t\t\t\t\tallowedGridTypes = " + cell.allowedGridTypes + "\n";
 					}
 					result += "\t\t\t\t}\n";
 				}
@@ -862,6 +862,9 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Severity', 'boot
 	 * @returns {*|jQuery}
 	 */
 	GridEditor.stripMarkup = function(input) {
+		if (input === undefined) {
+			return;
+		}
 		input = input.replace( /<(.*)>/gi, '');
 		return $('<p>' + input + '</p>').text();
 	};
