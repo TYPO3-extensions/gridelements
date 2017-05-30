@@ -54,7 +54,7 @@ class PageRenderer implements SingletonInterface
         }
         if (get_class($GLOBALS['SOBE']) === PageLayoutController::class || is_subclass_of($GLOBALS['SOBE'], PageLayoutController::class)) {
             $iconFactory = GeneralUtility::makeInstance(IconFactory::class);
-            // $pageRenderer->loadRequireJsModule('TYPO3/CMS/Gridelements/GridElementsOnReady');
+            $pageRenderer->loadRequireJsModule('TYPO3/CMS/Gridelements/GridElementsOnReady');
             $pageRenderer->loadRequireJsModule('TYPO3/CMS/Gridelements/GridElementsDragDrop');
             // $pageRenderer->loadRequireJsModule('TYPO3/CMS/Gridelements/GridElementsDragInWizard');
 

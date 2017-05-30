@@ -16,7 +16,7 @@
  * based on jQuery UI
  */
 
-define(['jquery', 'TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Backend/Storage', 'TYPO3/CMS/Gridelements/GridElementsDragDrop', 'TYPO3/CMS/Backend/Modal'], function ($, AjaxDataHandler, Storage, DragDrop, Modal) {
+define(['jquery', 'TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Backend/Storage', 'TYPO3/CMS/Gridelements/GridElementsDragDrop', 'TYPO3/CMS/Backend/LayoutModule/Paste', 'TYPO3/CMS/Backend/Modal'], function ($, AjaxDataHandler, Storage, DragDrop, Paste, Modal) {
 
 	var OnReady = {
 		openedPopupWindow: []
@@ -38,9 +38,109 @@ define(['jquery', 'TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Backend/Storag
 		if ($('.t3js-page-columns').length) {
 			OnReady.setAllowedClasses();
 			OnReady.activateAllCollapseIcons();
-			OnReady.activatePasteIcons();
+			Paste.initialize();
 		}
 	};
+
+	/**
+	 * activates the paste into / paste after and fetch copy from another page icons outside of the context menus
+	 */
+	Paste.activatePasteIcons = function () {
+		$('.icon-actions-document-paste-into').parent().remove();
+		$('.t3-page-ce-wrapper-new-ce').each(function () {
+			if(!$(this).find('.icon-actions-document-new').length) {
+				return true;
+			}
+			$(this).addClass('btn-group btn-group-sm');
+			$('.t3js-page-lang-column .t3-page-ce > .t3-page-ce').removeClass('t3js-page-ce');
+			if (top.pasteAfterLinkTemplate && top.pasteIntoLinkTemplate) {
+				var parent = $(this).parent();
+				if (parent.data('page') || (parent.data('container') && !parent.data('uid'))) {
+					$(this).append(top.pasteIntoLinkTemplate);
+				} else {
+					$(this).append(top.pasteAfterLinkTemplate);
+				}
+				$(this).find('.t3js-paste').on('click', function (evt) {
+					evt.preventDefault();
+					Paste.activatePasteModal($(this));
+				});
+			}
+			/* $(this).append(top.copyFromAnotherPageLinkTemplate);
+			 $(this).find('.t3js-paste-new').on('click', function (evt) {
+			 evt.preventDefault();
+			 OnReady.copyFromAnotherPage($(this));
+			 });*/
+		});
+	}
+
+	/**
+	 * generates the paste into / paste after modal
+	 */
+	Paste.activatePasteModal = function (element) {
+		var $element = $(element);
+		var url = $element.data('url') || null;
+		var title = (TYPO3.lang['paste.modal.title.paste'] || 'Paste record') + ': "' + $element.data('title') + '"';
+		var severity = (typeof top.TYPO3.Severity[$element.data('severity')] !== 'undefined') ? top.TYPO3.Severity[$element.data('severity')] : top.TYPO3.Severity.info;
+		if ($element.hasClass('t3js-paste-copy')) {
+			var content = TYPO3.lang['tx_gridelements_js.modal.pastecopy'] || '1 How do you want to paste that clipboard content here?';
+			var buttons = [
+				{
+					text: TYPO3.lang['paste.modal.button.cancel'] || 'Cancel',
+					active: true,
+					btnClass: 'btn-default',
+					trigger: function () {
+						Modal.currentModal.trigger('modal-dismiss');
+					}
+				},
+				{
+					text: TYPO3.lang['tx_gridelements_js.modal.button.pastecopy'] || 'Paste as copy',
+					btnClass: 'btn-' + top.TYPO3.Severity.getCssClass(severity),
+					trigger: function (ev) {
+						Modal.currentModal.trigger('modal-dismiss');
+						DragDrop.onDrop($element.data('content'), $element, ev);
+					}
+				},
+				{
+					text: TYPO3.lang['tx_gridelements_js.modal.button.pastereference'] || 'Paste as reference',
+					btnClass: 'btn-' + top.TYPO3.Severity.getCssClass(severity),
+					trigger: function (ev) {
+						Modal.currentModal.trigger('modal-dismiss');
+						DragDrop.onDrop($element.data('content'), $element, ev, 'reference');
+					}
+				}
+			];
+			if(top.pasteReferenceAllowed !== true) {
+				buttons.pop();
+			}
+		} else {
+			var content = TYPO3.lang['paste.modal.paste'] || 'Do you want to move the record to this position?';
+			var buttons = [
+				{
+					text: TYPO3.lang['paste.modal.button.cancel'] || 'Cancel',
+					active: true,
+					btnClass: 'btn-default',
+					trigger: function () {
+						Modal.currentModal.trigger('modal-dismiss');
+					}
+				},
+				{
+					text: TYPO3.lang['paste.modal.button.paste'] || 'Move',
+					btnClass: 'btn-' + Severity.getCssClass(severity),
+					trigger: function () {
+						Modal.currentModal.trigger('modal-dismiss');
+						DragDrop.onDrop($element.data('content'), $element, null);
+					}
+				}
+			];
+		}
+		if (url !== null) {
+			var separator = (url.indexOf('?') > -1) ? '&' : '?';
+			var params = $.param({data: $element.data()});
+			Modal.loadUrl(title, severity, buttons, url + separator + params);
+		} else {
+			Modal.show(title, content, severity, buttons);
+		}
+	}
 
 	/**
 	 * sets the classes for allowed element types to the cells of the original page module
@@ -160,106 +260,6 @@ define(['jquery', 'TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Backend/Storag
 			$(this).addClass('btn-group btn-group-sm');
 			$(this).find('a').addClass('btn btn-default');
 		});
-	}
-
-	/**
-	 * activates the paste into / paste after and fetch copy from another page icons outside of the context menus
-	 */
-	OnReady.activatePasteIcons = function () {
-		$('.icon-actions-document-paste-into').parent().remove();
-		$('.t3-page-ce-wrapper-new-ce').each(function () {
-			if(!$(this).find('.icon-actions-document-new').length) {
-				return true;
-			}
-			$(this).addClass('btn-group btn-group-sm');
-			$('.t3js-page-lang-column .t3-page-ce > .t3-page-ce').removeClass('t3js-page-ce');
-			if (top.pasteAfterLinkTemplate && top.pasteIntoLinkTemplate) {
-				var parent = $(this).parent();
-				if (parent.data('page') || (parent.data('container') && !parent.data('uid'))) {
-					$(this).append(top.pasteIntoLinkTemplate);
-				} else {
-					$(this).append(top.pasteAfterLinkTemplate);
-				}
-				$(this).find('.t3js-paste').on('click', function (evt) {
-					evt.preventDefault();
-					OnReady.activatePasteModal($(this));
-				});
-			}
-			$(this).append(top.copyFromAnotherPageLinkTemplate);
-			$(this).find('.t3js-paste-new').on('click', function (evt) {
-				evt.preventDefault();
-				OnReady.copyFromAnotherPage($(this));
-			});
-		});
-	}
-
-	/**
-	 * generates the paste into / paste after modal
-	 */
-	OnReady.activatePasteModal = function (element) {
-		var $element = $(element);
-		var url = $element.data('url') || null;
-		var title = (TYPO3.lang['tx_gridelements_js.modal.title.paste'] || 'Paste record') + ': "' + $element.data('pastetitle') + '"';
-		var severity = (typeof top.TYPO3.Severity[$element.data('severity')] !== 'undefined') ? top.TYPO3.Severity[$element.data('severity')] : top.TYPO3.Severity.info;
-		if ($element.hasClass('t3js-paste-copy')) {
-			var content = TYPO3.lang['tx_gridelements_js.modal.pastecopy'] || '1 How do you want to paste that clipboard content here?';
-			var buttons = [
-				{
-					text: TYPO3.lang['tx_gridelements_js.modal.button.cancel'] || 'Cancel',
-					active: true,
-					btnClass: 'btn-default',
-					trigger: function () {
-						Modal.currentModal.trigger('modal-dismiss');
-					}
-				},
-				{
-					text: TYPO3.lang['tx_gridelements_js.modal.button.pastecopy'] || 'Paste as copy',
-					btnClass: 'btn-' + Modal.getSeverityClass(severity),
-					trigger: function () {
-						Modal.currentModal.trigger('modal-dismiss');
-						DragDrop.onDrop($element.data('pasteitem'), $element, null);
-					}
-				},
-				{
-					text: TYPO3.lang['tx_gridelements_js.modal.button.pastereference'] || 'Paste as reference',
-					btnClass: 'btn-' + Modal.getSeverityClass(severity),
-					trigger: function () {
-						Modal.currentModal.trigger('modal-dismiss');
-						DragDrop.onDrop($element.data('pasteitem'), $element, 'reference');
-					}
-				}
-			];
-			if(top.pasteReferencesAllowed !== true) {
-				buttons.pop();
-			}
-		} else {
-			var content = TYPO3.lang['tx_gridelements_js.modal.paste'] || 'Do you want to paste that clipboard content here?';
-			var buttons = [
-				{
-					text: TYPO3.lang['tx_gridelements_js.modal.button.cancel'] || 'Cancel',
-					active: true,
-					btnClass: 'btn-default',
-					trigger: function () {
-						Modal.currentModal.trigger('modal-dismiss');
-					}
-				},
-				{
-					text: TYPO3.lang['tx_gridelements_js.modal.button.paste'] || 'Paste',
-					btnClass: 'btn-' + Modal.getSeverityClass(severity),
-					trigger: function () {
-						Modal.currentModal.trigger('modal-dismiss');
-						DragDrop.onDrop($element.data('pasteitem'), $element, null);
-					}
-				}
-			];
-		}
-		if (url !== null) {
-			var separator = (url.indexOf('?') > -1) ? '&' : '?';
-			var params = $.param({data: $element.data()});
-			Modal.loadUrl(title, severity, buttons, url + separator + params);
-		} else {
-			Modal.show(title, content, severity, buttons);
-		}
 	}
 
 	/**

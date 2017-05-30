@@ -31,9 +31,10 @@ define(['jquery', 'jquery-ui/droppable', 'TYPO3/CMS/Backend/LayoutModule/DragDro
 	 * @param $draggableElement
 	 * @param $droppableElement
 	 * @param {Event} evt the event
+	 * @param reference if content should be pasted as copy or reference
 	 * @private
 	 */
-	DragDrop.onDrop = function ($draggableElement, $droppableElement, evt) {
+	DragDrop.onDrop = function ($draggableElement, $droppableElement, evt, reference) {
 		var newColumn = DragDrop.getColumnPositionForElement($droppableElement),
 				gridColumn = DragDrop.getGridColumnPositionForElement($droppableElement);
 		if (gridColumn !== false && gridColumn !== '') {
@@ -83,7 +84,7 @@ define(['jquery', 'jquery-ui/droppable', 'TYPO3/CMS/Backend/LayoutModule/DragDro
 						}
 					}
 				};
-				if (evt === 'reference') {
+				if (reference === 'reference') {
 					parameters['reference'] = 1;
 				}
 				if (language > -1) {
@@ -175,4 +176,5 @@ define(['jquery', 'jquery-ui/droppable', 'TYPO3/CMS/Backend/LayoutModule/DragDro
 		}
 	};
 
+	return DragDrop;
 });
