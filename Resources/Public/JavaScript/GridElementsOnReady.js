@@ -229,7 +229,7 @@ define(['jquery', 'TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Backend/Storag
 					}
 				}
 			];
-			if(top.pasteReferencesAllowed !== true) {
+			if(top.pasteReferenceAllowed !== true) {
 				buttons.pop();
 			}
 		} else {
