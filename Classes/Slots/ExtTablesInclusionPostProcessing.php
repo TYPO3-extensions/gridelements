@@ -37,7 +37,7 @@ class ExtTablesInclusionPostProcessing
      *
      * @return void
      */
-    function processData($tca)
+    public function processData($tca)
     {
         // Move the local $tca to global variable to use general modification functions like addToAllTCAtypes
         $GLOBALS['TCA'] = $tca;
