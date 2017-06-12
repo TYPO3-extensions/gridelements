@@ -57,20 +57,22 @@ tt_content.shortcut {
 }
 
 plugin.tx_gridelements_pi1 >
+# for typo3 8
 tt_content.gridelements_pi1 >
-tt_content.gridelements_pi1 = COA
+tt_content.gridelements_pi1 =< lib.contentElement
 tt_content.gridelements_pi1 {
-	#10 =< lib.stdheader
-	20 = COA
-	20 {
-		10 = USER
-		10 {
-			userFunc = GridElementsTeam\Gridelements\Plugin\Gridelements->main
-			setup {
-				default < lib.gridelements.defaultGridSetup
-			}
-		}
-	}
+    templateName = Generic
+    variables {
+        content = COA
+        content {
+            10 = USER
+            10 {
+                userFunc = GridElementsTeam\Gridelements\Plugin\Gridelements->main
+                setup {
+                    default < lib.gridelements.defaultGridSetup
+                }
+            }
+        }
+    }
 }
-
-tt_content.gridelements_view < tt_content.gridelements_pi1
+lib.gridelements.defaultGridSetup.cObject =< lib.contentElement
