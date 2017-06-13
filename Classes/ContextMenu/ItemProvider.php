@@ -92,7 +92,7 @@ class ItemProvider extends RecordProvider
 
         $attributes = $this->getPasteAdditionalAttributes('after');
         $attributes += [
-            'data-callback-module' => 'TYPO3/CMS/Gridelements/ClickMenuActions',
+            'data-callback-module' => 'TYPO3/CMS/Gridelements/ContextMenuActions',
             'data-action-url' => htmlspecialchars(BackendUtility::getModuleUrl('tce_db', $urlParameters))
         ];
         return $attributes;
