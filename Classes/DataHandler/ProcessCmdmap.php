@@ -83,6 +83,8 @@ class ProcessCmdmap extends AbstractDataHandler
             $this->getTceMain()->start($data, array());
             $this->getTceMain()->process_datamap();
 
+            $parentObj->registerDBList = null;
+            $parentObj->remapStack = null;
             $commandIsProcessed = true;
 
         }
