@@ -149,7 +149,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
                     $itemContent .= $this->renderCTypeGridelements($parentObject, $row, $enableFields);
                     $refIndexObj = GeneralUtility::makeInstance(ReferenceIndex::class);
                     /* @var $refIndexObj \TYPO3\CMS\Core\Database\ReferenceIndex */
-                    $refIndexObj->updateRefIndexTable('tt_content', $row['uid']);
+                    $refIndexObj->updateRefIndexTable('tt_content', (int)$row['uid']);
                     break;
                 case 'shortcut':
                     $drawItem = false;
