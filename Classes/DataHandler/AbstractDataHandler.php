@@ -240,11 +240,12 @@ abstract class AbstractDataHandler
                 'tx_gridelements_container,tx_gridelements_columns,colPos'
             );
 
-            if ($translatedElement['tx_gridelements_container'] !== $updateArray['tx_gridelements_container']) {
+            if (isset($updateArray['tx_gridelements_container']) &&
+                $translatedElement['tx_gridelements_container'] !== $updateArray['tx_gridelements_container']) {
                 $containerUpdateArray[$translatedElement['tx_gridelements_container']] -= 1;
                 $containerUpdateArray[$updateArray['tx_gridelements_container']] += 1;
-                $this->getTceMain()->updateRefIndex('tt_content', $translatedElement['tx_gridelements_container']);
-                $this->getTceMain()->updateRefIndex('tt_content', $updateArray['tx_gridelements_container']);
+                $this->getTceMain()->updateRefIndex('tt_content', (int)$translatedElement['tx_gridelements_container']);
+                $this->getTceMain()->updateRefIndex('tt_content', (int)$updateArray['tx_gridelements_container']);
             }
         }
         if (!empty($containerUpdateArray)) {
