@@ -21,8 +21,44 @@ define(['jquery', 'jquery-ui/droppable', 'TYPO3/CMS/Backend/LayoutModule/DragDro
 	/**
 	 * @exports TYPO3/CMS/Gridelements/DragDrop
 	 */
+	DragDrop.draggableIdentifier = '.t3js-page-ce:has(.t3-page-ce-header-draggable)';
 	DragDrop.gridContainerIdentifier = '.t3-grid-element-container';
 	DragDrop.newContentElementWizardIdentifier = '#new-element-drag-in-wizard';
+
+	/**
+	 * initializes Drag+Drop for all content elements on the page
+	 */
+	DragDrop.initialize = function () {
+		$(DragDrop.draggableIdentifier).draggable({
+			handle: this.dragHeaderIdentifier,
+			scope: 'tt_content',
+			cursor: 'move',
+			distance: 20,
+			addClasses: 'active-drag',
+			revert: 'invalid',
+			zIndex: 100,
+			start: function (evt, ui) {
+				DragDrop.onDragStart($(this));
+			},
+			stop: function (evt, ui) {
+				DragDrop.onDragStop($(this));
+			}
+        });
+		$(DragDrop.dropZoneIdentifier).droppable({
+			accept: this.contentIdentifier,
+			scope: 'tt_content',
+			tolerance: 'pointer',
+			over: function (evt, ui) {
+				DragDrop.onDropHoverOver($(ui.draggable), $(this));
+			},
+			out: function (evt, ui) {
+				DragDrop.onDropHoverOut($(ui.draggable), $(this));
+			},
+			drop: function (evt, ui) {
+				DragDrop.onDrop($(ui.draggable), $(this), evt);
+			}
+		});
+	};
 
 	/**
 	 * this method does the whole logic when a draggable is dropped on to a dropzone

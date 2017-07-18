@@ -16,7 +16,7 @@
  * based on jQuery UI
  */
 
-define(['jquery', 'TYPO3/CMS/Gridelements/GridElementsDragDrop', 'jquery-ui/sortable', 'jquery-ui/droppable'], function ($, DragDrop) {
+define(['jquery', 'TYPO3/CMS/Gridelements/GridElementsDragDrop', 'jquery-ui/draggable', 'jquery-ui/droppable'], function ($, DragDrop) {
 
 	var DragInWizard = {
 		wizardUrl: '',
@@ -84,7 +84,7 @@ define(['jquery', 'TYPO3/CMS/Gridelements/GridElementsDragDrop', 'jquery-ui/sort
 			$wizard = $('<div id="' + DragInWizard.wizardIdentifier + '"></div>');
 			$('.t3js-module-docheader').append($wizard);
 			$wizard.load(DragInWizard.wizardUrl + ' .t3js-module-body div[role=\'tabpanel\']:first', function () {
-				DragInWizard.makeItemsSortable();
+				DragInWizard.makeItemsDraggable();
 				DragInWizard.rearrangeItems();
 			});
 			$wizard.css('visibility', 'visible');
@@ -92,10 +92,10 @@ define(['jquery', 'TYPO3/CMS/Gridelements/GridElementsDragDrop', 'jquery-ui/sort
 	};
 
 	/**
-	 * make wizard items sortable so they can be dragged into content columns
+	 * make wizard items draggable so they can be dragged into content columns
 	 */
-	DragInWizard.makeItemsSortable = function () {
-		$('#' + DragInWizard.wizardIdentifier + ' .panel-body .media').attr('language-uid', 0).find('.media-left img').addClass('t3js-page-ce-draghandle').parent().addClass('t3-page-ce-dragitem').closest('.media').addClass('t3js-page-ce t3js-page-ce-sortable');
+	DragInWizard.makeItemsDraggable = function () {
+		$('#' + DragInWizard.wizardIdentifier + ' .panel-body .media').attr('language-uid', 0).find('.media-left img').addClass('t3js-page-ce-draghandle').parent().addClass('t3-page-ce-dragitem t3-page-ce-header-draggable').closest('.media').addClass('t3js-page-ce t3js-page-ce-draggable');
 		DragDrop.initialize();
 	};
 
