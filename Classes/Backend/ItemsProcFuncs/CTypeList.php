@@ -82,7 +82,7 @@ class CTypeList extends AbstractItemsProcFunc {
 		}
 		if (isset($backendLayout)) {
 			foreach ($items as $key => $item) {
-				if (!(GeneralUtility::inList($backendLayout['columns'][$column], $item[1]) || GeneralUtility::inList($backendLayout['columns'][$column], '*'))) {
+				if (!empty($backendLayout['columns'][$column]) && !(GeneralUtility::inList($backendLayout['columns'][$column], $item[1]) || GeneralUtility::inList($backendLayout['columns'][$column], '*'))) {
 					unset($items[$key]);
 				}
 			}
