@@ -16,7 +16,7 @@
  * based on jQuery UI
  */
 
-define(['jquery', 'TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Backend/Storage', 'TYPO3/CMS/Gridelements/GridElementsDragDrop', 'TYPO3/CMS/Backend/LayoutModule/Paste', 'TYPO3/CMS/Backend/Modal'], function ($, AjaxDataHandler, Storage, DragDrop, Paste, Modal) {
+define(['jquery', 'TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Backend/Storage', 'TYPO3/CMS/Gridelements/GridElementsDragDrop', 'TYPO3/CMS/Backend/LayoutModule/Paste', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Severity'], function ($, AjaxDataHandler, Storage, DragDrop, Paste, Modal, Severity) {
 
 	var OnReady = {
 		openedPopupWindow: []
