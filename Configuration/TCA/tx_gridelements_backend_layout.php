@@ -95,7 +95,6 @@ return array(
                 'internal_type' => 'file',
                 'allowed' => 'jpg,gif,png,svg',
                 'uploadfolder' => 'uploads/tx_gridelements',
-                'show_thumbs' => 1,
                 'size' => 5,
                 'minitems' => 0,
                 'maxitems' => 2,
@@ -152,9 +151,9 @@ return array(
                 'type' => 'text',
                 'renderType' => 'belayoutwizard',
                 'cols' => '25',
-                'rows' => '5'
-            ),
-            'defaultExtras' => 'fixed-font : enable-tab',
+                'rows' => '5',
+                'fixedFont' => true
+            )
         ),
         'pi_flexform_ds' => array(
             'exclude' => 1,
