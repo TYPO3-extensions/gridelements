@@ -28,7 +28,7 @@ use TYPO3\CMS\Backend\View\PageLayoutViewDrawFooterHookInterface;
 use TYPO3\CMS\Backend\View\PageLayoutViewDrawItemHookInterface;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Database\ConnectionPool;
-use TYPO3\CMS\Core\Database\DatabaseConnection;
+use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Core\Database\Query\Restriction\BackendWorkspaceRestriction;
 use TYPO3\CMS\Core\Database\Query\Restriction\DefaultRestrictionContainer;
 use TYPO3\CMS\Core\Database\Query\Restriction\EndTimeRestriction;
@@ -42,7 +42,6 @@ use TYPO3\CMS\Core\Messaging\FlashMessage;
 use TYPO3\CMS\Core\Messaging\FlashMessageService;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Type\Bitmask\Permission;
-use TYPO3\CMS\Core\Utility\DebugUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Versioning\VersionState;
 use TYPO3\CMS\Lang\LanguageService;
@@ -61,11 +60,6 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
      * @var Helper
      */
     protected $helper;
-
-    /**
-     * @var DatabaseConnection
-     */
-    protected $databaseConnection;
 
     /**
      * @var IconFactory
@@ -96,7 +90,6 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
 
     public function __construct()
     {
-        $this->setDatabaseConnection($GLOBALS['TYPO3_DB']);
         $this->setLanguageService($GLOBALS['LANG']);
         $this->helper = Helper::getInstance();
         $this->iconFactory = GeneralUtility::makeInstance(IconFactory::class);
@@ -247,7 +240,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
                     $this->collectContentDataFromPages($shortcutItem, $collectedItems, $row['recursive'], $enableFields,
                         $deleteClause, $row['uid']);
                 } else if (strpos($shortcutItem, '_') === false || strpos($shortcutItem, 'tt_content_') !== false) {
-                    $this->collectContentData($shortcutItem, $collectedItems, $enableFields, $deleteClause, $row['uid']);
+                    $this->collectContentData($shortcutItem, $collectedItems, $row['uid'], $parentObject->tt_contentConfig['showHidden']);
                 }
             }
             if (!empty($collectedItems)) {
@@ -799,9 +792,26 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
             }
             $itemList = $this->tree->getTreeList($itemList, (int)$recursive, 0, 1);
         }
-        $itemRows = $this->databaseConnection->exec_SELECTgetRows('*', 'tt_content',
-            'uid != ' . (int)$parentUid . ' AND pid IN (' . $itemList . ') AND colPos >= 0 ' . $enableFields . $deleteClause,
-            '', 'FIND_IN_SET(pid, \'' . $itemList . '\'),colPos,sorting');
+
+        /** @var QueryBuilder $queryBuilder */
+        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
+            ->getQueryBuilderForTable('tt_content');
+
+        $itemRows = $queryBuilder
+            ->select('*')
+            ->addSelectLiteral($queryBuilder->expr()->inSet('pid', $queryBuilder->createNamedParameter($itemList)) . ' AS inSet')
+            ->from('tt_content')
+            ->where(
+                $queryBuilder->expr()->neq('uid', (int)$parentUid),
+                $queryBuilder->expr()->in('pid', $queryBuilder->createNamedParameter($itemList)),
+                $queryBuilder->expr()->gte('colPos', 0)
+            )
+            ->orderBy('inSet')
+            ->addOrderBy('colPos')
+            ->addOrderBy('sorting')
+            ->execute()
+            ->fetchAll();
+
         foreach ($itemRows as $itemRow) {
             if ($this->helper->getBackendUser()->workspace > 0) {
                 BackendUtility::workspaceOL('tt_content', $itemRow, $this->helper->getBackendUser()->workspace);
@@ -816,20 +826,38 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
      *
      * @param string $shortcutItem : The tt_content element to fetch the data from
      * @param array $collectedItems : The collected item data row
-     * @param string $enableFields
-     * @param string $deleteClause : query String to check for deleted items
      * @param int $parentUid : uid of the referencing tt_content record
+     * @param int $showHidden : Show hidden content elements
      *
      * @return void
      */
-    protected function collectContentData($shortcutItem, &$collectedItems, &$enableFields, &$deleteClause, $parentUid)
+    protected function collectContentData($shortcutItem, &$collectedItems, $parentUid, $showHidden)
     {
         $shortcutItem = str_replace('tt_content_', '', $shortcutItem);
         if ((int)$shortcutItem !== (int)$parentUid) {
-            $itemRow = $this->databaseConnection->exec_SELECTgetSingleRow('*', 'tt_content',
-                'uid=' . (int)$shortcutItem . $enableFields . $deleteClause);
+            $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
+                ->getQueryBuilderForTable('tt_content');
+
+            if ($showHidden) {
+                $queryBuilder->getRestrictions()->removeByType(HiddenRestriction::class);
+            }
+
+            $itemRow = $queryBuilder
+                ->select('*')
+                ->from('tt_content')
+                ->where(
+                    $queryBuilder->expr()->eq('uid', (int)$shortcutItem)
+                )
+                ->setMaxResults(1)
+                ->execute()
+                ->fetch();
+
             if ($this->helper->getBackendUser()->workspace > 0) {
-                BackendUtility::workspaceOL('tt_content', $itemRow, $this->helper->getBackendUser()->workspace);
+                BackendUtility::workspaceOL(
+                    'tt_content',
+                    $itemRow,
+                    $this->helper->getBackendUser()->workspace
+                );
             }
             $collectedItems[] = $itemRow;
         }
@@ -904,29 +932,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
     }
 
     /**
-     * setter for databaseConnection object
-     *
-     * @param DatabaseConnection $databaseConnection
-     *
-     * @return void
-     */
-    public function setDatabaseConnection(DatabaseConnection $databaseConnection)
-    {
-        $this->databaseConnection = $databaseConnection;
-    }
-
-    /**
-     * getter for databaseConnection
-     *
-     * @return DatabaseConnection databaseConnection
-     */
-    public function getDatabaseConnection()
-    {
-        return $this->databaseConnection;
-    }
-
-    /**
-     * getter for databaseConnection
+     * getter for LanguageService
      *
      * @return LanguageService $languageService
      */
@@ -936,7 +942,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
     }
 
     /**
-     * setter for databaseConnection object
+     * setter for LanguageService object
      *
      * @param LanguageService $languageService
      *
