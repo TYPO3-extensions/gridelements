@@ -104,6 +104,10 @@ $GLOBALS['TCA']['tt_content']['columns']['sys_language_uid']['config']['itemsPro
 $GLOBALS['TCA']['tt_content']['columns']['pi_flexform']['config']['ds']['*,gridelements_pi1'] = '';
 $GLOBALS['TCA']['tt_content']['columns']['records']['config']['allowed'] .= ',pages';
 
+$frames = isset($GLOBALS['TCA']['tt_content']['palettes']['frames'])
+    ? '--palette--;LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:palette.frames;frames'
+    : 'layout;LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:layout_formlabel';
+
 $GLOBALS['TCA']['tt_content']['types']['gridelements_pi1']['showitem'] = '
 	--palette--;LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:palette.general;general,
 	--palette--;LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:palette.header;header,
@@ -111,7 +115,7 @@ $GLOBALS['TCA']['tt_content']['types']['gridelements_pi1']['showitem'] = '
 	pi_flexform,
 	tx_gridelements_children,
 	--div--;LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:tabs.appearance,
-	--palette--;LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:palette.frames;frames,
+	' . $frames . ',
 	media,
 	--div--;LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:tabs.access,
 	--palette--;LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:palette.visibility;visibility,
