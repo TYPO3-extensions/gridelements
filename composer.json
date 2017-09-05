@@ -2,6 +2,7 @@
   "name": "gridelementsteam/gridelements",
   "description": "This extension integrates the grid layout concept to regular content elements.",
   "type": "typo3-cms-extension",
+  "version": "8.0.0",
   "keywords": ["TYPO3 CMS", "Grids", "Gridelements"],
   "homepage": "https://forge.typo3.org/projects/extension-gridelements2",
   "license": "GPL-2.0+",
