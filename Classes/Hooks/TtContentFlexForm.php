@@ -1,4 +1,5 @@
 <?php
+
 namespace GridElementsTeam\Gridelements\Hooks;
 
 /***************************************************************
@@ -21,7 +22,6 @@ namespace GridElementsTeam\Gridelements\Hooks;
 
 use GridElementsTeam\Gridelements\Backend\LayoutSetup;
 use GridElementsTeam\Gridelements\Helper\Helper;
-use TYPO3\CMS\Core\Database\DatabaseConnection;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -92,12 +92,12 @@ class TtContentFlexForm
         return $identifier;
     }
 
-   /**
-    * Deliver a dummy flex form if identifier tells us to do so.
-    *
-    * @param array $identifier
-    * @return string
-    */
+    /**
+     * Deliver a dummy flex form if identifier tells us to do so.
+     *
+     * @param array $identifier
+     * @return string
+     */
     public function parseDataStructureByIdentifierPreProcess(array $identifier)
     {
         if ($identifier['type'] === 'gridelements-dummy') {

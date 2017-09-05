@@ -41,7 +41,6 @@
                     'inlineNewButtonStyle' => 'display: inline-block;',
                 ),
                 'behaviour' => array(
-                    'localizationMode' => 'select',
                     'localizeChildrenAtParentLocalization' => true,
                 ),
                 'foreign_table' => 'tt_content',

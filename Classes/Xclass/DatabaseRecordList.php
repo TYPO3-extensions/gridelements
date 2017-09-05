@@ -1,4 +1,5 @@
 <?php
+
 namespace GridElementsTeam\Gridelements\Xclass;
 
 /*
@@ -577,8 +578,8 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
         $titleCol = $GLOBALS['TCA'][$table]['ctrl']['label'];
         $thumbsCol = $GLOBALS['TCA'][$table]['ctrl']['thumbnail'];
         $l10nEnabled = $GLOBALS['TCA'][$table]['ctrl']['languageField']
-                     && $GLOBALS['TCA'][$table]['ctrl']['transOrigPointerField']
-                     && $table !== 'pages_language_overlay';
+            && $GLOBALS['TCA'][$table]['ctrl']['transOrigPointerField']
+            && $table !== 'pages_language_overlay';
         $tableCollapsed = (bool)$this->tablesCollapsed[$table];
         // prepare space icon
         $this->spaceIcon = '<span class="btn btn-default disabled">' . $this->iconFactory->getIcon('empty-empty',
@@ -895,7 +896,7 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
                             $this->showMoveUp = true;
                         }
                         $this->showMoveDown = !isset($row['colPos']) || !isset($accRows[$key + 1])
-                                              || $row['colPos'] == $accRows[$key + 1]['colPos'];
+                            || $row['colPos'] == $accRows[$key + 1]['colPos'];
                         $rowOutput .= $this->renderListRow($table, $row, $cc, $titleCol, $thumbsCol);
                         // If localization view is enabled and no search happened it means that the selected
                         // records are either default or All language and here we will not select translations
@@ -919,11 +920,13 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
                                             ),
                                             $queryBuilder->expr()->eq(
                                                 'pid',
-                                                $queryBuilder->createNamedParameter((int)$row['_MOVE_PLH_pid'], \PDO::PARAM_INT)
+                                                $queryBuilder->createNamedParameter((int)$row['_MOVE_PLH_pid'],
+                                                    \PDO::PARAM_INT)
                                             ),
                                             $queryBuilder->expr()->eq(
                                                 't3ver_wsid',
-                                                $queryBuilder->createNamedParameter((int)$row['t3ver_wsid'], \PDO::PARAM_INT)
+                                                $queryBuilder->createNamedParameter((int)$row['t3ver_wsid'],
+                                                    \PDO::PARAM_INT)
                                             ),
                                         ];
 
@@ -1636,7 +1639,7 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
             }
             // "Delete" link:
             $disableDeleteTS = $this->getBackendUserAuthentication()->getTSConfig('options.disableDelete');
-            $disableDelete = (bool) trim(isset($disableDeleteTS['properties'][$table]) ? $disableDeleteTS['properties'][$table] : $disableDeleteTS['value']);
+            $disableDelete = (bool)trim(isset($disableDeleteTS['properties'][$table]) ? $disableDeleteTS['properties'][$table] : $disableDeleteTS['value']);
             if ($permsEdit && !$disableDelete && ($table === 'pages' && $localCalcPerms & Permission::PAGE_DELETE || $table !== 'pages' && $this->calcPerms & Permission::CONTENT_EDIT)) {
                 // Check if the record version is in "deleted" state, because that will switch the action to "restore"
                 if ($this->getBackendUserAuthentication()->workspace > 0 && isset($row['t3ver_state']) && (int)$row['t3ver_state'] === 2) {
@@ -2114,16 +2117,18 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
                 if (isset($child['tx_gridelements_columns']) && ($child['tx_gridelements_columns'] !== $previousGridColumn)) {
                     $previousGridColumn = $child['tx_gridelements_columns'];
                     $this->currentTable['prev'][$child['uid']] = (int)$row['pid'];
-                } else if (isset($theData['_CHILDREN_'][$key-2]) && $theData['_CHILDREN_'][$key-2]['tx_gridelements_columns'] === $child['tx_gridelements_columns']) {
-                    $this->currentTable['prev'][$child['uid']] = -(int)$theData['_CHILDREN_'][$key-2]['uid'];
                 } else {
-                    $this->currentTable['prev'][$child['uid']] = (int)$row['pid'];
+                    if (isset($theData['_CHILDREN_'][$key - 2]) && $theData['_CHILDREN_'][$key - 2]['tx_gridelements_columns'] === $child['tx_gridelements_columns']) {
+                        $this->currentTable['prev'][$child['uid']] = -(int)$theData['_CHILDREN_'][$key - 2]['uid'];
+                    } else {
+                        $this->currentTable['prev'][$child['uid']] = (int)$row['pid'];
+                    }
                 }
-                if (isset($theData['_CHILDREN_'][$key+1]) && $theData['_CHILDREN_'][$key+1]['tx_gridelements_columns'] === $child['tx_gridelements_columns']) {
-                    $this->currentTable['next'][$child['uid']] = -(int)$theData['_CHILDREN_'][$key+1]['uid'];
+                if (isset($theData['_CHILDREN_'][$key + 1]) && $theData['_CHILDREN_'][$key + 1]['tx_gridelements_columns'] === $child['tx_gridelements_columns']) {
+                    $this->currentTable['next'][$child['uid']] = -(int)$theData['_CHILDREN_'][$key + 1]['uid'];
                 }
             }
-            $previousGridColumn  = '';
+            $previousGridColumn = '';
             foreach ($theData['_CHILDREN_'] as $key => $child) {
                 if (isset($child['tx_gridelements_columns']) && ($child['tx_gridelements_columns'] !== $previousGridColumn)) {
                     $previousGridColumn = $child['tx_gridelements_columns'];
@@ -2149,7 +2154,8 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
                 }
                 $child['_CSSCLASS'] = 't3-gridelements-child" data-trigger-container="'
                     . ($this->localizationView && $row['l18n_parent'] ? $row['l18n_parent'] : $row['uid']) . $expanded;
-                $rowOutput .= $this->renderListRow($table, $child, $cc, $titleCol, $thumbsCol, 0, $level + 1, $expanded);
+                $rowOutput .= $this->renderListRow($table, $child, $cc, $titleCol, $thumbsCol, 0, $level + 1,
+                    $expanded);
             }
             $this->showMoveUp = $originalMoveUp;
             $this->showMoveDown = $originalMoveDown;
@@ -2232,7 +2238,7 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
 			';
         }
         // Init rendering.
-        $colsp =  '';
+        $colsp = '';
         $lastKey = '';
         $c = 0;
         $ccount = 0;
@@ -2269,10 +2275,12 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
             }
             if ($c > 1) {
                 $colsp = ' colspan="2"';
-            } else if ($ccount === 1 && $colType === 'td') {
-                $colsp = ' colspan="' . ($this->maxDepth - $level - 1) . '"';
             } else {
-                $colsp = '';
+                if ($ccount === 1 && $colType === 'td') {
+                    $colsp = ' colspan="' . ($this->maxDepth - $level - 1) . '"';
+                } else {
+                    $colsp = '';
+                }
             }
         }
         if ($lastKey) {
@@ -2308,12 +2316,12 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
     {
         $formProtection = FormProtectionFactory::get();
         return ($table === '_FILE' ? BackendUtility::getModuleUrl('tce_file',
-            array()) : BackendUtility::getModuleUrl('tce_db', array()))
-        . ($setRedirect ? '&redirect=' . rawurlencode(GeneralUtility::linkThisScript(array('CB' => ''))) : '')
-        . '&vC=' . $this->getBackendUserAuthentication()->veriCode() . '&prErr=1&uPT=1' . '&CB[paste]='
-        . rawurlencode($table . '|' . $uid) . '&CB[pad]=' . $this->clipObj->current
-        . (is_array($update) ? GeneralUtility::implodeArrayForUrl('CB[update]', $update) : '')
-        . '&formToken=' . $formProtection->generateToken('tceAction');
+                array()) : BackendUtility::getModuleUrl('tce_db', array()))
+            . ($setRedirect ? '&redirect=' . rawurlencode(GeneralUtility::linkThisScript(array('CB' => ''))) : '')
+            . '&vC=' . $this->getBackendUserAuthentication()->veriCode() . '&prErr=1&uPT=1' . '&CB[paste]='
+            . rawurlencode($table . '|' . $uid) . '&CB[pad]=' . $this->clipObj->current
+            . (is_array($update) ? GeneralUtility::implodeArrayForUrl('CB[update]', $update) : '')
+            . '&formToken=' . $formProtection->generateToken('tceAction');
     }
 
     /**
@@ -2619,7 +2627,7 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
             return true;
         }
         return !in_array($table, $this->deniedNewTables)
-        && (empty($this->allowedNewTables) || in_array($table, $this->allowedNewTables));
+            && (empty($this->allowedNewTables) || in_array($table, $this->allowedNewTables));
     }
 
     /**

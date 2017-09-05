@@ -1,4 +1,5 @@
 <?php
+
 namespace GridElementsTeam\Gridelements\DataHandler;
 
 /***************************************************************
@@ -263,19 +264,25 @@ class PreProcessFieldArray extends AbstractDataHandler
             if ((int)$targetContainer['sys_language_uid'] > -1) {
                 $fieldArray['sys_language_uid'] = (int)$targetContainer['sys_language_uid'];
             }
-        } else if (isset($fieldArray['tx_gridelements_container']) && (int)$fieldArray['tx_gridelements_container'] === 0 && (int)$fieldArray['colPos'] === -1) {
-            $fieldArray['colPos'] = $this->checkForRootColumn((int)$this->getPageUid());
-            $fieldArray['tx_gridelements_columns'] = 0;
-            $fieldArray['tx_gridelements_container'] = 0;
-        } else if (!isset($fieldArray['sys_language_uid']) && isset($fieldArray['tx_gridelements_container']) && (int)$fieldArray['tx_gridelements_container'] > 0 && (int)$fieldArray['colPos'] === -1) {
-            $targetContainer = $this->databaseConnection->exec_SELECTgetSingleRow('sys_language_uid', 'tt_content',
-                'uid=' . (int)$fieldArray['tx_gridelements_container']);
-            if ((int)$targetContainer['sys_language_uid'] > -1) {
-                $fieldArray['sys_language_uid'] = (int)$targetContainer['sys_language_uid'];
+        } else {
+            if (isset($fieldArray['tx_gridelements_container']) && (int)$fieldArray['tx_gridelements_container'] === 0 && (int)$fieldArray['colPos'] === -1) {
+                $fieldArray['colPos'] = $this->checkForRootColumn((int)$this->getPageUid());
+                $fieldArray['tx_gridelements_columns'] = 0;
+                $fieldArray['tx_gridelements_container'] = 0;
+            } else {
+                if (!isset($fieldArray['sys_language_uid']) && isset($fieldArray['tx_gridelements_container']) && (int)$fieldArray['tx_gridelements_container'] > 0 && (int)$fieldArray['colPos'] === -1) {
+                    $targetContainer = $this->databaseConnection->exec_SELECTgetSingleRow('sys_language_uid',
+                        'tt_content',
+                        'uid=' . (int)$fieldArray['tx_gridelements_container']);
+                    if ((int)$targetContainer['sys_language_uid'] > -1) {
+                        $fieldArray['sys_language_uid'] = (int)$targetContainer['sys_language_uid'];
+                    }
+                }
             }
         }
         if (isset($targetContainer) && (int)$targetContainer['sys_language_uid'] === -1) {
-            $list = array_flip(GeneralUtility::trimExplode(',', $GLOBALS['TCA']['tt_content']['ctrl']['copyAfterDuplFields'], true));
+            $list = array_flip(GeneralUtility::trimExplode(',',
+                $GLOBALS['TCA']['tt_content']['ctrl']['copyAfterDuplFields'], true));
             unset($list['sys_language_uid']);
             $GLOBALS['TCA']['tt_content']['ctrl']['copyAfterDuplFields'] = implode(',', array_flip($list));
         }

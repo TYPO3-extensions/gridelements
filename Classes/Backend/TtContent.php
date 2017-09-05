@@ -1,4 +1,5 @@
 <?php
+
 namespace GridElementsTeam\Gridelements\Backend;
 
 /***************************************************************
@@ -20,7 +21,9 @@ namespace GridElementsTeam\Gridelements\Backend;
  ***************************************************************/
 
 use GridElementsTeam\Gridelements\Helper\Helper;
-use TYPO3\CMS\Core\Database\DatabaseConnection;
+use TYPO3\CMS\Core\Database\ConnectionPool;
+use TYPO3\CMS\Core\Database\Query\Expression\ExpressionBuilder;
+use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Core\Utility\ArrayUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -34,9 +37,14 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 class TtContent
 {
     /**
-     * @var DatabaseConnection
+     * @var QueryBuilder
      */
-    protected $databaseConnection;
+    protected $queryBuilder;
+
+    /**
+     * @var ExpressionBuilder
+     */
+    protected $expressionBuilder;
 
     /**
      * @var LayoutSetup
@@ -60,7 +68,8 @@ class TtContent
      */
     public function init($pageUid)
     {
-        $this->setDatabaseConnection($GLOBALS['TYPO3_DB']);
+        $this->setQueryBuilder();
+        $this->setExpressionBuilder();
         if (!$this->layoutSetup instanceof LayoutSetup) {
             if ($pageUid < 0) {
                 $pageUid = Helper::getInstance()->getPidFromNegativeUid($pageUid);
@@ -164,15 +173,19 @@ class TtContent
         $layoutSetups = $this->layoutSetup->getLayoutSetup();
         if ($itemUidList) {
             $itemUidList = implode(',', GeneralUtility::intExplode(',', $itemUidList));
-            $containerRecords = $this->databaseConnection->exec_SELECTgetRows(
-                'uid,tx_gridelements_backend_layout',
-                'tt_content',
-                'uid IN (' . $itemUidList . ')',
-                '', '', '', 'uid'
-            );
-
+            $containerQuery = $this->getQueryBuilder()
+                ->select('uid', 'tx_gridelements_backend_layout')
+                ->from('tt_content')
+                ->where(
+                    $this->getExpressionBuilder()->in('uid', $itemUidList)
+                )
+                ->execute();
+            $containers = [];
+            while ($container = $containerQuery->fetch()) {
+                $containers[$container['uid']] = $container;
+            }
             foreach ($params['items'] as $key => $container) {
-                $allowed = $layoutSetups[$containerRecords[$container[1]]['tx_gridelements_backend_layout']]['allowed'];
+                $allowed = $layoutSetups[$containers[$container[1]]['tx_gridelements_backend_layout']]['allowed'];
                 if ($container[1] > 0 && $allowed) {
                     if (!GeneralUtility::inList($allowed, $ContentType) && !GeneralUtility::inList($allowed, '*')) {
                         unset($params['items'][$key]);
@@ -210,11 +223,18 @@ class TtContent
             return;
         }
         $containerIds = implode(',', GeneralUtility::intExplode(',', $containerIds));
-        $childrenOnNextLevel = $this->databaseConnection->exec_SELECTgetRows(
-            'uid, tx_gridelements_container',
-            'tt_content',
-            'CType=\'gridelements_pi1\' AND tx_gridelements_container IN (' . $containerIds . ')'
-        );
+        $childrenOnNextLevel = $this->getQueryBuilder()
+            ->select('uid', 'tx_gridelements_container')
+            ->from('tt_content')
+            ->where(
+                $this->getExpressionBuilder()->andX(
+                    $this->getExpressionBuilder()->eq('CType', 'gridelements_pi1'),
+                    $this->getExpressionBuilder()->in('tx_gridelements_container', $containerIds)
+                )
+            )
+            ->execute()
+            ->fetchAll();
+
 
         if (!empty($childrenOnNextLevel) && !empty($possibleContainers)) {
             $containerIds = '';
@@ -234,22 +254,43 @@ class TtContent
     }
 
     /**
-     * setter for databaseConnection object
+     * setter for queryBuilder object
      *
-     * @param DatabaseConnection $databaseConnection
+     * @return void
      */
-    public function setDatabaseConnection(DatabaseConnection $databaseConnection)
+    public function setQueryBuilder()
     {
-        $this->databaseConnection = $databaseConnection;
+        $this->queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
+            ->getQueryBuilderForTable('tt_content');
     }
 
     /**
-     * getter for databaseConnection
+     * getter for queryBuilder
      *
-     * @return DatabaseConnection databaseConnection
+     * @return QueryBuilder queryBuilder
      */
-    public function getDatabaseConnection()
+    public function getQueryBuilder()
     {
-        return $this->databaseConnection;
+        return $this->queryBuilder;
+    }
+
+    /**
+     * setter for expressionBuilder object
+     *
+     * @return void
+     */
+    public function setExpressionBuilder()
+    {
+        $this->expressionBuilder = $this->getQueryBuilder()->expr();
+    }
+
+    /**
+     * getter for ExpressionBuilder
+     *
+     * @return ExpressionBuilder
+     */
+    public function getExpressionBuilder()
+    {
+        return $this->expressionBuilder;
     }
 }

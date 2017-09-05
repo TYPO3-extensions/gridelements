@@ -1,4 +1,5 @@
 <?php
+
 namespace GridElementsTeam\Gridelements\Hooks;
 
 /***************************************************************
@@ -36,6 +37,6 @@ class PreHeaderRenderHook implements SingletonInterface
     {
         /** @var \TYPO3\CMS\Core\Page\PageRenderer $pagerenderer */
         $pagerenderer = $arg['pageRenderer'];
-        $pagerenderer->addCssFile(ExtensionManagementUtility::extRelPath('gridelements') . 'Resources/Public/Backend/Css/Skin/t3skin_override.css');
+        $pagerenderer->addCssFile(ExtensionManagementUtility::siteRelPath('gridelements') . 'Resources/Public/Backend/Css/Skin/t3skin_override.css');
     }
 }

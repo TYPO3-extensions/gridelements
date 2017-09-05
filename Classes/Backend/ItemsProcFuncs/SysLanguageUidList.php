@@ -1,4 +1,5 @@
 <?php
+
 namespace GridElementsTeam\Gridelements\Backend\ItemsProcFuncs;
 
 /***************************************************************

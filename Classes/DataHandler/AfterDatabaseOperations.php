@@ -1,4 +1,5 @@
 <?php
+
 namespace GridElementsTeam\Gridelements\DataHandler;
 
 /***************************************************************
@@ -140,13 +141,17 @@ class AfterDatabaseOperations extends AbstractDataHandler
                         $backendLayoutUid = $fieldArray['backend_layout'];
                         break;
                     }
-                } else if ($selectedBackendLayoutNextLevel === -1 && $page['uid'] !== $this->getPageUid()) {
-                    // Some previous page in our rootline sets layout_next to "None"
-                    break;
-                } else if ($selectedBackendLayoutNextLevel > 0 && $page['uid'] !== $this->getPageUid()) {
-                    // Some previous page in our rootline sets some backend_layout, use it
-                    $backendLayoutUid = $selectedBackendLayoutNextLevel;
-                    break;
+                } else {
+                    if ($selectedBackendLayoutNextLevel === -1 && $page['uid'] !== $this->getPageUid()) {
+                        // Some previous page in our rootline sets layout_next to "None"
+                        break;
+                    } else {
+                        if ($selectedBackendLayoutNextLevel > 0 && $page['uid'] !== $this->getPageUid()) {
+                            // Some previous page in our rootline sets some backend_layout, use it
+                            $backendLayoutUid = $selectedBackendLayoutNextLevel;
+                            break;
+                        }
+                    }
                 }
             }
 
@@ -222,7 +227,8 @@ class AfterDatabaseOperations extends AbstractDataHandler
                             $subPageElementsInAvailableColumns = array();
                         }
 
-                        $changedPageElements = array_merge($subPageElementsInUnavailableColumns, $subPageElementsInAvailableColumns);
+                        $changedPageElements = array_merge($subPageElementsInUnavailableColumns,
+                            $subPageElementsInAvailableColumns);
                         $changedSubPageElements = array_merge($changedSubPageElements, $changedPageElements);
                     }
                 }

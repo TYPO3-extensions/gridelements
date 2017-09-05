@@ -1,4 +1,5 @@
 <?php
+
 namespace GridElementsTeam\Gridelements\ContextMenu;
 
 /*
@@ -14,8 +15,8 @@ namespace GridElementsTeam\Gridelements\ContextMenu;
  * The TYPO3 project - inspiring people to share!
  */
 
-use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Backend\ContextMenu\ItemProviders\RecordProvider;
+use TYPO3\CMS\Backend\Utility\BackendUtility;
 
 class ItemProvider extends RecordProvider
 {
@@ -37,7 +38,8 @@ class ItemProvider extends RecordProvider
     {
         $canRender = false;
         if ($itemName === 'pastereference') {
-            $canRender = $this->canBePastedAfter() && $this->clipboard->currentMode() === 'copy' && $this->backendUser->checkAuthMode('tt_content', 'CType', 'shortcut', $GLOBALS['TYPO3_CONF_VARS']['BE']['explicitADmode']);
+            $canRender = $this->canBePastedAfter() && $this->clipboard->currentMode() === 'copy' && $this->backendUser->checkAuthMode('tt_content',
+                    'CType', 'shortcut', $GLOBALS['TYPO3_CONF_VARS']['BE']['explicitADmode']);
         }
         return $canRender;
     }
@@ -54,8 +56,8 @@ class ItemProvider extends RecordProvider
             $localItems = $this->prepareItems($this->itemsConfiguration);
             $position = array_search('pasteAfter', array_keys($items), true);
 
-            $beginning = array_slice($items, 0, $position+1, true);
-            $end = array_slice($items, $position+1, null, true);
+            $beginning = array_slice($items, 0, $position + 1, true);
+            $end = array_slice($items, $position + 1, null, true);
 
             $items = $beginning + $localItems + $end;
             $items['pasteAfter']['additioanlAttributes'] = $this->getAdditionalAttributes('pasteAfter');
