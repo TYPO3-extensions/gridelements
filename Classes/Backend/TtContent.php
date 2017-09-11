@@ -86,7 +86,7 @@ class TtContent
             $params['items'] = $this->layoutSetup->getLayoutColumnsSelectItems($gridElement['tx_gridelements_backend_layout']);
 
             $ContentType = is_array($params['row']['CType']) ? $params['row']['CType'][0] : $params['row']['CType'];
-            if ($ContentType !== '' && is_array($params['items'])) {
+            if (!empty($ContentType) && is_array($params['items'])) {
                 foreach ($params['items'] as $itemKey => $itemArray) {
                     if ($itemArray[3] !== '' && $itemArray[3] !== '*'
                         && !GeneralUtility::inList($itemArray[3], $ContentType)
