@@ -407,22 +407,77 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
             $showLanguage = '';
         }
 
-        $where = '';
-        if ($this->helper->getBackendUser()->workspace > 0 && $row['t3ver_wsid'] > 0) {
-            $where .= 'AND t3ver_wsid = ' . (int)$row['t3ver_wsid'];
+        /*******************************************************************************************
+         * To get the tt_contents related to the current workspace, I used the same method as in
+         * this function:
+         *
+         * \TYPO3\CMS\Backend\Controller\PageLayoutController->makeQuickEditMenu()
+         *
+         * NOTICE: In javascript, checking/unchecking the "Show hidden content elements" trigger
+         * an ajax request to refresh the view. This doesn't influence tt_content inside
+         * gridelements. This is why the SQL query will always include hidden elements.
+         */
+        $whereClause = ' colPos = -1 ' . BackendUtility::deleteClause('tt_content')
+            . BackendUtility::versioningPlaceholderClause('tt_content')
+            . ' AND tx_gridelements_container = ' . $specificIds['uid']
+            . ' AND tx_gridelements_columns IN (' . $colPosList . ')' . $showHidden . $deleteClause . $showLanguage . ';';
+        $displayRecords = array();
+        $res = $this->databaseConnection->exec_SELECTquery('*', 'tt_content', $whereClause, '');
+        $newRecords = array();
+        while ($cRow = $this->databaseConnection->sql_fetch_assoc($res)) {
+            $sorting = $cRow['sorting'];
+            if( $cRow['t3ver_state'] != 1 ){
+                BackendUtility::workspaceOL('tt_content', $cRow );
+                $cRow['sorting'] = $sorting;
+            }
+            if( is_array($cRow) && $cRow['tx_gridelements_container'] == $row['uid'] && $cRow['pid'] == $row['pid'] ) {
+                $displayRecords[$cRow['uid']] = $cRow;
+            }
+            if( $cRow['t3ver_state'] == -1 ){
+                $newRecords[$cRow['uid']] = $cRow;
+            }
         }
-        $where .= ' AND colPos = -1 
-        AND tx_gridelements_container IN (' . (int)$row['uid'] . ',' . $specificIds['uid'] . ') 
-        AND tx_gridelements_columns IN (' . $colPosList . ')' . $showHidden . $deleteClause . $showLanguage;
+        // Looking for associated MovePlaceHolder records to fetch the sorting value
+        $t3VerMoveIds = array();
+        foreach( $displayRecords as $displayRecord ){
+            if( $displayRecord['t3ver_state'] == 4 ){
+                $t3VerMoveIds[] = $displayRecord['uid'];
+            }
+            if( $displayRecord['t3ver_state'] == 1 ){
+                foreach( $newRecords as $newUid => $newRecord ){
+                    if( $displayRecord['uid'] == $newRecord['t3ver_oid'] ){
+                        $displayRecords[$newRecord['t3ver_oid']]['hidden'] = $newRecord['hidden'];
+                        $displayRecords[$newRecord['t3ver_oid']]['sorting'] = $newRecord['sorting'];
+                        $displayRecords[$newRecord['t3ver_oid']]['bodytext'] = $newRecord['bodytext'];
+                    }
+                }
+            }
+        }
 
-        $queryParts = $parentObject->makeQueryArray('tt_content', $row['pid'], $where);
+        if( count( $t3VerMoveIds ) > 0 ){
+            $whereClause = $originalPidSelect
+                . BackendUtility::deleteClause('tt_content')
+                . ' AND t3ver_state = 3 AND t3ver_move_id IN (' . implode( ',', $t3VerMoveIds ) . ')'
+                . $showHidden . ';';
+            $res = $this->databaseConnection->exec_SELECTquery('*', 'tt_content', $whereClause, '');
+            while ($cRow = $this->databaseConnection->sql_fetch_assoc($res)) {
+                $displayRecords[$cRow['t3ver_move_id']]['sorting'] = $cRow['sorting'];
+            }
+        }
 
-        // Due to the pid being "NOT USED" in makeQueryArray we have to reset pidSelect here
-        $parentObject->pidSelect = $originalPidSelect;
-
-        $result = $this->databaseConnection->exec_SELECT_queryArray($queryParts);
-
-        return $parentObject->getResult($result);
+        /* tt_contents are displayed in the order of the returned array. Sorting is
+           not done using SQL query. The following usort() re-order the tt_contents using the
+           "sorting" field.
+        */
+        usort( $displayRecords, function( $a, $b){
+            if( $a['sorting'] > $b['sorting'] ){
+                return 1;
+            } else{
+                return -1;
+            }
+        });
+        return $displayRecords;
+        /**************************************************************************************/
     }
 
     /**
@@ -433,7 +488,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
      * @param int $colPos : The column position we want to get the content for
      * @param array $values : The layout configuration values for the grid column
      * @param array $gridContent : The rendered content data of the grid column
-     * @param $row
+     * @param array $row         : Gridelement row
      * @param array $editUidList : determines if we will get edit icons or not
      */
     protected function renderSingleGridColumn(
@@ -824,6 +879,19 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
      */
     public function renderSingleElementHTML(PageLayoutView $parentObject, $itemRow)
     {
+        /*******************************************************************************************
+         * With the patch in $this->collectItemsForColumns() function, we need to add tt_content
+         * ids in the PageLayoutView parent object. Otherwise, the URL generated to edit the
+         * tt_content caused an error by missing the uid of the tt_content to edit.
+         */
+        if( !isset( $parentObject->tt_contentData['nextThree'][$itemRow['uid']] ) ){
+            $parentObject->tt_contentData['nextThree'][$itemRow['uid']] = $itemRow['uid'];
+        } else {
+            $parentObject->tt_contentData['nextThree'][$itemRow['uid']] .= "," . $itemRow['uid'];
+        }
+        /******************************************************************************************/
+
+
         // @todo $parentObject->lP is gone, defLangBinding is proably not enough for the third param to act correctly
         $singleElementHTML = $parentObject->tt_content_drawHeader($itemRow,
             $parentObject->tt_contentConfig['showInfo'] ? 15 : 5, $parentObject->defLangBinding, true, true);
@@ -875,6 +943,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
         if (!empty($content)) {
             $content = '<div class="t3-page-ce-footer">' . $content . '</div>';
         }
+
         return $content;
     }
 
