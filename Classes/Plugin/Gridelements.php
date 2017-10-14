@@ -1,4 +1,5 @@
 <?php
+
 namespace GridElementsTeam\Gridelements\Plugin;
 
 /***************************************************************
@@ -459,9 +460,10 @@ class Gridelements extends ContentObjectRenderer
     public function user_getTreeList()
     {
         $pidList = $this->getTSFE()->register['tt_content_shortcut_recursive']
-            ? $this->cObj->getTreeList($this->cObj->data['uid'], $this->getTSFE()->register['tt_content_shortcut_recursive'])
+            ? $this->cObj->getTreeList($this->cObj->data['uid'],
+                $this->getTSFE()->register['tt_content_shortcut_recursive'])
             : '';
-        $this->getTSFE()->register['pidInList'] = trim($this->cObj->data['uid'] . ',' .  $pidList, ',');
+        $this->getTSFE()->register['pidInList'] = trim($this->cObj->data['uid'] . ',' . $pidList, ',');
     }
 
     /**

@@ -1,4 +1,5 @@
 <?php
+
 namespace GridElementsTeam\Gridelements\Helper;
 
 /***************************************************************
@@ -67,7 +68,7 @@ class Helper implements SingletonInterface
     {
         $this->databaseConnection = $databaseConnection;
     }
-    
+
     /**
      * @param string $table
      * @param int $uid
@@ -82,7 +83,9 @@ class Helper implements SingletonInterface
         $retVal = array();
 
         if (trim($table) === 'tt_content' && $uid > 0) {
-            $children = self::getDatabaseConnection()->exec_SELECTgetRows($selectFieldList . ',sorting,tx_gridelements_columns', 'tt_content', 'tx_gridelements_container = ' . (int)$uid . ' AND pid = ' . (int)$pid . ' AND deleted = 0', '');
+            $children = self::getDatabaseConnection()->exec_SELECTgetRows($selectFieldList . ',sorting,tx_gridelements_columns',
+                'tt_content',
+                'tx_gridelements_container = ' . (int)$uid . ' AND pid = ' . (int)$pid . ' AND deleted = 0', '');
 
             foreach ($children as $child) {
                 if (trim($sortingField) && isset($child[$sortingField]) && $sortingField !== 'sorting') {
@@ -90,7 +93,8 @@ class Helper implements SingletonInterface
                 } else {
                     $sortField = sprintf('%1$011d', $child['sorting']);
                 }
-                $sortKey = sprintf('%1$011d', $child['tx_gridelements_columns']) . '.' . $sortField . ':' . sprintf('%1$011d', $child['uid']);
+                $sortKey = sprintf('%1$011d',
+                        $child['tx_gridelements_columns']) . '.' . $sortField . ':' . sprintf('%1$011d', $child['uid']);
 
                 $retVal[$sortKey] = $child;
             }
@@ -116,7 +120,8 @@ class Helper implements SingletonInterface
         if ($negativeUid >= 0) {
             return $negativeUid;
         }
-        $triggerElement = $this->databaseConnection->exec_SELECTgetSingleRow('pid', 'tt_content', 'uid = ' . abs($negativeUid));
+        $triggerElement = $this->databaseConnection->exec_SELECTgetSingleRow('pid', 'tt_content',
+            'uid = ' . abs($negativeUid));
         $pid = (int)$triggerElement['pid'];
         return is_array($triggerElement) && $pid ? $pid : 0;
     }

@@ -1,4 +1,5 @@
 <?php
+
 namespace GridElementsTeam\Gridelements\Backend\ItemsProcFuncs;
 
 /***************************************************************
@@ -78,14 +79,24 @@ class CTypeList extends AbstractItemsProcFunc
     public function itemsProcFunc(array &$params)
     {
         if ((int)$params['row']['pid'] > 0) {
-            $this->checkForAllowedCTypes($params['items'], $params['row']['pid'], $params['row']['colPos'], $params['row']['tx_gridelements_container'], $params['row']['tx_gridelements_columns']);
+            $this->checkForAllowedCTypes($params['items'], $params['row']['pid'], $params['row']['colPos'],
+                $params['row']['tx_gridelements_container'], $params['row']['tx_gridelements_columns']);
         } else {
             $this->init((int)$params['row']['pid']);
             // negative uid_pid values indicate that the element has been inserted after an existing element
             // so there is no pid to get the backendLayout for and we have to get that first
-            $existingElement = $this->databaseConnection->exec_SELECTgetSingleRow('pid, CType, colPos, tx_gridelements_container, tx_gridelements_columns', 'tt_content', 'uid=' . -((int)$params['row']['pid']));
+            $existingElement = $this->getQueryBuilder()
+                ->select('pid', 'CType', 'colPos', 'tx_gridelements_container', 'tx_gridelements_columns')
+                ->from('tt_content')
+                ->where(
+                    $this->getQueryBuilder()->expr()->eq('uid', -((int)$params['row']['pid']))
+                )
+                ->setMaxResults(1)
+                ->execute()
+                ->fetch();
             if ((int)$existingElement['pid'] > 0) {
-                $this->checkForAllowedCTypes($params['items'], $existingElement['pid'], $existingElement['colPos'], $existingElement['tx_gridelements_container'], $existingElement['tx_gridelements_columns']);
+                $this->checkForAllowedCTypes($params['items'], $existingElement['pid'], $existingElement['colPos'],
+                    $existingElement['tx_gridelements_container'], $existingElement['tx_gridelements_columns']);
             }
         }
     }
@@ -112,7 +123,8 @@ class CTypeList extends AbstractItemsProcFunc
         }
         if (isset($backendLayout)) {
             foreach ($items as $key => $item) {
-                if (!GeneralUtility::inList($backendLayout['columns'][$column], $item[1]) && !GeneralUtility::inList($backendLayout['columns'][$column], '*')) {
+                if (!GeneralUtility::inList($backendLayout['columns'][$column],
+                        $item[1]) && !GeneralUtility::inList($backendLayout['columns'][$column], '*')) {
                     unset($items[$key]);
                 }
             }

@@ -22,7 +22,11 @@ namespace GridElementsTeam\Gridelements\DataHandler;
 
 use GridElementsTeam\Gridelements\Backend\LayoutSetup;
 use GridElementsTeam\Gridelements\Helper\Helper;
+use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\DatabaseConnection;
+use TYPO3\CMS\Core\Database\Query\Expression\ExpressionBuilder;
+use TYPO3\CMS\Core\Database\Query\QueryBuilder;
+use TYPO3\CMS\Core\Database\Query\Restriction\DefaultRestrictionContainer;
 use TYPO3\CMS\Core\DataHandling\DataHandler;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -35,6 +39,21 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 abstract class AbstractDataHandler
 {
+    /**
+     * @var QueryBuilder
+     */
+    protected $queryBuilder;
+
+    /**
+     * @var ExpressionBuilder
+     */
+    protected $expressionBuilder;
+
+    /**
+     * @var DefaultRestrictionContainer
+     */
+    protected $restrictions;
+
     /**
      * @var string
      */
@@ -49,11 +68,6 @@ abstract class AbstractDataHandler
      * @var DataHandler
      */
     protected $dataHandler;
-
-    /**
-     * @var DatabaseConnection
-     */
-    protected $databaseConnection;
 
     /**
      * @var LayoutSetup
@@ -82,12 +96,130 @@ abstract class AbstractDataHandler
         $this->setTable($table);
         $this->setPageUid($pageUid);
         $this->setTceMain($dataHandler);
-        $this->setDatabaseConnection($GLOBALS['TYPO3_DB']);
+        $this->setQueryBuilder();
+        $this->setExpressionBuilder();
         if (!$this->layoutSetup instanceof LayoutSetup) {
             if ($pageUid < 0) {
                 $pageUid = Helper::getInstance()->getPidFromNegativeUid($pageUid);
             }
             $this->injectLayoutSetup(GeneralUtility::makeInstance(LayoutSetup::class)->init($pageUid));
+        }
+    }
+
+    /**
+     * Function to handle record actions between different grid containers
+     *
+     * @param array $containerUpdateArray
+     */
+    public function doGridContainerUpdate($containerUpdateArray = array())
+    {
+        if (is_array($containerUpdateArray) && !empty($containerUpdateArray)) {
+            foreach ($containerUpdateArray as $containerUid => $newElement) {
+                $fieldArray = array('tx_gridelements_children' => 'tx_gridelements_children + ' . (int)$newElement);
+                $this->databaseConnection->exec_UPDATEquery('tt_content', 'uid=' . (int)$containerUid, $fieldArray,
+                    'tx_gridelements_children');
+                $this->getTceMain()->updateRefIndex('tt_content', (int)$containerUid);
+            }
+        }
+    }
+
+    /**
+     * Function to handle record actions for current or former children of translated grid containers
+     * as well as translated references
+     *
+     * @param int $uid
+     */
+    public function checkAndUpdateTranslatedElements($uid)
+    {
+        if ($uid <= 0) {
+            return;
+        }
+        $currentValues = $this->getQueryBuilder()
+            ->select('uid', 'tx_gridelements_container', 'tx_gridelements_columns', 'sys_language_uid', 'colPos', 'l18n_parent')
+            ->from('tt_content')
+            ->where(
+                $this->getExpressionBuilder()->andX(
+                    $this->getExpressionBuilder()->eq('deleted', 0),
+                    $this->getExpressionBuilder()->eq('uid', (int)$uid)
+                )
+            )
+            ->setMaxResults(1)
+            ->execute()
+            ->fetch();
+        if (!empty($currentValues['l18n_parent'])) {
+            $currentValues = $this->getQueryBuilder()
+                ->select('uid', 'tx_gridelements_container', 'tx_gridelements_columns', 'sys_language_uid', 'colPos', 'l18n_parent')
+                ->from('tt_content')
+                ->where(
+                    $this->getExpressionBuilder()->andX(
+                        $this->getExpressionBuilder()->eq('deleted', 0),
+                        $this->getExpressionBuilder()->eq('uid', (int)$currentValues['l18n_parent'])
+                    )
+                )
+                ->setMaxResults(1)
+                ->execute()
+                ->fetch();
+        }
+        if (empty($currentValues['uid'])) {
+            return;
+        }
+        $translatedElementQuery = $this->getQueryBuilder()
+            ->select('uid', 'tx_gridelements_container', 'tx_gridelements_columns', 'sys_language_uid', 'colPos', 'l18n_parent')
+            ->from('tt_content')
+            ->where(
+                $this->getExpressionBuilder()->andX(
+                    $this->getExpressionBuilder()->eq('deleted', 0),
+                    $this->getExpressionBuilder()->eq('l18n_parent', (int)$currentValues['uid'])
+                )
+            )
+            ->execute();
+        $translatedElements = [];
+        while ($translatedElement = $translatedElementQuery->fetch()) {
+            $translatedElements[$translatedElements['uid']] = $translatedElements;
+        }
+        if (empty($translatedElements)) {
+            return;
+        }
+        $translatedContainers = [];
+        if ($currentValues['tx_gridelements_container'] > 0) {
+            $translatedContainerQuery = $this->getQueryBuilder()
+                ->select('uid', 'sys_language_uid')
+                ->from('tt_content')
+                ->where(
+                    $this->getExpressionBuilder()->andX(
+                        $this->getExpressionBuilder()->eq('deleted', 0),
+                        $this->getExpressionBuilder()->eq('l18n_parent', (int)$currentValues['tx_gridelements_container'])
+                    )
+                )
+                ->execute();
+            while ($translatedContainer = $translatedContainerQuery->fetch()) {
+                $translatedContainers[$translatedContainer['sys_language_uid']] = $translatedContainer;
+            }
+        }
+        $containerUpdateArray = array();
+        foreach ($translatedElements as $translatedUid => $translatedElement) {
+            $updateArray = array();
+            if (isset($translatedContainers[$translatedElement['sys_language_uid']])) {
+                $updateArray['tx_gridelements_container'] = (int)$translatedContainers[$translatedElement['sys_language_uid']]['uid'];
+                $updateArray['tx_gridelements_columns'] = (int)$currentValues['tx_gridelements_columns'];
+            }
+            $updateArray['colPos'] = (int)$currentValues['colPos'];
+
+            $this->databaseConnection->exec_UPDATEquery('tt_content', 'uid=' . (int)$translatedUid,
+                $updateArray,
+                'tx_gridelements_container,tx_gridelements_columns,colPos'
+            );
+
+            if (isset($updateArray['tx_gridelements_container']) &&
+                $translatedElement['tx_gridelements_container'] !== $updateArray['tx_gridelements_container']) {
+                $containerUpdateArray[$translatedElement['tx_gridelements_container']] -= 1;
+                $containerUpdateArray[$updateArray['tx_gridelements_container']] += 1;
+                $this->getTceMain()->updateRefIndex('tt_content', (int)$translatedElement['tx_gridelements_container']);
+                $this->getTceMain()->updateRefIndex('tt_content', (int)$updateArray['tx_gridelements_container']);
+            }
+        }
+        if (!empty($containerUpdateArray)) {
+            $this->doGridContainerUpdate($containerUpdateArray);
         }
     }
 
@@ -152,104 +284,64 @@ abstract class AbstractDataHandler
     }
 
     /**
-     * setter for databaseConnection object
+     * setter for queryBuilder object
      *
-     * @param DatabaseConnection $databaseConnection
+     * @return void
      */
-    public function setDatabaseConnection(DatabaseConnection $databaseConnection)
+    public function setQueryBuilder()
     {
-        $this->databaseConnection = $databaseConnection;
+        $this->queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
+            ->getQueryBuilderForTable('tt_content');
     }
 
     /**
-     * getter for databaseConnection
+     * getter for queryBuilder
      *
-     * @return DatabaseConnection databaseConnection
+     * @return QueryBuilder queryBuilder
      */
-    public function getDatabaseConnection()
+    public function getQueryBuilder()
     {
-        return $this->databaseConnection;
+        return $this->queryBuilder;
     }
 
     /**
-     * Function to handle record actions between different grid containers
+     * setter for expressionBuilder object
      *
-     * @param array $containerUpdateArray
+     * @return void
      */
-    public function doGridContainerUpdate($containerUpdateArray = array())
+    public function setExpressionBuilder()
     {
-        if (is_array($containerUpdateArray) && !empty($containerUpdateArray)) {
-            foreach ($containerUpdateArray as $containerUid => $newElement) {
-                $fieldArray = array('tx_gridelements_children' => 'tx_gridelements_children + ' . (int)$newElement);
-                $this->databaseConnection->exec_UPDATEquery('tt_content', 'uid=' . (int)$containerUid, $fieldArray,
-                    'tx_gridelements_children');
-                $this->getTceMain()->updateRefIndex('tt_content', (int)$containerUid);
-            }
-        }
+        $this->expressionBuilder = $this->getQueryBuilder()->expr();
     }
 
     /**
-     * Function to handle record actions for current or former children of translated grid containers
-     * as well as translated references
+     * getter for ExpressionBuilder
      *
-     * @param int $uid
+     * @return ExpressionBuilder
      */
-    public function checkAndUpdateTranslatedElements($uid)
+    public function getExpressionBuilder()
     {
-        if ($uid <= 0) {
-            return;
-        }
-        $currentValues = $this->databaseConnection->exec_SELECTgetSingleRow(
-            'uid,tx_gridelements_container,tx_gridelements_columns,sys_language_uid,colPos,l18n_parent',
-            'tt_content', 'deleted = 0 AND uid=' . (int)$uid
-        );
-        if (!empty($currentValues['l18n_parent'])) {
-            $currentValues = $this->databaseConnection->exec_SELECTgetSingleRow(
-                'uid,tx_gridelements_container,tx_gridelements_columns,sys_language_uid,colPos,l18n_parent',
-                'tt_content', 'deleted = 0 AND uid=' . (int)$currentValues['l18n_parent']
-            );
-        }
-        if (empty($currentValues['uid'])) {
-            return;
-        }
-        $translatedElements = $this->databaseConnection->exec_SELECTgetRows(
-            'uid,tx_gridelements_container,tx_gridelements_columns,sys_language_uid,colPos,l18n_parent',
-            'tt_content', 'deleted = 0 AND l18n_parent=' . (int)$currentValues['uid'], '', '', '', 'uid'
-        );
-        if (empty($translatedElements)) {
-            return;
-        }
-        if ($currentValues['tx_gridelements_container'] > 0) {
-            $translatedContainers = $this->databaseConnection->exec_SELECTgetRows(
-                'uid,sys_language_uid',
-                'tt_content', 'deleted = 0 AND l18n_parent=' . (int)$currentValues['tx_gridelements_container'], '', '',
-                '', 'sys_language_uid'
-            );
-        }
-        $containerUpdateArray = array();
-        foreach ($translatedElements as $translatedUid => $translatedElement) {
-            $updateArray = array();
-            if (isset($translatedContainers[$translatedElement['sys_language_uid']])) {
-                $updateArray['tx_gridelements_container'] = (int)$translatedContainers[$translatedElement['sys_language_uid']]['uid'];
-                $updateArray['tx_gridelements_columns'] = (int)$currentValues['tx_gridelements_columns'];
-            }
-            $updateArray['colPos'] = (int)$currentValues['colPos'];
-
-            $this->databaseConnection->exec_UPDATEquery('tt_content', 'uid=' . (int)$translatedUid,
-                $updateArray,
-                'tx_gridelements_container,tx_gridelements_columns,colPos'
-            );
-
-            if (isset($updateArray['tx_gridelements_container']) &&
-                $translatedElement['tx_gridelements_container'] !== $updateArray['tx_gridelements_container']) {
-                $containerUpdateArray[$translatedElement['tx_gridelements_container']] -= 1;
-                $containerUpdateArray[$updateArray['tx_gridelements_container']] += 1;
-                $this->getTceMain()->updateRefIndex('tt_content', (int)$translatedElement['tx_gridelements_container']);
-                $this->getTceMain()->updateRefIndex('tt_content', (int)$updateArray['tx_gridelements_container']);
-            }
-        }
-        if (!empty($containerUpdateArray)) {
-            $this->doGridContainerUpdate($containerUpdateArray);
-        }
+        return $this->expressionBuilder;
     }
+
+    /**
+     * setter for restrictions object
+     *
+     * @return void
+     */
+    public function setRestrictions()
+    {
+        $this->restrictions = GeneralUtility::makeInstance(DefaultRestrictionContainer::class);
+    }
+
+    /**
+     * getter for restrictions
+     *
+     * @return DefaultRestrictionContainer restrictions
+     */
+    public function getRestrictions()
+    {
+        return $this->restrictions;
+    }
+
 }

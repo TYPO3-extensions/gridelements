@@ -1,4 +1,5 @@
 <?php
+
 namespace GridElementsTeam\Gridelements\Backend\ItemsProcFuncs;
 
 /***************************************************************
@@ -22,7 +23,8 @@ namespace GridElementsTeam\Gridelements\Backend\ItemsProcFuncs;
 
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Backend\View\BackendLayoutView;
-use TYPO3\CMS\Core\Database\DatabaseConnection;
+use TYPO3\CMS\Core\Database\ConnectionPool;
+use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Core\Database\QueryGenerator;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -38,9 +40,9 @@ use TYPO3\CMS\Lang\LanguageService;
 abstract class AbstractItemsProcFunc implements SingletonInterface
 {
     /**
-     * @var DatabaseConnection
+     * @var QueryBuilder
      */
-    protected $databaseConnection;
+    protected $queryBuilder;
 
     /**
      * @var LanguageService
@@ -59,7 +61,7 @@ abstract class AbstractItemsProcFunc implements SingletonInterface
      */
     public function init($pageUid = 0)
     {
-        $this->setDatabaseConnection($GLOBALS['TYPO3_DB']);
+        $this->setQueryBuilder();
         $this->setLanguageService($GLOBALS['LANG']);
     }
 
@@ -72,7 +74,8 @@ abstract class AbstractItemsProcFunc implements SingletonInterface
      */
     public function getSelectedBackendLayout($id)
     {
-        $backendLayoutData = GeneralUtility::callUserFunction(BackendLayoutView::class . '->getSelectedBackendLayout', $id, $this);
+        $backendLayoutData = GeneralUtility::callUserFunction(BackendLayoutView::class . '->getSelectedBackendLayout',
+            $id, $this);
         // add allowed CTypes to the columns, since this is not done by the native core methods
         if (!empty($backendLayoutData['__items'])) {
             if (!empty($backendLayoutData['__config']['backend_layout.']['rows.'])) {
@@ -108,29 +111,28 @@ abstract class AbstractItemsProcFunc implements SingletonInterface
     }
 
     /**
-     * setter for databaseConnection object
-     *
-     * @param DatabaseConnection $databaseConnection
+     * setter for queryBuilder object
      *
      * @return void
      */
-    public function setDatabaseConnection(DatabaseConnection $databaseConnection)
+    public function setQueryBuilder()
     {
-        $this->databaseConnection = $databaseConnection;
+        $this->queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
+            ->getQueryBuilderForTable('tt_content');
     }
 
     /**
-     * getter for databaseConnection
+     * getter for queryBuilder
      *
-     * @return DatabaseConnection databaseConnection
+     * @return QueryBuilder queryBuilder
      */
-    public function getDatabaseConnection()
+    public function getQueryBuilder()
     {
-        return $this->databaseConnection;
+        return $this->queryBuilder;
     }
 
     /**
-     * getter for databaseConnection
+     * getter for languageService
      *
      * @return LanguageService $languageService
      */
@@ -140,7 +142,7 @@ abstract class AbstractItemsProcFunc implements SingletonInterface
     }
 
     /**
-     * setter for databaseConnection object
+     * setter for languageService object
      *
      * @param LanguageService $languageService
      *

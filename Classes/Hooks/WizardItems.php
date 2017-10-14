@@ -1,4 +1,5 @@
 <?php
+
 namespace GridElementsTeam\Gridelements\Hooks;
 
 /***************************************************************
@@ -80,7 +81,8 @@ class WizardItems implements NewContentElementWizardHookInterface
      */
     public function manipulateWizardItems(&$wizardItems, &$parentObject)
     {
-        if (GeneralUtility::inList($GLOBALS['BE_USER']->groupData['explicit_allowdeny'], 'tt_content:CType:gridelements_pi1:DENY')) {
+        if (GeneralUtility::inList($GLOBALS['BE_USER']->groupData['explicit_allowdeny'],
+            'tt_content:CType:gridelements_pi1:DENY')) {
             return;
         }
         $pageID = $parentObject->id;
@@ -101,10 +103,12 @@ class WizardItems implements NewContentElementWizardHookInterface
         }
 
         if (empty($allowed) || isset($allowed['gridelements_pi1'])) {
-            $allowedGridTypes = array_flip(GeneralUtility::trimExplode(',', GeneralUtility::_GP('tx_gridelements_allowed_grid_types'), true));
+            $allowedGridTypes = array_flip(GeneralUtility::trimExplode(',',
+                GeneralUtility::_GP('tx_gridelements_allowed_grid_types'), true));
             $excludeLayouts = $this->getExcludeLayouts($container, $parentObject);
 
-            $gridItems = $this->layoutSetup->getLayoutWizardItems($parentObject->colPos, $excludeLayouts, $allowedGridTypes);
+            $gridItems = $this->layoutSetup->getLayoutWizardItems($parentObject->colPos, $excludeLayouts,
+                $allowedGridTypes);
             $this->addGridItemsToWizard($gridItems, $wizardItems);
         }
 
@@ -228,10 +232,12 @@ class WizardItems implements NewContentElementWizardHookInterface
                     }
                     if (StringUtility::beginsWith($largeIcon, '../uploads/tx_gridelements/')) {
                         $largeIcon = str_replace('../', '', $largeIcon);
-                    } else if (!StringUtility::beginsWith($largeIcon, 'EXT:') && strpos($largeIcon,
-                            '/') === false
-                    ) {
-                        $largeIcon = GeneralUtility::resolveBackPath($item['icon'][1]);
+                    } else {
+                        if (!StringUtility::beginsWith($largeIcon, 'EXT:') && strpos($largeIcon,
+                                '/') === false
+                        ) {
+                            $largeIcon = GeneralUtility::resolveBackPath($item['icon'][1]);
+                        }
                     }
                     if (!empty($largeIcon)) {
                         if (StringUtility::endsWith($largeIcon, '.svg')) {
@@ -257,8 +263,8 @@ class WizardItems implements NewContentElementWizardHookInterface
                 'title' => $item['title'],
                 'description' => $item['description'],
                 'params' => ($largeIcon ? '&largeIconImage=' . $largeIcon : '')
-                            . '&defVals[tt_content][CType]=gridelements_pi1&defVals[tt_content][tx_gridelements_backend_layout]=' . $item['uid']
-                            . ($item['tll'] ? '&isTopLevelLayout' : ''),
+                    . '&defVals[tt_content][CType]=gridelements_pi1&defVals[tt_content][tx_gridelements_backend_layout]=' . $item['uid']
+                    . ($item['tll'] ? '&isTopLevelLayout' : ''),
                 'tt_content_defValues' => array(
                     'CType' => 'gridelements_pi1',
                     'tx_gridelements_backend_layout' => $item['uid']
@@ -275,8 +281,10 @@ class WizardItems implements NewContentElementWizardHookInterface
                 }
                 if (StringUtility::beginsWith($icon, '../uploads/tx_gridelements/')) {
                     $icon = str_replace('../', '', $icon);
-                } else if (!StringUtility::beginsWith($icon, 'EXT:') && strpos($icon, '/') !== false) {
-                    $icon = GeneralUtility::resolveBackPath($item['icon'][0]);
+                } else {
+                    if (!StringUtility::beginsWith($icon, 'EXT:') && strpos($icon, '/') !== false) {
+                        $icon = GeneralUtility::resolveBackPath($item['icon'][0]);
+                    }
                 }
                 if (StringUtility::endsWith($icon, '.svg')) {
                     $iconRegistry->registerIcon($item['iconIdentifier'], SvgIconProvider::class, array(
@@ -295,8 +303,10 @@ class WizardItems implements NewContentElementWizardHookInterface
             }
             if ($icon && !isset($wizardItems['gridelements_' . $itemIdentifier]['iconIdentifier'])) {
                 $wizardItems['gridelements_' . $itemIdentifier]['iconIdentifier'] = 'gridelements-' . $key;
-            } else if (!isset($wizardItems['gridelements_' . $itemIdentifier]['iconIdentifier'])) {
-                $wizardItems['gridelements_' . $itemIdentifier]['iconIdentifier'] = 'gridelements-default';
+            } else {
+                if (!isset($wizardItems['gridelements_' . $itemIdentifier]['iconIdentifier'])) {
+                    $wizardItems['gridelements_' . $itemIdentifier]['iconIdentifier'] = 'gridelements-default';
+                }
             }
         }
     }

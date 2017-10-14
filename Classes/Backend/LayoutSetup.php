@@ -1,4 +1,5 @@
 <?php
+
 namespace GridElementsTeam\Gridelements\Backend;
 
 /***************************************************************
@@ -20,9 +21,15 @@ namespace GridElementsTeam\Gridelements\Backend;
  ***************************************************************/
 
 use TYPO3\CMS\Backend\Utility\BackendUtility;
-use TYPO3\CMS\Core\Database\DatabaseConnection;
+use TYPO3\CMS\Core\Database\ConnectionPool;
+use TYPO3\CMS\Core\Database\Query\Expression\ExpressionBuilder;
+use TYPO3\CMS\Core\Database\Query\QueryBuilder;
+use TYPO3\CMS\Core\Database\Query\Restriction\DefaultRestrictionContainer;
+use TYPO3\CMS\Core\Database\Query\Restriction\EndTimeRestriction;
+use TYPO3\CMS\Core\Database\Query\Restriction\StartTimeRestriction;
 use TYPO3\CMS\Core\TypoScript\Parser\TypoScriptParser;
 use TYPO3\CMS\Core\Utility\ArrayUtility;
+use TYPO3\CMS\Core\Utility\DebugUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\StringUtility;
 use TYPO3\CMS\Lang\LanguageService;
@@ -37,9 +44,19 @@ use TYPO3\CMS\Lang\LanguageService;
 class LayoutSetup
 {
     /**
-     * @var DatabaseConnection
+     * @var QueryBuilder
      */
-    protected $databaseConnection;
+    protected $queryBuilder;
+
+    /**
+     * @var ExpressionBuilder
+     */
+    protected $expressionBuilder;
+
+    /**
+     * @var DefaultRestrictionContainer
+     */
+    protected $restrictions;
 
     /**
      * @var array
@@ -71,7 +88,9 @@ class LayoutSetup
      */
     public function init($pageId, array $typoScriptSetup = array())
     {
-        $this->setDatabaseConnection($GLOBALS['TYPO3_DB']);
+        $this->setQueryBuilder();
+        $this->setExpressionBuilder();
+        $this->setRestrictions();
         $this->setLanguageService($GLOBALS['LANG']);
         $pageId = (strpos($pageId, 'NEW') === 0) ? 0 : (int)$pageId;
         $this->loadLayoutSetup($pageId);
@@ -187,7 +206,8 @@ class LayoutSetup
     {
         if ($gridContainerId > 0) {
             if (empty($GLOBALS['tx_gridelements']['parentElement'][$gridContainerId])) {
-                $GLOBALS['tx_gridelements']['parentElement'][$gridContainerId] = BackendUtility::getRecordWSOL('tt_content', $gridContainerId);
+                $GLOBALS['tx_gridelements']['parentElement'][$gridContainerId] = BackendUtility::getRecordWSOL('tt_content',
+                    $gridContainerId);
             }
         }
         if ($doReturn) {
@@ -357,7 +377,8 @@ class LayoutSetup
         if ($layoutSetup['pi_flexform_ds_file']) {
             $flexformConfiguration = GeneralUtility::getUrl(GeneralUtility::getFileAbsFileName($layoutSetup['pi_flexform_ds_file']));
         } elseif (strpos($layoutSetup['pi_flexform_ds'], 'FILE:') === 0) {
-            $flexformConfiguration = GeneralUtility::getUrl(GeneralUtility::getFileAbsFileName(substr($layoutSetup['pi_flexform_ds'], 5)));
+            $flexformConfiguration = GeneralUtility::getUrl(GeneralUtility::getFileAbsFileName(substr($layoutSetup['pi_flexform_ds'],
+                5)));
         } elseif ($layoutSetup['pi_flexform_ds']) {
             $flexformConfiguration = $layoutSetup['pi_flexform_ds'];
         } else {
@@ -382,7 +403,7 @@ class LayoutSetup
             : array();
 
         $overruleRecords = isset($pageTSconfig['tx_gridelements.']['overruleRecords'])
-                           && (int)$pageTSconfig['tx_gridelements.']['overruleRecords'] === 1;
+            && (int)$pageTSconfig['tx_gridelements.']['overruleRecords'] === 1;
 
         $gridLayoutConfig = array();
         if (!empty($pageTSconfig['tx_gridelements.']['setup.'])) {
@@ -429,21 +450,45 @@ class LayoutSetup
             ? (int)$pageTSconfig['TCEFORM.']['pages.']['_STORAGE_PID']
             : 0;
         $pageTSconfigId = isset($pageTSconfig['TCEFORM.']['tt_content.']['tx_gridelements_backend_layout.']['PAGE_TSCONFIG_ID'])
-            ? implode(',', GeneralUtility::intExplode(',', $pageTSconfig['TCEFORM.']['tt_content.']['tx_gridelements_backend_layout.']['PAGE_TSCONFIG_ID']))
+            ? implode(',', GeneralUtility::intExplode(',',
+                $pageTSconfig['TCEFORM.']['tt_content.']['tx_gridelements_backend_layout.']['PAGE_TSCONFIG_ID']))
             : 0;
 
         // Load records.
-        $where_clause = '(( ' . $pageTSconfigId . ' = 0 AND ' . $storagePid . ' = 0 )'
-                        . ' OR ( tx_gridelements_backend_layout.pid IN (' . $pageTSconfigId . ') OR tx_gridelements_backend_layout.pid = ' . $storagePid . ' ) '
-                        . ' OR ( ' . $pageTSconfigId . ' = 0 AND tx_gridelements_backend_layout.pid = ' . (int)$pageId . ' ))'
-                        . ' AND tx_gridelements_backend_layout.hidden = 0 AND tx_gridelements_backend_layout.deleted = 0';
-        $result = $this->databaseConnection->exec_SELECTgetRows('*', 'tx_gridelements_backend_layout', $where_clause, '', 'sorting ASC', '', 'uid');
+        $layoutQuery = $this->getQueryBuilder()
+            ->select('*')
+            ->from('tx_gridelements_backend_layout')
+            ->where(
+                $this->getExpressionBuilder()->orX(
+                    $this->getExpressionBuilder()->andX(
+                        $this->getExpressionBuilder()->comparison($pageTSconfigId, '=', 0),
+                        $this->getExpressionBuilder()->comparison($storagePid, '=', 0)
+                    ),
+                    $this->getExpressionBuilder()->orX(
+                        $this->getExpressionBuilder()->in('pid', $pageTSconfigId),
+                        $this->getExpressionBuilder()->eq('pid', $storagePid)
+                    ),
+                    $this->getExpressionBuilder()->andX(
+                        $this->getExpressionBuilder()->comparison($pageTSconfigId, '=', 0),
+                        $this->getExpressionBuilder()->eq('pid', (int)$pageId)
+                    )
+                )
+            )
+            ->orderBy('sorting', 'ASC');
+
+        $restrictions = $this->getRestrictions();
+        $restrictions->removeByType(StartTimeRestriction::class);
+        $restrictions->removeByType(EndTimeRestriction::class);
+        $layoutQuery->setRestrictions($restrictions);
+        $layoutItems = $layoutQuery->execute()->fetchAll();
 
         $gridLayoutRecords = array();
 
-        foreach ($result as $layoutId => $item) {
+        foreach ($layoutItems as $item) {
             if (isset($item['alias']) && (string)$item['alias'] !== '') {
                 $layoutId = $item['alias'];
+            } else {
+                $layoutId = $item['uid'];
             }
             // Continue if layout is excluded.
             if (isset($excludeLayoutIds[$layoutId])) {
@@ -482,17 +527,68 @@ class LayoutSetup
     }
 
     /**
-     * setter for databaseConnection object
+     * setter for queryBuilder object
      *
-     * @param DatabaseConnection $databaseConnection
+     * @return void
      */
-    public function setDatabaseConnection(DatabaseConnection $databaseConnection)
+    public function setQueryBuilder()
     {
-        $this->databaseConnection = $databaseConnection;
+        $this->queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
+            ->getQueryBuilderForTable('tx_gridelements_backend_layout');
     }
 
     /**
-     * getter for databaseConnection
+     * getter for queryBuilder
+     *
+     * @return QueryBuilder queryBuilder
+     */
+    public function getQueryBuilder()
+    {
+        return $this->queryBuilder;
+    }
+
+    /**
+     * setter for expressionBuilder object
+     *
+     * @return void
+     */
+    public function setExpressionBuilder()
+    {
+        $this->expressionBuilder = $this->getQueryBuilder()->expr();
+    }
+
+    /**
+     * getter for ExpressionBuilder
+     *
+     * @return ExpressionBuilder
+     */
+    public function getExpressionBuilder()
+    {
+        return $this->expressionBuilder;
+    }
+
+    /**
+     * setter for restrictions object
+     *
+     * @return void
+     */
+    public function setRestrictions()
+    {
+        $this->restrictions = GeneralUtility::makeInstance(DefaultRestrictionContainer::class);
+    }
+
+    /**
+     * getter for restrictions
+     *
+     * @return DefaultRestrictionContainer restrictions
+     */
+    public function getRestrictions()
+    {
+        return $this->restrictions;
+    }
+
+    /**
+     * getter for languageService
      *
      * @return LanguageService $languageService
      */
@@ -502,7 +598,7 @@ class LayoutSetup
     }
 
     /**
-     * setter for databaseConnection object
+     * setter for languageService object
      *
      * @param LanguageService $languageService
      */
@@ -512,16 +608,6 @@ class LayoutSetup
         if ($this->getBackendUser()) {
             $this->languageService->init($this->getBackendUser()->uc['lang']);
         }
-    }
-
-    /**
-     * getter for databaseConnection
-     *
-     * @return DatabaseConnection databaseConnection
-     */
-    public function getDatabaseConnection()
-    {
-        return $this->databaseConnection;
     }
 
     /**

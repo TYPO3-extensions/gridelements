@@ -1,4 +1,5 @@
 <?php
+
 namespace GridElementsTeam\Gridelements\Hooks;
 
 /***************************************************************
@@ -132,7 +133,8 @@ class DatabaseRecordList implements RecordListHookInterface, SingletonInterface
     public function checkChildren($table, array $row, $level, array &$theData, DatabaseRecordListXclass $parentObj)
     {
         if ($table === 'tt_content' && $row['CType'] === 'gridelements_pi1') {
-            $elementChildren = Helper::getInstance()->getChildren($table, $row['uid'], $row['pid'], '', 0, $parentObj->selFieldList);
+            $elementChildren = Helper::getInstance()->getChildren($table, $row['uid'], $row['pid'], '', 0,
+                $parentObj->selFieldList);
             if (!empty($elementChildren)) {
                 $theData['_EXPANDABLE_'] = true;
                 $theData['_EXPAND_ID_'] = $table . ':' . $row['uid'];
@@ -152,8 +154,13 @@ class DatabaseRecordList implements RecordListHookInterface, SingletonInterface
      * @param string $contentCollapseIcon
      * @param DatabaseRecordListXclass $parentObj
      */
-    public function contentCollapseIcon(array &$data, $sortField, $level, &$contentCollapseIcon, DatabaseRecordListXclass $parentObj)
-    {
+    public function contentCollapseIcon(
+        array &$data,
+        $sortField,
+        $level,
+        &$contentCollapseIcon,
+        DatabaseRecordListXclass $parentObj
+    ) {
         if ($data['_EXPAND_TABLE_'] === 'tt_content') {
             $expandTitle = $this->languageService->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xlf:list.expandElement');
             $collapseTitle = $this->languageService->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xlf:list.collapseElement');
@@ -161,17 +168,17 @@ class DatabaseRecordList implements RecordListHookInterface, SingletonInterface
             if ($expandedGridelements[$data['uid']]) {
                 $href = htmlspecialchars(($parentObj->listURL() . '&gridelementsExpand[' . (int)$data['uid'] . ']=0'));
                 $contentCollapseIcon = '<a class="btn btn-default t3js-toggle-gridelements-list open-gridelements-container" data-state="expanded" href="' . $href .
-                                       '" id="t3-gridelements-' . $data['uid'] . '" title="' . $collapseTitle
-                                       . '" data-toggle-title="' . $expandTitle . '">'
-                                       . $this->getIconFactory()->getIcon('actions-view-list-expand', 'small')->render()
-                                       . $this->getIconFactory()->getIcon('actions-view-list-collapse', 'small')->render() . '</a>';
+                    '" id="t3-gridelements-' . $data['uid'] . '" title="' . $collapseTitle
+                    . '" data-toggle-title="' . $expandTitle . '">'
+                    . $this->getIconFactory()->getIcon('actions-view-list-expand', 'small')->render()
+                    . $this->getIconFactory()->getIcon('actions-view-list-collapse', 'small')->render() . '</a>';
             } else {
                 $href = htmlspecialchars(($parentObj->listURL() . '&gridelementsExpand[' . (int)$data['uid'] . ']=1'));
                 $contentCollapseIcon = '<a class="btn btn-default t3js-toggle-gridelements-list" data-state="collapsed" href="' . $href .
-                                       '" id="t3-gridelements-' . $data['uid'] . '" title="' . $expandTitle
-                                       . '" data-toggle-title="' . $collapseTitle . '">'
-                                       . $this->getIconFactory()->getIcon('actions-view-list-expand', 'small')->render()
-                                       . $this->getIconFactory()->getIcon('actions-view-list-collapse', 'small')->render() . '</a>';
+                    '" id="t3-gridelements-' . $data['uid'] . '" title="' . $expandTitle
+                    . '" data-toggle-title="' . $collapseTitle . '">'
+                    . $this->getIconFactory()->getIcon('actions-view-list-expand', 'small')->render()
+                    . $this->getIconFactory()->getIcon('actions-view-list-collapse', 'small')->render() . '</a>';
             }
         }
     }

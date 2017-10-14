@@ -1,4 +1,5 @@
 <?php
+
 namespace GridElementsTeam\Gridelements\Backend\ItemsProcFuncs;
 
 /***************************************************************
@@ -40,13 +41,23 @@ class ColPosList extends AbstractItemsProcFunc
         $this->init();
         if ($params['row']['pid'] > 0) {
             $ContentType = is_array($params['row']['CType']) ? $params['row']['CType'][0] : $params['row']['CType'];
-            $params['items'] = $this->addColPosListLayoutItems($params['row']['pid'], $params['items'], $ContentType, $params['row']['tx_gridelements_container']);
+            $params['items'] = $this->addColPosListLayoutItems($params['row']['pid'], $params['items'], $ContentType,
+                $params['row']['tx_gridelements_container']);
         } else {
             // negative uid_pid values indicate that the element has been inserted after an existing element
             // so there is no pid to get the backendLayout for and we have to get that first
-            $existingElement = $this->databaseConnection->exec_SELECTgetSingleRow('pid, CType, tx_gridelements_container', 'tt_content', 'uid=' . -((int)$params['row']['pid']));
+            $existingElement = $this->getQueryBuilder()
+                ->select('pid', 'CType', 'tx_gridelements_container')
+                ->from('tt_content')
+                ->where(
+                    $this->getQueryBuilder()->expr()->eq('uid', -((int)$params['row']['pid']))
+                )
+                ->setMaxResults(1)
+                ->execute()
+                ->fetch();
             if ($existingElement['pid'] > 0) {
-                $params['items'] = $this->addColPosListLayoutItems($existingElement['pid'], $params['items'], $existingElement['CType'], $existingElement['tx_gridelements_container']);
+                $params['items'] = $this->addColPosListLayoutItems($existingElement['pid'], $params['items'],
+                    $existingElement['CType'], $existingElement['tx_gridelements_container']);
             }
         }
     }
@@ -69,7 +80,8 @@ class ColPosList extends AbstractItemsProcFunc
             if ($layout) {
                 if ($CType !== '' && !empty($layout['__items'])) {
                     foreach ($layout['__items'] as $itemKey => $itemArray) {
-                        if ($itemArray[3] !== '' && !GeneralUtility::inList($itemArray[3], $CType) && !GeneralUtility::inList($itemArray[3], '*')) {
+                        if ($itemArray[3] !== '' && !GeneralUtility::inList($itemArray[3],
+                                $CType) && !GeneralUtility::inList($itemArray[3], '*')) {
                             unset($layout['__items'][$itemKey]);
                         }
                     }
