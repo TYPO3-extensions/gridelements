@@ -213,7 +213,7 @@ class TtContent
         $childrenOnNextLevel = $this->databaseConnection->exec_SELECTgetRows(
             'uid, tx_gridelements_container',
             'tt_content',
-            'CType=\'gridelements_pi1\' AND tx_gridelements_container IN (' . $containerIds . ')'
+            'CType="gridelements_pi1" AND tx_gridelements_container IN (' . $containerIds . ')'
         );
 
         if (!empty($childrenOnNextLevel) && !empty($possibleContainers)) {

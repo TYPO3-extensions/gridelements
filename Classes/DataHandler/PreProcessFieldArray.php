@@ -146,9 +146,9 @@ class PreProcessFieldArray extends AbstractDataHandler
         // Fetch default values if a previous record exists
         if ($pid < 0 && $GLOBALS['TCA']['tt_content']['ctrl']['useColumnsForDefaultValues']) {
             // Fetches the previous record:
-            $res = $this->databaseConnection->exec_SELECTquery('*', 'tt_content',
+            $res = $this->getDatabaseConnection()->exec_SELECTquery('*', 'tt_content',
                 'uid=' . abs($id) . BackendUtility::deleteClause('tt_content'));
-            if ($row = $this->databaseConnection->sql_fetch_assoc($res)) {
+            if ($row = $this->getDatabaseConnection()->sql_fetch_assoc($res)) {
                 // Gets the list of fields to copy from the previous record.
                 $fArr = explode(',', $GLOBALS['TCA']['tt_content']['ctrl']['useColumnsForDefaultValues']);
                 foreach ($fArr as $theF) {
@@ -235,7 +235,7 @@ class PreProcessFieldArray extends AbstractDataHandler
                 $containerUpdateArray[(int)$fieldArray['tx_gridelements_container']] = 1;
             }
             if ((int)$fieldArray['tx_gridelements_container'] === 0) {
-                $originalContainer = $this->databaseConnection->exec_SELECTgetSingleRow('tx_gridelements_container, sys_language_uid',
+                $originalContainer = $this->getDatabaseConnection()->exec_SELECTgetSingleRow('tx_gridelements_container, sys_language_uid',
                     'tt_content', 'uid=' . (int)$id);
                 if (!empty($originalContainer)) {
                     $containerUpdateArray[(int)$originalContainer['tx_gridelements_container']] = -1;
@@ -258,7 +258,7 @@ class PreProcessFieldArray extends AbstractDataHandler
         if ((int)$fieldArray['tx_gridelements_container'] > 0 && isset($fieldArray['colPos']) && (int)$fieldArray['colPos'] !== -1) {
             $fieldArray['colPos'] = -1;
             $fieldArray['tx_gridelements_columns'] = 0;
-            $targetContainer = $this->databaseConnection->exec_SELECTgetSingleRow('sys_language_uid', 'tt_content',
+            $targetContainer = $this->getDatabaseConnection()->exec_SELECTgetSingleRow('sys_language_uid', 'tt_content',
                 'uid=' . (int)$fieldArray['tx_gridelements_container']);
             if ((int)$targetContainer['sys_language_uid'] > -1) {
                 $fieldArray['sys_language_uid'] = (int)$targetContainer['sys_language_uid'];
@@ -268,7 +268,7 @@ class PreProcessFieldArray extends AbstractDataHandler
             $fieldArray['tx_gridelements_columns'] = 0;
             $fieldArray['tx_gridelements_container'] = 0;
         } else if (!isset($fieldArray['sys_language_uid']) && isset($fieldArray['tx_gridelements_container']) && (int)$fieldArray['tx_gridelements_container'] > 0 && (int)$fieldArray['colPos'] === -1) {
-            $targetContainer = $this->databaseConnection->exec_SELECTgetSingleRow('sys_language_uid', 'tt_content',
+            $targetContainer = $this->getDatabaseConnection()->exec_SELECTgetSingleRow('sys_language_uid', 'tt_content',
                 'uid=' . (int)$fieldArray['tx_gridelements_container']);
             if ((int)$targetContainer['sys_language_uid'] > -1) {
                 $fieldArray['sys_language_uid'] = (int)$targetContainer['sys_language_uid'];
@@ -292,7 +292,7 @@ class PreProcessFieldArray extends AbstractDataHandler
      */
     public function checkForRootColumn($contentId)
     {
-        $parent = $this->databaseConnection->exec_SELECTgetSingleRow('t1.colPos, t1.tx_gridelements_container',
+        $parent = $this->getDatabaseConnection()->exec_SELECTgetSingleRow('t1.colPos, t1.tx_gridelements_container',
             'tt_content AS t1, tt_content AS t2', 't1.uid=t2.tx_gridelements_container AND t2.uid=' . (int)$contentId
         );
         if (!empty($parent) && $parent['tx_gridelements_container'] > 0) {
