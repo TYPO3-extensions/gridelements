@@ -1,4 +1,5 @@
 <?php
+
 namespace GridElementsTeam\Gridelements\DataHandler;
 
 /***************************************************************
@@ -57,12 +58,12 @@ class ProcessCmdmap extends AbstractDataHandler
 
         if ($command === 'copy' && $reference === 1 && !$commandIsProcessed && $table === 'tt_content' && !$this->getTceMain()->isImporting) {
 
-            $dataArray = array(
-                'pid' => $value,
-                'CType' => 'shortcut',
+            $dataArray = [
+                'pid'     => $value,
+                'CType'   => 'shortcut',
                 'records' => $id,
-                'header' => 'Reference'
-            );
+                'header'  => 'Reference',
+            ];
 
             // used for overriding container and column with real target values
             if (is_array($pasteUpdate) && !empty($pasteUpdate)) {
@@ -77,10 +78,10 @@ class ProcessCmdmap extends AbstractDataHandler
                 }
             }
 
-            $data = array();
+            $data = [];
             $data['tt_content']['NEW234134'] = $dataArray;
 
-            $this->getTceMain()->start($data, array());
+            $this->getTceMain()->start($data, []);
             $this->getTceMain()->process_datamap();
 
             $parentObj->registerDBList = null;
@@ -90,9 +91,12 @@ class ProcessCmdmap extends AbstractDataHandler
         }
 
         if ($command === 'delete' && $table === 'tt_content') {
-            $containerUpdateArray = array();
-            $originalContainer = $this->databaseConnection->exec_SELECTgetSingleRow('tx_gridelements_container, sys_language_uid',
-                'tt_content', 'uid=' . $id);
+            $containerUpdateArray = [];
+            $originalContainer = $this->getConnection()->select(
+                ['tx_gridelements_container', 'sys_language_uid'],
+                'tt_content',
+                ['uid' => (int)$id]
+            )->fetch();
             $containerUpdateArray[$originalContainer['tx_gridelements_container']] = -1;
             $this->doGridContainerUpdate($containerUpdateArray);
         }

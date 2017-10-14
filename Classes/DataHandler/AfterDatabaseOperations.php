@@ -1,4 +1,5 @@
 <?php
+
 namespace GridElementsTeam\Gridelements\DataHandler;
 
 /***************************************************************
@@ -21,6 +22,7 @@ namespace GridElementsTeam\Gridelements\DataHandler;
 
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Backend\View\BackendLayoutView;
+use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\DataHandling\DataHandler;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -83,38 +85,78 @@ class AfterDatabaseOperations extends AbstractDataHandler
      */
     public function setUnusedElements(array &$fieldArray)
     {
-        $changedGridElements = array();
-        $changedElements = array();
-        $changedSubPageElements = array();
+        $changedGridElements = [];
+        $changedElements = [];
+        $changedSubPageElements = [];
 
         if ($this->getTable() === 'tt_content') {
             $changedGridElements[$this->getPageUid()] = true;
-            $childElementsInUnavailableColumns = array();
-            $childElementsInAvailableColumns = array();
+            $childElementsInUnavailableColumns = [];
+            $childElementsInAvailableColumns = [];
             $availableColumns = $this->getAvailableColumns($fieldArray['tx_gridelements_backend_layout'], 'tt_content',
                 $this->getPageUid());
             if (!empty($availableColumns) || $availableColumns === '0') {
-                $childElementsInUnavailableColumns = array_keys($this->databaseConnection->exec_SELECTgetRows('uid',
-                    'tt_content', 'tx_gridelements_container = ' . $this->getPageUid() . '
-					AND tx_gridelements_columns NOT IN (' . $availableColumns . ')', '', '', '', 'uid'));
+                $queryBuilder = $this->getQueryBuilder();
+                $childElementsInUnavailableColumnsQuery = $queryBuilder
+                    ->select('uid')
+                    ->from('tt_content')
+                    ->where(
+                        $queryBuilder->expr()->andX(
+                            $queryBuilder->expr()->eq('tx_gridelements_container',
+                                $queryBuilder->createNamedParameter((int)$this->getPageUid(),
+                                    \PDO::PARAM_INT)),
+                            $queryBuilder->expr()->notIn('tx_gridelements_columns',
+                                $queryBuilder->createNamedParameter($availableColumns))
+                        )
+                    )
+                    ->execute();
+                $childElementsInUnavailableColumns = [];
+                while ($childElementInUnavailableColumns = $childElementsInUnavailableColumnsQuery->fetch()) {
+                    $childElementsInUnavailableColumns[] = $childElementInUnavailableColumns['uid'];
+                }
                 if (!empty($childElementsInUnavailableColumns)) {
-                    $this->databaseConnection->sql_query('
-						UPDATE tt_content
-						SET colPos = -2, backupColPos = -1
-						WHERE uid IN (' . join(',', $childElementsInUnavailableColumns) . ')
-					');
+                    $queryBuilder
+                        ->update('tt_content')
+                        ->where(
+                            $queryBuilder->expr()->in('uid',
+                                $queryBuilder->createNamedParameter(join(',',
+                                    $childElementsInUnavailableColumns)))
+                        )
+                        ->set('colPos', -2)
+                        ->set('backupColPos', -1)
+                        ->execute();
                     array_flip($childElementsInUnavailableColumns);
                 }
 
-                $childElementsInAvailableColumns = array_keys($this->databaseConnection->exec_SELECTgetRows('uid',
-                    'tt_content', 'tx_gridelements_container = ' . $this->getPageUid() . '
-						AND tx_gridelements_columns IN (' . $availableColumns . ')', '', '', '', 'uid'));
+                $queryBuilder = $this->getQueryBuilder();
+                $childElementsInAvailableColumnsQuery = $queryBuilder
+                    ->select('uid')
+                    ->from('tt_content')
+                    ->where(
+                        $queryBuilder->expr()->andX(
+                            $queryBuilder->expr()->eq('tx_gridelements_container',
+                                $queryBuilder->createNamedParameter((int)$this->getPageUid(),
+                                    \PDO::PARAM_INT)),
+                            $queryBuilder->expr()->in('tx_gridelements_columns',
+                                $queryBuilder->createNamedParameter($availableColumns))
+                        )
+                    )
+                    ->execute();
+                $childElementsInAvailableColumns = [];
+                while ($childElementInAvailableColumns = $childElementsInAvailableColumnsQuery->fetch()) {
+                    $childElementsInAvailableColumns[] = $childElementInAvailableColumns['uid'];
+                }
                 if (!empty($childElementsInAvailableColumns)) {
-                    $this->databaseConnection->sql_query('
-						UPDATE tt_content
-						SET colPos = -1, backupColPos = -2
-						WHERE uid IN (' . join(',', $childElementsInAvailableColumns) . ')
-					');
+                    $queryBuilder
+                        ->update('tt_content')
+                        ->where(
+                            $queryBuilder->expr()->in('uid',
+                                $queryBuilder->createNamedParameter(join(',',
+                                    $childElementsInUnavailableColumns)))
+                        )
+                        ->set('colPos', -1)
+                        ->set('backupColPos', -2)
+                        ->execute();
                     array_flip($childElementsInAvailableColumns);
                 }
             }
@@ -127,12 +169,12 @@ class AfterDatabaseOperations extends AbstractDataHandler
             $backendLayoutNextLevelUid = 0;
             $rootline = BackendUtility::BEgetRootLine($this->getPageUid());
             for ($i = count($rootline); $i > 0; $i--) {
-                $page = $this->databaseConnection->exec_SELECTgetSingleRow('uid, backend_layout, backend_layout_next_level',
-                    'pages', 'uid=' . (int)$rootline[$i]['uid']);
+                $page = BackendUtility::getRecord('pages', (int)$rootline[$i]['uid'],
+                    'uid,backend_layout,backend_layout_next_level');
                 $selectedBackendLayoutNextLevel = (int)$page['backend_layout_next_level'];
                 if ($page['uid'] === $this->getPageUid()) {
                     if ($fieldArray['backend_layout_next_level'] !== 0) {
-                        // Backend layout for subpages of the current page is set
+                        // Backend layout for sub pages of the current page is set
                         $backendLayoutNextLevelUid = (int)$fieldArray['backend_layout_next_level'];
                     }
                     if ($fieldArray['backend_layout'] !== 0) {
@@ -140,89 +182,165 @@ class AfterDatabaseOperations extends AbstractDataHandler
                         $backendLayoutUid = $fieldArray['backend_layout'];
                         break;
                     }
-                } else if ($selectedBackendLayoutNextLevel === -1 && $page['uid'] !== $this->getPageUid()) {
-                    // Some previous page in our rootline sets layout_next to "None"
-                    break;
-                } else if ($selectedBackendLayoutNextLevel > 0 && $page['uid'] !== $this->getPageUid()) {
-                    // Some previous page in our rootline sets some backend_layout, use it
-                    $backendLayoutUid = $selectedBackendLayoutNextLevel;
-                    break;
+                } else {
+                    if ($selectedBackendLayoutNextLevel === -1 && $page['uid'] !== $this->getPageUid()) {
+                        // Some previous page in our rootline sets layout_next to "None"
+                        break;
+                    } else {
+                        if ($selectedBackendLayoutNextLevel > 0 && $page['uid'] !== $this->getPageUid()) {
+                            // Some previous page in our rootline sets some backend_layout, use it
+                            $backendLayoutUid = $selectedBackendLayoutNextLevel;
+                            break;
+                        }
+                    }
                 }
             }
 
             if (isset($fieldArray['backend_layout'])) {
                 $availableColumns = $this->getAvailableColumns($backendLayoutUid, 'pages', $this->getPageUid());
-                $elementsInUnavailableColumns = array_keys($this->databaseConnection->exec_SELECTgetRows('uid',
-                    'tt_content', 'pid = ' . $this->getPageUid() . '
-						AND colPos NOT IN (' . $availableColumns . ')', '', '', '', 'uid'));
+                $queryBuilder = $this->getQueryBuilder();
+                $elementsInUnavailableColumnsQuery = $queryBuilder
+                    ->select('uid')
+                    ->from('tt_content')
+                    ->where(
+                        $queryBuilder->expr()->andX(
+                            $queryBuilder->expr()->eq('pid',
+                                $queryBuilder->createNamedParameter((int)$this->getPageUid(),
+                                    \PDO::PARAM_INT)),
+                            $queryBuilder->expr()->notIn('colPos',
+                                $queryBuilder->createNamedParameter($availableColumns))
+                        )
+                    )
+                    ->execute();
+                $elementsInUnavailableColumns = [];
+                while ($elementInUnavailableColumns = $elementsInUnavailableColumnsQuery->fetch()) {
+                    $elementsInUnavailableColumns[] = $elementInUnavailableColumns['uid'];
+                }
                 if (!empty($elementsInUnavailableColumns)) {
-                    $this->databaseConnection->sql_query('
-						UPDATE tt_content
-						SET backupColPos = colPos, colPos = -2
-						WHERE uid IN (' . join(',', $elementsInUnavailableColumns) . ')
-					');
+                    $queryBuilder
+                        ->update('tt_content')
+                        ->where(
+                            $queryBuilder->expr()->in('uid',
+                                $queryBuilder->createNamedParameter(join(',',
+                                    $elementsInUnavailableColumns)))
+                        )
+                        ->set('backupColPos', $queryBuilder->quoteIdentifier('colPos'))
+                        ->set('colPos', -2)
+                        ->execute();
                     array_flip($elementsInUnavailableColumns);
-                } else {
-                    $elementsInUnavailableColumns = array();
                 }
 
-                $elementsInAvailableColumns = array_keys($this->databaseConnection->exec_SELECTgetRows('uid',
-                    'tt_content', 'pid = ' . $this->getPageUid() . '
-						AND pid = ' . $this->getPageUid() . '
-						AND backupColPos != -2
-						AND backupColPos IN (' . $availableColumns . ')', '', '', '', 'uid'));
+                $queryBuilder = $this->getQueryBuilder();
+                $elementsInAvailableColumnsQuery = $queryBuilder
+                    ->select('uid')
+                    ->from('tt_content')
+                    ->where(
+                        $queryBuilder->expr()->andX(
+                            $queryBuilder->expr()->eq('pid',
+                                $queryBuilder->createNamedParameter((int)$this->getPageUid(),
+                                    \PDO::PARAM_INT)),
+                            $queryBuilder->expr()->neq('backupColPos', -2),
+                            $queryBuilder->expr()->in('backupColPos',
+                                $queryBuilder->createNamedParameter($availableColumns))
+                        )
+                    )
+                    ->execute();
+                $elementsInAvailableColumns = [];
+                while ($elementInAvailableColumns = $elementsInAvailableColumnsQuery->fetch()) {
+                    $elementsInAvailableColumns[] = $elementInAvailableColumns['uid'];
+                }
                 if (!empty($elementsInAvailableColumns)) {
-                    $this->databaseConnection->sql_query('
-						UPDATE tt_content
-						SET colPos = backupColPos, backupColPos = -2
-						WHERE uid IN (' . join(',', $elementsInAvailableColumns) . ')
-					');
+                    $queryBuilder
+                        ->update('tt_content')
+                        ->where(
+                            $queryBuilder->expr()->in('uid',
+                                $queryBuilder->createNamedParameter(join(',',
+                                    $elementsInAvailableColumns)))
+                        )
+                        ->set('colPos', $queryBuilder->quoteIdentifier('backupColPos'))
+                        ->set('backupColPos', -2)
+                        ->execute();
                     array_flip($elementsInAvailableColumns);
-                } else {
-                    $elementsInAvailableColumns = array();
                 }
-
                 $changedElements = array_merge($elementsInUnavailableColumns, $elementsInAvailableColumns);
             }
 
             if (isset($fieldArray['backend_layout_next_level'])) {
                 $backendLayoutUid = $backendLayoutNextLevelUid ? $backendLayoutNextLevelUid : $backendLayoutUid;
-                $subpages = array();
-                $this->getSubpagesRecursively($this->getPageUid(), $subpages);
-                if (!empty($subpages)) {
-                    $changedSubPageElements = array();
-                    foreach ($subpages as $page) {
+                $subPages = [];
+                $this->getSubPagesRecursively($this->getPageUid(), $subPages);
+                if (!empty($subPages)) {
+                    $changedSubPageElements = [];
+                    foreach ($subPages as $page) {
                         $availableColumns = $this->getAvailableColumns($backendLayoutUid, 'pages', $page['uid']);
-                        $subPageElementsInUnavailableColumns = array_keys($this->databaseConnection->exec_SELECTgetRows('uid',
-                            'tt_content', 'pid = ' . $page['uid'] . '
-								AND colPos NOT IN (' . $availableColumns . ')', '', '', '', 'uid'));
+                        $queryBuilder = $this->getQueryBuilder();
+                        $subPageElementsInUnavailableColumnsQuery = $queryBuilder
+                            ->select('uid')
+                            ->from('tt_content')
+                            ->where(
+                                $queryBuilder->expr()->andX(
+                                    $queryBuilder->expr()->eq('pid',
+                                        $queryBuilder->createNamedParameter((int)$page['uid'],
+                                            \PDO::PARAM_INT)),
+                                    $queryBuilder->expr()->notIn('colPos',
+                                        $queryBuilder->createNamedParameter($availableColumns,
+                                            \PDO::PARAM_STR))
+                                )
+                            )
+                            ->execute();
+                        $subPageElementsInUnavailableColumns = [];
+                        while ($subPageElementInUnavailableColumns = $subPageElementsInUnavailableColumnsQuery->fetch()) {
+                            $subPageElementsInUnavailableColumns[] = $subPageElementInUnavailableColumns['uid'];
+                        }
                         if (!empty($subPageElementsInUnavailableColumns)) {
-                            $this->databaseConnection->sql_query('
-								UPDATE tt_content
-								SET backupColPos = colPos, colPos = -2
-								WHERE uid IN (' . join(',', $subPageElementsInUnavailableColumns) . ')
-							');
+                            $queryBuilder
+                                ->update('tt_content')
+                                ->where(
+                                    $queryBuilder->expr()->in('uid',
+                                        $queryBuilder->createNamedParameter(join(',',
+                                            $subPageElementsInUnavailableColumns)))
+                                )
+                                ->set('backupColPos', $queryBuilder->quoteIdentifier('colPos'))
+                                ->set('colPos', -2)
+                                ->execute();
                             array_flip($subPageElementsInUnavailableColumns);
-                        } else {
-                            $subPageElementsInUnavailableColumns = array();
                         }
 
-                        $subPageElementsInAvailableColumns = array_keys($this->databaseConnection->exec_SELECTgetRows('uid',
-                            'tt_content', 'pid = ' . (int)$page['uid'] . '
-								AND backupColPos != -2
-								AND backupColPos IN (' . $availableColumns . ')', '', '', '', 'uid'));
+                        $queryBuilder = $this->getQueryBuilder();
+                        $subPageElementsInAvailableColumnsQuery = $queryBuilder
+                            ->select('uid')
+                            ->from('tt_content')
+                            ->where(
+                                $queryBuilder->expr()->andX(
+                                    $queryBuilder->expr()->eq('pid',
+                                        $queryBuilder->createNamedParameter((int)$page['uid'],
+                                            \PDO::PARAM_INT)),
+                                    $queryBuilder->expr()->in('colPos',
+                                        $queryBuilder->createNamedParameter($availableColumns,
+                                            \PDO::PARAM_STR))
+                                )
+                            )
+                            ->execute();
+                        $subPageElementsInAvailableColumns = [];
+                        while ($subPageElementInAvailableColumns = $subPageElementsInAvailableColumnsQuery->fetch()) {
+                            $subPageElementsInAvailableColumns[] = $subPageElementInAvailableColumns['uid'];
+                        }
                         if (!empty($subPageElementsInAvailableColumns)) {
-                            $this->databaseConnection->sql_query('
-								UPDATE tt_content
-								SET colPos = backupColPos, backupColPos = -2
-								WHERE uid IN (' . join(',', $subPageElementsInAvailableColumns) . ')
-							');
+                            $queryBuilder
+                                ->update('tt_content')
+                                ->where(
+                                    $queryBuilder->expr()->in('uid',
+                                        $queryBuilder->createNamedParameter(join(',',
+                                            $subPageElementsInAvailableColumns)))
+                                )
+                                ->set('colPos', $queryBuilder->quoteIdentifier('backupColPos'))
+                                ->set('backupColPos', -2)
+                                ->execute();
                             array_flip($subPageElementsInAvailableColumns);
-                        } else {
-                            $subPageElementsInAvailableColumns = array();
                         }
 
-                        $changedPageElements = array_merge($subPageElementsInUnavailableColumns, $subPageElementsInAvailableColumns);
+                        $changedPageElements = array_merge($subPageElementsInUnavailableColumns,
+                            $subPageElementsInAvailableColumns);
                         $changedSubPageElements = array_merge($changedSubPageElements, $changedPageElements);
                     }
                 }
@@ -238,32 +356,6 @@ class AfterDatabaseOperations extends AbstractDataHandler
     }
 
     /**
-     * gets all subpages of the current page and traverses recursively unless backend_layout_next_level is set or unset (!= 0)
-     *
-     * @param int $pageUid
-     * @param array $subpages
-     */
-    public function getSubpagesRecursively($pageUid, array &$subpages)
-    {
-        $childPages = $this->databaseConnection->exec_SELECTgetRows(
-            'uid, backend_layout, backend_layout_next_level',
-            'pages',
-            'pid = ' . (int)$pageUid
-        );
-
-        if (!empty($childPages)) {
-            foreach ($childPages as $page) {
-                if (empty($page['backend_layout'])) {
-                    $subpages[] = $page;
-                }
-                if (empty($page['backend_layout_next_level'])) {
-                    $this->getSubpagesRecursively($page['uid'], $subpages);
-                }
-            }
-        }
-    }
-
-    /**
      * fetches all available columns for a certain grid container based on TCA settings and layout records
      *
      * @param string $layout The selected backend layout of the grid container or the page
@@ -274,7 +366,7 @@ class AfterDatabaseOperations extends AbstractDataHandler
      */
     public function getAvailableColumns($layout = '', $table = '', $id = 0)
     {
-        $tcaColumns = array();
+        $tcaColumns = [];
 
         if ($layout && $table === 'tt_content') {
             $tcaColumns = $this->layoutSetup->getLayoutColumns($layout);
@@ -282,7 +374,7 @@ class AfterDatabaseOperations extends AbstractDataHandler
         } elseif ($table === 'pages') {
             $tcaColumns = GeneralUtility::callUserFunction(BackendLayoutView::class . '->getColPosListItemsParsed',
                 $id, $this);
-            $temp = array();
+            $temp = [];
             foreach ($tcaColumns AS $item) {
                 if (trim($item[1]) !== '') {
                     $temp[] = (int)$item[1];
@@ -293,5 +385,33 @@ class AfterDatabaseOperations extends AbstractDataHandler
         }
 
         return $tcaColumns;
+    }
+
+    /**
+     * gets all subpages of the current page and traverses recursively unless backend_layout_next_level is set or unset (!= 0)
+     *
+     * @param int $pageUid
+     * @param array $subPages
+     */
+    public function getSubPagesRecursively($pageUid, array &$subPages)
+    {
+        $childPages = GeneralUtility::makeInstance(ConnectionPool::class)
+            ->getConnectionForTable('pages')
+            ->select(
+                ['uid', 'backend_layout', 'backend_layout_next_level'],
+                'pages',
+                ['pid' => (int)$pageUid]
+            )->fetchAll();
+
+        if (!empty($childPages)) {
+            foreach ($childPages as $page) {
+                if (empty($page['backend_layout'])) {
+                    $subPages[] = $page;
+                }
+                if (empty($page['backend_layout_next_level'])) {
+                    $this->getSubPagesRecursively($page['uid'], $subPages);
+                }
+            }
+        }
     }
 }

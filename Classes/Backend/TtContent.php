@@ -1,4 +1,5 @@
 <?php
+
 namespace GridElementsTeam\Gridelements\Backend;
 
 /***************************************************************
@@ -20,7 +21,9 @@ namespace GridElementsTeam\Gridelements\Backend;
  ***************************************************************/
 
 use GridElementsTeam\Gridelements\Helper\Helper;
-use TYPO3\CMS\Core\Database\DatabaseConnection;
+use TYPO3\CMS\Core\Database\ConnectionPool;
+use TYPO3\CMS\Core\Database\Query\QueryBuilder;
+use TYPO3\CMS\Core\Database\Query\Restriction\DeletedRestriction;
 use TYPO3\CMS\Core\Utility\ArrayUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -33,41 +36,11 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class TtContent
 {
-    /**
-     * @var DatabaseConnection
-     */
-    protected $databaseConnection;
 
     /**
      * @var LayoutSetup
      */
     protected $layoutSetup;
-
-    /**
-     * inject layout setup
-     *
-     * @param LayoutSetup $layoutSetup
-     */
-    public function injectLayoutSetup(LayoutSetup $layoutSetup)
-    {
-        $this->layoutSetup = $layoutSetup;
-    }
-
-    /**
-     * initializes this class
-     *
-     * @param int $pageUid
-     */
-    public function init($pageUid)
-    {
-        $this->setDatabaseConnection($GLOBALS['TYPO3_DB']);
-        if (!$this->layoutSetup instanceof LayoutSetup) {
-            if ($pageUid < 0) {
-                $pageUid = Helper::getInstance()->getPidFromNegativeUid($pageUid);
-            }
-            $this->injectLayoutSetup(GeneralUtility::makeInstance(LayoutSetup::class)->init($pageUid));
-        }
-    }
 
     /**
      * ItemProcFunc for columns items
@@ -99,6 +72,31 @@ class TtContent
     }
 
     /**
+     * initializes this class
+     *
+     * @param int $pageId
+     */
+    public function init($pageId)
+    {
+        if (!$this->layoutSetup instanceof LayoutSetup) {
+            if ($pageId < 0) {
+                $pageId = Helper::getInstance()->getPidFromNegativeUid($pageId);
+            }
+            $this->injectLayoutSetup(GeneralUtility::makeInstance(LayoutSetup::class)->init($pageId));
+        }
+    }
+
+    /**
+     * inject layout setup
+     *
+     * @param LayoutSetup $layoutSetup
+     */
+    public function injectLayoutSetup(LayoutSetup $layoutSetup)
+    {
+        $this->layoutSetup = $layoutSetup;
+    }
+
+    /**
      * ItemProcFunc for container items
      * removes items of the children chain from the list of selectable containers
      * if the element itself already is a container
@@ -108,8 +106,8 @@ class TtContent
     public function containerItemsProcFunc(array &$params)
     {
         $this->init($params['row']['pid']);
-        $possibleContainers = array();
-        $this->removesItemsFromListOfSelectableContainers($params, $possibleContainers);
+        $possibleContainers = [];
+        $this->removeItemsFromListOfSelectableContainers($params, $possibleContainers);
 
         if (!empty($possibleContainers)) {
             $params['items'] = array_merge($params['items'], $possibleContainers);
@@ -125,7 +123,7 @@ class TtContent
         }
 
         if ($itemUidList) {
-            $this->deleteUnallowedContainer($params, $itemUidList);
+            $this->deleteDisallowedContainers($params, $itemUidList);
         }
     }
 
@@ -135,12 +133,12 @@ class TtContent
      * @param array $params
      * @param array $possibleContainers
      */
-    public function removesItemsFromListOfSelectableContainers(array &$params, array &$possibleContainers)
+    public function removeItemsFromListOfSelectableContainers(array &$params, array &$possibleContainers)
     {
-        $ContentType = is_array($params['row']['CType']) ? $params['row']['CType'][0] : $params['row']['CType'];
-        if ($ContentType === 'gridelements_pi1' && count($params['items']) > 1) {
+        $contentType = is_array($params['row']['CType']) ? $params['row']['CType'][0] : $params['row']['CType'];
+        if ($contentType === 'gridelements_pi1' && count($params['items']) > 1) {
             $items = $params['items'];
-            $params['items'] = array(0 => array_shift($items));
+            $params['items'] = [0 => array_shift($items)];
 
             foreach ($items as $item) {
                 $possibleContainers[$item['1']] = $item;
@@ -153,28 +151,91 @@ class TtContent
     }
 
     /**
+     * Recursive function to remove any container from the list of possible containers
+     * that is already a subcontainer on any level of the current container
+     *
+     * @param string $containerIds : A list determining containers that should be checked
+     * @param array $possibleContainers : The result list containing the remaining containers after the check
+     */
+    public function lookForChildContainersRecursively($containerIds, array &$possibleContainers)
+    {
+        if (!$containerIds) {
+            return;
+        }
+        $containerIds = implode(',', GeneralUtility::intExplode(',', $containerIds));
+        $queryBuilder = $this->getQueryBuilder();
+        $childrenOnNextLevel = $queryBuilder
+            ->select('uid', 'tx_gridelements_container')
+            ->from('tt_content')
+            ->where(
+                $queryBuilder->expr()->andX(
+                    $queryBuilder->expr()->eq('CType', $queryBuilder->createNamedParameter('gridelements_pi1')),
+                    $queryBuilder->expr()->in('tx_gridelements_container', $containerIds)
+                )
+            )
+            ->execute()
+            ->fetchAll();
+
+        if (!empty($childrenOnNextLevel) && !empty($possibleContainers)) {
+            $containerIds = '';
+
+            foreach ($childrenOnNextLevel as $childOnNextLevel) {
+                if (isset($possibleContainers[$childOnNextLevel['uid']])) {
+                    unset($possibleContainers[$childOnNextLevel['uid']]);
+                }
+
+                $containerIds .= $containerIds ? ',' . (int)$childOnNextLevel['uid'] : (int)$childOnNextLevel['uid'];
+
+                if ($containerIds !== '') {
+                    $this->lookForChildContainersRecursively($containerIds, $possibleContainers);
+                }
+            }
+        }
+    }
+
+    /**
+     * getter for queryBuilder
+     *
+     * @return QueryBuilder queryBuilder
+     */
+    public function getQueryBuilder()
+    {
+        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
+            ->getQueryBuilderForTable('tt_content');
+        $queryBuilder->getRestrictions()
+            ->removeAll()
+            ->add(GeneralUtility::makeInstance(DeletedRestriction::class));
+        return $queryBuilder;
+    }
+
+    /**
      * delete containers from params which are not allowed
      *
      * @param array $params
      * @param string $itemUidList comma separated list of uids
      */
-    public function deleteUnallowedContainer(array &$params, $itemUidList = '')
+    public function deleteDisallowedContainers(array &$params, $itemUidList = '')
     {
-        $ContentType = is_array($params['row']['CType']) ? $params['row']['CType'][0] : $params['row']['CType'];
+        $contentType = is_array($params['row']['CType']) ? $params['row']['CType'][0] : $params['row']['CType'];
         $layoutSetups = $this->layoutSetup->getLayoutSetup();
         if ($itemUidList) {
             $itemUidList = implode(',', GeneralUtility::intExplode(',', $itemUidList));
-            $containerRecords = $this->databaseConnection->exec_SELECTgetRows(
-                'uid,tx_gridelements_backend_layout',
-                'tt_content',
-                'uid IN (' . $itemUidList . ')',
-                '', '', '', 'uid'
-            );
-
+            $queryBuilder = $this->getQueryBuilder();
+            $containerQuery = $queryBuilder
+                ->select('uid', 'tx_gridelements_backend_layout')
+                ->from('tt_content')
+                ->where(
+                    $queryBuilder->expr()->in('uid', $itemUidList)
+                )
+                ->execute();
+            $containers = [];
+            while ($container = $containerQuery->fetch()) {
+                $containers[$container['uid']] = $container;
+            }
             foreach ($params['items'] as $key => $container) {
-                $allowed = $layoutSetups[$containerRecords[$container[1]]['tx_gridelements_backend_layout']]['allowed'];
+                $allowed = $layoutSetups[$containers[$container[1]]['tx_gridelements_backend_layout']]['allowed'];
                 if ($container[1] > 0 && $allowed) {
-                    if (!GeneralUtility::inList($allowed, $ContentType) && !GeneralUtility::inList($allowed, '*')) {
+                    if (!GeneralUtility::inList($allowed, $contentType) && !GeneralUtility::inList($allowed, '*')) {
                         unset($params['items'][$key]);
                     }
                 }
@@ -197,59 +258,5 @@ class TtContent
         $params['items'] = ArrayUtility::keepItemsInArray($layoutSelectItems, $params['items'], true);
     }
 
-    /**
-     * Recursive function to remove any container from the list of possible containers
-     * that is already a subcontainer on any level of the current container
-     *
-     * @param string $containerIds : A list determining containers that should be checked
-     * @param array $possibleContainers : The result list containing the remaining containers after the check
-     */
-    public function lookForChildContainersRecursively($containerIds, array &$possibleContainers)
-    {
-        if (!$containerIds) {
-            return;
-        }
-        $containerIds = implode(',', GeneralUtility::intExplode(',', $containerIds));
-        $childrenOnNextLevel = $this->databaseConnection->exec_SELECTgetRows(
-            'uid, tx_gridelements_container',
-            'tt_content',
-            'CType="gridelements_pi1" AND tx_gridelements_container IN (' . $containerIds . ')'
-        );
 
-        if (!empty($childrenOnNextLevel) && !empty($possibleContainers)) {
-            $containerIds = '';
-
-            foreach ($childrenOnNextLevel as $childOnNextLevel) {
-                if (isset($possibleContainers[$childOnNextLevel['uid']])) {
-                    unset($possibleContainers[$childOnNextLevel['uid']]);
-                }
-
-                $containerIds .= $containerIds ? ',' . (int)$childOnNextLevel['uid'] : (int)$childOnNextLevel['uid'];
-
-                if ($containerIds !== '') {
-                    $this->lookForChildContainersRecursively($containerIds, $possibleContainers);
-                }
-            }
-        }
-    }
-
-    /**
-     * setter for databaseConnection object
-     *
-     * @param DatabaseConnection $databaseConnection
-     */
-    public function setDatabaseConnection(DatabaseConnection $databaseConnection)
-    {
-        $this->databaseConnection = $databaseConnection;
-    }
-
-    /**
-     * getter for databaseConnection
-     *
-     * @return DatabaseConnection databaseConnection
-     */
-    public function getDatabaseConnection()
-    {
-        return $this->databaseConnection;
-    }
 }

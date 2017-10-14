@@ -1,4 +1,5 @@
 <?php
+
 namespace GridElementsTeam\Gridelements\Backend\ItemsProcFuncs;
 
 /***************************************************************
@@ -22,7 +23,9 @@ namespace GridElementsTeam\Gridelements\Backend\ItemsProcFuncs;
 
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Backend\View\BackendLayoutView;
-use TYPO3\CMS\Core\Database\DatabaseConnection;
+use TYPO3\CMS\Core\Database\ConnectionPool;
+use TYPO3\CMS\Core\Database\Query\QueryBuilder;
+use TYPO3\CMS\Core\Database\Query\Restriction\DeletedRestriction;
 use TYPO3\CMS\Core\Database\QueryGenerator;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -38,11 +41,6 @@ use TYPO3\CMS\Lang\LanguageService;
 abstract class AbstractItemsProcFunc implements SingletonInterface
 {
     /**
-     * @var DatabaseConnection
-     */
-    protected $databaseConnection;
-
-    /**
      * @var LanguageService
      */
     protected $languageService;
@@ -54,25 +52,23 @@ abstract class AbstractItemsProcFunc implements SingletonInterface
 
     /**
      * initializes this class
-     *
-     * @param int $pageUid
      */
-    public function init($pageUid = 0)
+    public function init()
     {
-        $this->setDatabaseConnection($GLOBALS['TYPO3_DB']);
         $this->setLanguageService($GLOBALS['LANG']);
     }
 
     /**
      * Gets the selected backend layout
      *
-     * @param int $id The uid of the page we are currently working on
+     * @param int $pageId The uid of the page we are currently working on
      *
      * @return array|null An array containing the data of the selected backend layout as well as a parsed version of the layout configuration
      */
-    public function getSelectedBackendLayout($id)
+    public function getSelectedBackendLayout($pageId)
     {
-        $backendLayoutData = GeneralUtility::callUserFunction(BackendLayoutView::class . '->getSelectedBackendLayout', $id, $this);
+        $backendLayoutData = GeneralUtility::callUserFunction(BackendLayoutView::class . '->getSelectedBackendLayout',
+            $pageId, $this);
         // add allowed CTypes to the columns, since this is not done by the native core methods
         if (!empty($backendLayoutData['__items'])) {
             if (!empty($backendLayoutData['__config']['backend_layout.']['rows.'])) {
@@ -98,39 +94,32 @@ abstract class AbstractItemsProcFunc implements SingletonInterface
     /**
      * This method is a wrapper for unitTests because of the static method
      *
-     * @param int $pageUid
+     * @param int $pageId
      *
      * @return array
      */
-    public function getRootline($pageUid)
+    public function getRootline($pageId)
     {
-        return BackendUtility::BEgetRootLine($pageUid);
+        return BackendUtility::BEgetRootLine($pageId);
     }
 
     /**
-     * setter for databaseConnection object
+     * getter for queryBuilder
      *
-     * @param DatabaseConnection $databaseConnection
-     *
-     * @return void
+     * @return QueryBuilder queryBuilder
      */
-    public function setDatabaseConnection(DatabaseConnection $databaseConnection)
+    public function getQueryBuilder()
     {
-        $this->databaseConnection = $databaseConnection;
+        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
+            ->getQueryBuilderForTable('tt_content');
+        $queryBuilder->getRestrictions()
+            ->removeAll()
+            ->add(GeneralUtility::makeInstance(DeletedRestriction::class));
+        return $queryBuilder;
     }
 
     /**
-     * getter for databaseConnection
-     *
-     * @return DatabaseConnection databaseConnection
-     */
-    public function getDatabaseConnection()
-    {
-        return $this->databaseConnection;
-    }
-
-    /**
-     * getter for databaseConnection
+     * getter for languageService
      *
      * @return LanguageService $languageService
      */
@@ -140,7 +129,7 @@ abstract class AbstractItemsProcFunc implements SingletonInterface
     }
 
     /**
-     * setter for databaseConnection object
+     * setter for languageService object
      *
      * @param LanguageService $languageService
      *

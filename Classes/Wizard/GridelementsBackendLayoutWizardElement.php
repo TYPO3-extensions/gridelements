@@ -1,4 +1,5 @@
 <?php
+
 namespace GridElementsTeam\Gridelements\Wizard;
 
 /***************************************************************
@@ -21,7 +22,6 @@ namespace GridElementsTeam\Gridelements\Wizard;
 
 use TYPO3\CMS\Backend\View\Wizard\Element\BackendLayoutWizardElement;
 use TYPO3\CMS\Core\TypoScript\Parser\TypoScriptParser;
-use TYPO3\CMS\Core\Utility\DebugUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -64,73 +64,73 @@ class GridelementsBackendLayoutWizardElement extends BackendLayoutWizardElement
         $json = json_encode($this->rows, JSON_HEX_QUOT | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS);
         $html = [];
         $html[] = '<div class="formengine-field-item t3js-formengine-field-item">';
-        $html[] =   $fieldInformationHtml;
-        $html[] =   '<div class="form-control-wrap">';
-        $html[] =       '<div class="form-wizards-wrap">';
-        $html[] =           '<div class="form-wizards-element">';
-        $html[] =               '<input';
-        $html[] =                   ' type="hidden"';
-        $html[] =                   ' name="' . htmlspecialchars($this->data['parameterArray']['itemFormElName']) . '"';
-        $html[] =                   ' value="' . htmlspecialchars($this->data['parameterArray']['itemFormElValue']) . '"';
-        $html[] =                   '/>';
-        $html[] =               '<table class="grideditor table table-bordered">';
-        $html[] =                   '<tr>';
-        $html[] =                       '<td class="editor_cell">';
-        $html[] =                           '<div';
-        $html[] =                               ' id="editor"';
-        $html[] =                               ' class="t3js-grideditor"';
-        $html[] =                               ' data-data="' . htmlspecialchars($json) . '"';
-        $html[] =                               ' data-rowcount="' . (int)$this->rowCount . '"';
-        $html[] =                               ' data-colcount="' . (int)$this->colCount . '"';
-        $html[] =                               ' data-field="' . htmlspecialchars($this->data['parameterArray']['itemFormElName']) . '"';
-        $html[] =                           '>';
-        $html[] =                           '</div>';
-        $html[] =                       '</td>';
-        $html[] =                       '<td>';
-        $html[] =                           '<div class="btn-group-vertical">';
-        $html[] =                               '<a class="btn btn-default btn-sm t3js-grideditor-addcolumn" href="#"';
-        $html[] =                                   ' title="' . htmlspecialchars($lang->getLL('grid_addColumn')) . '">';
-        $html[] =                                   '<i class="fa fa-fw fa-arrow-right"></i>';
-        $html[] =                               '</a>';
-        $html[] =                               '<a class="btn btn-default btn-sm t3js-grideditor-removecolumn" href="#"';
-        $html[] =                                   ' title="' . htmlspecialchars($lang->getLL('grid_removeColumn')) . '">';
-        $html[] =                                   '<i class="fa fa-fw fa-arrow-left"></i>';
-        $html[] =                               '</a>';
-        $html[] =                           '</div>';
-        $html[] =                       '</td>';
-        $html[] =                   '</tr>';
-        $html[] =                   '<tr>';
-        $html[] =                       '<td colspan="2" align="center">';
-        $html[] =                           '<div class="btn-group">';
-        $html[] =                               '<a class="btn btn-default btn-sm t3js-grideditor-addrow" href="#"';
-        $html[] =                                   ' title="' . htmlspecialchars($lang->getLL('grid_addRow')) . '">';
-        $html[] =                                   '<i class="fa fa-fw fa-arrow-down"></i>';
-        $html[] =                               '</a>';
-        $html[] =                               '<a class="btn btn-default btn-sm t3js-grideditor-removerow" href="#"';
-        $html[] =                                   ' title="' . htmlspecialchars($lang->getLL('grid_removeRow')) . '">';
-        $html[] =                                   '<i class="fa fa-fw fa-arrow-up"></i>';
-        $html[] =                               '</a>';
-        $html[] =                           '</div>';
-        $html[] =                       '</td>';
-        $html[] =                   '</tr>';
-        $html[] =                   '<tr>';
-        $html[] =                       '<td colspan="2">';
-        $html[] =                           '<a href="#" class="btn btn-default btn-sm t3js-grideditor-preview-button"></a>';
-        $html[] =                           '<pre class="t3js-grideditor-preview-config grideditor-preview"><code></code></pre>';
-        $html[] =                       '</td>';
-        $html[] =                   '</tr>';
-        $html[] =               '</table>';
-        $html[] =           '</div>';
-        $html[] =           '<div class="form-wizards-items-bottom">';
-        $html[] =               $fieldWizardHtml;
-        $html[] =           '</div>';
-        $html[] =       '</div>';
-        $html[] =   '</div>';
+        $html[] = $fieldInformationHtml;
+        $html[] = '<div class="form-control-wrap">';
+        $html[] = '<div class="form-wizards-wrap">';
+        $html[] = '<div class="form-wizards-element">';
+        $html[] = '<input';
+        $html[] = ' type="hidden"';
+        $html[] = ' name="' . htmlspecialchars($this->data['parameterArray']['itemFormElName']) . '"';
+        $html[] = ' value="' . htmlspecialchars($this->data['parameterArray']['itemFormElValue']) . '"';
+        $html[] = '/>';
+        $html[] = '<table class="grideditor table table-bordered">';
+        $html[] = '<tr>';
+        $html[] = '<td class="editor_cell">';
+        $html[] = '<div';
+        $html[] = ' id="editor"';
+        $html[] = ' class="t3js-grideditor"';
+        $html[] = ' data-data="' . htmlspecialchars($json) . '"';
+        $html[] = ' data-rowcount="' . (int)$this->rowCount . '"';
+        $html[] = ' data-colcount="' . (int)$this->colCount . '"';
+        $html[] = ' data-field="' . htmlspecialchars($this->data['parameterArray']['itemFormElName']) . '"';
+        $html[] = '>';
+        $html[] = '</div>';
+        $html[] = '</td>';
+        $html[] = '<td>';
+        $html[] = '<div class="btn-group-vertical">';
+        $html[] = '<a class="btn btn-default btn-sm t3js-grideditor-addcolumn" href="#"';
+        $html[] = ' title="' . htmlspecialchars($lang->getLL('grid_addColumn')) . '">';
+        $html[] = '<i class="fa fa-fw fa-arrow-right"></i>';
+        $html[] = '</a>';
+        $html[] = '<a class="btn btn-default btn-sm t3js-grideditor-removecolumn" href="#"';
+        $html[] = ' title="' . htmlspecialchars($lang->getLL('grid_removeColumn')) . '">';
+        $html[] = '<i class="fa fa-fw fa-arrow-left"></i>';
+        $html[] = '</a>';
+        $html[] = '</div>';
+        $html[] = '</td>';
+        $html[] = '</tr>';
+        $html[] = '<tr>';
+        $html[] = '<td colspan="2" align="center">';
+        $html[] = '<div class="btn-group">';
+        $html[] = '<a class="btn btn-default btn-sm t3js-grideditor-addrow" href="#"';
+        $html[] = ' title="' . htmlspecialchars($lang->getLL('grid_addRow')) . '">';
+        $html[] = '<i class="fa fa-fw fa-arrow-down"></i>';
+        $html[] = '</a>';
+        $html[] = '<a class="btn btn-default btn-sm t3js-grideditor-removerow" href="#"';
+        $html[] = ' title="' . htmlspecialchars($lang->getLL('grid_removeRow')) . '">';
+        $html[] = '<i class="fa fa-fw fa-arrow-up"></i>';
+        $html[] = '</a>';
+        $html[] = '</div>';
+        $html[] = '</td>';
+        $html[] = '</tr>';
+        $html[] = '<tr>';
+        $html[] = '<td colspan="2">';
+        $html[] = '<a href="#" class="btn btn-default btn-sm t3js-grideditor-preview-button"></a>';
+        $html[] = '<pre class="t3js-grideditor-preview-config grideditor-preview"><code></code></pre>';
+        $html[] = '</td>';
+        $html[] = '</tr>';
+        $html[] = '</table>';
+        $html[] = '</div>';
+        $html[] = '<div class="form-wizards-items-bottom">';
+        $html[] = $fieldWizardHtml;
+        $html[] = '</div>';
+        $html[] = '</div>';
+        $html[] = '</div>';
         $html[] = '</div>';
 
-        $ctypes = array();
+        $ctypes = [];
         foreach ($GLOBALS['TCA']['tt_content']['columns']['CType']['config']['items'] as $item) {
-            $ctype = array();
+            $ctype = [];
             $ctype['key'] = $item[1];
             if (substr($ctype['key'], 0, 2) !== '--') {
                 $ctype['label'] = $lang->sL($item[0], true);
@@ -143,12 +143,12 @@ class GridelementsBackendLayoutWizardElement extends BackendLayoutWizardElement
                 }
                 // Check if file ending exists, therefore compare pos of last slash to pos of last dot
                 if (!empty($ctype['icon']) && strrpos($ctype['icon'], '/') > strrpos($ctype['icon'], '.')) {
-                  $ctype['icon'] .= '.svg';
+                    $ctype['icon'] .= '.svg';
                 }
                 $ctypes[] = $ctype;
             }
         }
-        $html[] = '<script type="text/javascript">/*<![CDATA[*/ TYPO3.settings.availableCTypes = '. json_encode($ctypes) .'; /*]]>*/</script>';
+        $html[] = '<script type="text/javascript">/*<![CDATA[*/ TYPO3.settings.availableCTypes = ' . json_encode($ctypes) . '; /*]]>*/</script>';
 
         $html = implode(LF, $html);
         $resultArray['html'] = $html;

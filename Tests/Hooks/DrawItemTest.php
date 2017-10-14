@@ -3,7 +3,6 @@
 use GridElementsTeam\Gridelements\Hooks\DrawItem;
 use TYPO3\CMS\Backend\Controller\PageLayoutController;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
-use TYPO3\CMS\Core\Database\DatabaseConnection;
 use TYPO3\CMS\Core\Imaging\IconFactory;
 use TYPO3\CMS\Core\Tests\UnitTestCase;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -13,27 +12,12 @@ class DrawItemTest extends UnitTestCase
 {
 
     /**
-     * test get database connection
-     *
-     * @test
-     */
-    public function testGetDatabaseConnection()
-    {
-        $GLOBALS['TYPO3_DB'] = GeneralUtility::makeInstance(DatabaseConnection::class);
-        $GLOBALS['LANG'] = GeneralUtility::makeInstance(LanguageService::class);
-        $drawItem = GeneralUtility::makeInstance(DrawItem::class);
-        $result = $drawItem->getDatabaseConnection();
-        $this->assertEquals($GLOBALS['TYPO3_DB'], $result);
-    }
-
-    /**
      * test get language service
      *
      * @test
      */
     public function testGetLanguageService()
     {
-        $GLOBALS['TYPO3_DB'] = GeneralUtility::makeInstance(DatabaseConnection::class);
         $GLOBALS['LANG'] = GeneralUtility::makeInstance(LanguageService::class);
         $drawItem = GeneralUtility::makeInstance(DrawItem::class);
         $result = $drawItem->getLanguageService();

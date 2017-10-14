@@ -1,4 +1,5 @@
 <?php
+
 namespace GridElementsTeam\Gridelements\Backend;
 
 /***************************************************************
@@ -20,7 +21,11 @@ namespace GridElementsTeam\Gridelements\Backend;
  ***************************************************************/
 
 use TYPO3\CMS\Backend\Utility\BackendUtility;
-use TYPO3\CMS\Core\Database\DatabaseConnection;
+use TYPO3\CMS\Core\Database\ConnectionPool;
+use TYPO3\CMS\Core\Database\Query\QueryBuilder;
+use TYPO3\CMS\Core\Database\Query\Restriction\DefaultRestrictionContainer;
+use TYPO3\CMS\Core\Database\Query\Restriction\DeletedRestriction;
+use TYPO3\CMS\Core\Database\Query\Restriction\HiddenRestriction;
 use TYPO3\CMS\Core\TypoScript\Parser\TypoScriptParser;
 use TYPO3\CMS\Core\Utility\ArrayUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -36,15 +41,16 @@ use TYPO3\CMS\Lang\LanguageService;
  */
 class LayoutSetup
 {
+
     /**
-     * @var DatabaseConnection
+     * @var DefaultRestrictionContainer
      */
-    protected $databaseConnection;
+    protected $restrictions;
 
     /**
      * @var array
      */
-    protected $layoutSetup = array();
+    protected $layoutSetup = [];
 
     /**
      * @var LanguageService
@@ -69,9 +75,8 @@ class LayoutSetup
      *
      * @return LayoutSetup
      */
-    public function init($pageId, array $typoScriptSetup = array())
+    public function init($pageId, array $typoScriptSetup = [])
     {
-        $this->setDatabaseConnection($GLOBALS['TYPO3_DB']);
         $this->setLanguageService($GLOBALS['LANG']);
         $pageId = (strpos($pageId, 'NEW') === 0) ? 0 : (int)$pageId;
         $this->loadLayoutSetup($pageId);
@@ -88,113 +93,157 @@ class LayoutSetup
     }
 
     /**
-     * setter for layout setup
+     * Returns the page TSconfig merged with the grid layout records
      *
-     * @param array $layoutSetup
+     * @param int $pageId The uid of the page we are currently working on
      */
-    public function setLayoutSetup(array $layoutSetup)
+    protected function loadLayoutSetup($pageId)
     {
-        $this->layoutSetup = $layoutSetup;
-    }
+        // Load page TSconfig.
+        $pageTSconfig = BackendUtility::getPagesTSconfig($pageId);
 
-    /**
-     * setter for typoscript setup
-     *
-     * @param array $typoScriptSetup
-     */
-    public function setTypoScriptSetup(array $typoScriptSetup)
-    {
-        $this->typoScriptSetup = $typoScriptSetup;
-    }
+        $excludeLayoutIds = !empty($pageTSconfig['tx_gridelements.']['excludeLayoutIds'])
+            ? array_flip(GeneralUtility::trimExplode(',', $pageTSconfig['tx_gridelements.']['excludeLayoutIds']))
+            : [];
 
-    /**
-     * Returns the grid layout setup
-     *
-     * @param string $layoutId If set only requested layout setup, else all layout setups will be returned.
-     *
-     * @return array
-     */
-    public function getLayoutSetup($layoutId = '')
-    {
-        // Continue only if setup for given layout ID found.
-        if (isset($this->layoutSetup[$layoutId])) {
-            return $this->layoutSetup[$layoutId];
-        }
+        $overruleRecords = isset($pageTSconfig['tx_gridelements.']['overruleRecords'])
+            && (int)$pageTSconfig['tx_gridelements.']['overruleRecords'] === 1;
 
-        return $this->layoutSetup;
-    }
+        $gridLayoutConfig = [];
+        if (!empty($pageTSconfig['tx_gridelements.']['setup.'])) {
+            foreach ($pageTSconfig['tx_gridelements.']['setup.'] as $layoutId => $item) {
+                // remove tailing dot of layout ID
+                $layoutId = rtrim($layoutId, '.');
 
-    /**
-     * fetches the setup for each of the columns
-     * assigns a default setup if there is none available
-     *
-     * @param string $layoutId The selected backend layout of the grid container
-     *
-     * @return array The adjusted TypoScript setup for the container or a default setup
-     */
-    public function getTypoScriptSetup($layoutId)
-    {
-        $typoScriptSetup = array();
+                // Continue if layout is excluded.
+                if (isset($excludeLayoutIds[$layoutId])) {
+                    continue;
+                }
 
-        if ($layoutId == '0' && isset($this->typoScriptSetup['setup.']['default.'])) {
-            $typoScriptSetup = $this->typoScriptSetup['setup.']['default.'];
-        } elseif ($layoutId && isset($this->typoScriptSetup['setup.'][$layoutId . '.'])) {
-            $typoScriptSetup = $this->typoScriptSetup['setup.'][$layoutId . '.'];
-        } elseif ($layoutId) {
-            $typoScriptSetup = $this->typoScriptSetup['setup.']['default.'];
-        }
+                // Parse icon path for records.
+                if ($item['icon']) {
+                    $icons = explode(',', $item['icon']);
+                    foreach ($icons as &$icon) {
+                        $icon = trim($icon);
+                        if (strpos($icon, 'EXT:') === 0) {
+                            $icon = str_replace(PATH_site, '../', GeneralUtility::getFileAbsFileName($icon));
+                        }
+                    }
+                    $item['icon'] = $icons;
+                }
 
-        // if there is none, we will use a reference to the tt_content setup as a default renderObj
-        // without additional stdWrap functionality
-        if (empty($typoScriptSetup)) {
-            $typoScriptSetup['columns.']['default.']['renderObj'] = '<tt_content';
-        }
+                // remove tailing dot of config
+                if (isset($item['config.'])) {
+                    $item['config'] = $item['config.'];
+                    unset($item['config.']);
+                }
 
-        return $typoScriptSetup;
-    }
+                // Change topLevelLayout to top_level_layout.
+                $item['top_level_layout'] = $item['topLevelLayout'];
+                unset($item['topLevelLayout']);
 
-    /**
-     * Sets the flexformConfigurationPathAndFileName
-     *
-     * @param string $flexformConfigurationPathAndFileName
-     *
-     * @return void
-     */
-    public function setFlexformConfigurationPathAndFileName($flexformConfigurationPathAndFileName)
-    {
-        $this->flexformConfigurationPathAndFileName = $flexformConfigurationPathAndFileName;
-    }
+                // Change flexformDS to pi_flexform_ds.
+                $item['pi_flexform_ds'] = $item['flexformDS'];
+                unset($item['flexformDS']);
 
-    /**
-     * Returns the flexformConfigurationPathAndFileName
-     *
-     * @return string $flexformConfigurationPathAndFileName
-     */
-    public function getFlexformConfigurationPathAndFileName()
-    {
-        return $this->flexformConfigurationPathAndFileName;
-    }
-
-    /**
-     * Caches Container-Records and their setup to avoid multiple selects of the same record during a single request
-     *
-     * @param int $gridContainerId The ID of the current grid container
-     * @param bool $doReturn
-     *
-     * @return null|array
-     */
-    public function cacheCurrentParent($gridContainerId = 0, $doReturn = false)
-    {
-        if ($gridContainerId > 0) {
-            if (empty($GLOBALS['tx_gridelements']['parentElement'][$gridContainerId])) {
-                $GLOBALS['tx_gridelements']['parentElement'][$gridContainerId] = BackendUtility::getRecordWSOL('tt_content', $gridContainerId);
+                $gridLayoutConfig[$layoutId] = $item;
             }
         }
-        if ($doReturn) {
-            return $GLOBALS['tx_gridelements']['parentElement'][$gridContainerId];
-        };
 
-        return null;
+        $storagePid = isset($pageTSconfig['TCEFORM.']['pages.']['_STORAGE_PID'])
+            ? (int)$pageTSconfig['TCEFORM.']['pages.']['_STORAGE_PID']
+            : 0;
+        $pageTSconfigId = isset($pageTSconfig['TCEFORM.']['tt_content.']['tx_gridelements_backend_layout.']['PAGE_TSCONFIG_ID'])
+            ? implode(',', GeneralUtility::intExplode(',',
+                $pageTSconfig['TCEFORM.']['tt_content.']['tx_gridelements_backend_layout.']['PAGE_TSCONFIG_ID']))
+            : 0;
+
+        // Load records.
+        $queryBuilder = $this->getQueryBuilder();
+        $layoutQuery = $queryBuilder
+            ->select('*')
+            ->from('tx_gridelements_backend_layout')
+            ->where(
+                $queryBuilder->expr()->orX(
+                    $queryBuilder->expr()->andX(
+                        $queryBuilder->expr()->comparison($pageTSconfigId, '=', 0),
+                        $queryBuilder->expr()->comparison($storagePid, '=', 0)
+                    ),
+                    $queryBuilder->expr()->orX(
+                        $queryBuilder->expr()->eq('pid',
+                            $queryBuilder->createNamedParameter((int)$pageTSconfigId, \PDO::PARAM_INT)),
+                        $queryBuilder->expr()->eq('pid',
+                            $queryBuilder->createNamedParameter((int)$storagePid, \PDO::PARAM_INT))
+                    ),
+                    $queryBuilder->expr()->andX(
+                        $queryBuilder->expr()->comparison($pageTSconfigId, '=', 0),
+                        $queryBuilder->expr()->eq('pid',
+                            $queryBuilder->createNamedParameter((int)$pageId, \PDO::PARAM_INT))
+                    )
+                )
+            )
+            ->orderBy('sorting', 'ASC');
+
+        $layoutItems = $layoutQuery->execute()->fetchAll();
+
+        $gridLayoutRecords = [];
+
+        foreach ($layoutItems as $item) {
+            if (isset($item['alias']) && (string)$item['alias'] !== '') {
+                $layoutId = $item['alias'];
+            } else {
+                $layoutId = $item['uid'];
+            }
+            // Continue if layout is excluded.
+            if (isset($excludeLayoutIds[$layoutId])) {
+                continue;
+            }
+
+            // Prepend icon path for records.
+            if ($item['icon']) {
+                $icons = explode(',', $item['icon']);
+                foreach ($icons as &$icon) {
+                    $icon = '../' . $GLOBALS['TCA']['tx_gridelements_backend_layout']['ctrl']['selicon_field_path'] . '/' . htmlspecialchars(trim($icon));
+                }
+                $item['icon'] = $icons;
+            }
+
+            // parse config
+            if ($item['config']) {
+                $parser = GeneralUtility::makeInstance(TypoScriptParser::class);
+                $parser->parse($parser->checkIncludeLines($item['config']));
+                if (isset($parser->setup['backend_layout.'])) {
+                    $item['config'] = $parser->setup['backend_layout.'];
+                }
+            }
+
+            $gridLayoutRecords[$layoutId] = $item;
+
+        }
+
+        if ($overruleRecords === true) {
+            ArrayUtility::mergeRecursiveWithOverrule($gridLayoutRecords, $gridLayoutConfig, true, false);
+            $this->setLayoutSetup($gridLayoutRecords);
+        } else {
+            ArrayUtility::mergeRecursiveWithOverrule($gridLayoutConfig, $gridLayoutRecords, true, false);
+            $this->setLayoutSetup($gridLayoutConfig);
+        }
+    }
+
+    /**
+     * getter for queryBuilder
+     *
+     * @return QueryBuilder queryBuilder
+     */
+    public function getQueryBuilder()
+    {
+        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
+            ->getQueryBuilderForTable('tx_gridelements_backend_layout');
+        $queryBuilder->getRestrictions()
+            ->removeAll()
+            ->add(GeneralUtility::makeInstance(DeletedRestriction::class))
+            ->add(GeneralUtility::makeInstance(HiddenRestriction::class));
+        return $queryBuilder;
     }
 
     /**
@@ -244,6 +293,90 @@ class LayoutSetup
     }
 
     /**
+     * fetches the setup for each of the columns
+     * assigns a default setup if there is none available
+     *
+     * @param string $layoutId The selected backend layout of the grid container
+     *
+     * @return array The adjusted TypoScript setup for the container or a default setup
+     */
+    public function getTypoScriptSetup($layoutId)
+    {
+        $typoScriptSetup = [];
+
+        if ($layoutId == '0' && isset($this->typoScriptSetup['setup.']['default.'])) {
+            $typoScriptSetup = $this->typoScriptSetup['setup.']['default.'];
+        } elseif ($layoutId && isset($this->typoScriptSetup['setup.'][$layoutId . '.'])) {
+            $typoScriptSetup = $this->typoScriptSetup['setup.'][$layoutId . '.'];
+        } elseif ($layoutId) {
+            $typoScriptSetup = $this->typoScriptSetup['setup.']['default.'];
+        }
+
+        // if there is none, we will use a reference to the tt_content setup as a default renderObj
+        // without additional stdWrap functionality
+        if (empty($typoScriptSetup)) {
+            $typoScriptSetup['columns.']['default.']['renderObj'] = '<tt_content';
+        }
+
+        return $typoScriptSetup;
+    }
+
+    /**
+     * setter for typoscript setup
+     *
+     * @param array $typoScriptSetup
+     */
+    public function setTypoScriptSetup(array $typoScriptSetup)
+    {
+        $this->typoScriptSetup = $typoScriptSetup;
+    }
+
+    /**
+     * Returns the flexformConfigurationPathAndFileName
+     *
+     * @return string $flexformConfigurationPathAndFileName
+     */
+    public function getFlexformConfigurationPathAndFileName()
+    {
+        return $this->flexformConfigurationPathAndFileName;
+    }
+
+    /**
+     * Sets the flexformConfigurationPathAndFileName
+     *
+     * @param string $flexformConfigurationPathAndFileName
+     *
+     * @return void
+     */
+    public function setFlexformConfigurationPathAndFileName($flexformConfigurationPathAndFileName)
+    {
+        $this->flexformConfigurationPathAndFileName = $flexformConfigurationPathAndFileName;
+    }
+
+    /**
+     * Caches Container-Records and their setup to avoid multiple selects of the same record during a single request
+     *
+     * @param int $gridContainerId The ID of the current grid container
+     * @param bool $doReturn
+     *
+     * @return null|array
+     */
+    public function cacheCurrentParent($gridContainerId = 0, $doReturn = false)
+    {
+        if ($gridContainerId > 0) {
+            if (empty($GLOBALS['tx_gridelements']['parentElement'][$gridContainerId])) {
+                $GLOBALS['tx_gridelements']['parentElement'][$gridContainerId] = BackendUtility::getRecordWSOL('tt_content',
+                    $gridContainerId);
+            }
+        }
+        if ($doReturn) {
+            return $GLOBALS['tx_gridelements']['parentElement'][$gridContainerId];
+        };
+
+        return null;
+    }
+
+    /**
      * Returns the item array for form field selection.
      *
      * @param int $colPos The selected content column position.
@@ -252,7 +385,7 @@ class LayoutSetup
      */
     public function getLayoutSelectItems($colPos)
     {
-        $selectItems = array();
+        $selectItems = [];
         foreach ($this->layoutSetup as $layoutId => $item) {
             if ((int)$colPos === -1 && $item['top_level_layout']) {
                 continue;
@@ -270,7 +403,7 @@ class LayoutSetup
                     $icon = PATH_site . str_replace('../', '', $icon);
                 }
             }
-            $selectItems[] = array($this->languageService->sL($item['title']), $layoutId, $icon);
+            $selectItems[] = [$this->languageService->sL($item['title']), $layoutId, $icon];
         }
 
         return $selectItems;
@@ -296,16 +429,43 @@ class LayoutSetup
                 continue;
             }
             foreach ($row['columns.'] as $column) {
-                $selectItems[] = array(
+                $selectItems[] = [
                     $this->languageService->sL($column['name']),
                     $column['colPos'],
                     null,
-                    $column['allowed'] ? $column['allowed'] : '*'
-                );
+                    $column['allowed'] ? $column['allowed'] : '*',
+                ];
             }
         }
 
         return $selectItems;
+    }
+
+    /**
+     * Returns the grid layout setup
+     *
+     * @param string $layoutId If set only requested layout setup, else all layout setups will be returned.
+     *
+     * @return array
+     */
+    public function getLayoutSetup($layoutId = '')
+    {
+        // Continue only if setup for given layout ID found.
+        if (isset($this->layoutSetup[$layoutId])) {
+            return $this->layoutSetup[$layoutId];
+        }
+
+        return $this->layoutSetup;
+    }
+
+    /**
+     * setter for layout setup
+     *
+     * @param array $layoutSetup
+     */
+    public function setLayoutSetup(array $layoutSetup)
+    {
+        $this->layoutSetup = $layoutSetup;
     }
 
     /**
@@ -317,9 +477,9 @@ class LayoutSetup
      *
      * @return array
      */
-    public function getLayoutWizardItems($colPos, $excludeLayouts = '', array $allowedGridTypes = array())
+    public function getLayoutWizardItems($colPos, $excludeLayouts = '', array $allowedGridTypes = [])
     {
-        $wizardItems = array();
+        $wizardItems = [];
         $excludeLayouts = array_flip(explode(',', $excludeLayouts));
         foreach ($this->layoutSetup as $layoutId => $item) {
             if (!empty($allowedGridTypes) && !isset($allowedGridTypes[$layoutId])) {
@@ -329,14 +489,14 @@ class LayoutSetup
                 continue;
             }
 
-            $wizardItems[] = array(
-                'uid' => $layoutId,
-                'title' => $this->languageService->sL($item['title']),
-                'description' => $this->languageService->sL($item['description']),
-                'icon' => $item['icon'],
+            $wizardItems[] = [
+                'uid'            => $layoutId,
+                'title'          => $this->languageService->sL($item['title']),
+                'description'    => $this->languageService->sL($item['description']),
+                'icon'           => $item['icon'],
                 'iconIdentifier' => $item['iconIdentifier'],
-                'tll' => $item['top_level_layout'],
-            );
+                'tll'            => $item['top_level_layout'],
+            ];
 
         }
 
@@ -357,7 +517,8 @@ class LayoutSetup
         if ($layoutSetup['pi_flexform_ds_file']) {
             $flexformConfiguration = GeneralUtility::getUrl(GeneralUtility::getFileAbsFileName($layoutSetup['pi_flexform_ds_file']));
         } elseif (strpos($layoutSetup['pi_flexform_ds'], 'FILE:') === 0) {
-            $flexformConfiguration = GeneralUtility::getUrl(GeneralUtility::getFileAbsFileName(substr($layoutSetup['pi_flexform_ds'], 5)));
+            $flexformConfiguration = GeneralUtility::getUrl(GeneralUtility::getFileAbsFileName(substr($layoutSetup['pi_flexform_ds'],
+                5)));
         } elseif ($layoutSetup['pi_flexform_ds']) {
             $flexformConfiguration = $layoutSetup['pi_flexform_ds'];
         } else {
@@ -368,131 +529,17 @@ class LayoutSetup
     }
 
     /**
-     * Returns the page TSconfig merged with the grid layout records
+     * getter for restrictions
      *
-     * @param int $pageId The uid of the page we are currently working on
+     * @return DefaultRestrictionContainer restrictions
      */
-    protected function loadLayoutSetup($pageId)
+    public function getRestrictions()
     {
-        // Load page TSconfig.
-        $pageTSconfig = BackendUtility::getPagesTSconfig($pageId);
-
-        $excludeLayoutIds = !empty($pageTSconfig['tx_gridelements.']['excludeLayoutIds'])
-            ? array_flip(GeneralUtility::trimExplode(',', $pageTSconfig['tx_gridelements.']['excludeLayoutIds']))
-            : array();
-
-        $overruleRecords = isset($pageTSconfig['tx_gridelements.']['overruleRecords'])
-                           && (int)$pageTSconfig['tx_gridelements.']['overruleRecords'] === 1;
-
-        $gridLayoutConfig = array();
-        if (!empty($pageTSconfig['tx_gridelements.']['setup.'])) {
-            foreach ($pageTSconfig['tx_gridelements.']['setup.'] as $layoutId => $item) {
-                // remove tailing dot of layout ID
-                $layoutId = rtrim($layoutId, '.');
-
-                // Continue if layout is excluded.
-                if (isset($excludeLayoutIds[$layoutId])) {
-                    continue;
-                }
-
-                // Parse icon path for records.
-                if ($item['icon']) {
-                    $icons = explode(',', $item['icon']);
-                    foreach ($icons as &$icon) {
-                        $icon = trim($icon);
-                        if (strpos($icon, 'EXT:') === 0) {
-                            $icon = str_replace(PATH_site, '../', GeneralUtility::getFileAbsFileName($icon));
-                        }
-                    }
-                    $item['icon'] = $icons;
-                }
-
-                // remove tailing dot of config
-                if (isset($item['config.'])) {
-                    $item['config'] = $item['config.'];
-                    unset($item['config.']);
-                }
-
-                // Change topLevelLayout to top_level_layout.
-                $item['top_level_layout'] = $item['topLevelLayout'];
-                unset($item['topLevelLayout']);
-
-                // Change flexformDS to pi_flexform_ds.
-                $item['pi_flexform_ds'] = $item['flexformDS'];
-                unset($item['flexformDS']);
-
-                $gridLayoutConfig[$layoutId] = $item;
-            }
-        }
-
-        $storagePid = isset($pageTSconfig['TCEFORM.']['pages.']['_STORAGE_PID'])
-            ? (int)$pageTSconfig['TCEFORM.']['pages.']['_STORAGE_PID']
-            : 0;
-        $pageTSconfigId = isset($pageTSconfig['TCEFORM.']['tt_content.']['tx_gridelements_backend_layout.']['PAGE_TSCONFIG_ID'])
-            ? implode(',', GeneralUtility::intExplode(',', $pageTSconfig['TCEFORM.']['tt_content.']['tx_gridelements_backend_layout.']['PAGE_TSCONFIG_ID']))
-            : 0;
-
-        // Load records.
-        $where_clause = '(( ' . $pageTSconfigId . ' = 0 AND ' . $storagePid . ' = 0 )'
-                        . ' OR ( tx_gridelements_backend_layout.pid IN (' . $pageTSconfigId . ') OR tx_gridelements_backend_layout.pid = ' . $storagePid . ' ) '
-                        . ' OR ( ' . $pageTSconfigId . ' = 0 AND tx_gridelements_backend_layout.pid = ' . (int)$pageId . ' ))'
-                        . ' AND tx_gridelements_backend_layout.hidden = 0 AND tx_gridelements_backend_layout.deleted = 0';
-        $result = $this->databaseConnection->exec_SELECTgetRows('*', 'tx_gridelements_backend_layout', $where_clause, '', 'sorting ASC', '', 'uid');
-
-        $gridLayoutRecords = array();
-
-        foreach ($result as $layoutId => $item) {
-            if (isset($item['alias']) && (string)$item['alias'] !== '') {
-                $layoutId = $item['alias'];
-            }
-            // Continue if layout is excluded.
-            if (isset($excludeLayoutIds[$layoutId])) {
-                continue;
-            }
-
-            // Prepend icon path for records.
-            if ($item['icon']) {
-                $icons = explode(',', $item['icon']);
-                foreach ($icons as &$icon) {
-                    $icon = '../' . $GLOBALS['TCA']['tx_gridelements_backend_layout']['ctrl']['selicon_field_path'] . '/' . htmlspecialchars(trim($icon));
-                }
-                $item['icon'] = $icons;
-            }
-
-            // parse config
-            if ($item['config']) {
-                $parser = GeneralUtility::makeInstance(TypoScriptParser::class);
-                $parser->parse($parser->checkIncludeLines($item['config']));
-                if (isset($parser->setup['backend_layout.'])) {
-                    $item['config'] = $parser->setup['backend_layout.'];
-                }
-            }
-
-            $gridLayoutRecords[$layoutId] = $item;
-
-        }
-
-        if ($overruleRecords === true) {
-            ArrayUtility::mergeRecursiveWithOverrule($gridLayoutRecords, $gridLayoutConfig, true, false);
-            $this->setLayoutSetup($gridLayoutRecords);
-        } else {
-            ArrayUtility::mergeRecursiveWithOverrule($gridLayoutConfig, $gridLayoutRecords, true, false);
-            $this->setLayoutSetup($gridLayoutConfig);
-        }
+        return GeneralUtility::makeInstance(DefaultRestrictionContainer::class);
     }
 
     /**
-     * setter for databaseConnection object
-     *
-     * @param DatabaseConnection $databaseConnection
-     */
-    public function setDatabaseConnection(DatabaseConnection $databaseConnection)
-    {
-        $this->databaseConnection = $databaseConnection;
-    }
-
-    /**
-     * getter for databaseConnection
+     * getter for languageService
      *
      * @return LanguageService $languageService
      */
@@ -502,7 +549,7 @@ class LayoutSetup
     }
 
     /**
-     * setter for databaseConnection object
+     * setter for languageService object
      *
      * @param LanguageService $languageService
      */
@@ -512,16 +559,6 @@ class LayoutSetup
         if ($this->getBackendUser()) {
             $this->languageService->init($this->getBackendUser()->uc['lang']);
         }
-    }
-
-    /**
-     * getter for databaseConnection
-     *
-     * @return DatabaseConnection databaseConnection
-     */
-    public function getDatabaseConnection()
-    {
-        return $this->databaseConnection;
     }
 
     /**

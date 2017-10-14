@@ -1,4 +1,5 @@
 <?php
+
 namespace GridElementsTeam\Gridelements\Helper;
 
 /***************************************************************
@@ -19,8 +20,10 @@ namespace GridElementsTeam\Gridelements\Helper;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-use TYPO3\CMS\Core\Database\DatabaseConnection;
+use TYPO3\CMS\Core\Database\Connection;
+use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\SingletonInterface;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Gridelements helper class
@@ -39,9 +42,9 @@ class Helper implements SingletonInterface
     protected static $instance = null;
 
     /**
-     * @var DatabaseConnection
+     * @var Connection
      */
-    protected $databaseConnection;
+    protected static $connection;
 
     /**
      * Get instance from the class.
@@ -52,22 +55,11 @@ class Helper implements SingletonInterface
     {
         if (!self::$instance instanceof Helper) {
             self::$instance = new self();
-            self::$instance->setDatabaseConnection($GLOBALS['TYPO3_DB']);
         }
 
         return self::$instance;
     }
 
-    /**
-     * setter for databaseConnection object
-     *
-     * @param DatabaseConnection $databaseConnection
-     */
-    public function setDatabaseConnection(DatabaseConnection $databaseConnection)
-    {
-        $this->databaseConnection = $databaseConnection;
-    }
-    
     /**
      * @param string $table
      * @param int $uid
@@ -79,10 +71,19 @@ class Helper implements SingletonInterface
      */
     public function getChildren($table = '', $uid = 0, $pid = 0, $sortingField = '', $sortRev = 0, $selectFieldList)
     {
-        $retVal = array();
+        $retVal = [];
 
         if (trim($table) === 'tt_content' && $uid > 0) {
-            $children = self::getDatabaseConnection()->exec_SELECTgetRows($selectFieldList . ',sorting,tx_gridelements_columns', 'tt_content', 'tx_gridelements_container = ' . (int)$uid . ' AND pid = ' . (int)$pid . ' AND deleted = 0', '');
+            $selectFieldList .= ',sorting,tx_gridelements_columns';
+            $selectFieldArray = GeneralUtility::trimExplode(',', $selectFieldList);
+            $children = self::getConnection()->select(
+                $selectFieldArray,
+                'tt_content',
+                [
+                    'tx_gridelements_container' => (int)$uid,
+                    'pid'                       => (int)$pid,
+                ]
+            )->fetchAll();
 
             foreach ($children as $child) {
                 if (trim($sortingField) && isset($child[$sortingField]) && $sortingField !== 'sorting') {
@@ -90,7 +91,8 @@ class Helper implements SingletonInterface
                 } else {
                     $sortField = sprintf('%1$011d', $child['sorting']);
                 }
-                $sortKey = sprintf('%1$011d', $child['tx_gridelements_columns']) . '.' . $sortField . ':' . sprintf('%1$011d', $child['uid']);
+                $sortKey = sprintf('%1$011d',
+                        $child['tx_gridelements_columns']) . '.' . $sortField . ':' . sprintf('%1$011d', $child['uid']);
 
                 $retVal[$sortKey] = $child;
             }
@@ -105,6 +107,20 @@ class Helper implements SingletonInterface
     }
 
     /**
+     * setter for Connection object
+     *
+     * @return Connection
+     */
+    public function getConnection()
+    {
+        if (!$this->connection instanceof Connection) {
+            $this->connection = GeneralUtility::makeInstance(ConnectionPool::class)
+                ->getConnectionForTable('tt_content');
+        }
+        return $this->connection;
+    }
+
+    /**
      * converts a negative tt_content uid into a positive pid
      *
      * @param int $negativeUid the negative uid value of a tt_content record
@@ -116,7 +132,11 @@ class Helper implements SingletonInterface
         if ($negativeUid >= 0) {
             return $negativeUid;
         }
-        $triggerElement = $this->databaseConnection->exec_SELECTgetSingleRow('pid', 'tt_content', 'uid = ' . abs($negativeUid));
+        $triggerElement = self::getConnection()->select(
+            ['pid'],
+            'tt_content',
+            ['uid' => abs($negativeUid)]
+        )->fetch();
         $pid = (int)$triggerElement['pid'];
         return is_array($triggerElement) && $pid ? $pid : 0;
     }
@@ -132,7 +152,7 @@ class Helper implements SingletonInterface
      */
     public function getSpecificIds(array $record)
     {
-        $specificIds = array();
+        $specificIds = [];
         $specificIds['uid'] = (int)$record['uid'];
         $specificIds['pid'] = (int)$record['pid'];
 
@@ -145,16 +165,6 @@ class Helper implements SingletonInterface
     }
 
     /**
-     * getter for databaseConnection
-     *
-     * @return DatabaseConnection databaseConnection
-     */
-    public function getDatabaseConnection()
-    {
-        return $this->databaseConnection;
-    }
-
-    /**
      * Gets the current backend user.
      *
      * @return \TYPO3\CMS\Core\Authentication\BackendUserAuthentication
@@ -163,4 +173,5 @@ class Helper implements SingletonInterface
     {
         return $GLOBALS['BE_USER'];
     }
+
 }

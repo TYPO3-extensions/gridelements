@@ -1,26 +1,9 @@
 <?php
 
-use GridElementsTeam\Gridelements\Backend\TtContent;
-use TYPO3\CMS\Core\Database\DatabaseConnection;
 use TYPO3\CMS\Core\Tests\UnitTestCase;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class TtContentTest extends UnitTestCase
 {
-
-    /**
-     * test get database connection
-     *
-     * @test
-     */
-    public function testGetDatabaseConnection()
-    {
-        $ttContent = GeneralUtility::makeInstance(TtContent::class);
-        $databaseConnection = GeneralUtility::makeInstance(DatabaseConnection::class);
-        $ttContent->setDatabaseConnection($databaseConnection);
-        $result = $ttContent->getDatabaseConnection();
-        $this->assertEquals($databaseConnection, $result);
-    }
 
     /**
      * test columns items proc func
@@ -50,11 +33,11 @@ class TtContentTest extends UnitTestCase
     }
 
     /**
-     * test delete unallowed container
+     * test delete disallowed container
      *
      * @test
      */
-    public function testDeleteUnallowedContainer()
+    public function testDeleteDisallowedContainer()
     {
     }
 

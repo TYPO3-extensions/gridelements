@@ -22,7 +22,10 @@ namespace GridElementsTeam\Gridelements\DataHandler;
 
 use GridElementsTeam\Gridelements\Backend\LayoutSetup;
 use GridElementsTeam\Gridelements\Helper\Helper;
-use TYPO3\CMS\Core\Database\DatabaseConnection;
+use TYPO3\CMS\Core\Database\Connection;
+use TYPO3\CMS\Core\Database\ConnectionPool;
+use TYPO3\CMS\Core\Database\Query\QueryBuilder;
+use TYPO3\CMS\Core\Database\Query\Restriction\DeletedRestriction;
 use TYPO3\CMS\Core\DataHandling\DataHandler;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -35,6 +38,11 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 abstract class AbstractDataHandler
 {
+    /**
+     * @var Connection
+     */
+    protected $connection;
+
     /**
      * @var string
      */
@@ -51,24 +59,9 @@ abstract class AbstractDataHandler
     protected $dataHandler;
 
     /**
-     * @var DatabaseConnection
-     */
-    protected $databaseConnection;
-
-    /**
      * @var LayoutSetup
      */
     protected $layoutSetup;
-
-    /**
-     * inject layout setup
-     *
-     * @param LayoutSetup $layoutSetup
-     */
-    public function injectLayoutSetup(LayoutSetup $layoutSetup)
-    {
-        $this->layoutSetup = $layoutSetup;
-    }
 
     /**
      * initializes this class
@@ -82,53 +75,12 @@ abstract class AbstractDataHandler
         $this->setTable($table);
         $this->setPageUid($pageUid);
         $this->setTceMain($dataHandler);
-        $this->setDatabaseConnection($GLOBALS['TYPO3_DB']);
         if (!$this->layoutSetup instanceof LayoutSetup) {
             if ($pageUid < 0) {
                 $pageUid = Helper::getInstance()->getPidFromNegativeUid($pageUid);
             }
             $this->injectLayoutSetup(GeneralUtility::makeInstance(LayoutSetup::class)->init($pageUid));
         }
-    }
-
-    /**
-     * setter for table
-     *
-     * @param string $table
-     */
-    public function setTable($table)
-    {
-        $this->table = $table;
-    }
-
-    /**
-     * getter for table
-     *
-     * @return string table
-     */
-    public function getTable()
-    {
-        return $this->table;
-    }
-
-    /**
-     * setter for pageUid
-     *
-     * @param integer $pageUid
-     */
-    public function setPageUid($pageUid)
-    {
-        $this->pageUid = $pageUid;
-    }
-
-    /**
-     * getter for pageUid
-     *
-     * @return integer pageUid
-     */
-    public function getPageUid()
-    {
-        return $this->pageUid;
     }
 
     /**
@@ -142,50 +94,13 @@ abstract class AbstractDataHandler
     }
 
     /**
-     * getter for dataHandler
+     * inject layout setup
      *
-     * @return DataHandler dataHandler
+     * @param LayoutSetup $layoutSetup
      */
-    public function getTceMain()
+    public function injectLayoutSetup(LayoutSetup $layoutSetup)
     {
-        return $this->dataHandler;
-    }
-
-    /**
-     * setter for databaseConnection object
-     *
-     * @param DatabaseConnection $databaseConnection
-     */
-    public function setDatabaseConnection(DatabaseConnection $databaseConnection)
-    {
-        $this->databaseConnection = $databaseConnection;
-    }
-
-    /**
-     * getter for databaseConnection
-     *
-     * @return DatabaseConnection databaseConnection
-     */
-    public function getDatabaseConnection()
-    {
-        return $this->databaseConnection;
-    }
-
-    /**
-     * Function to handle record actions between different grid containers
-     *
-     * @param array $containerUpdateArray
-     */
-    public function doGridContainerUpdate($containerUpdateArray = array())
-    {
-        if (is_array($containerUpdateArray) && !empty($containerUpdateArray)) {
-            foreach ($containerUpdateArray as $containerUid => $newElement) {
-                $fieldArray = array('tx_gridelements_children' => 'tx_gridelements_children + ' . (int)$newElement);
-                $this->databaseConnection->exec_UPDATEquery('tt_content', 'uid=' . (int)$containerUid, $fieldArray,
-                    'tx_gridelements_children');
-                $this->getTceMain()->updateRefIndex('tt_content', (int)$containerUid);
-            }
-        }
+        $this->layoutSetup = $layoutSetup;
     }
 
     /**
@@ -199,45 +114,94 @@ abstract class AbstractDataHandler
         if ($uid <= 0) {
             return;
         }
-        $currentValues = $this->databaseConnection->exec_SELECTgetSingleRow(
-            'uid,tx_gridelements_container,tx_gridelements_columns,sys_language_uid,colPos,l18n_parent',
-            'tt_content', 'deleted = 0 AND uid=' . (int)$uid
-        );
+        $queryBuilder = $this->getQueryBuilder();
+        $currentValues = $queryBuilder
+            ->select('uid', 'tx_gridelements_container', 'tx_gridelements_columns', 'sys_language_uid', 'colPos',
+                'l18n_parent')
+            ->from('tt_content')
+            ->where(
+                $queryBuilder->expr()->andX(
+                    $queryBuilder->expr()->eq('deleted', 0),
+                    $queryBuilder->expr()->eq('uid',
+                        $queryBuilder->createNamedParameter((int)$uid, \PDO::PARAM_INT))
+                )
+            )
+            ->setMaxResults(1)
+            ->execute()
+            ->fetch();
         if (!empty($currentValues['l18n_parent'])) {
-            $currentValues = $this->databaseConnection->exec_SELECTgetSingleRow(
-                'uid,tx_gridelements_container,tx_gridelements_columns,sys_language_uid,colPos,l18n_parent',
-                'tt_content', 'deleted = 0 AND uid=' . (int)$currentValues['l18n_parent']
-            );
+            $queryBuilder = $this->getQueryBuilder();
+            $currentValues = $queryBuilder
+                ->select('uid', 'tx_gridelements_container', 'tx_gridelements_columns', 'sys_language_uid', 'colPos',
+                    'l18n_parent')
+                ->from('tt_content')
+                ->where(
+                    $queryBuilder->expr()->andX(
+                        $queryBuilder->expr()->eq('deleted', 0),
+                        $queryBuilder->expr()->eq('uid',
+                            $queryBuilder->createNamedParameter((int)$currentValues['l18n_parent'],
+                                \PDO::PARAM_INT))
+                    )
+                )
+                ->setMaxResults(1)
+                ->execute()
+                ->fetch();
         }
         if (empty($currentValues['uid'])) {
             return;
         }
-        $translatedElements = $this->databaseConnection->exec_SELECTgetRows(
-            'uid,tx_gridelements_container,tx_gridelements_columns,sys_language_uid,colPos,l18n_parent',
-            'tt_content', 'deleted = 0 AND l18n_parent=' . (int)$currentValues['uid'], '', '', '', 'uid'
-        );
+        $queryBuilder = $this->getQueryBuilder();
+        $translatedElementQuery = $queryBuilder
+            ->select('uid', 'tx_gridelements_container', 'tx_gridelements_columns', 'sys_language_uid', 'colPos',
+                'l18n_parent')
+            ->from('tt_content')
+            ->where(
+                $queryBuilder->expr()->andX(
+                    $queryBuilder->expr()->eq('deleted', 0),
+                    $queryBuilder->expr()->eq('l18n_parent',
+                        $queryBuilder->createNamedParameter((int)$currentValues['uid'], \PDO::PARAM_INT))
+                )
+            )
+            ->execute();
+        $translatedElements = [];
+        while ($translatedElement = $translatedElementQuery->fetch()) {
+            $translatedElements[$translatedElement['uid']] = $translatedElement;
+        }
         if (empty($translatedElements)) {
             return;
         }
+        $translatedContainers = [];
         if ($currentValues['tx_gridelements_container'] > 0) {
-            $translatedContainers = $this->databaseConnection->exec_SELECTgetRows(
-                'uid,sys_language_uid',
-                'tt_content', 'deleted = 0 AND l18n_parent=' . (int)$currentValues['tx_gridelements_container'], '', '',
-                '', 'sys_language_uid'
-            );
+            $queryBuilder = $this->getQueryBuilder();
+            $translatedContainerQuery = $queryBuilder
+                ->select('uid', 'sys_language_uid')
+                ->from('tt_content')
+                ->where(
+                    $queryBuilder->expr()->andX(
+                        $queryBuilder->expr()->eq('deleted', 0),
+                        $queryBuilder->expr()->eq('l18n_parent',
+                            $queryBuilder->createNamedParameter((int)$currentValues['tx_gridelements_container'],
+                                \PDO::PARAM_INT))
+                    )
+                )
+                ->execute();
+            while ($translatedContainer = $translatedContainerQuery->fetch()) {
+                $translatedContainers[$translatedContainer['sys_language_uid']] = $translatedContainer;
+            }
         }
-        $containerUpdateArray = array();
+        $containerUpdateArray = [];
         foreach ($translatedElements as $translatedUid => $translatedElement) {
-            $updateArray = array();
+            $updateArray = [];
             if (isset($translatedContainers[$translatedElement['sys_language_uid']])) {
                 $updateArray['tx_gridelements_container'] = (int)$translatedContainers[$translatedElement['sys_language_uid']]['uid'];
                 $updateArray['tx_gridelements_columns'] = (int)$currentValues['tx_gridelements_columns'];
             }
             $updateArray['colPos'] = (int)$currentValues['colPos'];
 
-            $this->databaseConnection->exec_UPDATEquery('tt_content', 'uid=' . (int)$translatedUid,
+            $this->getConnection()->update(
+                'tt_content',
                 $updateArray,
-                'tx_gridelements_container,tx_gridelements_columns,colPos'
+                ['uid' => (int)$translatedUid]
             );
 
             if (isset($updateArray['tx_gridelements_container']) &&
@@ -252,4 +216,102 @@ abstract class AbstractDataHandler
             $this->doGridContainerUpdate($containerUpdateArray);
         }
     }
+
+    /**
+     * getter for queryBuilder
+     *
+     * @return QueryBuilder queryBuilder
+     */
+    public function getQueryBuilder()
+    {
+        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
+            ->getQueryBuilderForTable('tt_content');
+        $queryBuilder->getRestrictions()
+            ->removeAll()
+            ->add(GeneralUtility::makeInstance(DeletedRestriction::class));
+        return $queryBuilder;
+    }
+
+
+    /**
+     * setter for Connection object
+     *
+     * @return Connection
+     */
+    public function getConnection()
+    {
+        return GeneralUtility::makeInstance(ConnectionPool::class)
+            ->getConnectionForTable('tt_content');;
+    }
+
+    /**
+     * getter for dataHandler
+     *
+     * @return DataHandler dataHandler
+     */
+    public function getTceMain()
+    {
+        return $this->dataHandler;
+    }
+
+    /**
+     * Function to handle record actions between different grid containers
+     *
+     * @param array $containerUpdateArray
+     */
+    public function doGridContainerUpdate($containerUpdateArray = [])
+    {
+        if (is_array($containerUpdateArray) && !empty($containerUpdateArray)) {
+            foreach ($containerUpdateArray as $containerUid => $newElement) {
+                $fieldArray = ['tx_gridelements_children' => 'tx_gridelements_children + ' . (int)$newElement];
+                $this->getConnection()->update(
+                    'tt_content',
+                    $fieldArray,
+                    ['uid' => (int)$containerUid]
+                );
+                $this->getTceMain()->updateRefIndex('tt_content', (int)$containerUid);
+            }
+        }
+    }
+
+    /**
+     * getter for table
+     *
+     * @return string table
+     */
+    public function getTable()
+    {
+        return $this->table;
+    }
+
+    /**
+     * setter for table
+     *
+     * @param string $table
+     */
+    public function setTable($table)
+    {
+        $this->table = $table;
+    }
+
+    /**
+     * getter for pageUid
+     *
+     * @return integer pageUid
+     */
+    public function getPageUid()
+    {
+        return $this->pageUid;
+    }
+
+    /**
+     * setter for pageUid
+     *
+     * @param integer $pageUid
+     */
+    public function setPageUid($pageUid)
+    {
+        $this->pageUid = $pageUid;
+    }
+
 }

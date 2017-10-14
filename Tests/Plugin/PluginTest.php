@@ -1,26 +1,12 @@
 <?php
 
 use GridElementsTeam\Gridelements\Plugin\Gridelements;
-use TYPO3\CMS\Core\Database\DatabaseConnection;
 use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\Tests\UnitTestCase;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class PluginTest extends UnitTestCase
 {
-
-    /**
-     * test get database connection
-     *
-     * @test
-     */
-    public function testGetDatabaseConnection()
-    {
-        $GLOBALS['TYPO3_DB'] = GeneralUtility::makeInstance(DatabaseConnection::class);
-        $gridelements = GeneralUtility::makeInstance(Gridelements::class);
-        $result = $gridelements->getDatabaseConnection();
-        $this->assertEquals($GLOBALS['TYPO3_DB'], $result);
-    }
 
     /**
      * test get page renderer

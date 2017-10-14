@@ -2,26 +2,10 @@
 
 use GridElementsTeam\Gridelements\Helper\Helper;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
-use TYPO3\CMS\Core\Database\DatabaseConnection;
 use TYPO3\CMS\Core\Tests\UnitTestCase;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class HelperTest extends UnitTestCase
 {
-
-    /**
-     * test get database connection
-     *
-     * @test
-     */
-    public function testGetDatabaseConnection()
-    {
-        $GLOBALS['TYPO3_DB'] = GeneralUtility::makeInstance(DatabaseConnection::class);
-        $helper = Helper::getInstance();
-        $helper->setDatabaseConnection($GLOBALS['TYPO3_DB']);
-        $result = $helper->getDatabaseConnection();
-        $this->assertEquals($GLOBALS['TYPO3_DB'], $result);
-    }
 
     /**
      * test get children
@@ -48,7 +32,6 @@ class HelperTest extends UnitTestCase
      */
     public function testGetSpecificIdsWithoutWorkspaceAndOriginalId()
     {
-        $GLOBALS['TYPO3_DB'] = GeneralUtility::makeInstance(DatabaseConnection::class);
         $helper = Helper::getInstance();
         $record = array(
             'uid' => '1',
@@ -70,7 +53,6 @@ class HelperTest extends UnitTestCase
      */
     public function testGetSpecificIdsWithoutWorkspaceButWithOriginalId()
     {
-        $GLOBALS['TYPO3_DB'] = GeneralUtility::makeInstance(DatabaseConnection::class);
         $helper = Helper::getInstance();
         $record = array(
             'uid' => '1',
@@ -92,7 +74,6 @@ class HelperTest extends UnitTestCase
      */
     public function testGetSpecificIdsWithWorkspaceAndWithOriginalId()
     {
-        $GLOBALS['TYPO3_DB'] = GeneralUtility::makeInstance(DatabaseConnection::class);
         $helper = Helper::getInstance();
         $GLOBALS['BE_USER'] = $this->getMock(BackendUserAuthentication::class);
         $GLOBALS['BE_USER']->workspace = 1;
@@ -116,7 +97,6 @@ class HelperTest extends UnitTestCase
      */
     public function testGetSpecificIdsWithWorkspaceButWithoutOriginalId()
     {
-        $GLOBALS['TYPO3_DB'] = GeneralUtility::makeInstance(DatabaseConnection::class);
         $helper = Helper::getInstance();
         $GLOBALS['BE_USER'] = $this->getMock(BackendUserAuthentication::class);
         $GLOBALS['BE_USER']->workspace = 1;

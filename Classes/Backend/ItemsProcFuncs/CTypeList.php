@@ -1,4 +1,5 @@
 <?php
+
 namespace GridElementsTeam\Gridelements\Backend\ItemsProcFuncs;
 
 /***************************************************************
@@ -21,7 +22,6 @@ namespace GridElementsTeam\Gridelements\Backend\ItemsProcFuncs;
 
 use GridElementsTeam\Gridelements\Backend\LayoutSetup;
 use GridElementsTeam\Gridelements\Helper\Helper;
-use TYPO3\CMS\Core\Database\DatabaseConnection;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -35,40 +35,9 @@ class CTypeList extends AbstractItemsProcFunc
 {
 
     /**
-     * @var DatabaseConnection
-     */
-    protected $databaseConnection;
-
-    /**
      * @var LayoutSetup
      */
     protected $layoutSetup;
-
-    /**
-     * injects layout setup
-     *
-     * @param LayoutSetup $layoutSetup
-     */
-    public function injectLayoutSetup(LayoutSetup $layoutSetup)
-    {
-        $this->layoutSetup = $layoutSetup;
-    }
-
-    /**
-     * initializes this class
-     *
-     * @param int $pageUid
-     */
-    public function init($pageUid = 0)
-    {
-        parent::init();
-        if (!$this->layoutSetup) {
-            if ($pageUid < 0) {
-                $pageUid = Helper::getInstance()->getPidFromNegativeUid($pageUid);
-            }
-            $this->injectLayoutSetup(GeneralUtility::makeInstance(LayoutSetup::class)->init($pageUid));
-        }
-    }
 
     /**
      * ItemProcFunc for CType items
@@ -78,14 +47,26 @@ class CTypeList extends AbstractItemsProcFunc
     public function itemsProcFunc(array &$params)
     {
         if ((int)$params['row']['pid'] > 0) {
-            $this->checkForAllowedCTypes($params['items'], $params['row']['pid'], $params['row']['colPos'], $params['row']['tx_gridelements_container'], $params['row']['tx_gridelements_columns']);
+            $this->checkForAllowedCTypes($params['items'], $params['row']['pid'], $params['row']['colPos'],
+                $params['row']['tx_gridelements_container'], $params['row']['tx_gridelements_columns']);
         } else {
             $this->init((int)$params['row']['pid']);
             // negative uid_pid values indicate that the element has been inserted after an existing element
             // so there is no pid to get the backendLayout for and we have to get that first
-            $existingElement = $this->databaseConnection->exec_SELECTgetSingleRow('pid, CType, colPos, tx_gridelements_container, tx_gridelements_columns', 'tt_content', 'uid=' . -((int)$params['row']['pid']));
+            $queryBuilder = $this->getQueryBuilder();
+            $existingElement = $queryBuilder
+                ->select('pid', 'CType', 'colPos', 'tx_gridelements_container', 'tx_gridelements_columns')
+                ->from('tt_content')
+                ->where(
+                    $queryBuilder->expr()->eq('uid',
+                        $queryBuilder->createNamedParameter(-((int)$params['row']['pid']), \PDO::PARAM_INT))
+                )
+                ->setMaxResults(1)
+                ->execute()
+                ->fetch();
             if ((int)$existingElement['pid'] > 0) {
-                $this->checkForAllowedCTypes($params['items'], $existingElement['pid'], $existingElement['colPos'], $existingElement['tx_gridelements_container'], $existingElement['tx_gridelements_columns']);
+                $this->checkForAllowedCTypes($params['items'], $existingElement['pid'], $existingElement['colPos'],
+                    $existingElement['tx_gridelements_container'], $existingElement['tx_gridelements_columns']);
             }
         }
     }
@@ -94,28 +75,55 @@ class CTypeList extends AbstractItemsProcFunc
      * Checks if a CType is allowed in this particular page or grid column - only this one column defines the allowed CTypes regardless of any parent column
      *
      * @param array $items The items of the current CType list
-     * @param int $pid The id of the page we are currently working on
+     * @param int $pageId The id of the page we are currently working on
      * @param int $pageColumn The page column the element is a child of
      * @param int $gridContainerId The ID of the current container
      * @param int $gridColumn The grid column the element is a child of
      */
-    public function checkForAllowedCTypes(array &$items, $pid, $pageColumn, $gridContainerId, $gridColumn)
+    public function checkForAllowedCTypes(array &$items, $pageId, $pageColumn, $gridContainerId, $gridColumn)
     {
         if ((int)$pageColumn >= 0 || (int)$pageColumn === -2) {
             $column = $pageColumn ? $pageColumn : 0;
-            $backendLayout = $this->getSelectedBackendLayout($pid);
+            $backendLayout = $this->getSelectedBackendLayout($pageId);
         } else {
-            $this->init($pid);
+            $this->init($pageId);
             $column = $gridColumn ? (int)$gridColumn : 0;
             $gridElement = $this->layoutSetup->cacheCurrentParent($gridContainerId, true);
             $backendLayout = $this->layoutSetup->getLayoutSetup($gridElement['tx_gridelements_backend_layout']);
         }
         if (isset($backendLayout)) {
             foreach ($items as $key => $item) {
-                if (!GeneralUtility::inList($backendLayout['columns'][$column], $item[1]) && !GeneralUtility::inList($backendLayout['columns'][$column], '*')) {
+                if (!GeneralUtility::inList($backendLayout['columns'][$column],
+                        $item[1]) && !GeneralUtility::inList($backendLayout['columns'][$column], '*')) {
                     unset($items[$key]);
                 }
             }
         }
+    }
+
+    /**
+     * initializes this class
+     *
+     * @param int $pageId
+     */
+    public function init($pageId = 0)
+    {
+        parent::init();
+        if (!$this->layoutSetup) {
+            if ($pageId < 0) {
+                $pageId = Helper::getInstance()->getPidFromNegativeUid($pageId);
+            }
+            $this->injectLayoutSetup(GeneralUtility::makeInstance(LayoutSetup::class)->init($pageId));
+        }
+    }
+
+    /**
+     * injects layout setup
+     *
+     * @param LayoutSetup $layoutSetup
+     */
+    public function injectLayoutSetup(LayoutSetup $layoutSetup)
+    {
+        $this->layoutSetup = $layoutSetup;
     }
 }
