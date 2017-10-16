@@ -47,7 +47,6 @@ class ColPosList extends AbstractItemsProcFunc
             // negative uid_pid values indicate that the element has been inserted after an existing element
             // so there is no pid to get the backendLayout for and we have to get that first
             $queryBuilder = $this->getQueryBuilder();
-            $queryBuilder = $this->getQueryBuilder();
             $existingElement = $queryBuilder
                 ->select('pid', 'CType', 'tx_gridelements_container')
                 ->from('tt_content')
