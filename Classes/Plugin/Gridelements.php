@@ -21,6 +21,7 @@ namespace GridElementsTeam\Gridelements\Plugin;
  ***************************************************************/
 
 use GridElementsTeam\Gridelements\Backend\LayoutSetup;
+use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Core\Database\Query\Restriction\DeletedRestriction;
@@ -300,12 +301,13 @@ class Gridelements extends ContentObjectRenderer
                     $queryBuilder->expr()->andX(
                         $queryBuilder->expr()->eq('tx_gridelements_container',
                             $queryBuilder->createNamedParameter((int)$element, \PDO::PARAM_INT)),
-                        $queryBuilder->expr()->neq('colPos', -2),
+                        $queryBuilder->expr()->neq('colPos', $queryBuilder->createNamedParameter(-2, \PDO::PARAM_INT)),
                         $queryBuilder->expr()->eq('pid',
                             $queryBuilder->createNamedParameter((int)$pid, \PDO::PARAM_INT)),
                         $queryBuilder->expr()->in('tx_gridelements_columns',
-                            $queryBuilder->createNamedParameter($csvColumns)),
-                        $queryBuilder->expr()->in('sys_language_uid', '-1,0')
+                            $queryBuilder->createNamedParameter($csvColumns, Connection::PARAM_INT_ARRAY)),
+                        $queryBuilder->expr()->in('sys_language_uid',
+                            $queryBuilder->createNamedParameter([-1, 0], Connection::PARAM_INT_ARRAY))
                     ),
                     $this->getTSFE()->sys_language_content > 0 &&
                     $this->getTSFE()->sys_language_contentOL &&
@@ -316,16 +318,18 @@ class Gridelements extends ContentObjectRenderer
                                 $queryBuilder->createNamedParameter((int)$this->cObj->data['_LOCALIZED_UID'],
                                     \PDO::PARAM_INT)),
                             $queryBuilder->expr()->in('sys_language_uid',
-                                '-1,' . $this->getTSFE()->sys_language_content),
-                            $queryBuilder->expr()->eq('l18n_parent', 0)
+                                $queryBuilder->createNamedParameter([-1, $this->getTSFE()->sys_language_content],
+                                    Connection::PARAM_INT_ARRAY)),
+                            $queryBuilder->expr()->eq('l18n_parent',
+                                $queryBuilder->createNamedParameter(0, \PDO::PARAM_INT))
                         ) : [],
                     $this->getTSFE()->sys_language_content > 0 ?
                         $queryBuilder->expr()->andX(
                             $queryBuilder->expr()->eq('tx_gridelements_container',
-                                $queryBuilder->createNamedParameter((int)$element,
-                                    \PDO::PARAM_INT)),
+                                $queryBuilder->createNamedParameter((int)$element, \PDO::PARAM_INT)),
                             $queryBuilder->expr()->in('sys_language_uid',
-                                '-1,' . $this->getTSFE()->sys_language_content)
+                                $queryBuilder->createNamedParameter([-1, $this->getTSFE()->sys_language_content],
+                                    Connection::PARAM_INT_ARRAY))
                         ) : []
                 )
             )

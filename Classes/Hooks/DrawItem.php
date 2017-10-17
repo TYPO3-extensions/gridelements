@@ -28,6 +28,7 @@ use TYPO3\CMS\Backend\View\PageLayoutView;
 use TYPO3\CMS\Backend\View\PageLayoutViewDrawFooterHookInterface;
 use TYPO3\CMS\Backend\View\PageLayoutViewDrawItemHookInterface;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
+use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Core\Database\Query\Restriction\DeletedRestriction;
@@ -42,6 +43,7 @@ use TYPO3\CMS\Core\Messaging\FlashMessage;
 use TYPO3\CMS\Core\Messaging\FlashMessageService;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Type\Bitmask\Permission;
+use TYPO3\CMS\Core\Utility\DebugUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Versioning\VersionState;
 use TYPO3\CMS\Lang\LanguageService;
@@ -82,6 +84,11 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
      * @var QueryGenerator
      */
     protected $tree;
+
+    /**
+     * @var bool
+     */
+    protected $showHidden;
 
     /**
      * @var string
@@ -275,14 +282,17 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
         $specificIds = $this->helper->getSpecificIds($row);
         $parentObject->setOverridePageIdList([$specificIds['pid']]);
 
+        $expressionBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
+            ->getQueryBuilderForTable('tt_content')
+            ->expr();
         $queryBuilder = $parentObject->getQueryBuilder(
             'tt_content',
             $specificIds['pid'], [
-                $queryBuilder->expr()->eq('colPos', -1),
-                $queryBuilder->expr()->in('tx_gridelements_container', [(int)$row['uid'], $specificIds['uid']]),
+                $expressionBuilder->eq('colPos', -1),
+                $expressionBuilder->in('tx_gridelements_container', [(int)$row['uid'], $specificIds['uid']]),
             ]
         );
-        $restrictions = $this->getRestrictions();
+        $restrictions = $queryBuilder->getRestrictions();
         if ($this->showHidden) {
             $restrictions->removeByType(HiddenRestriction::class);
         }
@@ -348,24 +358,28 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
      * @param array $colPosValues : The column position to collect the items for
      * @param array $row : The current data row for the container item
      *
-     * @return array collected items for the given column
+     * @return mixed collected items for the given column
      */
     protected function collectItemsForColumns(PageLayoutView $parentObject, &$colPosValues, &$row)
     {
-        $colPosList = implode(',', array_keys($colPosValues));
+        $colPosList = array_keys($colPosValues);
 
         $specificIds = $this->helper->getSpecificIds($row);
         $parentObject->setOverridePageIdList([$specificIds['pid']]);
 
         $queryBuilder = $this->getQueryBuilder();
         $constraints = [
-            $queryBuilder->expr()->eq('colPos', -1),
-            $queryBuilder->expr()->in('tx_gridelements_container', [(int)$row['uid'], $specificIds['uid']]),
-            $queryBuilder->expr()->in('tx_gridelements_columns', $colPosList),
+            $queryBuilder->expr()->eq('pid', $queryBuilder->createNamedParameter($row['pid'], \PDO::PARAM_INT)),
+            $queryBuilder->expr()->eq('colPos', $queryBuilder->createNamedParameter(-1, \PDO::PARAM_INT)),
+            $queryBuilder->expr()->in('tx_gridelements_container',
+                $queryBuilder->createNamedParameter([(int)$row['uid'], $specificIds['uid']],
+                    Connection::PARAM_INT_ARRAY)),
+            $queryBuilder->expr()->in('tx_gridelements_columns',
+                $queryBuilder->createNamedParameter($colPosList, Connection::PARAM_INT_ARRAY))
         ];
         if (!$parentObject->tt_contentConfig['languageMode']) {
             $constraints[] = $queryBuilder->expr()->orX(
-                $queryBuilder->expr()->eq('sys_language_uid', -1),
+                $queryBuilder->expr()->eq('sys_language_uid', $queryBuilder->createNamedParameter(-1, \PDO::PARAM_INT)),
                 $queryBuilder->expr()->eq('sys_language_uid',
                     $queryBuilder->createNamedParameter((int)$parentObject->tt_contentConfig['sys_language_uid'],
                         \PDO::PARAM_INT))
@@ -379,7 +393,13 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
                 $queryBuilder->createNamedParameter((int)$row['t3ver_wsid'], \PDO::PARAM_INT));
         }
 
-        $queryBuilder = $parentObject->getQueryBuilder('tt_content', $row['pid'], $constraints);
+        $queryBuilder
+            ->select('*')
+            ->from('tt_content')
+            ->where(
+                ...$constraints
+            )
+            ->orderBy('sorting');
 
         $restrictions = $queryBuilder->getRestrictions();
         if ($this->showHidden) {
@@ -389,23 +409,21 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
         $restrictions->removeByType(EndTimeRestriction::class);
         $queryBuilder->setRestrictions($restrictions);
 
-        $parentObject->setOverridePageIdList([]);
-
-        return $parentObject->getResult($queryBuilder->execute());
+        return $queryBuilder->execute();
     }
 
     /**
      * getter for queryBuilder
      *
-     * @return QueryBuilder queryBuilder
+     * @return QueryBuilder
      */
     public function getQueryBuilder()
     {
+        /**
+         * @var $queryBuilder QueryBuilder
+         */
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
             ->getQueryBuilderForTable('tt_content');
-        $queryBuilder->getRestrictions()
-            ->removeAll()
-            ->add(GeneralUtility::makeInstance(DeletedRestriction::class));
         return $queryBuilder;
     }
 
@@ -965,18 +983,20 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
             }
             $itemList = $this->tree->getTreeList($itemList, (int)$recursive, 0, 1);
         }
+        $itemList = GeneralUtility::intExplode(',', $itemList);
 
         $queryBuilder = $this->getQueryBuilder();
         $itemRows = $queryBuilder
             ->select('*')
             ->addSelectLiteral($queryBuilder->expr()->inSet('pid',
-                    $queryBuilder->createNamedParameter($itemList)) . ' AS inSet')
+                $queryBuilder->createNamedParameter($itemList, Connection::PARAM_INT_ARRAY) . ' AS inSet'))
             ->from('tt_content')
             ->where(
                 $queryBuilder->expr()->neq('uid',
                     $queryBuilder->createNamedParameter((int)$parentUid, \PDO::PARAM_INT)),
-                $queryBuilder->expr()->in('pid', $queryBuilder->createNamedParameter($itemList)),
-                $queryBuilder->expr()->gte('colPos', 0)
+                $queryBuilder->expr()->in('pid',
+                    $queryBuilder->createNamedParameter($itemList, Connection::PARAM_INT_ARRAY)),
+                $queryBuilder->expr()->gte('colPos', $queryBuilder->createNamedParameter(0, \PDO::PARAM_INT))
             )
             ->orderBy('inSet')
             ->addOrderBy('colPos')

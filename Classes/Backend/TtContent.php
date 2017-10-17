@@ -21,6 +21,7 @@ namespace GridElementsTeam\Gridelements\Backend;
  ***************************************************************/
 
 use GridElementsTeam\Gridelements\Helper\Helper;
+use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Core\Database\Query\Restriction\DeletedRestriction;
@@ -162,7 +163,7 @@ class TtContent
         if (!$containerIds) {
             return;
         }
-        $containerIds = implode(',', GeneralUtility::intExplode(',', $containerIds));
+        $containerIds = GeneralUtility::intExplode(',', $containerIds);
         $queryBuilder = $this->getQueryBuilder();
         $childrenOnNextLevel = $queryBuilder
             ->select('uid', 'tx_gridelements_container')
@@ -170,7 +171,8 @@ class TtContent
             ->where(
                 $queryBuilder->expr()->andX(
                     $queryBuilder->expr()->eq('CType', $queryBuilder->createNamedParameter('gridelements_pi1')),
-                    $queryBuilder->expr()->in('tx_gridelements_container', $containerIds)
+                    $queryBuilder->expr()->in('tx_gridelements_container',
+                        $queryBuilder->createNamedParameter($containerIds, Connection::PARAM_INT_ARRAY))
                 )
             )
             ->execute()
@@ -219,13 +221,14 @@ class TtContent
         $contentType = is_array($params['row']['CType']) ? $params['row']['CType'][0] : $params['row']['CType'];
         $layoutSetups = $this->layoutSetup->getLayoutSetup();
         if ($itemUidList) {
-            $itemUidList = implode(',', GeneralUtility::intExplode(',', $itemUidList));
+            $itemUidList = GeneralUtility::intExplode(',', $itemUidList);
             $queryBuilder = $this->getQueryBuilder();
             $containerQuery = $queryBuilder
                 ->select('uid', 'tx_gridelements_backend_layout')
                 ->from('tt_content')
                 ->where(
-                    $queryBuilder->expr()->in('uid', $itemUidList)
+                    $queryBuilder->expr()->in('uid',
+                        $queryBuilder->createNamedParameter($itemUidList, Connection::PARAM_INT_ARRAY))
                 )
                 ->execute();
             $containers = [];

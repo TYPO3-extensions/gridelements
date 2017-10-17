@@ -610,8 +610,10 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
             // Only restrict to the default language if no search request is in place
             if ($this->searchString === '') {
                 $addWhere = (string)$queryBuilder->expr()->orX(
-                    $queryBuilder->expr()->lte($GLOBALS['TCA'][$table]['ctrl']['languageField'], 0),
-                    $queryBuilder->expr()->eq($GLOBALS['TCA'][$table]['ctrl']['transOrigPointerField'], 0)
+                    $queryBuilder->expr()->lte($GLOBALS['TCA'][$table]['ctrl']['languageField'],
+                        $queryBuilder->createNamedParameter(0, \PDO::PARAM_INT)),
+                    $queryBuilder->expr()->eq($GLOBALS['TCA'][$table]['ctrl']['transOrigPointerField'],
+                        $queryBuilder->createNamedParameter(0, \PDO::PARAM_INT))
                 );
             }
         }
@@ -708,7 +710,7 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
         $additionalConstraints = empty($addWhere) ? [] : [QueryHelper::stripLogicalOperatorPrefix($addWhere)];
         if ($table === 'tt_content') {
             $additionalConstraints[] = (string)$queryBuilder->expr()->andX(
-                $queryBuilder->expr()->neq('colPos', -1)
+                $queryBuilder->expr()->neq('colPos', $queryBuilder->createNamedParameter(-1, \PDO::PARAM_INT))
             );
         }
         $selFieldList = GeneralUtility::trimExplode(',', $selFieldList, true);

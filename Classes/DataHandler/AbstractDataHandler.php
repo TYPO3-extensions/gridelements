@@ -67,19 +67,19 @@ abstract class AbstractDataHandler
      * initializes this class
      *
      * @param string $table : The name of the table the data should be saved to
-     * @param integer $pageUid : The uid of the page we are currently working on
+     * @param integer $uidPid : The uid of the record or page we are currently working on
      * @param DataHandler $dataHandler
      */
-    public function init($table, $pageUid, DataHandler $dataHandler)
+    public function init($table, $uidPid, DataHandler $dataHandler)
     {
         $this->setTable($table);
-        $this->setPageUid($pageUid);
+        $this->setPageUid($uidPid);
         $this->setTceMain($dataHandler);
         if (!$this->layoutSetup instanceof LayoutSetup) {
-            if ($pageUid < 0) {
-                $pageUid = Helper::getInstance()->getPidFromNegativeUid($pageUid);
+            if ($uidPid < 0) {
+                $uidPid = Helper::getInstance()->getPidFromNegativeUid($uidPid);
             }
-            $this->injectLayoutSetup(GeneralUtility::makeInstance(LayoutSetup::class)->init($pageUid));
+            $this->injectLayoutSetup(GeneralUtility::makeInstance(LayoutSetup::class)->init($uidPid));
         }
     }
 
@@ -120,11 +120,7 @@ abstract class AbstractDataHandler
                 'l18n_parent')
             ->from('tt_content')
             ->where(
-                $queryBuilder->expr()->andX(
-                    $queryBuilder->expr()->eq('deleted', 0),
-                    $queryBuilder->expr()->eq('uid',
-                        $queryBuilder->createNamedParameter((int)$uid, \PDO::PARAM_INT))
-                )
+                $queryBuilder->expr()->eq('uid', $queryBuilder->createNamedParameter((int)$uid, \PDO::PARAM_INT))
             )
             ->setMaxResults(1)
             ->execute()
@@ -136,12 +132,8 @@ abstract class AbstractDataHandler
                     'l18n_parent')
                 ->from('tt_content')
                 ->where(
-                    $queryBuilder->expr()->andX(
-                        $queryBuilder->expr()->eq('deleted', 0),
-                        $queryBuilder->expr()->eq('uid',
-                            $queryBuilder->createNamedParameter((int)$currentValues['l18n_parent'],
-                                \PDO::PARAM_INT))
-                    )
+                    $queryBuilder->expr()->eq('uid',
+                        $queryBuilder->createNamedParameter((int)$currentValues['l18n_parent'], \PDO::PARAM_INT))
                 )
                 ->setMaxResults(1)
                 ->execute()
@@ -156,11 +148,8 @@ abstract class AbstractDataHandler
                 'l18n_parent')
             ->from('tt_content')
             ->where(
-                $queryBuilder->expr()->andX(
-                    $queryBuilder->expr()->eq('deleted', 0),
-                    $queryBuilder->expr()->eq('l18n_parent',
-                        $queryBuilder->createNamedParameter((int)$currentValues['uid'], \PDO::PARAM_INT))
-                )
+                $queryBuilder->expr()->eq('l18n_parent',
+                    $queryBuilder->createNamedParameter((int)$currentValues['uid'], \PDO::PARAM_INT))
             )
             ->execute();
         $translatedElements = [];
@@ -177,12 +166,9 @@ abstract class AbstractDataHandler
                 ->select('uid', 'sys_language_uid')
                 ->from('tt_content')
                 ->where(
-                    $queryBuilder->expr()->andX(
-                        $queryBuilder->expr()->eq('deleted', 0),
-                        $queryBuilder->expr()->eq('l18n_parent',
-                            $queryBuilder->createNamedParameter((int)$currentValues['tx_gridelements_container'],
-                                \PDO::PARAM_INT))
-                    )
+                    $queryBuilder->expr()->eq('l18n_parent',
+                        $queryBuilder->createNamedParameter((int)$currentValues['tx_gridelements_container'],
+                            \PDO::PARAM_INT))
                 )
                 ->execute();
             while ($translatedContainer = $translatedContainerQuery->fetch()) {
