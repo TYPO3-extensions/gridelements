@@ -31,7 +31,6 @@ use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
-use TYPO3\CMS\Core\Database\Query\Restriction\DeletedRestriction;
 use TYPO3\CMS\Core\Database\Query\Restriction\EndTimeRestriction;
 use TYPO3\CMS\Core\Database\Query\Restriction\HiddenRestriction;
 use TYPO3\CMS\Core\Database\Query\Restriction\StartTimeRestriction;
@@ -43,7 +42,6 @@ use TYPO3\CMS\Core\Messaging\FlashMessage;
 use TYPO3\CMS\Core\Messaging\FlashMessageService;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Type\Bitmask\Permission;
-use TYPO3\CMS\Core\Utility\DebugUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Versioning\VersionState;
 use TYPO3\CMS\Lang\LanguageService;
@@ -363,7 +361,6 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
     protected function collectItemsForColumns(PageLayoutView $parentObject, &$colPosValues, &$row)
     {
         $colPosList = array_keys($colPosValues);
-
         $specificIds = $this->helper->getSpecificIds($row);
         $parentObject->setOverridePageIdList([$specificIds['pid']]);
 
@@ -409,7 +406,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
         $restrictions->removeByType(EndTimeRestriction::class);
         $queryBuilder->setRestrictions($restrictions);
 
-        return $queryBuilder->execute();
+        return $queryBuilder->execute()->fetchAll();
     }
 
     /**
