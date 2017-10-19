@@ -835,7 +835,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
     {
         $specificIds = $this->helper->getSpecificIds($row);
 
-        $grid = '<div class="t3-grid-container t3-grid-element-container' . ($layoutSetup['frame'] ? ' t3-grid-container-framed t3-grid-container-' . $layoutSetup['frame'] : '') . ($layoutSetup['top_level_layout'] ? ' t3-grid-tl-container' : '') . '">';
+        $grid = '<div class="t3-grid-container t3-grid-element-container' . ($layoutSetup['frame'] ? ' t3-grid-container-framed t3-grid-container-' . (int)$layoutSetup['frame'] : '') . ($layoutSetup['top_level_layout'] ? ' t3-grid-tl-container' : '') . '">';
         if ($layoutSetup['frame'] || $this->helper->getBackendUser()->uc['showGridInformation'] === 1) {
             $grid .= '<h4 class="t3-grid-container-title-' . (int)$layoutSetup['frame'] . '">' . BackendUtility::wrapInHelp('tx_gridelements_backend_layouts',
                     'title', $this->languageService->sL($layoutSetup['title']), [

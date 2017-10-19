@@ -291,7 +291,7 @@ class Gridelements extends ContentObjectRenderer
         if (!$element || $csvColumns === '') {
             return;
         }
-
+        $csvColumns = GeneralUtility::intExplode(',', $csvColumns);
         $queryBuilder = $this->getQueryBuilder();
         $children = $queryBuilder
             ->select('*')
