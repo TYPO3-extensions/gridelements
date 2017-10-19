@@ -769,7 +769,8 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Severity', 'TYPO
 				name: 'ok'
 			}
 		]);
-		$modal.data('col', col);
+        $modal.find('select').css('min-height', 'unset');
+        $modal.data('col', col);
 		$modal.data('row', row);
 		$modal.on('button.clicked', function(e) {
 			if (e.target.name === 'cancel') {
