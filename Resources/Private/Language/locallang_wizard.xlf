@@ -7,6 +7,12 @@
 			<generator>LFEditor</generator>
 		</header>
 		<body>
+			<trans-unit id="grid_maxitems">
+				<source>Maximum number of items</source>
+			</trans-unit>
+			<trans-unit id="grid_maxitemsHelp">
+				<source>Enter the maximum number of items to be created or moved here.</source>
+			</trans-unit>
 			<trans-unit id="grid_allowed">
 				<source>Allowed CE</source>
 			</trans-unit>
@@ -17,7 +23,31 @@
 				<source>Allowed Grids</source>
 			</trans-unit>
 			<trans-unit id="grid_allowedGridTypesHelp">
-				<source>Fill in the Gridelements types that may be created or moved here.</source>
+				<source>Select the Gridelements types that may be created or moved here.</source>
+			</trans-unit>
+			<trans-unit id="grid_allowedListTypes">
+				<source>Allowed Plugins</source>
+			</trans-unit>
+			<trans-unit id="grid_allowedListTypesHelp">
+				<source>Select the plugin types that may be created or moved here.</source>
+			</trans-unit>
+			<trans-unit id="grid_disallowed">
+				<source>Restricted CE</source>
+			</trans-unit>
+			<trans-unit id="grid_disallowedHelp">
+				<source>Select the content element types that may NOT be created or moved here.</source>
+			</trans-unit>
+			<trans-unit id="grid_disallowedGridTypes">
+				<source>Restricted Grids</source>
+			</trans-unit>
+			<trans-unit id="grid_disallowedGridTypesHelp">
+				<source>Select the Gridelements types that may NOT be created or moved here.</source>
+			</trans-unit>
+			<trans-unit id="grid_disallowedListTypes">
+				<source>Restricted Plugins</source>
+			</trans-unit>
+			<trans-unit id="grid_disallowedListTypesHelp">
+				<source>Select the plugin types that may NOT be created or moved here.</source>
 			</trans-unit>
 		</body>
 	</file>

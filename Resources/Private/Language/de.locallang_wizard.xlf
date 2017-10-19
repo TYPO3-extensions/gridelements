@@ -7,6 +7,14 @@
 			<generator>LFEditor</generator>
 		</header>
 		<body>
+			<trans-unit id="grid_maxitems">
+				<source>Maximum number of items</source>
+				<target>Maximale Anzahl von Elementen</target>
+			</trans-unit>
+			<trans-unit id="grid_maxitemsHelp">
+				<source>Enter the maximum number of items to be created or moved here.</source>
+				<target>Geben Sie die maximale Anzahl von Elementen ein, die innerhalb dieser Spalte angelegt oder dorthin bewegt werden dürfen.</target>
+			</trans-unit>
 			<trans-unit id="grid_allowed">
 				<source>Allowed CE</source>
 				<target>Zulässige CE</target>
@@ -20,8 +28,40 @@
 				<target>Zulässige Raster-Elemente</target>
 			</trans-unit>
 			<trans-unit id="grid_allowedGridTypesHelp">
-				<source>Fill in the Gridelements types that may be created or moved here.</source>
-				<target>Tragen Sie die Raster-Element-Typen ein, die innerhalb dieser Spalte angelegt oder dorthin bewegt werden dürfen.</target>
+				<source>Select Gridelements types that may be created or moved here.</source>
+				<target>Wählen Sie die Raster-Element-Typen aus, die innerhalb dieser Spalte angelegt oder dorthin bewegt werden dürfen.</target>
+			</trans-unit>
+			<trans-unit id="grid_allowedListTypes">
+				<source>Allowed Plugins</source>
+				<target>Zulässige Plugins</target>
+			</trans-unit>
+			<trans-unit id="grid_allowedListTypesHelp">
+				<source>Select the plugin types that may be created or moved here.</source>
+				<target>Wählen Sie die Plugin-Typen aus, die innerhalb dieser Spalte angelegt oder dorthin bewegt werden dürfen.</target>
+			</trans-unit>
+			<trans-unit id="grid_disallowed">
+				<source>Restricted CE</source>
+				<target>Zulässige CE</target>
+			</trans-unit>
+			<trans-unit id="grid_disallowedHelp">
+				<source>Select the content element types that may NOT be created or moved here.</source>
+				<target>Wählen Sie die Content-Element-Typen aus, die NICHT innerhalb dieser Spalte angelegt oder dorthin bewegt werden dürfen.</target>
+			</trans-unit>
+			<trans-unit id="grid_disallowedGridTypes">
+				<source>Restricted Grids</source>
+				<target>Zulässige Raster-Elemente</target>
+			</trans-unit>
+			<trans-unit id="grid_disallowedGridTypesHelp">
+				<source>Select the Gridelements types that may NOT be created or moved here.</source>
+				<target>Wählen Sie die Raster-Element-Typen aus, die NICHT innerhalb dieser Spalte angelegt oder dorthin bewegt werden dürfen.</target>
+			</trans-unit>
+			<trans-unit id="grid_disallowedListTypes">
+				<source>Restricted Plugins</source>
+				<target>Zulässige Plugins</target>
+			</trans-unit>
+			<trans-unit id="grid_disallowedListTypesHelp">
+				<source>Select the plugin types that may NOT be created or moved here.</source>
+				<target>Wählen Sie die Plugin-Typen aus, die NICHT innerhalb dieser Spalte angelegt oder dorthin bewegt werden dürfen.</target>
 			</trans-unit>
 		</body>
 	</file>

@@ -20,6 +20,7 @@ namespace GridElementsTeam\Gridelements\Wizard;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use GridElementsTeam\Gridelements\Backend\LayoutSetup;
 use TYPO3\CMS\Backend\View\Wizard\Element\BackendLayoutWizardElement;
 use TYPO3\CMS\Core\TypoScript\Parser\TypoScriptParser;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -128,27 +129,86 @@ class GridelementsBackendLayoutWizardElement extends BackendLayoutWizardElement
         $html[] = '</div>';
         $html[] = '</div>';
 
-        $ctypes = [];
-        foreach ($GLOBALS['TCA']['tt_content']['columns']['CType']['config']['items'] as $item) {
-            $ctype = [];
-            $ctype['key'] = $item[1];
-            if (substr($ctype['key'], 0, 2) !== '--') {
-                $ctype['label'] = $lang->sL($item[0], true);
-                if (strpos($item[2], 'EXT:') === 0) {
-                    $ctype['icon'] = \TYPO3\CMS\Core\Utility\GeneralUtility::getFileAbsFileName($item[2]);
-                } elseif (strpos($item[2], '/typo3') === 0) {
-                    $ctype['icon'] = '../../../' . $item[2];
-                } else {
-                    $ctype['icon'] = '../../../' . '../typo3/sysext/core/Resources/Public/Icons/T3Icons/content/' . $item[2];
+        $contentTypes = array();
+        if (is_array($GLOBALS['TCA']['tt_content']['columns']['CType']['config']['items'])) {
+            foreach ($GLOBALS['TCA']['tt_content']['columns']['CType']['config']['items'] as $item) {
+                $contentType = array();
+                if (!empty($item[1])) {
+                    $contentType['key'] = $item[1];
+                    if (substr($contentType['key'], 0, 2) !== '--') {
+                        $contentType['label'] = $lang->sL($item[0], true);
+                        if (strpos($item[2], 'EXT:') === 0) {
+                            $contentType['icon'] = \TYPO3\CMS\Core\Utility\GeneralUtility::getFileAbsFileName($item[2]);
+                        } elseif (strpos($item[2], '/typo3') === 0) {
+                            $contentType['icon'] = '../../../' . $item[2];
+                        } else {
+                            $contentType['icon'] = '../../../' . '../typo3/sysext/core/Resources/Public/Icons/T3Icons/content/' . $item[2];
+                        }
+                        // Check if file ending exists, therefore compare pos of last slash to pos of last dot
+                        if (!empty($contentType['icon']) && strrpos($contentType['icon'], '/') > strrpos($contentType['icon'], '.')) {
+                            $contentType['icon'] .= '.svg';
+                        }
+                        $contentTypes[] = $contentType;
+                    }
                 }
-                // Check if file ending exists, therefore compare pos of last slash to pos of last dot
-                if (!empty($ctype['icon']) && strrpos($ctype['icon'], '/') > strrpos($ctype['icon'], '.')) {
-                    $ctype['icon'] .= '.svg';
-                }
-                $ctypes[] = $ctype;
             }
         }
-        $html[] = '<script type="text/javascript">/*<![CDATA[*/ TYPO3.settings.availableCTypes = ' . json_encode($ctypes) . '; /*]]>*/</script>';
+        $listTypes = array();
+        if (is_array($GLOBALS['TCA']['tt_content']['columns']['list_type']['config']['items'])) {
+            foreach ($GLOBALS['TCA']['tt_content']['columns']['list_type']['config']['items'] as $item) {
+                $listType = [];
+                if (!empty($item[1])) {
+                    $listType['key'] = $item[1];
+                    if (substr($listType['key'], 0, 2) !== '--') {
+                        $listType['label'] = $lang->sL($item[0], true);
+                        if (strpos($item[2], 'EXT:') === 0) {
+                            $listType['icon'] = \TYPO3\CMS\Core\Utility\GeneralUtility::getFileAbsFileName($item[2]);
+                        } elseif (strpos($item[2], '/typo3') === 0) {
+                            $listType['icon'] = '../../../' . $item[2];
+                        } else {
+                            $listType['icon'] = '../../../' . '../typo3/sysext/core/Resources/Public/Icons/T3Icons/content/' . $item[2];
+                        }
+                        // Check if file ending exists, therefore compare pos of last slash to pos of last dot
+                        if (!empty($listType['icon']) && strrpos($listType['icon'], '/') > strrpos($listType['icon'],
+                                '.')) {
+                            $listType['icon'] .= '.svg';
+                        }
+                        $listTypes[] = $listType;
+                    }
+                }
+            }
+        }
+        $gridTypes = array();
+        $layoutSetup = GeneralUtility::makeInstance(LayoutSetup::class)->init($this->data['parentPageRow']['pid'])->getLayoutSetup();
+        if (is_array($layoutSetup)) {
+            foreach ($layoutSetup as $key => $item) {
+                $gridType = [];
+                if (!empty($key)) {
+                    $gridType['key'] = $key;
+                    if (substr($gridType['key'], 0, 2) !== '--') {
+                        $gridType['label'] = $lang->sL($item['title'], true);
+                        if (strpos($item['icon'], 'EXT:') === 0) {
+                            $gridType['icon'] = \TYPO3\CMS\Core\Utility\GeneralUtility::getFileAbsFileName($item['icon']);
+                        } elseif (strpos($item['icon'], '/typo3') === 0) {
+                            $gridType['icon'] = '../../../' . $item['icon'];
+                        } else {
+                            $gridType['icon'] = '../../../' . '../typo3/sysext/core/Resources/Public/Icons/T3Icons/content/' . $item['icon'];
+                        }
+                        // Check if file ending exists, therefore compare pos of last slash to pos of last dot
+                        if (!empty($gridType['icon']) && strrpos($gridType['icon'], '/') > strrpos($gridType['icon'],
+                                '.')) {
+                            $gridType['icon'] .= '.svg';
+                        }
+                        $gridTypes[] = $gridType;
+                    }
+                }
+            }
+        }
+        $html[] = '<script type="text/javascript">/*<![CDATA[*/ ' .
+            ($contentTypes ? ' TYPO3.settings.availableCTypes = ' . json_encode($contentTypes) . '; ' : '') .
+            ($listTypes ? ' TYPO3.settings.availableListTypes = ' . json_encode($listTypes) . '; ' : '') .
+            ($gridTypes ? ' TYPO3.settings.availableGridTypes = ' . json_encode($gridTypes) . '; ' : '') .
+            '/*]]>*/</script>';
 
         $html = implode(LF, $html);
         $resultArray['html'] = $html;

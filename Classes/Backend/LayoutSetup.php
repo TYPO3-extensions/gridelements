@@ -170,15 +170,12 @@ class LayoutSetup
                         $queryBuilder->expr()->comparison($storagePid, '=', 0)
                     ),
                     $queryBuilder->expr()->orX(
-                        $queryBuilder->expr()->eq('pid',
-                            $queryBuilder->createNamedParameter((int)$pageTSconfigId, \PDO::PARAM_INT)),
-                        $queryBuilder->expr()->eq('pid',
-                            $queryBuilder->createNamedParameter((int)$storagePid, \PDO::PARAM_INT))
+                        $queryBuilder->expr()->eq('pid', $queryBuilder->createNamedParameter((int)$pageTSconfigId, \PDO::PARAM_INT)),
+                        $queryBuilder->expr()->eq('pid', $queryBuilder->createNamedParameter((int)$storagePid, \PDO::PARAM_INT))
                     ),
                     $queryBuilder->expr()->andX(
                         $queryBuilder->expr()->comparison($pageTSconfigId, '=', 0),
-                        $queryBuilder->expr()->eq('pid',
-                            $queryBuilder->createNamedParameter((int)$pageId, \PDO::PARAM_INT))
+                        $queryBuilder->expr()->eq('pid', $queryBuilder->createNamedParameter((int)$pageId, \PDO::PARAM_INT))
                     )
                 )
             )
@@ -272,23 +269,26 @@ class LayoutSetup
                     }
                     $colPos = (int)$column['colPos'];
                     $availableColumns['CSV'] .= ',' . $colPos;
-                    $availableColumns[$colPos] = $column['allowed'] ? $column['allowed'] : '*';
-                    $availableGridColumns = [];
-                    if ($column['allowedGridTypes']) {
-                        $availableGridColumns[$colPos] = $column['allowedGridTypes'];
+                    if (!is_array($column['allowed']) && !empty($column['allowed'])) {
+                        $allowed = ['CType' => $column['allowed']];
+                        $column['allowed'] = $allowed;
+                    } else if (empty($column['allowed'])) {
+                        $column['allowed'] = ['CType' => '*'];
                     }
-                    $availableColumns['allowed'] .= $availableColumns['allowed']
-                        ? ',' . $availableColumns[$colPos]
-                        : $availableColumns[$colPos];
-                    if (!empty($availableGridColumns[$colPos])) {
-                        $availableColumns['allowedGridTypes'] .= $availableColumns['allowedGridTypes']
-                            ? ',' . $availableGridColumns[$colPos]
-                            : $availableGridColumns[$colPos];
+                    if ($column['allowedGridTypes']) {
+                        $column['allowed']['tx_gridelements_backend_layout'] = $column['allowedGridTypes'];
+                        unset($column['allowedGridTypes']);
+                    }
+                    $availableColumns['allowed'][$colPos] = $column['allowed'];
+                    if (!empty($column['disallowed'])) {
+                        $availableColumns['disallowed'][$colPos] = $column['disallowed'];
+                    }
+                    if (!empty($column['maxitems'])) {
+                        $availableColumns['maxitems'][$colPos] = $column['maxitems'];
                     }
                 }
             }
         }
-
         return $availableColumns;
     }
 

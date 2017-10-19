@@ -446,6 +446,25 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Severity', 'TYPO
 	};
 
 	/**
+	 * Sets the column field for a certain grid element. This is NOT the column of the
+	 * element itself.
+	 *
+	 * @param {String} newMaxItems
+	 * @param {Integer} col
+	 * @param {Integer} row
+	 *
+	 * @returns {Boolean}
+	 */
+	GridEditor.setMaxItems = function(newMaxItems, col, row) {
+		var cell = GridEditor.getCell(col, row);
+		if (!cell) {
+			return false;
+		}
+		cell.maxitems = newMaxItems.trim() !== '' ? parseInt(newMaxItems, 10) : '';
+		return true;
+	};
+
+	/**
 	 * Sets the allowed CTypes of a certain grid element.
 	 *
 	 * @param {String} newAllowed
@@ -464,6 +483,60 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Severity', 'TYPO
 	};
 
 	/**
+	 * Sets the allowed CTypes of a certain grid element.
+	 *
+	 * @param {String} newDisallowed
+	 * @param {Integer} col
+	 * @param {Integer} row
+	 *
+	 * @returns {Boolean}
+	 */
+	GridEditor.setDisallowed = function(newDisallowed, col, row) {
+		var cell = GridEditor.getCell(col, row);
+		if (!cell) {
+			return false;
+		}
+		cell.disallowed = GridEditor.stripMarkup(newDisallowed);
+		return true;
+	};
+
+    /**
+     * Sets the allowed grid types of a certain grid element.
+     *
+     * @param {String} newAllowedListTypes
+     * @param {Integer} col
+     * @param {Integer} row
+     *
+     * @returns {Boolean}
+     */
+    GridEditor.setAllowedListTypes = function(newAllowedListTypes, col, row) {
+        var cell = GridEditor.getCell(col, row);
+        if (!cell) {
+            return false;
+        }
+        cell.allowedListTypes = GridEditor.stripMarkup(newAllowedListTypes);
+        return true;
+    };
+
+    /**
+     * Sets the allowed grid types of a certain grid element.
+     *
+     * @param {String} newDisallowedListTypes
+     * @param {Integer} col
+     * @param {Integer} row
+     *
+     * @returns {Boolean}
+     */
+    GridEditor.setDisallowedListTypes = function(newDisallowedListTypes, col, row) {
+        var cell = GridEditor.getCell(col, row);
+        if (!cell) {
+            return false;
+        }
+        cell.disallowedListTypes = GridEditor.stripMarkup(newDisallowedListTypes);
+        return true;
+    };
+
+    /**
 	 * Sets the allowed grid types of a certain grid element.
 	 *
 	 * @param {String} newAllowedGridTypes
@@ -477,7 +550,25 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Severity', 'TYPO
 		if (!cell) {
 			return false;
 		}
-		cell.allowedGridTypes = newAllowedGridTypes.trim() !== '' ? GridEditor.stripMarkup(newAllowedGridTypes) : '';
+		cell.allowedGridTypes = GridEditor.stripMarkup(newAllowedGridTypes);
+		return true;
+	};
+
+	/**
+	 * Sets the allowed grid types of a certain grid element.
+	 *
+	 * @param {String} newDisallowedGridTypes
+	 * @param {Integer} col
+	 * @param {Integer} row
+	 *
+	 * @returns {Boolean}
+	 */
+	GridEditor.setDisallowedGridTypes = function(newDisallowedGridTypes, col, row) {
+		var cell = GridEditor.getCell(col, row);
+		if (!cell) {
+			return false;
+		}
+		cell.disallowedGridTypes = GridEditor.stripMarkup(newDisallowedGridTypes);
 		return true;
 	};
 
@@ -506,6 +597,14 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Severity', 'TYPO
 		} else {
 			colPos = '';
 		}
+		var maxitems;
+		if (cell.maxitems === 0) {
+			maxitems = 0;
+		} else if(parseInt(cell.maxitems, 10)) {
+			maxitems = parseInt(cell.maxitems, 10);
+		} else {
+			maxitems = '';
+		}
 
 		var $markup = $('<div>');
 		var $formGroup = $('<div class="form-group">');
@@ -519,7 +618,8 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Severity', 'TYPO
 				.append([
 					$label
 						.clone()
-						.text(Lang['grid_nameHelp'])
+						.text(Lang['grid_name'])
+						.attr('title', Lang['grid_nameHelp'])
 					,
 					$input
 						.clone()
@@ -533,7 +633,8 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Severity', 'TYPO
 				.append([
 					$label
 						.clone()
-						.text(Lang['grid_columnHelp'])
+						.text(Lang['grid_column'])
+						.attr('title', Lang['grid_columnHelp'])
 					,
 					$input
 						.clone()
@@ -547,29 +648,112 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Severity', 'TYPO
 				.append([
 					$label
 						.clone()
-						.text(Lang['grid_allowedHelp'])
+						.text(Lang['grid_maxitems'])
+						.attr('title', Lang['grid_maxitemsHelp'])
+					,
+					$input
+						.clone()
+						.attr('type', 'text')
+						.attr('class', 't3js-grideditor-field-maxitems form-control')
+						.attr('name', 'maxitems')
+						.val(maxitems)
+			]),
+            typeof TYPO3.settings.availableCTypes !== 'undefined' ?
+				$formGroup
+				.clone()
+				.append([
+					$label
+						.clone()
+						.text(Lang['grid_allowed'])
+						.attr('title', Lang['grid_allowedHelp'])
 					,
 					$select
 						.clone()
 						.attr('multiple', 'true')
 						.attr('class', 't3js-grideditor-field-allowed form-control')
 						.attr('name', 'allowed')
-						.append(GridEditor.getCTypeOptions(cell.allowed))
-			]),
-			$formGroup
+						.append(GridEditor.getTypeOptions(cell.allowed, TYPO3.settings.availableCTypes))
+			]) : '',
+            typeof TYPO3.settings.availableCTypes !== 'undefined' ?
+				$formGroup
 				.clone()
 				.append([
 					$label
 						.clone()
-						.text(Lang['grid_allowedGridTypesHelp'])
+						.text(Lang['grid_disallowed'])
+						.attr('title', Lang['grid_disallowedHelp'])
 					,
-					$input
+					$select
 						.clone()
-						.attr('type', 'text')
+						.attr('multiple', 'true')
+						.attr('class', 't3js-grideditor-field-disallowed form-control')
+						.attr('name', 'disallowed')
+						.append(GridEditor.getTypeOptions(cell.disallowed, TYPO3.settings.availableCTypes))
+			]) : '',
+            typeof TYPO3.settings.availableListTypes !== 'undefined' ?
+				$formGroup
+				.clone()
+				.append([
+					$label
+						.clone()
+						.text(Lang['grid_allowedListTypes'])
+						.attr('title', Lang['grid_allowedListTypesHelp'])
+					,
+					$select
+						.clone()
+						.attr('multiple', 'true')
+						.attr('class', 't3js-grideditor-field-allowed-list-types form-control')
+						.attr('name', 'allowedListTypes')
+                        .append(GridEditor.getTypeOptions(cell.allowedListTypes, TYPO3.settings.availableListTypes))
+			]) : '',
+            typeof TYPO3.settings.availableListTypes !== 'undefined' ?
+				$formGroup
+				.clone()
+				.append([
+					$label
+						.clone()
+						.text(Lang['grid_disallowedListTypes'])
+						.attr('title', Lang['grid_disallowedListTypesHelp'])
+					,
+                    $select
+                        .clone()
+                        .attr('multiple', 'true')
+						.attr('class', 't3js-grideditor-field-disallowed-list-types form-control')
+						.attr('name', 'disallowedListTypes')
+                        .append(GridEditor.getTypeOptions(cell.disallowedListTypes, TYPO3.settings.availableListTypes))
+			]) : '',
+            typeof TYPO3.settings.availableGridTypes !== 'undefined' ?
+				$formGroup
+				.clone()
+				.append([
+					$label
+						.clone()
+						.text(Lang['grid_allowedGridTypes'])
+						.attr('title', Lang['grid_allowedGridTypesHelp'])
+					,
+                    $select
+                        .clone()
+                        .attr('multiple', 'true')
 						.attr('class', 't3js-grideditor-field-allowed-grid-types form-control')
 						.attr('name', 'allowedGridTypes')
-						.val(GridEditor.stripMarkup(cell.allowedGridTypes) || '')
-			])
+                        .append(GridEditor.getTypeOptions(cell.allowedGridTypes, TYPO3.settings.availableGridTypes))
+			]) : '',
+            typeof TYPO3.settings.availableGridTypes !== 'undefined' ?
+				$formGroup
+				.clone()
+				.append([
+					$label
+						.clone()
+						.text(Lang['grid_disallowedGridTypes'])
+						.attr('title', Lang['grid_disallowedGridTypesHelp'])
+					,
+                    $select
+                        .clone()
+                        .attr('multiple', 'true')
+						.attr('class', 't3js-grideditor-field-disallowed-grid-types form-control')
+						.attr('name', 'disallowedGridTypes')
+                        .append(GridEditor.getTypeOptions(cell.disallowedGridTypes, TYPO3.settings.availableGridTypes))
+			]) : ''
 		]);
 
 		var $modal = Modal.show(Lang['grid_windowTitle'], $markup, Severity.notice, [
@@ -593,8 +777,19 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Severity', 'TYPO
 			} else if (e.target.name === 'ok') {
 				GridEditor.setName($modal.find('.t3js-grideditor-field-name').val(), $modal.data('col'), $modal.data('row'));
 				GridEditor.setColumn($modal.find('.t3js-grideditor-field-colpos').val(), $modal.data('col'), $modal.data('row'));
-				GridEditor.setAllowed($modal.find('.t3js-grideditor-field-allowed').val().join(), $modal.data('col'), $modal.data('row'));
-				GridEditor.setAllowedGridTypes($modal.find('.t3js-grideditor-field-allowed-grid-types').val(), $modal.data('col'), $modal.data('row'));
+				GridEditor.setMaxItems($modal.find('.t3js-grideditor-field-maxitems').val(), $modal.data('col'), $modal.data('row'));
+                if (typeof TYPO3.settings.availableCTypes !== 'undefined') {
+                    GridEditor.setAllowed($modal.find('.t3js-grideditor-field-allowed').val().join(), $modal.data('col'), $modal.data('row'));
+                    GridEditor.setDisallowed($modal.find('.t3js-grideditor-field-disallowed').val().join(), $modal.data('col'), $modal.data('row'));
+                }
+                if (typeof TYPO3.settings.availableListTypes !== 'undefined') {
+                    GridEditor.setAllowedListTypes($modal.find('.t3js-grideditor-field-allowed-list-types').val().join(), $modal.data('col'), $modal.data('row'));
+                    GridEditor.setDisallowedListTypes($modal.find('.t3js-grideditor-field-disallowed-list-types').val().join(), $modal.data('col'), $modal.data('row'));
+                }
+                if (typeof TYPO3.settings.availableGridTypes !== 'undefined' ) {
+                    GridEditor.setAllowedGridTypes($modal.find('.t3js-grideditor-field-allowed-grid-types').val().join(), $modal.data('col'), $modal.data('row'));
+                    GridEditor.setDisallowedGridTypes($modal.find('.t3js-grideditor-field-disallowed-grid-types').val().join(), $modal.data('col'), $modal.data('row'));
+                }
 				GridEditor.drawTable();
 				GridEditor.writeConfig(GridEditor.export2LayoutRecord());
 				Modal.currentModal.trigger('modal-dismiss');
@@ -602,26 +797,26 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Severity', 'TYPO
 		});
 	};
 
-	GridEditor.getCTypeOptions = function (selectedCTypesCSV) {
-		var allowedCTypeOptions = [];
+	GridEditor.getTypeOptions = function (selectedTypesCSV, availableTypes) {
+		var allowedTypeOptions = [];
 
-		var selectedCTypes = [];
-		if (selectedCTypesCSV) {
-			selectedCTypes = selectedCTypesCSV.split(',');
+		var selectedTypes = [];
+		if (selectedTypesCSV) {
+			selectedTypes = selectedTypesCSV.split(',');
 		}
 
-		for (var i = 0; i < TYPO3.settings.availableCTypes.length; i++) {
-			var ctype = TYPO3.settings.availableCTypes[i],
-				ctypeKey = ctype.key,
-				ctypeIcon = ctype.icon,
-				ctypeLabel = ctype.label,
-				ctypeSelected = $.inArray(ctypeKey, selectedCTypes) !== -1,
-				ctypeStyle = 'background: #fff url(' + ctypeIcon + ') 0% 50% no-repeat; height: 16px; padding: 2px 10px 0 22px;'
+		for (var i = 0; i < availableTypes.length; i++) {
+			var type = availableTypes[i],
+				typeKey = String(type.key),
+				typeIcon = type.icon,
+				typeLabel = type.label,
+				typeSelected = $.inArray(typeKey, selectedTypes) !== -1,
+				typeStyle = 'background: #fff url(' + typeIcon + ') 0% 50% no-repeat; height: 16px; padding: 2px 10px 0 22px;'
 
-			allowedCTypeOptions.push('<option value="' + ctypeKey + '" style="' + ctypeStyle + '"' + (ctypeSelected ? ' selected="selected"' : '') + '>' + ctypeLabel + '</option>');
+			allowedTypeOptions.push('<option value="' + typeKey + '" style="' + typeStyle + '"' + (typeSelected ? ' selected="selected"' : '') + '>' + typeLabel + '</option>');
 		}
 
-		return allowedCTypeOptions.join('');
+		return allowedTypeOptions.join('');
 	};
 
 	/**
