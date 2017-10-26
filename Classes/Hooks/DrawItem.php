@@ -42,6 +42,7 @@ use TYPO3\CMS\Core\Messaging\FlashMessage;
 use TYPO3\CMS\Core\Messaging\FlashMessageService;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Type\Bitmask\Permission;
+use TYPO3\CMS\Core\Utility\DebugUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Versioning\VersionState;
 use TYPO3\CMS\Lang\LanguageService;
@@ -687,6 +688,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
     protected function renderSingleElementHTML(PageLayoutView $parentObject, $itemRow)
     {
         // @todo $parentObject->lP is gone, defLangBinding is proably not enough for the third param to act correctly
+        $parentObject->tt_contentData['nextThree'][$itemRow['uid']] = $itemRow['uid'];
         $singleElementHTML = $parentObject->tt_content_drawHeader($itemRow,
             $parentObject->tt_contentConfig['showInfo'] ? 15 : 5, $parentObject->defLangBinding, true, true);
         $singleElementHTML .= (!empty($itemRow['_ORIG_uid']) ? '<div class="ver-element">' : '')
@@ -695,6 +697,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
             . '</div>'
             . (!empty($itemRow['_ORIG_uid']) ? '</div>' : '');
         $singleElementHTML .= $this->tt_content_drawFooter($parentObject, $itemRow);
+        unset($parentObject->tt_contentData['nextThree'][$itemRow['uid']]);
 
         return $singleElementHTML;
     }
