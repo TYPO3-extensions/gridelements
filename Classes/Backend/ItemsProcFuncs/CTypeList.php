@@ -48,7 +48,7 @@ class CTypeList extends AbstractItemsProcFunc
     public function itemsProcFunc(array &$params)
     {
         if ((int)$params['row']['pid'] > 0) {
-            $this->checkForAllowedCTypes($params['items'], $params['row']['pid'], $params['row']['colPos'],
+            $this->checkForAllowedCTypes($params['items'], $params['row']['pid'], $params['row']['colPos'][0],
                 $params['row']['tx_gridelements_container'], $params['row']['tx_gridelements_columns']);
         } else {
             $this->init((int)$params['row']['pid']);
@@ -96,13 +96,15 @@ class CTypeList extends AbstractItemsProcFunc
             foreach ($items as $key => $item) {
                 if ((
                         !empty($allowed) &&
-                        !GeneralUtility::inList($allowed, '*') &&
-                        !GeneralUtility::inList($allowed, $item[1])
+                        !isset($allowed['*']) &&
+                        !isset($allowed[$item[1]])
                     ) ||
                     (
                         !empty($disallowed) &&
-                        GeneralUtility::inList($disallowed, '*') &&
-                        GeneralUtility::inList($disallowed, $item[1])
+                        (
+                            isset($disallowed['*']) ||
+                            isset($disallowed[$item[1]])
+                        )
                     )) {
                     unset($items[$key]);
                 }

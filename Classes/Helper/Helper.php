@@ -106,6 +106,31 @@ class Helper implements SingletonInterface
         return array_values($retVal);
     }
 
+    public function mergeAllowedDisallowedSettings($backendLayout) {
+        if (!empty($backendLayout['allowed'])) {
+            foreach ($backendLayout['allowed'] as $column => &$fields) {
+                if ($fields['CType'] !== '*') {
+                    if (!empty($fields['list_type'])) {
+                        $fields['CType'] .= ',list';
+                    }
+                    if (!empty($fields['tx_gridelements_backend_layout'])) {
+                        $fields['CType'] .= ',gridelements_pi1';
+                    }
+                }
+                if (!empty($fields['CType'])) {
+                    $fields['CType'] = array_flip(GeneralUtility::trimExplode(',', $fields['CType']));
+                }
+                if (!empty($fields['list_type'])) {
+                    $fields['list_type'] = array_flip(GeneralUtility::trimExplode(',', $fields['list_type']));
+                }
+                if (!empty($fields['tx_gridelements_backend_layout'])) {
+                    $fields['tx_gridelements_backend_layout'] = array_flip(GeneralUtility::trimExplode(',', $fields['tx_gridelements_backend_layout']));
+                }
+            }
+        };
+        return $backendLayout;
+    }
+
     /**
      * setter for Connection object
      *

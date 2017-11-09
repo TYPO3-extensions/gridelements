@@ -26,7 +26,6 @@ use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Core\Database\Query\Restriction\DeletedRestriction;
 use TYPO3\CMS\Core\Utility\ArrayUtility;
-use TYPO3\CMS\Core\Utility\DebugUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -114,7 +113,6 @@ class TtContent
         if (!empty($possibleContainers)) {
             $params['items'] = array_merge($params['items'], $possibleContainers);
         }
-
         $itemUidList = '';
         if (count($params['items']) > 1) {
             foreach ($params['items'] as $container) {
@@ -220,6 +218,10 @@ class TtContent
     public function deleteDisallowedContainers(array &$params, $itemUidList = '')
     {
         $contentType = is_array($params['row']['CType']) ? $params['row']['CType'][0] : $params['row']['CType'];
+        $listType = '';
+        if ($contentType === 'list') {
+            $listType = is_array($params['row']['list_type']) ? $params['row']['list_type'][0] : $params['row']['list_type'];
+        }
         $layoutSetups = $this->layoutSetup->getLayoutSetup();
         if ($itemUidList) {
             $itemUidList = GeneralUtility::intExplode(',', $itemUidList);
@@ -237,10 +239,44 @@ class TtContent
                 $containers[$container['uid']] = $container;
             }
             foreach ($params['items'] as $key => $container) {
-                $allowed = $layoutSetups[$containers[$container[1]]['tx_gridelements_backend_layout']]['allowed'];
-                if ($container[1] > 0 && $allowed) {
-                    if (!GeneralUtility::inList($allowed, $contentType) && !GeneralUtility::inList($allowed, '*')) {
+                $backendLayout = $containers[$container[1]]['tx_gridelements_backend_layout'];
+                $gridColumn = $params['row']['tx_gridelements_columns'];
+                $allowed = $layoutSetups[$backendLayout]['allowed'][$gridColumn];
+                $disallowed = $layoutSetups[$backendLayout]['disallowed'][$gridColumn];
+                if ($container[1] > 0 && (!empty($allowed) || !empty($disallowed))) {
+                    if ((
+                            !empty($allowed) &&
+                            !isset($allowed['CType']['*']) &&
+                            !isset($allowed['CType'][$contentType])
+                        ) ||
+                        (
+                            !empty($disallowed) &&
+                            (
+                                isset($disallowed['CType']['*']) ||
+                                isset($disallowed['CType'][$contentType])
+                            )
+                        )) {
                         unset($params['items'][$key]);
+                    }
+                    if (!empty($listType)) {
+                        if ((
+                                !empty($allowed) &&
+                                !isset($allowed['CType']['*']) &&
+                                !(
+                                    isset($allowed['list_type']['*']) ||
+                                    isset($allowed['list_type'][$listType])
+                                )
+                            ) ||
+                            (
+                                !empty($disallowed) &&
+                                (
+                                    isset($disallowed['CType']['*']) ||
+                                    isset($disallowed['list_type']['*']) ||
+                                    isset($disallowed['list_type'][$listType])
+                                )
+                            )) {
+                            unset($params['items'][$key]);
+                        }
                     }
                 }
             }

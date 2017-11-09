@@ -21,6 +21,7 @@ namespace GridElementsTeam\Gridelements\Backend\ItemsProcFuncs;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use GridElementsTeam\Gridelements\Helper\Helper;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Backend\View\BackendLayoutView;
 use TYPO3\CMS\Core\Database\QueryGenerator;
@@ -64,38 +65,47 @@ abstract class AbstractItemsProcFunc implements SingletonInterface
      */
     public function getSelectedBackendLayout($pageId)
     {
-        $backendLayoutData = GeneralUtility::callUserFunction(BackendLayoutView::class . '->getSelectedBackendLayout',
-            $pageId, $this);
-        // add allowed CTypes to the columns, since this is not done by the native core methods
-        if (!empty($backendLayoutData['__items'])) {
-            if (!empty($backendLayoutData['__config']['backend_layout.']['rows.'])) {
-                foreach ($backendLayoutData['__config']['backend_layout.']['rows.'] as $row) {
-                    if (!empty($row['columns.'])) {
-                        $backendLayoutData['columns']['CSV'] = '-2,-1';
-                        $allowed = [];
-                        $disallowed = [];
-                        $maxItems = [];
-                        foreach ($row['columns.'] as $column) {
-                            if (!isset($column['colPos'])) {
-                                continue;
+        if (empty($GLOBALS['tx_gridelements']['pageBackendLayoutData'][$pageId])) {
+            $backendLayoutData = GeneralUtility::callUserFunction(BackendLayoutView::class . '->getSelectedBackendLayout',
+                $pageId, $this);
+            // add allowed CTypes to the columns, since this is not done by the native core methods
+            if (!empty($backendLayoutData['__items'])) {
+                $backendLayoutData['columns']['CSV'] = '-2,-1';
+                if (!empty($backendLayoutData['__config']['backend_layout.']['rows.'])) {
+                    $allowed = [];
+                    $disallowed = [];
+                    $maxItems = [];
+                    foreach ($backendLayoutData['__config']['backend_layout.']['rows.'] as $row) {
+                        if (!empty($row['columns.'])) {
+                            foreach ($row['columns.'] as $column) {
+                                if (!isset($column['colPos'])) {
+                                    continue;
+                                }
+                                $colPos = (int)$column['colPos'];
+                                if (isset($column['allowed.'])) {
+                                    $column['allowed'] = $column['allowed.'];
+                                }
+                                if (isset($column['disallowed.'])) {
+                                    $column['disallowed'] = $column['disallowed.'];
+                                }
+                                if (!is_array($column['allowed']) && !empty($column['allowed'])) {
+                                    $allowed[$colPos] = ['CType' => $column['allowed']];
+                                } else if (empty($column['allowed'])) {
+                                    $allowed[$colPos] = ['CType' => '*'];
+                                } else {
+                                    $allowed[$colPos] = $column['allowed'];
+                                }
+                                if ($column['allowedGridTypes']) {
+                                    $allowed[$colPos]['tx_gridelements_backend_layout'] = $column['allowedGridTypes'];
+                                }
+                                if (!empty($column['disallowed'])) {
+                                    $disallowed[$colPos] = $column['disallowed'];
+                                }
+                                if (!empty($column['maxitems'])) {
+                                    $maxItems[$colPos] = $column['maxitems'];
+                                }
+                                $backendLayoutData['columns']['CSV'] .= ',' . $colPos;
                             }
-                            $colPos = (int)$column['colPos'];
-                            if (!is_array($column['allowed']) && !empty($column['allowed'])) {
-                                $allowed[$colPos] = ['CType' => $column['allowed']];
-                            } else if (empty($column['allowed'])) {
-                                $allowed[$colPos] = ['CType' => '*'];
-                            }
-                            if ($column['allowedGridTypes']) {
-                                $allowed[$colPos]['tx_gridelements_backend_layout'] = $column['allowedGridTypes'];
-                                unset($column['allowedGridTypes']);
-                            }
-                            if (!empty($column['disallowed'])) {
-                                $disallowed[$colPos] = $column['disallowed'];
-                            }
-                            if (!empty($column['maxitems'])) {
-                                $maxItems[$colPos] = $column['maxitems'];
-                            }
-                            $backendLayoutData['columns']['CSV'] .= ',' . $colPos;
                         }
                     }
                     $backendLayoutData['allowed'] = $allowed;
@@ -106,13 +116,14 @@ abstract class AbstractItemsProcFunc implements SingletonInterface
                         $backendLayoutData['maxitems'] = $maxItems;
                     }
                 }
-            }
-            foreach ($backendLayoutData['__items'] as $key => $item) {
-                $backendLayoutData['__items'][$key][3] = $backendLayoutData['columns'][$item[1]];
-            }
-        };
-
-        return $backendLayoutData;
+                $backendLayoutData = Helper::getInstance()->mergeAllowedDisallowedSettings($backendLayoutData);
+                foreach ($backendLayoutData['__items'] as $key => $item) {
+                    $backendLayoutData['__items'][$key][3] = $backendLayoutData['columns'][$item[1]];
+                }
+            };
+            $GLOBALS['tx_gridelements']['pageBackendLayoutData'][$pageId] = $backendLayoutData;
+        }
+        return $GLOBALS['tx_gridelements']['pageBackendLayoutData'][$pageId];
     }
 
     /**
