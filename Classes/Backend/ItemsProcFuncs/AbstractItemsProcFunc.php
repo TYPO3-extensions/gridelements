@@ -23,9 +23,6 @@ namespace GridElementsTeam\Gridelements\Backend\ItemsProcFuncs;
 
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Backend\View\BackendLayoutView;
-use TYPO3\CMS\Core\Database\ConnectionPool;
-use TYPO3\CMS\Core\Database\Query\QueryBuilder;
-use TYPO3\CMS\Core\Database\Query\Restriction\DeletedRestriction;
 use TYPO3\CMS\Core\Database\QueryGenerator;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -74,12 +71,39 @@ abstract class AbstractItemsProcFunc implements SingletonInterface
             if (!empty($backendLayoutData['__config']['backend_layout.']['rows.'])) {
                 foreach ($backendLayoutData['__config']['backend_layout.']['rows.'] as $row) {
                     if (!empty($row['columns.'])) {
+                        $backendLayoutData['columns']['CSV'] = '-2,-1';
+                        $allowed = [];
+                        $disallowed = [];
+                        $maxItems = [];
                         foreach ($row['columns.'] as $column) {
-                            $backendLayoutData['columns'][$column['colPos']] = $column['allowed'] ? $column['allowed'] : '*';
-                            $backendLayoutData['columns']['allowed'] .= $backendLayoutData['columns']['allowed']
-                                ? ',' . $backendLayoutData['columns'][$column['colPos']]
-                                : $backendLayoutData['columns'][$column['colPos']];
+                            if (!isset($column['colPos'])) {
+                                continue;
+                            }
+                            $colPos = (int)$column['colPos'];
+                            if (!is_array($column['allowed']) && !empty($column['allowed'])) {
+                                $allowed[$colPos] = ['CType' => $column['allowed']];
+                            } else if (empty($column['allowed'])) {
+                                $allowed[$colPos] = ['CType' => '*'];
+                            }
+                            if ($column['allowedGridTypes']) {
+                                $allowed[$colPos]['tx_gridelements_backend_layout'] = $column['allowedGridTypes'];
+                                unset($column['allowedGridTypes']);
+                            }
+                            if (!empty($column['disallowed'])) {
+                                $disallowed[$colPos] = $column['disallowed'];
+                            }
+                            if (!empty($column['maxitems'])) {
+                                $maxItems[$colPos] = $column['maxitems'];
+                            }
+                            $backendLayoutData['columns']['CSV'] .= ',' . $colPos;
                         }
+                    }
+                    $backendLayoutData['allowed'] = $allowed;
+                    if (!empty($disallowed)) {
+                        $backendLayoutData['disallowed'] = $disallowed;
+                    }
+                    if (!empty($maxItems)) {
+                        $backendLayoutData['maxitems'] = $maxItems;
                     }
                 }
             }
@@ -101,21 +125,6 @@ abstract class AbstractItemsProcFunc implements SingletonInterface
     public function getRootline($pageId)
     {
         return BackendUtility::BEgetRootLine($pageId);
-    }
-
-    /**
-     * getter for queryBuilder
-     *
-     * @return QueryBuilder queryBuilder
-     */
-    public function getQueryBuilder()
-    {
-        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
-            ->getQueryBuilderForTable('tt_content');
-        $queryBuilder->getRestrictions()
-            ->removeAll()
-            ->add(GeneralUtility::makeInstance(DeletedRestriction::class));
-        return $queryBuilder;
     }
 
     /**

@@ -32,7 +32,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  * @package TYPO3
  * @subpackage tx_gridelements
  */
-class CTypeList extends AbstractItemsProcFunc
+class ListTypeList extends AbstractItemsProcFunc
 {
 
     /**
@@ -48,22 +48,22 @@ class CTypeList extends AbstractItemsProcFunc
     public function itemsProcFunc(array &$params)
     {
         if ((int)$params['row']['pid'] > 0) {
-            $this->checkForAllowedCTypes($params['items'], $params['row']['pid'], $params['row']['colPos'],
+            $this->checkForAllowedListTypes($params['items'], $params['row']['pid'], $params['row']['colPos'],
                 $params['row']['tx_gridelements_container'], $params['row']['tx_gridelements_columns']);
         } else {
             $this->init((int)$params['row']['pid']);
             // negative uid_pid values indicate that the element has been inserted after an existing element
             // so there is no pid to get the backendLayout for and we have to get that first
-            $existingElement = BackendUtility::getRecordWSOL('tt_content', -((int)$params['row']['pid']), 'pid,CType,colPos,tx_gridelements_container,tx_gridelements_columns');
+            $existingElement = BackendUtility::getRecordWSOL('tt_content', -((int)$params['row']['pid']), 'pid,list_type,colPos,tx_gridelements_container,tx_gridelements_columns');
             if ((int)$existingElement['pid'] > 0) {
-                $this->checkForAllowedCTypes($params['items'], $existingElement['pid'], $existingElement['colPos'],
+                $this->checkForAllowedListTypes($params['items'], $existingElement['pid'], $existingElement['colPos'],
                     $existingElement['tx_gridelements_container'], $existingElement['tx_gridelements_columns']);
             }
         }
     }
 
     /**
-     * Checks if a CType is allowed in this particular page or grid column - only this one column defines the allowed CTypes regardless of any parent column
+     * Checks if a ListType is allowed in this particular page or grid column - only this one column defines the allowed CTypes regardless of any parent column
      *
      * @param array $items The items of the current CType list
      * @param int $pageId The id of the page we are currently working on
@@ -71,7 +71,7 @@ class CTypeList extends AbstractItemsProcFunc
      * @param int $gridContainerId The ID of the current container
      * @param int $gridColumn The grid column the element is a child of
      */
-    public function checkForAllowedCTypes(array &$items, $pageId, $pageColumn, $gridContainerId, $gridColumn)
+    public function checkForAllowedListTypes(array &$items, $pageId, $pageColumn, $gridContainerId, $gridColumn)
     {
         $allowed = '*';
         $disallowed = '';
@@ -85,14 +85,14 @@ class CTypeList extends AbstractItemsProcFunc
             $backendLayout = $this->layoutSetup->getLayoutSetup($gridElement['tx_gridelements_backend_layout']);
         }
         if (!empty($backendLayout)) {
-            if (is_array($backendLayout['allowed']) && is_array($backendLayout['allowed'][$column]) && !empty($backendLayout['allowed'][$column]['CType'])) {
-                $allowed = $backendLayout['allowed'][$column]['CType'];
+            if (is_array($backendLayout['allowed']) && is_array($backendLayout['allowed'][$column]) && !empty($backendLayout['allowed'][$column]['list_type'])) {
+                $allowed = $backendLayout['allowed'][$column]['list_type'];
             }
-            if (is_array($backendLayout['disallowed']) && is_array($backendLayout['disallowed'][$column]) && !empty($backendLayout['disallowed'][$column]['CType'])){
-                $disallowed = $backendLayout['disallowed'][$column]['CType'];
+            if (is_array($backendLayout['disallowed']) && is_array($backendLayout['disallowed'][$column]) && !empty($backendLayout['disallowed'][$column]['list_type'])){
+                $disallowed = $backendLayout['disallowed'][$column]['list_type'];
             }
         }
-        if (isset($backendLayout) &&  (!empty($allowed) || !empty($disallowed))) {
+        if (isset($backendLayout) && (!empty($allowed) || !empty($disallowed))) {
             foreach ($items as $key => $item) {
                 if ((
                         !empty($allowed) &&

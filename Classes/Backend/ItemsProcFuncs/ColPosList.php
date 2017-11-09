@@ -20,6 +20,7 @@ namespace GridElementsTeam\Gridelements\Backend\ItemsProcFuncs;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -46,17 +47,7 @@ class ColPosList extends AbstractItemsProcFunc
         } else {
             // negative uid_pid values indicate that the element has been inserted after an existing element
             // so there is no pid to get the backendLayout for and we have to get that first
-            $queryBuilder = $this->getQueryBuilder();
-            $existingElement = $queryBuilder
-                ->select('pid', 'CType', 'tx_gridelements_container')
-                ->from('tt_content')
-                ->where(
-                    $queryBuilder->expr()->eq('uid',
-                        $queryBuilder->createNamedParameter(-((int)$params['row']['pid']), \PDO::PARAM_INT))
-                )
-                ->setMaxResults(1)
-                ->execute()
-                ->fetch();
+            $existingElement = BackendUtility::getRecordWSOL('tt_content', -((int)$params['row']['pid']), 'pid,CType,tx_gridelements_container');
             if ($existingElement['pid'] > 0) {
                 $params['items'] = $this->addColPosListLayoutItems($existingElement['pid'], $params['items'],
                     $existingElement['CType'], $existingElement['tx_gridelements_container']);

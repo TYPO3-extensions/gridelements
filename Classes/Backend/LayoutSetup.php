@@ -84,6 +84,7 @@ class LayoutSetup
             $columns = $this->getLayoutColumns($key);
             if ($columns['allowed']) {
                 $this->layoutSetup[$key]['columns'] = $columns;
+                unset($this->layoutSetup[$key]['columns']['allowed']);
                 $this->layoutSetup[$key]['allowed'] = $columns['allowed'];
             }
         }
@@ -170,12 +171,15 @@ class LayoutSetup
                         $queryBuilder->expr()->comparison($storagePid, '=', 0)
                     ),
                     $queryBuilder->expr()->orX(
-                        $queryBuilder->expr()->eq('pid', $queryBuilder->createNamedParameter((int)$pageTSconfigId, \PDO::PARAM_INT)),
-                        $queryBuilder->expr()->eq('pid', $queryBuilder->createNamedParameter((int)$storagePid, \PDO::PARAM_INT))
+                        $queryBuilder->expr()->eq('pid',
+                            $queryBuilder->createNamedParameter((int)$pageTSconfigId, \PDO::PARAM_INT)),
+                        $queryBuilder->expr()->eq('pid',
+                            $queryBuilder->createNamedParameter((int)$storagePid, \PDO::PARAM_INT))
                     ),
                     $queryBuilder->expr()->andX(
                         $queryBuilder->expr()->comparison($pageTSconfigId, '=', 0),
-                        $queryBuilder->expr()->eq('pid', $queryBuilder->createNamedParameter((int)$pageId, \PDO::PARAM_INT))
+                        $queryBuilder->expr()->eq('pid',
+                            $queryBuilder->createNamedParameter((int)$pageId, \PDO::PARAM_INT))
                     )
                 )
             )
@@ -272,8 +276,10 @@ class LayoutSetup
                     if (!is_array($column['allowed']) && !empty($column['allowed'])) {
                         $allowed = ['CType' => $column['allowed']];
                         $column['allowed'] = $allowed;
-                    } else if (empty($column['allowed'])) {
-                        $column['allowed'] = ['CType' => '*'];
+                    } else {
+                        if (empty($column['allowed'])) {
+                            $column['allowed'] = ['CType' => '*'];
+                        }
                     }
                     if ($column['allowedGridTypes']) {
                         $column['allowed']['tx_gridelements_backend_layout'] = $column['allowedGridTypes'];
@@ -379,15 +385,39 @@ class LayoutSetup
     /**
      * Returns the item array for form field selection.
      *
-     * @param int $colPos The selected content column position.
-     *
+     * @param int $colPos The selected content column position.     *
+     * @param int $gridColPos
+     * @param int $containerId
      * @return array
      */
-    public function getLayoutSelectItems($colPos)
+    public function getLayoutSelectItems($colPos, $gridColPos = 0, $containerId = 0)
     {
+        $allowed = '*';
+        $disallowed = '';
         $selectItems = [];
+        if ($containerId > 0) {
+            $container = $this->cacheCurrentParent((int)$containerId, true);
+            if (!empty($container)) {
+                $containerLayout = $this->layoutSetup[$container['tx_gridelements_backend_layout']];
+                $allowed = $containerLayout['allowed'][$gridColPos]['tx_gridelements_backend_layout'];
+                $disallowed = $containerLayout['disallowed'][$gridColPos]['tx_gridelements_backend_layout'];
+            }
+        }
         foreach ($this->layoutSetup as $layoutId => $item) {
-            if ((int)$colPos === -1 && $item['top_level_layout']) {
+            if ((
+                    (int)$colPos === -1 &&
+                    $item['top_level_layout']
+                ) ||
+                (
+                    !empty($allowed) &&
+                    !GeneralUtility::inList($allowed, '*') &&
+                    !GeneralUtility::inList($allowed, $layoutId)
+                ) ||
+                (
+                    !empty($disallowed) &&
+                    GeneralUtility::inList($disallowed, '*') &&
+                    GeneralUtility::inList($disallowed, $layoutId)
+                )) {
                 continue;
             }
             $icon = 'gridelements-default';

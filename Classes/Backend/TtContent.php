@@ -26,6 +26,7 @@ use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Core\Database\Query\Restriction\DeletedRestriction;
 use TYPO3\CMS\Core\Utility\ArrayUtility;
+use TYPO3\CMS\Core\Utility\DebugUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -256,8 +257,7 @@ class TtContent
     public function layoutItemsProcFunc(array &$params)
     {
         $this->init($params['row']['pid']);
-        $layoutSelectItems = $this->layoutSetup->getLayoutSelectItems($params['row']['colPos']);
-
+        $layoutSelectItems = $this->layoutSetup->getLayoutSelectItems($params['row']['colPos'], $params['row']['tx_gridelements_columns'], $params['row']['tx_gridelements_container']);
         $params['items'] = ArrayUtility::keepItemsInArray($layoutSelectItems, $params['items'], true);
     }
 
