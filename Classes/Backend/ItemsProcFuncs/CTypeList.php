@@ -48,7 +48,7 @@ class CTypeList extends AbstractItemsProcFunc
     public function itemsProcFunc(array &$params)
     {
         if ((int)$params['row']['pid'] > 0) {
-            $this->checkForAllowedCTypes($params['items'], $params['row']['pid'], $params['row']['colPos'][0],
+            $this->checkForAllowedCTypes($params['items'], $params['row']['pid'], ($params['row']['colPos'][0] ?: $params['row']['colPos']),
                 $params['row']['tx_gridelements_container'], $params['row']['tx_gridelements_columns']);
         } else {
             $this->init((int)$params['row']['pid']);
@@ -73,7 +73,7 @@ class CTypeList extends AbstractItemsProcFunc
      */
     public function checkForAllowedCTypes(array &$items, $pageId, $pageColumn, $gridContainerId, $gridColumn)
     {
-        $allowed = '*';
+        $allowed = '';
         $disallowed = '';
         if ((int)$pageColumn >= 0 || (int)$pageColumn === -2) {
             $column = $pageColumn ? $pageColumn : 0;

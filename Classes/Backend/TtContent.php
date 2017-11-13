@@ -293,7 +293,7 @@ class TtContent
     public function layoutItemsProcFunc(array &$params)
     {
         $this->init($params['row']['pid']);
-        $layoutSelectItems = $this->layoutSetup->getLayoutSelectItems($params['row']['colPos'], $params['row']['tx_gridelements_columns'], $params['row']['tx_gridelements_container']);
+        $layoutSelectItems = $this->layoutSetup->getLayoutSelectItems($params['row']['colPos'][0] ?: $params['row']['colPos'], $params['row']['tx_gridelements_columns'], $params['row']['tx_gridelements_container']);
         $params['items'] = ArrayUtility::keepItemsInArray($layoutSelectItems, $params['items'], true);
     }
 
