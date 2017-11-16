@@ -1,33 +1,42 @@
 <?php
 
+
+\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addStaticFile('gridelements', 'Configuration/TypoScript/', 'Gridelements');
+
+\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addPlugin([
+    'LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tt_content.CType_pi1',
+    'gridelements_pi1',
+    'gridelements-default'
+], 'CType', 'gridelements');
+
 \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addTCAcolumns(
     'tt_content',
-    array(
-        'tx_gridelements_backend_layout' => array(
+    [
+        'tx_gridelements_backend_layout' => [
             'exclude' => 1,
             'label' => 'LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tt_content.tx_gridelements_backend_layout',
-            'config' => array(
+            'config' => [
                 'type' => 'select',
                 'renderType' => 'selectSingle',
                 'itemsProcFunc' => 'GridElementsTeam\Gridelements\Backend\TtContent->layoutItemsProcFunc',
                 'size' => 1,
                 'maxitems' => 1,
                 'default' => 0
-            ),
+            ],
             'onChange' => 'reload'
-        ),
-        'tx_gridelements_children' => array(
+        ],
+        'tx_gridelements_children' => [
             'exclude' => 1,
             'label' => 'LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tt_content.tx_gridelements_children',
-            'config' => array(
+            'config' => [
                 'type' => 'inline',
-                'appearance' => array(
+                'appearance' => [
                     'levelLinksPosition' => 'top',
                     'showPossibleLocalizationRecords' => true,
                     'showRemovedLocalizationRecords' => true,
                     'showAllLocalizationLink' => true,
                     'showSynchronizationLink' => true,
-                    'enabledControls' => array(
+                    'enabledControls' => [
                         'info' => true,
                         'new' => false,
                         'dragdrop' => false,
@@ -35,42 +44,42 @@
                         'hide' => true,
                         'delete' => true,
                         'localize' => true,
-                    )
-                ),
-                'inline' => array(
+                    ]
+                ],
+                'inline' => [
                     'inlineNewButtonStyle' => 'display: inline-block;',
-                ),
-                'behaviour' => array(
+                ],
+                'behaviour' => [
                     'localizeChildrenAtParentLocalization' => true,
-                ),
+                ],
                 'foreign_table' => 'tt_content',
                 'foreign_field' => 'tx_gridelements_container',
-                'overrideChildTca' => array(
-                    'columns' => array(
-                        'colPos' => array(
-                            'config' => array(
+                'overrideChildTca' => [
+                    'columns' => [
+                        'colPos' => [
+                            'config' => [
                                 'default' => -1
-                            )
-                        )
-                    )
-                ),
+                            ]
+                        ]
+                    ]
+                ],
                 'foreign_sortby' => 'sorting',
                 'size' => 5,
                 'autoSizeMax' => 20,
-            )
-        ),
-        'tx_gridelements_container' => array(
+            ]
+        ],
+        'tx_gridelements_container' => [
             'exclude' => 1,
             'label' => 'LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tt_content.tx_gridelements_container',
-            'config' => array(
+            'config' => [
                 'type' => 'select',
                 'renderType' => 'selectSingle',
-                'items' => array(
-                    array(
+                'items' => [
+                    [
                         '',
                         0
-                    ),
-                ),
+                    ],
+                ],
                 'default' => 0,
                 'foreign_table' => 'tt_content',
                 'foreign_table_where' => "AND (tt_content.sys_language_uid = ###REC_FIELD_sys_language_uid### OR tt_content.sys_language_uid = -1) AND tt_content.pid=###CURRENT_PID### AND tt_content.CType='gridelements_pi1' AND (tt_content.uid != ###THIS_UID###) AND (tt_content.tx_gridelements_container != ###THIS_UID### OR tt_content.tx_gridelements_container=0) ORDER BY tt_content.header, tt_content.uid",
@@ -79,23 +88,23 @@
                 'size' => 1,
                 'minitems' => 0,
                 'maxitems' => 1,
-            ),
+            ],
             'onChange' => 'reload'
-        ),
-        'tx_gridelements_columns' => array(
+        ],
+        'tx_gridelements_columns' => [
             'exclude' => 1,
             'label' => 'LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tt_content.tx_gridelements_columns',
-            'config' => array(
+            'config' => [
                 'type' => 'select',
                 'renderType' => 'selectSingle',
                 'itemsProcFunc' => 'GridElementsTeam\Gridelements\Backend\TtContent->columnsItemsProcFunc',
                 'size' => 1,
                 'maxitems' => 1,
                 'default' => 0,
-            ),
+            ],
             'onChange' => 'reload'
-        )
-    )
+        ]
+    ]
 );
 
 $GLOBALS['TCA']['tt_content']['ctrl']['useColumnsForDefaultValues'] .= ',tx_gridelements_container,tx_gridelements_columns';

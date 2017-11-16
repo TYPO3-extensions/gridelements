@@ -33,15 +33,15 @@ class HelperTest extends UnitTestCase
     public function testGetSpecificIdsWithoutWorkspaceAndOriginalId()
     {
         $helper = Helper::getInstance();
-        $record = array(
+        $record = [
             'uid' => '1',
             'pid' => '2',
             't3ver_oid' => '0'
-        );
-        $expected = array(
+        ];
+        $expected = [
             'uid' => 1,
             'pid' => 2
-        );
+        ];
         $result = $helper->getSpecificIds($record);
         $this->assertEquals($expected, $result);
     }
@@ -54,15 +54,15 @@ class HelperTest extends UnitTestCase
     public function testGetSpecificIdsWithoutWorkspaceButWithOriginalId()
     {
         $helper = Helper::getInstance();
-        $record = array(
+        $record = [
             'uid' => '1',
             'pid' => '2',
             't3ver_oid' => '3'
-        );
-        $expected = array(
+        ];
+        $expected = [
             'uid' => 1,
             'pid' => 2
-        );
+        ];
         $result = $helper->getSpecificIds($record);
         $this->assertEquals($expected, $result);
     }
@@ -77,15 +77,15 @@ class HelperTest extends UnitTestCase
         $helper = Helper::getInstance();
         $GLOBALS['BE_USER'] = $this->getMock(BackendUserAuthentication::class);
         $GLOBALS['BE_USER']->workspace = 1;
-        $record = array(
+        $record = [
             'uid' => '1',
             'pid' => '2',
             't3ver_oid' => '3'
-        );
-        $expected = array(
+        ];
+        $expected = [
             'uid' => 3,
             'pid' => -1
-        );
+        ];
         $result = $helper->getSpecificIds($record);
         $this->assertEquals($expected, $result);
     }
@@ -100,15 +100,15 @@ class HelperTest extends UnitTestCase
         $helper = Helper::getInstance();
         $GLOBALS['BE_USER'] = $this->getMock(BackendUserAuthentication::class);
         $GLOBALS['BE_USER']->workspace = 1;
-        $record = array(
+        $record = [
             'uid' => '1',
             'pid' => '2',
             't3ver_oid' => '0'
-        );
-        $expected = array(
+        ];
+        $expected = [
             'uid' => 1,
             'pid' => 2
-        );
+        ];
         $result = $helper->getSpecificIds($record);
         $this->assertEquals($expected, $result);
     }

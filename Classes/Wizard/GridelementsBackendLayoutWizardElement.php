@@ -129,10 +129,10 @@ class GridelementsBackendLayoutWizardElement extends BackendLayoutWizardElement
         $html[] = '</div>';
         $html[] = '</div>';
 
-        $contentTypes = array();
+        $contentTypes = [];
         if (is_array($GLOBALS['TCA']['tt_content']['columns']['CType']['config']['items'])) {
             foreach ($GLOBALS['TCA']['tt_content']['columns']['CType']['config']['items'] as $item) {
-                $contentType = array();
+                $contentType = [];
                 if (!empty($item[1])) {
                     $contentType['key'] = $item[1];
                     if (substr($contentType['key'], 0, 2) !== '--') {
@@ -153,7 +153,7 @@ class GridelementsBackendLayoutWizardElement extends BackendLayoutWizardElement
                 }
             }
         }
-        $listTypes = array();
+        $listTypes = [];
         if (is_array($GLOBALS['TCA']['tt_content']['columns']['list_type']['config']['items'])) {
             foreach ($GLOBALS['TCA']['tt_content']['columns']['list_type']['config']['items'] as $item) {
                 $listType = [];
@@ -178,7 +178,7 @@ class GridelementsBackendLayoutWizardElement extends BackendLayoutWizardElement
                 }
             }
         }
-        $gridTypes = array();
+        $gridTypes = [];
         $layoutSetup = GeneralUtility::makeInstance(LayoutSetup::class)->init($this->data['parentPageRow']['pid'])->getLayoutSetup();
         if (is_array($layoutSetup)) {
             foreach ($layoutSetup as $key => $item) {

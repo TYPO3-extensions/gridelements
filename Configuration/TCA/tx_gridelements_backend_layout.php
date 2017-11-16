@@ -2,8 +2,8 @@
 
 $l10n = 'LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml';
 
-return array(
-    'ctrl' => array(
+return [
+    'ctrl' => [
         'title' => $l10n . ':tx_gridelements_backend_layout',
         'label' => 'title',
         'tstamp' => 'tstamp',
@@ -18,79 +18,79 @@ return array(
         'dividers2tabs' => true,
         'selicon_field' => 'icon',
         'selicon_field_path' => 'uploads/tx_gridelements',
-        'enablecolumns' => array(
+        'enablecolumns' => [
             'disabled' => 'hidden',
-        ),
+        ],
         'iconfile' => 'EXT:gridelements/Resources/Public/Icons/gridelements.svg',
-    ),
-    'interface' => array(
+    ],
+    'interface' => [
         'showRecordFieldList' => 'title,frame,config,pi_flexform_ds,description,hidden,icon'
-    ),
-    'columns' => array(
-        't3ver_label' => array(
+    ],
+    'columns' => [
+        't3ver_label' => [
             'label' => 'LLL:EXT:lang/Resources/Private/Language/locallang_general.xlf:LGL.versionLabel',
-            'config' => array(
+            'config' => [
                 'type' => 'input',
                 'size' => '30',
                 'max' => '30',
-            )
-        ),
-        'hidden' => array(
+            ]
+        ],
+        'hidden' => [
             'exclude' => 1,
             'label' => $l10n . ':tx_gridelements_backend_layout',
-            'config' => array(
+            'config' => [
                 'type' => 'check',
-                'items' => array(
-                    '1' => array(
+                'items' => [
+                    '1' => [
                         '0' => 'LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:hidden.I.0',
-                    ),
-                ),
-            ),
-        ),
-        'title' => array(
+                    ],
+                ],
+            ],
+        ],
+        'title' => [
             'exclude' => 1,
             'label' => $l10n . ':tx_gridelements_backend_layout.title',
-            'config' => array(
+            'config' => [
                 'type' => 'input',
                 'size' => '25',
                 'max' => '256',
                 'eval' => 'required'
-            )
-        ),
-        'alias' => array(
+            ]
+        ],
+        'alias' => [
             'exclude' => 1,
             'label' => $l10n . ':tx_gridelements_backend_layout.alias',
-            'config' => array(
+            'config' => [
                 'type' => 'input',
                 'size' => '25',
                 'max' => '256',
                 'eval' => 'nospace,alphanum_x,lower',
-            )
-        ),
-        'description' => array(
+            ]
+        ],
+        'description' => [
             'exclude' => 1,
             'label' => $l10n . ':tx_gridelements_backend_layout.description',
-            'config' => array(
+            'config' => [
                 'type' => 'text',
                 'rows' => '5',
-            )
-        ),
-        'horizontal' => array(
+            ]
+        ],
+        'horizontal' => [
             'exclude' => 1,
             'label' => $l10n . ':tx_gridelements_backend_layout.horizontal',
-            'config' => array(
+            'config' => [
                 'type' => 'check',
-                'items' => array(
-                    '1' => array(
+                'items' => [
+                    '1' => [
                         '0' => $l10n . ':tx_gridelements_backend_layout.horizontal.I.0',
-                    ),
-                ),
-            ),
-        ),
-        'icon' => array(
+                    ],
+                ],
+            ],
+        ],
+        'icon' => [
             'exclude' => 1,
             'label' => $l10n . ':tx_gridelements_backend_layout.icon',
-            'config' => array(
+            'config' => [
                 'type' => 'group',
                 'internal_type' => 'file',
                 'allowed' => 'jpg,gif,png,svg',
@@ -98,111 +98,111 @@ return array(
                 'size' => 5,
                 'minitems' => 0,
                 'maxitems' => 2,
-            )
-        ),
-        'frame' => array(
+            ]
+        ],
+        'frame' => [
             'exclude' => 1,
             'label' => $l10n . ':tx_gridelements_backend_layout.frame',
-            'config' => array(
+            'config' => [
                 'type' => 'select',
                 'renderType' => 'selectSingle',
-                'items' => array(
-                    array(
+                'items' => [
+                    [
                         $l10n . ':tx_gridelements_backend_layout.frame.I.0',
                         '0'
-                    ),
-                    array(
+                    ],
+                    [
                         $l10n . ':tx_gridelements_backend_layout.frame.I.-1',
                         '-1'
-                    ),
-                    array(
+                    ],
+                    [
                         $l10n . ':tx_gridelements_backend_layout.frame.I.1',
                         '1'
-                    ),
-                    array(
+                    ],
+                    [
                         $l10n . ':tx_gridelements_backend_layout.frame.I.2',
                         '2'
-                    ),
-                    array(
+                    ],
+                    [
                         $l10n . ':tx_gridelements_backend_layout.frame.I.3',
                         '3'
-                    ),
-                ),
+                    ],
+                ],
                 'size' => 1,
                 'maxitems' => 1,
-            )
-        ),
-        'top_level_layout' => array(
+            ]
+        ],
+        'top_level_layout' => [
             'exclude' => 1,
             'label' => $l10n . ':tx_gridelements_backend_layout.top_level_layout',
-            'config' => array(
+            'config' => [
                 'type' => 'check',
-                'items' => array(
-                    '1' => array(
+                'items' => [
+                    '1' => [
                         '0' => 'LLL:EXT:lang/Resources/Private/Language/locallang_core.xlf:labels.enabled',
-                    ),
-                ),
-            ),
-        ),
-        'config' => array(
+                    ],
+                ],
+            ],
+        ],
+        'config' => [
             'exclude' => 1,
             'label' => $l10n . ':tx_gridelements_backend_layout.config',
-            'config' => array(
+            'config' => [
                 'type' => 'text',
                 'renderType' => 'belayoutwizard',
                 'cols' => '25',
                 'rows' => '5',
                 'fixedFont' => true
-            )
-        ),
-        'pi_flexform_ds' => array(
+            ]
+        ],
+        'pi_flexform_ds' => [
             'exclude' => 1,
             'label' => $l10n . ':tx_gridelements_backend_layout.pi_flexform_ds',
-            'config' => array(
+            'config' => [
                 'type' => 'text',
                 'cols' => '35',
                 'rows' => '10',
-            ),
-        ),
-        'pi_flexform_ds_file' => array(
+            ],
+        ],
+        'pi_flexform_ds_file' => [
             'exclude' => 1,
             'label' => $l10n . ':tx_gridelements_backend_layout.pi_flexform_ds_file',
-            'config' => array(
+            'config' => [
                 'type' => 'group',
                 'internal_type' => 'file',
                 'allowed' => 'xml',
                 'maxitems' => 1,
                 'size' => 1,
-            ),
-        ),
-    ),
-    'palettes' => array(
-        'general' => array(
+            ],
+        ],
+    ],
+    'palettes' => [
+        'general' => [
             'canNotCollapse' => 1,
             'showitem' => 'title, --linebreak--, description'
-        ),
-        'appearance' => array(
+        ],
+        'appearance' => [
             'canNotCollapse' => 1,
             'showitem' => 'icon, horizontal, frame'
-        ),
-        'visibility' => array(
+        ],
+        'visibility' => [
             'canNotCollapse' => 1,
             'showitem' => 'hidden'
-        ),
-        'flexform' => array(
+        ],
+        'flexform' => [
             'canNotCollapse' => 1,
             'showitem' => 'pi_flexform_ds, --linebreak--, pi_flexform_ds_file'
-        ),
-    ),
-    'types' => array(
-        '1' => array(
+        ],
+    ],
+    'types' => [
+        '1' => [
             'showitem' => '--palette--;' . $l10n . ':tx_gridelements_backend_layout;general,
 					--palette--;' . $l10n . ':tx_gridelements_backend_layout.palette.appearance;appearance,
 					--div--;' . $l10n . ':tx_gridelements_backend_layout.div.configuration, top_level_layout, alias, config,
 					--palette--;' . $l10n . ':tx_gridelements_backend_layout.ce_configuration;flexform,
 					--div--;LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:tabs.access,--palette--;LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:palette.visibility;visibility'
-        ),
-    ),
+        ],
+    ],
 
 
-);
+];
