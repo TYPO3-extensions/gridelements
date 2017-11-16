@@ -128,6 +128,19 @@ class Helper implements SingletonInterface
                 }
             }
         };
+        if (!empty($backendLayout['disallowed'])) {
+            foreach ($backendLayout['disallowed'] as $column => &$fields) {
+                if (!empty($fields['CType'])) {
+                    $fields['CType'] = array_flip(GeneralUtility::trimExplode(',', $fields['CType']));
+                }
+                if (!empty($fields['list_type'])) {
+                    $fields['list_type'] = array_flip(GeneralUtility::trimExplode(',', $fields['list_type']));
+                }
+                if (!empty($fields['tx_gridelements_backend_layout'])) {
+                    $fields['tx_gridelements_backend_layout'] = array_flip(GeneralUtility::trimExplode(',', $fields['tx_gridelements_backend_layout']));
+                }
+            }
+        };
         return $backendLayout;
     }
 

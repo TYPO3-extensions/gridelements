@@ -83,14 +83,15 @@ class LayoutSetup
         $this->loadLayoutSetup($pageId);
         foreach ($this->layoutSetup as $key => $setup) {
             $columns = $this->getLayoutColumns($key);
-            if ($columns['allowed']) {
+            if ($columns['allowed'] || $columns['disallowed'] || $columns['maxitems']) {
                 $this->layoutSetup[$key]['columns'] = $columns;
                 unset($this->layoutSetup[$key]['columns']['allowed']);
-                $this->layoutSetup[$key]['allowed'] = $columns['allowed'];
+                $this->layoutSetup[$key]['allowed'] = $columns['allowed'] ?: [];
+                $this->layoutSetup[$key]['disallowed'] = $columns['disallowed'] ?: [];
+                $this->layoutSetup[$key]['maxitems'] = $columns['maxitems'] ?: [];
             }
         }
         $this->setTypoScriptSetup($typoScriptSetup);
-
         return $this;
     }
 
@@ -138,6 +139,10 @@ class LayoutSetup
                 if (isset($item['config.'])) {
                     $item['config'] = $item['config.'];
                     unset($item['config.']);
+                    if (isset($item['backend_layout.'])) {
+                        $item['config'] = $item['backend_layout.'];
+                    }
+                    unset($item['backend_layout.']);
                 }
 
                 // Change topLevelLayout to top_level_layout.
@@ -520,15 +525,22 @@ class LayoutSetup
      * @param int $colPos
      * @param string $excludeLayouts
      * @param array $allowedGridTypes
+     * @param array $disallowedGridTypes
      *
      * @return array
      */
-    public function getLayoutWizardItems($colPos, $excludeLayouts = '', array $allowedGridTypes = [])
+    public function getLayoutWizardItems($colPos, $excludeLayouts = '', array $allowedGridTypes = [], array $disallowedGridTypes = [])
     {
         $wizardItems = [];
         $excludeLayouts = array_flip(explode(',', $excludeLayouts));
         foreach ($this->layoutSetup as $layoutId => $item) {
-            if (!empty($allowedGridTypes) && !isset($allowedGridTypes[$layoutId])) {
+            if ((
+                    !empty($allowedGridTypes) &&
+                    !isset($allowedGridTypes[$layoutId])
+                ) ||
+                isset($disallowedGridTypes[$layoutId])
+            )
+            {
                 continue;
             }
             if (isset($excludeLayouts[$item['uid']]) || (int)$colPos === -1 && $item['top_level_layout']) {

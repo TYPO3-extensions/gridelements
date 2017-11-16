@@ -75,24 +75,33 @@ class WizardItems implements NewContentElementWizardHookInterface
         $container = (int)GeneralUtility::_GP('tx_gridelements_container');
         $column = (int)GeneralUtility::_GP('tx_gridelements_columns');
         $allowed_GP = GeneralUtility::_GP('tx_gridelements_allowed');
-        if (!empty($allowed_GP)) {
-            $allowed = array_flip(explode(',', $allowed_GP));
-            $allowedGridTypes_GP = GeneralUtility::_GP('tx_gridelements_allowed_grid_types');
-            if (!empty($allowedGridTypes_GP)) {
-                $allowed['gridelements_pi1'] = 1;
-            }
-            $this->removeDisallowedWizardItems($allowed, $wizardItems);
+        $disallowed_GP = GeneralUtility::_GP('tx_gridelements_disallowed');
+        if (!empty($allowed_GP) || !empty($disallowed_GP)) {
+            $allowed = json_decode(base64_decode($allowed_GP), true) ?: [];
+            $disallowed = json_decode(base64_decode($disallowed_GP), true) ?: [];
+            $this->removeDisallowedWizardItems($allowed, $disallowed, $wizardItems);
         } else {
             $allowed = null;
         }
 
-        if (empty($allowed) || isset($allowed['gridelements_pi1'])) {
-            $allowedGridTypes = array_flip(GeneralUtility::trimExplode(',',
-                GeneralUtility::_GP('tx_gridelements_allowed_grid_types'), true));
+        if ((
+                empty($allowed) ||
+                isset($allowed['CType']['gridelements_pi1']) ||
+                isset($allowed['CType']['*'])
+            ) &&
+            !isset($disallowed['CType']['*']) &&
+            !isset($disallowed['tx_gridelements_backend_layout']['*'])
+        ) {
+            $allowedGridTypes = $allowed['tx_gridelements_backend_layout'] ?: [];
+            $disallowedGridTypes = $disallowed['tx_gridelements_backend_layout'] ?: [];
             $excludeLayouts = $this->getExcludeLayouts($container, $parentObject);
 
-            $gridItems = $this->layoutSetup->getLayoutWizardItems($parentObject->colPos, $excludeLayouts,
-                $allowedGridTypes);
+            $gridItems = $this->layoutSetup->getLayoutWizardItems(
+                $parentObject->colPos,
+                $excludeLayouts,
+                $allowedGridTypes,
+                $disallowedGridTypes
+            );
             $this->addGridItemsToWizard($gridItems, $wizardItems);
         }
 
@@ -120,16 +129,27 @@ class WizardItems implements NewContentElementWizardHookInterface
      * remove disallowed content elements from wizard items
      *
      * @param array $allowed
+     * @param array $disallowed
      * @param array $wizardItems
      */
-    public function removeDisallowedWizardItems(array $allowed, array &$wizardItems)
+    public function removeDisallowedWizardItems(array $allowed, array $disallowed, array &$wizardItems)
     {
-        if (!isset($allowed['*'])) {
-            foreach ($wizardItems as $key => $wizardItem) {
-                if (!$wizardItems[$key]['header']) {
-                    if (!empty($allowed) && !isset($allowed[$wizardItems[$key]['tt_content_defValues']['CType']])) {
-                        unset($wizardItems[$key]);
-                    }
+        foreach ($wizardItems as $key => $wizardItem) {
+            if (!$wizardItems[$key]['header']) {
+                if (
+                    (
+                        !empty($allowed['CType']) &&
+                        !isset($allowed['CType'][$wizardItems[$key]['tt_content_defValues']['CType']]) &&
+                        !isset($allowed['CType']['*'])
+                    ) ||
+                    (
+                        !empty($disallowed) && (
+                            isset($disallowed['CType'][$wizardItems[$key]['tt_content_defValues']['CType']]) ||
+                            isset($disallowed['CType']['*'])
+                        )
+                    )
+                ) {
+                    unset($wizardItems[$key]);
                 }
             }
         }

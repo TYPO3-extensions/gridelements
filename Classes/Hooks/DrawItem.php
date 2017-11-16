@@ -163,8 +163,9 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
                     break;
             }
         }
-        $gridType = $row['tx_gridelements_backend_layout'] ? ' data-gridtype="' . $row['tx_gridelements_backend_layout'] . '"' : '';
-        $headerContent = '<div id="element-tt_content-' . $row['uid'] . '" class="t3-ctype-identifier " data-ctype="' . $row['CType'] . '"' . $gridType . '>' . $headerContent . '</div>';
+        $listType = $row['list_type'] && $row['CType'] === 'list' ? ' data-listtype="' . $row['list_type'] . '"' : '';
+        $gridType = $row['tx_gridelements_backend_layout'] && $row['CType'] === 'gridelements_pi1' ? ' data-gridtype="' . $row['tx_gridelements_backend_layout'] . '"' : '';
+        $headerContent = '<div id="element-tt_content-' . $row['uid'] . '" class="t3-ctype-identifier " data-ctype="' . $row['CType'] . '"' . $listType . $gridType . '>' . $headerContent . '</div>';
     }
 
     /**
@@ -185,14 +186,14 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
 
         // get the layout record for the selected backend layout if any
         $gridContainerId = $row['uid'];
-        /** @var $layoutSetup LayoutSetup */
-        $layoutSetup = GeneralUtility::makeInstance(LayoutSetup::class);
         if ($row['pid'] < 0) {
             $originalRecord = BackendUtility::getRecord('tt_content', $row['t3ver_oid']);
         } else {
             $originalRecord = $row;
         }
-        $gridElement = $layoutSetup->init($originalRecord['pid'])->cacheCurrentParent($gridContainerId, true);
+        /** @var $layoutSetup LayoutSetup */
+        $layoutSetup = GeneralUtility::makeInstance(LayoutSetup::class)->init($originalRecord['pid']);
+        $gridElement = $layoutSetup->cacheCurrentParent($gridContainerId, true);
         $layoutUid = $gridElement['tx_gridelements_backend_layout'];
         $layout = $layoutSetup->getLayoutSetup($layoutUid);
         $parserRows = null;
@@ -201,14 +202,12 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
         }
 
         // if there is anything to parse, lets check for existing columns in the layout
-
         if (is_array($parserRows) && !empty($parserRows)) {
-            $this->setMultipleColPosValues($parserRows, $colPosValues);
+            $this->setMultipleColPosValues($parserRows, $colPosValues, $layout);
         } else {
             $singleColumn = true;
             $this->setSingleColPosItems($parentObject, $colPosValues, $gridElement);
         }
-
         // if there are any columns, lets build the content for them
         $outerTtContentDataArray = $parentObject->tt_contentData['nextThree'];
         if (!empty($colPosValues)) {
@@ -235,10 +234,10 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
      *
      * @param array $parserRows : The parsed rows of the gridelement layout
      * @param array $colPosValues : The column positions that have been found for that layout
-     *
+     * @param array $layout
      * @return void
      */
-    protected function setMultipleColPosValues($parserRows, &$colPosValues)
+    protected function setMultipleColPosValues($parserRows, &$colPosValues, $layout)
     {
         if (is_array($parserRows)) {
             foreach ($parserRows as $parserRow) {
@@ -246,15 +245,19 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
                     foreach ($parserRow['columns.'] as $parserColumns) {
                         $name = $this->languageService->sL($parserColumns['name'], true);
                         if (isset($parserColumns['colPos']) && $parserColumns['colPos'] !== '') {
-                            $colPosValues[(int)$parserColumns['colPos']] = [
-                                'name'             => $name,
-                                'allowed'          => $parserColumns['allowed'],
-                                'allowedGridTypes' => $parserColumns['allowedGridTypes'],
+                            $columnKey = (int)$parserColumns['colPos'];
+                            $colPosValues[$columnKey] = [
+                                'name'       => $name,
+                                'allowed'    => $layout['allowed'][$columnKey],
+                                'disallowed' => $layout['disallowed'][$columnKey],
+                                'maxitems'   => $layout['maxitems'][$columnKey],
                             ];
                         } else {
                             $colPosValues[32768] = [
-                                'name'    => $this->languageService->getLL('notAssigned'),
-                                'allowed' => '',
+                                'name'       => $this->languageService->getLL('notAssigned'),
+                                'allowed'    => '',
+                                'disallowed' => '*',
+                                'maxitems'   => 0,
                             ];
                         }
                     }
@@ -272,11 +275,8 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
      *
      * @return array collected items for this column
      */
-    protected function setSingleColPosItems(
-        PageLayoutView $parentObject,
-        &$colPosValues,
-        &$row
-    ) {
+    protected function setSingleColPosItems(PageLayoutView $parentObject, &$colPosValues, &$row)
+    {
         $specificIds = $this->helper->getSpecificIds($row);
         $parentObject->setOverridePageIdList([$specificIds['pid']]);
 
@@ -372,7 +372,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
                 $queryBuilder->createNamedParameter([(int)$row['uid'], $specificIds['uid']],
                     Connection::PARAM_INT_ARRAY)),
             $queryBuilder->expr()->in('tx_gridelements_columns',
-                $queryBuilder->createNamedParameter($colPosList, Connection::PARAM_INT_ARRAY))
+                $queryBuilder->createNamedParameter($colPosList, Connection::PARAM_INT_ARRAY)),
         ];
         if (!$parentObject->tt_contentConfig['languageMode']) {
             $constraints[] = $queryBuilder->expr()->orX(
@@ -447,6 +447,9 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
 
         $specificIds = $this->helper->getSpecificIds($row);
 
+        $allowed = base64_encode(json_encode($values['allowed']));
+        $disallowed = base64_encode(json_encode($values['disallowed']));
+
         $url = '';
         $pageinfo = BackendUtility::readPageAccess($parentObject->id, '');
         if ($colPos < 32768) {
@@ -456,15 +459,15 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
             ) {
                 if ($parentObject->option_newWizard) {
                     $urlParameters = [
-                        'id'                                 => $parentObject->id,
-                        'sys_language_uid'                   => $row['sys_language_uid'],
-                        'tx_gridelements_allowed'            => $values['allowed'],
-                        'tx_gridelements_allowed_grid_types' => $values['allowedGridTypes'],
-                        'tx_gridelements_container'          => $specificIds['uid'],
-                        'tx_gridelements_columns'            => $colPos,
-                        'colPos'                             => -1,
-                        'uid_pid'                            => $parentObject->id,
-                        'returnUrl'                          => GeneralUtility::getIndpEnv('REQUEST_URI'),
+                        'id'                         => $parentObject->id,
+                        'sys_language_uid'           => $row['sys_language_uid'],
+                        'tx_gridelements_allowed'    => $allowed,
+                        'tx_gridelements_disallowed' => $disallowed,
+                        'tx_gridelements_container'  => $specificIds['uid'],
+                        'tx_gridelements_columns'    => $colPos,
+                        'colPos'                     => -1,
+                        'uid_pid'                    => $parentObject->id,
+                        'returnUrl'                  => GeneralUtility::getIndpEnv('REQUEST_URI'),
                     ];
                     $url = BackendUtility::getModuleUrl('new_content_element', $urlParameters);
                 } else {
@@ -476,12 +479,12 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
                         ],
                         'defVals'   => [
                             'tt_content' => [
-                                'sys_language_uid'                   => $row['sys_language_uid'],
-                                'tx_gridelements_allowed'            => $values['allowed'],
-                                'tx_gridelements_allowed_grid_types' => $values['allowedGridTypes'],
-                                'tx_gridelements_container'          => $specificIds['uid'],
-                                'tx_gridelements_columns'            => $colPos,
-                                'colPos'                             => -1,
+                                'sys_language_uid'           => $row['sys_language_uid'],
+                                'tx_gridelements_allowed'    => $allowed,
+                                'tx_gridelements_disallowed' => $disallowed,
+                                'tx_gridelements_container'  => $specificIds['uid'],
+                                'tx_gridelements_columns'    => $colPos,
+                                'colPos'                     => -1,
                             ],
                         ],
                         'returnUrl' => GeneralUtility::getIndpEnv('REQUEST_URI'),
@@ -501,14 +504,20 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
             ];
         }
 
-        $gridContent[$colPos] .= '<div class="t3-page-ce gridelements-collapsed-column-marker">' . $this->languageService->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tx_gridelements_contentcollapsed') . '</div>';
+        $gridContent[$colPos] .= '<div class="t3-page-ce gridelements-collapsed-column-marker">' .
+            $this->languageService->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tx_gridelements_contentcollapsed') .
+            '</div>';
 
         $gridContent[$colPos] .= '
-			<div data-colpos="' . $colPos . '" data-language-uid="' . $row['sys_language_uid'] . '" class="t3js-sortable t3js-sortable-lang t3js-sortable-lang-' . $row['sys_language_uid'] . ' t3-page-ce-wrapper ui-sortable">
-			<div class="t3-page-ce t3js-page-ce" data-container="' . $row['uid'] . '" id="' . str_replace('.', '',
-                uniqid('', true)) . '">
-					<div class="t3js-page-new-ce t3js-page-new-ce-allowed t3-page-ce-wrapper-new-ce btn-group btn-group-sm" id="colpos-' . $colPos . '-' . str_replace('.',
-                '', uniqid('', true)) . '">' . implode('', $iconsArray) . '
+			<div data-colpos="' . $colPos . '" 
+			     data-language-uid="' . $row['sys_language_uid'] . '" 
+			     class="t3js-sortable t3js-sortable-lang t3js-sortable-lang-' . $row['sys_language_uid'] . ' t3-page-ce-wrapper ui-sortable">
+			    <div class="t3-page-ce t3js-page-ce" 
+			         data-container="' . $row['uid'] . '" 
+			         id="' . str_replace('.', '', uniqid('', true)) . '">
+					<div class="t3js-page-new-ce t3js-page-new-ce-allowed t3-page-ce-wrapper-new-ce btn-group btn-group-sm" 
+					     id="colpos-' . $colPos . '-' . str_replace('.', '', uniqid('', true)) . '">' .
+            implode('', $iconsArray) . '
 					</div>
 					<div class="t3-page-ce-dropzone-available t3js-page-ce-dropzone-available"></div>
 				</div>';
@@ -519,10 +528,21 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
                     continue;
                 }
                 if (is_array($itemRow)) {
+                    $uid = (int)$itemRow['uid'];
+                    $pid = (int)$itemRow['pid'];
+                    $container = (int)$itemRow['tx_gridelements_container'];
+                    $gridColumn = (int)$itemRow['tx_gridelements_columns'];
+                    $language = (int)$itemRow['sys_language_uid'];
                     $statusHidden = $parentObject->isDisabled('tt_content', $itemRow) ? ' t3-page-ce-hidden' : '';
+
                     $gridContent[$colPos] .= '
-				<div class="t3-page-ce t3js-page-ce t3js-page-ce-sortable' . $statusHidden . '" data-table="tt_content" id="element-tt_content-' . $itemRow['uid'] . '" data-uid="' . $itemRow['uid'] . '" data-container="' . $itemRow['tx_gridelements_container'] . '" data-ctype="' . $itemRow['CType'] . '">' . $this->renderSingleElementHTML($parentObject,
-                            $itemRow) . '</div>';
+				<div class="t3-page-ce t3js-page-ce t3js-page-ce-sortable' . $statusHidden . '" 
+				     data-table="tt_content" id="element-tt_content-' . $uid . '" 
+				     data-uid="' . $uid . '" 
+				     data-container="' . $container . '" 
+				     data-ctype="' . $itemRow['CType'] . '">' .
+                        $this->renderSingleElementHTML($parentObject, $itemRow) .
+                        '</div>';
                     if ($this->getPageLayoutController()->contentIsNotLockedForEditors()
                         && $this->getBackendUser()->doesUserHaveAccess($pageinfo, Permission::CONTENT_EDIT)
                         && (!$this->checkIfTranslationsExistInLanguage($items, $row['sys_language_uid'], $parentObject))
@@ -531,15 +551,15 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
                         $specificIds = $this->helper->getSpecificIds($itemRow);
                         if ($parentObject->option_newWizard) {
                             $urlParameters = [
-                                'id'                                 => $parentObject->id,
-                                'sys_language_uid'                   => $itemRow['sys_language_uid'],
-                                'tx_gridelements_allowed'            => $values['allowed'],
-                                'tx_gridelements_allowed_grid_types' => $values['allowedGridTypes'],
-                                'tx_gridelements_container'          => $itemRow['tx_gridelements_container'],
-                                'tx_gridelements_columns'            => $itemRow['tx_gridelements_columns'],
-                                'colPos'                             => -1,
-                                'uid_pid'                            => -$specificIds['uid'],
-                                'returnUrl'                          => GeneralUtility::getIndpEnv('REQUEST_URI'),
+                                'id'                         => $parentObject->id,
+                                'sys_language_uid'           => $language,
+                                'tx_gridelements_allowed'    => $allowed,
+                                'tx_gridelements_disallowed' => $disallowed,
+                                'tx_gridelements_container'  => $container,
+                                'tx_gridelements_columns'    => $gridColumn,
+                                'colPos'                     => -1,
+                                'uid_pid'                    => -$specificIds['uid'],
+                                'returnUrl'                  => GeneralUtility::getIndpEnv('REQUEST_URI'),
                             ];
                             $url = BackendUtility::getModuleUrl('new_content_element', $urlParameters);
                         } else {
@@ -551,12 +571,12 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
                                 ],
                                 'defVals'   => [
                                     'tt_content' => [
-                                        'sys_language_uid'                   => $itemRow['sys_language_uid'],
-                                        'tx_gridelements_allowed'            => $values['allowed'],
-                                        'tx_gridelements_allowed_grid_types' => $values['allowedGridTypes'],
-                                        'tx_gridelements_container'          => $itemRow['tx_gridelements_container'],
-                                        'tx_gridelements_columns'            => $itemRow['tx_gridelements_columns'],
-                                        'colPos'                             => -1,
+                                        'sys_language_uid'           => $language,
+                                        'tx_gridelements_allowed'    => $allowed,
+                                        'tx_gridelements_disallowed' => $disallowed,
+                                        'tx_gridelements_container'  => $container,
+                                        'tx_gridelements_columns'    => $gridColumn,
+                                        'colPos'                     => -1,
                                     ],
                                 ],
                                 'returnUrl' => GeneralUtility::getIndpEnv('REQUEST_URI'),
@@ -564,22 +584,30 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
                             $url = BackendUtility::getModuleUrl('record_edit', $urlParameters);
                         }
                         $iconsArray = [
-                            'new' => '<a href="' . htmlspecialchars($url) . '" title="' . $this->languageService->getLL('newContentElement',
-                                    true) . '" class="btn btn-default btn-sm">' . $this->iconFactory->getIcon('actions-document-new',
-                                    'small') . ' ' . $this->languageService->getLL('content', true) . '</a>',
+                            'new' => '<a 
+                                href="' . htmlspecialchars($url) . '" 
+                                title="' . $this->languageService->getLL('newContentElement', true) . '" 
+                                class="btn btn-default btn-sm">' .
+                                $this->iconFactory->getIcon('actions-document-new', 'small') . ' ' .
+                                $this->languageService->getLL('content', true) .
+                                '</a>',
                         ];
                     }
 
                     $gridContent[$colPos] .= '
-                    <div class="t3-page-ce">
-				<div class="t3js-page-new-ce t3js-page-new-ce-allowed t3-page-ce-wrapper-new-ce btn-group btn-group-sm" id="colpos-' . $itemRow['tx_gridelements_columns'] . '-page-' . $itemRow['pid'] . '-gridcontainer-' . $itemRow['tx_gridelements_container'] . '-' . str_replace('.',
-                            '', uniqid('', true)) . '">' . implode('', $iconsArray) . '
-				</div>
-				</div>
-				<div class="t3-page-ce-dropzone-available t3js-page-ce-dropzone-available"></div>
-				</div>
+                        <div class="t3-page-ce">
+                            <div class="t3js-page-new-ce t3js-page-new-ce-allowed t3-page-ce-wrapper-new-ce btn-group btn-group-sm" 
+                                 id="colpos-' . $gridColumn .
+                        '-page-' . $pid .
+                        '-gridcontainer-' . $container .
+                        '-' . str_replace('.', '', uniqid('', true)) . '">' .
+                        implode('', $iconsArray) . '
+                            </div>
+                        </div>
+                        <div class="t3-page-ce-dropzone-available t3js-page-ce-dropzone-available"></div>
+                    </div>
 					';
-                    $editUidList[$colPos] .= $editUidList[$colPos] ? ',' . $itemRow['uid'] : $itemRow['uid'];
+                    $editUidList[$colPos] .= $editUidList[$colPos] ? ',' . $uid : $uid;
                 }
             }
         }
@@ -823,35 +851,39 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
     /**
      * Renders the grid layout table after the HTML content for the single elements has been rendered
      *
-     * @param array $layoutSetup : The setup of the layout that is selected for the grid we are going to render
+     * @param array $layout : The setup of the layout that is selected for the grid we are going to render
      * @param array $row : The current data row for the container item
      * @param array $head : The data for the column headers of the grid we are going to render
      * @param array $gridContent : The content data of the grid we are going to render
      *
      * @return string
      */
-    protected function renderGridLayoutTable($layoutSetup, $row, $head, $gridContent)
+    protected function renderGridLayoutTable($layout, $row, $head, $gridContent)
     {
         $specificIds = $this->helper->getSpecificIds($row);
 
-        $grid = '<div class="t3-grid-container t3-grid-element-container' . ($layoutSetup['frame'] ? ' t3-grid-container-framed t3-grid-container-' . (int)$layoutSetup['frame'] : '') . ($layoutSetup['top_level_layout'] ? ' t3-grid-tl-container' : '') . '">';
-        if ($layoutSetup['frame'] || $this->helper->getBackendUser()->uc['showGridInformation'] === 1) {
-            $grid .= '<h4 class="t3-grid-container-title-' . (int)$layoutSetup['frame'] . '">' . BackendUtility::wrapInHelp('tx_gridelements_backend_layouts',
-                    'title', $this->languageService->sL($layoutSetup['title']), [
-                        'title'       => $this->languageService->sL($layoutSetup['title']),
-                        'description' => $this->languageService->sL($layoutSetup['description']),
-                    ]) . '</h4>';
+        $grid = '<div class="t3-grid-container t3-grid-element-container' . ($layout['frame'] ? ' t3-grid-container-framed t3-grid-container-' . (int)$layout['frame'] : '') . ($layout['top_level_layout'] ? ' t3-grid-tl-container' : '') . '">';
+        if ($layout['frame'] || $this->helper->getBackendUser()->uc['showGridInformation'] === 1) {
+            $grid .= '<h4 class="t3-grid-container-title-' . (int)$layout['frame'] . '">' .
+                BackendUtility::wrapInHelp(
+                    'tx_gridelements_backend_layouts',
+                    'title',
+                    $this->languageService->sL($layout['title']), [
+                        'title'       => $this->languageService->sL($layout['title']),
+                        'description' => $this->languageService->sL($layout['description']),
+                    ]
+                ) . '</h4>';
         }
         $grid .= '<table border="0" cellspacing="0" cellpadding="0" width="100%" height="100%" class="t3-page-columns t3-grid-table">';
         // add colgroups
         $colCount = 0;
         $rowCount = 0;
-        if (isset($layoutSetup['config'])) {
-            if (isset($layoutSetup['config']['colCount'])) {
-                $colCount = (int)$layoutSetup['config']['colCount'];
+        if (isset($layout['config'])) {
+            if (isset($layout['config']['colCount'])) {
+                $colCount = (int)$layout['config']['colCount'];
             }
-            if (isset($layoutSetup['config']['rowCount'])) {
-                $rowCount = (int)$layoutSetup['config']['rowCount'];
+            if (isset($layout['config']['rowCount'])) {
+                $rowCount = (int)$layout['config']['rowCount'];
             }
         }
         $grid .= '<colgroup>';
@@ -861,51 +893,56 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
         $grid .= '</colgroup>';
         // cycle through rows
         for ($layoutRow = 1; $layoutRow <= $rowCount; $layoutRow++) {
-            $rowConfig = $layoutSetup['config']['rows.'][$layoutRow . '.'];
-            if (!isset($rowConfig)) {
+            $rowConfig = $layout['config']['rows.'][$layoutRow . '.'];
+            if (!isset($rowConfig) || !isset($rowConfig['columns.'])) {
                 continue;
             }
             $grid .= '<tr>';
-            for ($col = 1; $col <= $colCount; $col++) {
-                $columnConfig = $rowConfig['columns.'][$col . '.'];
+            foreach ($rowConfig['columns.'] as $column => $columnConfig) {
                 if (!isset($columnConfig)) {
                     continue;
                 }
                 // which column should be displayed inside this cell
                 $columnKey = isset($columnConfig['colPos']) && $columnConfig['colPos'] !== '' ? (int)$columnConfig['colPos'] : 32768;
                 // allowed CTypes
-                $allowedContentTypes = [];
-                $allowedGridTypes = [];
-                if (!empty($columnConfig['allowed'])) {
-                    $allowedContentTypes = array_flip(GeneralUtility::trimExplode(',', $columnConfig['allowed']));
-                    if (!isset($allowedContentTypes['*'])) {
-                        foreach ($allowedContentTypes as $key => &$ctype) {
-                            $ctype = 't3-allow-' . $key;
-                        }
-                    } else {
-                        unset($allowedContentTypes);
+                $allowedContentTypes = $layout['allowed'][$columnKey]['CType'];
+                if (!isset($allowedContentTypes['*'])) {
+                    foreach ($allowedContentTypes as $key => &$ctype) {
+                        $ctype = 't3js-allow-' . $key;
                     }
+                } else {
+                    unset($allowedContentTypes);
                 }
-                if (!empty($columnConfig['allowedGridTypes'])) {
-                    $allowedGridTypes = array_flip(GeneralUtility::trimExplode(',', $columnConfig['allowedGridTypes']));
-                    if (!isset($allowedGridTypes['*']) && !empty($allowedGridTypes)) {
-                        foreach ($allowedGridTypes as $gridType => &$gridTypeClass) {
-                            $gridTypeClass = 't3-allow-gridtype-' . $gridType;
-                        }
-                    } else {
-                        if (!empty($allowedContentTypes)) {
-                            $allowedContentTypes['gridelements_pi1'] = 't3-allow-gridelements_pi1';
-                        }
-                        unset($allowedGridTypes);
+                $allowedListTypes = $layout['allowed'][$columnKey]['list_type'];
+                if (!isset($allowedListTypes['*']) && !empty($allowedListTypes)) {
+                    foreach ($allowedListTypes as $gridType => &$gridTypeClass) {
+                        $gridTypeClass = 't3js-allow-listtype-' . $gridType;
                     }
+                } else {
+                    if (!empty($allowedContentTypes) && !empty($allowedListTypes)) {
+                        $allowedContentTypes['list'] = 't3js-allow-list';
+                    }
+                    unset($allowedListTypes);
+                }
+                $allowedGridTypes = $layout['allowed'][$columnKey]['tx_gridelements_backend_layout'];
+                if (!isset($allowedGridTypes['*']) && !empty($allowedGridTypes)) {
+                    foreach ($allowedGridTypes as $gridType => &$gridTypeClass) {
+                        $gridTypeClass = 't3js-allow-gridtype-' . $gridType;
+                    }
+                } else {
+                    if (!empty($allowedContentTypes) && !empty($allowedGridTypes)) {
+                        $allowedContentTypes['gridelements_pi1'] = 't3js-allow-gridelements_pi1';
+                    }
+                    unset($allowedGridTypes);
                 }
                 // render the grid cell
                 $colSpan = (int)$columnConfig['colspan'];
                 $rowSpan = (int)$columnConfig['rowspan'];
                 $expanded = $this->helper->getBackendUser()->uc['moduleData']['page']['gridelementsCollapsedColumns'][$row['uid'] . '_' . $columnKey] ? 'collapsed' : 'expanded';
                 $grid .= '<td valign="top"' . (isset($columnConfig['colspan']) ? ' colspan="' . $colSpan . '"' : '') . (isset($columnConfig['rowspan']) ? ' rowspan="' . $rowSpan . '"' : '') . 'data-colpos="' . $columnKey . '" data-columnkey="' . $specificIds['uid'] . '_' . $columnKey . '"
-					class="t3-grid-cell t3js-page-column t3-page-column t3-page-column-' . $columnKey . (!isset($columnConfig['colPos']) || $columnConfig['colPos'] === '' ? ' t3-grid-cell-unassigned' : '') . (isset($columnConfig['colspan']) && $columnConfig['colPos'] !== '' ? ' t3-grid-cell-width' . $colSpan : '') . (isset($columnConfig['rowspan']) && $columnConfig['colPos'] !== '' ? ' t3-grid-cell-height' . $rowSpan : '') . ' ' . ($layoutSetup['horizontal'] ? ' t3-grid-cell-horizontal' : '') . (!empty($allowedContentTypes) ? ' ' . join(' ',
-                            $allowedContentTypes) : ' t3-allow-all') . (!empty($allowedGridTypes) ? ' t3-allow-gridtype ' . join(' ',
+					class="t3-grid-cell t3js-page-column t3-page-column t3-page-column-' . $columnKey . (!isset($columnConfig['colPos']) || $columnConfig['colPos'] === '' ? ' t3-grid-cell-unassigned' : '') . (isset($columnConfig['colspan']) && $columnConfig['colPos'] !== '' ? ' t3-grid-cell-width' . $colSpan : '') . (isset($columnConfig['rowspan']) && $columnConfig['colPos'] !== '' ? ' t3-grid-cell-height' . $rowSpan : '') . ' ' . ($layout['horizontal'] ? ' t3-grid-cell-horizontal' : '') . (!empty($allowedContentTypes) ? ' ' . join(' ',
+                            $allowedContentTypes) : ' t3js-allow-all') . (!empty($allowedListTypes) ? ' t3js-allow-listtype ' . join(' ',
+                            $allowedListTypes) : '') . (!empty($allowedGridTypes) ? ' t3js-allow-gridtype ' . join(' ',
                             $allowedGridTypes) : '') . ' ' . $expanded . '" data-state="' . $expanded . '">';
 
                 $grid .= ($this->helper->getBackendUser()->uc['hideColumnHeaders'] ? '' : $head[$columnKey]) . $gridContent[$columnKey];
