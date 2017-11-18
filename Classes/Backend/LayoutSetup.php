@@ -299,7 +299,7 @@ class LayoutSetup
                                 $disallowed[$colPos] = $column['disallowed'];
                             }
                             if (!empty($column['maxitems'])) {
-                                $maxitems[$colPos] = $column['maxitems'];
+                                $maxItems[$colPos] = $column['maxitems'];
                             }
                             $availableColumns['CSV'] .= ',' . $colPos;
                         }
@@ -517,6 +517,17 @@ class LayoutSetup
     public function setLayoutSetup(array $layoutSetup)
     {
         $this->layoutSetup = $layoutSetup;
+    }
+
+    /**
+     * setter for layout setup
+     *
+     * @param string $key
+     * @param array $layoutSetup
+     */
+    public function setSingleLayoutSetup($key, array $layoutSetup)
+    {
+        $this->layoutSetup[$key] = $layoutSetup;
     }
 
     /**

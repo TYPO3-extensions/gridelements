@@ -22,7 +22,6 @@ namespace GridElementsTeam\Gridelements\Wizard;
 
 use GridElementsTeam\Gridelements\Backend\LayoutSetup;
 use TYPO3\CMS\Backend\View\Wizard\Element\BackendLayoutWizardElement;
-use TYPO3\CMS\Core\TypoScript\Parser\TypoScriptParser;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -129,10 +128,10 @@ class GridelementsBackendLayoutWizardElement extends BackendLayoutWizardElement
         $html[] = '</div>';
         $html[] = '</div>';
 
-        $contentTypes = [];
+        $contentTypes = array();
         if (is_array($GLOBALS['TCA']['tt_content']['columns']['CType']['config']['items'])) {
             foreach ($GLOBALS['TCA']['tt_content']['columns']['CType']['config']['items'] as $item) {
-                $contentType = [];
+                $contentType = array();
                 if (!empty($item[1])) {
                     $contentType['key'] = $item[1];
                     if (substr($contentType['key'], 0, 2) !== '--') {
@@ -153,7 +152,7 @@ class GridelementsBackendLayoutWizardElement extends BackendLayoutWizardElement
                 }
             }
         }
-        $listTypes = [];
+        $listTypes = array();
         if (is_array($GLOBALS['TCA']['tt_content']['columns']['list_type']['config']['items'])) {
             foreach ($GLOBALS['TCA']['tt_content']['columns']['list_type']['config']['items'] as $item) {
                 $listType = [];
@@ -178,7 +177,7 @@ class GridelementsBackendLayoutWizardElement extends BackendLayoutWizardElement
                 }
             }
         }
-        $gridTypes = [];
+        $gridTypes = array();
         $layoutSetup = GeneralUtility::makeInstance(LayoutSetup::class)->init($this->data['parentPageRow']['pid'])->getLayoutSetup();
         if (is_array($layoutSetup)) {
             foreach ($layoutSetup as $key => $item) {
@@ -230,14 +229,14 @@ class GridelementsBackendLayoutWizardElement extends BackendLayoutWizardElement
             $colCount = 1;
             $rowCount = 1;
         } else {
-            // load TS parser
-            $parser = GeneralUtility::makeInstance(TypoScriptParser::class);
-            $parser->parse($this->data['databaseRow']['config']);
-            $data = $parser->setup['backend_layout.'];
+            /** @var LayoutSetup $layoutSetup */
+            $layoutSetup = GeneralUtility::makeInstance(LayoutSetup::class)->init(0);
+            $layoutId = $this->data['databaseRow']['alias'] ?: (int)$this->data['databaseRow']['uid'];
+            $layout = $layoutSetup->getLayoutSetup($layoutId);
             $rows = [];
-            $colCount = $data['colCount'];
-            $rowCount = $data['rowCount'];
-            $dataRows = $data['rows.'];
+            $colCount = $layout['config']['colCount'];
+            $rowCount = $layout['config']['rowCount'];
+            $dataRows = $layout['config']['rows.'];
             $spannedMatrix = [];
             for ($i = 1; $i <= $rowCount; $i++) {
                 $cells = [];
@@ -281,13 +280,21 @@ class GridelementsBackendLayoutWizardElement extends BackendLayoutWizardElement
                                 $cellData['name'] = $column['name'];
                             }
                             if (isset($column['colPos'])) {
-                                $cellData['column'] = (int)$column['colPos'];
-                            }
-                            if (isset($column['allowed'])) {
-                                $cellData['allowed'] = $column['allowed'];
-                            }
-                            if (isset($column['allowedGridTypes'])) {
-                                $cellData['allowedGridTypes'] = $column['allowedGridTypes'];
+                                $colPos = (int)$column['colPos'];
+                                $cellData['column'] = $colPos;
+                                $cellData['allowed'] = [];
+                                if (isset($layout['allowed'][$colPos])) {
+                                    foreach ($layout['allowed'][$colPos] as $key => $valueArray) {
+                                        $cellData['allowed'][$key] = implode(',', array_keys($valueArray));
+                                    }
+                                }
+                                $cellData['disallowed'] = [];
+                                if (isset($layout['disallowed'][$colPos])) {
+                                    foreach ($layout['disallowed'][$colPos] as $key => $valueArray) {
+                                        $cellData['disallowed'][$key] = implode(',', array_keys($valueArray));
+                                    }
+                                }
+                                $cellData['maxitems'] = (int)$layout['maxitems'][$colPos];
                             }
                         }
                     } else {
