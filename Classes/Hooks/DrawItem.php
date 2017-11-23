@@ -906,7 +906,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
                 $columnKey = isset($columnConfig['colPos']) && $columnConfig['colPos'] !== '' ? (int)$columnConfig['colPos'] : 32768;
                 // allowed CTypes
                 $allowedContentTypes = $layout['allowed'][$columnKey]['CType'];
-                if (!isset($allowedContentTypes['*'])) {
+                if (!isset($allowedContentTypes['*']) && !empty($allowedContentTypes)) {
                     foreach ($allowedContentTypes as $key => &$ctype) {
                         $ctype = 't3js-allow-' . $key;
                     }
