@@ -308,10 +308,10 @@ define(['jquery', 'TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Backend/Storag
 					expandConfig[id] = isExpanded;
 					if (isExpanded === 1) {
 						$('[data-uid=' + id + ']').find('.t3js-toggle-gridelements-list').addClass('open-gridelements-container');
-						$('[data-trigger-container=' + id + ']').show();
+						$('[data-trigger-container=' + id + ']').addClass('expanded');
 					} else {
 						$('[data-uid=' + id + ']').find('.t3js-toggle-gridelements-list').removeClass('open-gridelements-container');
-						$('[data-trigger-container=' + id + ']').hide();
+						$('[data-trigger-container=' + id + ']').removeClass('expanded');
 					}
 				}
 			});
@@ -355,7 +355,7 @@ define(['jquery', 'TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Backend/Storag
 			$(this).attr('data-toggle-title', originalTitle);
 			$(this).blur();
 
-			$('[data-trigger-container=' + $(this).closest('tr').data('uid') + ']').toggle().find('.open-gridelements-container').click();
+			$('[data-trigger-container=' + $(this).closest('tr').data('uid') + ']').toggleClass('expanded').find('.open-gridelements-container').click();
 		});
 
 	};

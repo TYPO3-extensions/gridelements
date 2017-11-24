@@ -419,3 +419,6 @@
 .grideditor .cell_data th {
 	text-align: right;
 }
+.recordlist .expanded {
+	display: table-row!important;
+}
