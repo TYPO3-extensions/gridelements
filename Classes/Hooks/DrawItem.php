@@ -452,8 +452,13 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
 
         $url = '';
         $pageinfo = BackendUtility::readPageAccess($parentObject->id, '');
+        if (get_class($this->getPageLayoutController()) === PageLayoutController::class) {
+            $contentIsNotLockedForEditors = $this->getPageLayoutController()->contentIsNotLockedForEditors();
+        } else {
+            $contentIsNotLockedForEditors = true;
+        }
         if ($colPos < 32768) {
-            if ($this->getPageLayoutController()->contentIsNotLockedForEditors()
+            if ($contentIsNotLockedForEditors
                 && $this->getBackendUser()->doesUserHaveAccess($pageinfo, Permission::CONTENT_EDIT)
                 && (!$this->checkIfTranslationsExistInLanguage($items, $row['sys_language_uid'], $parentObject))
             ) {
@@ -543,7 +548,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
 				     data-ctype="' . $itemRow['CType'] . '">' .
                         $this->renderSingleElementHTML($parentObject, $itemRow) .
                         '</div>';
-                    if ($this->getPageLayoutController()->contentIsNotLockedForEditors()
+                    if ($contentIsNotLockedForEditors
                         && $this->getBackendUser()->doesUserHaveAccess($pageinfo, Permission::CONTENT_EDIT)
                         && (!$this->checkIfTranslationsExistInLanguage($items, $row['sys_language_uid'], $parentObject))
                     ) {
