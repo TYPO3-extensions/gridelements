@@ -909,46 +909,126 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
                 }
                 // which column should be displayed inside this cell
                 $columnKey = isset($columnConfig['colPos']) && $columnConfig['colPos'] !== '' ? (int)$columnConfig['colPos'] : 32768;
-                // allowed CTypes
-                $allowedContentTypes = $layout['allowed'][$columnKey]['CType'];
-                if (!isset($allowedContentTypes['*']) && !empty($allowedContentTypes)) {
-                    foreach ($allowedContentTypes as $key => &$ctype) {
-                        $ctype = 't3js-allow-' . $key;
+                // first get disallowed CTypes
+                $disallowedContentTypes = $layout['disallowed'][$columnKey]['CType'];
+                if (!isset($disallowedContentTypes['*']) && !empty($disallowedContentTypes)) {
+                    foreach ($disallowedContentTypes as $key => &$ctype) {
+                        $ctype = $key;
                     }
+                } else if(isset($disallowedContentTypes['*'])) {
+                    $disallowedGridTypes['*'] = '*';
                 } else {
-                    unset($allowedContentTypes);
+                    $disallowedContentTypes = [];
                 }
-                $allowedListTypes = $layout['allowed'][$columnKey]['list_type'];
-                if (!isset($allowedListTypes['*']) && !empty($allowedListTypes)) {
-                    foreach ($allowedListTypes as $gridType => &$gridTypeClass) {
-                        $gridTypeClass = 't3js-allow-listtype-' . $gridType;
+                // when everything is disallowed, no further checks are necessary
+                if (!isset($disallowedContentTypes['*'])) {
+                    $allowedContentTypes = $layout['allowed'][$columnKey]['CType'];
+                    if (!isset($allowedContentTypes['*']) && !empty($allowedContentTypes)) {
+                        // set allowed CTypes unless they are disallowed
+                        foreach ($allowedContentTypes as $key => &$ctype) {
+                            if (isset($disallowedContentTypes[$key])) {
+                                unset($allowedContentTypes[$key]);
+                                unset($disallowedContentTypes[$key]);
+                            } else {
+                                $ctype = $key;
+                            }
+                        }
+                    } else {
+                        $allowedContentTypes = [];
+                    }
+                    // get disallowed list types
+                    $disallowedListTypes = $layout['disallowed'][$columnKey]['list_type'];
+                    if (!isset($disallowedListTypes['*']) && !empty($disallowedListTypes)) {
+                        foreach ($disallowedListTypes as $key => &$ctype) {
+                            $ctype = $key;
+                        }
+                    } else if(isset($disallowedListTypes['*'])) {
+                        // when each list type is disallowed, no CType list is necessary anymore
+                        $disallowedListTypes['*'] = '*';
+                        unset($allowedContentTypes['list']);
+                    } else {
+                        $disallowedListTypes = [];
+                    }
+                    // when each list type is disallowed, no further list type checks are necessary
+                    if (!isset($disallowedListTypes['*'])) {
+                        $allowedListTypes = $layout['allowed'][$columnKey]['list_type'];
+                        if (!isset($allowedListTypes['*']) && !empty($allowedListTypes)) {
+                            foreach ($allowedListTypes as $listType => &$listTypeData) {
+                                // set allowed list types unless they are disallowed
+                                if (isset($disallowedListTypes[$listType])) {
+                                    unset($allowedListTypes[$listType]);
+                                    unset($disallowedListTypes[$listType]);
+                                } else {
+                                    $listTypeData = $listType;
+                                }
+                            }
+                        } else {
+                            if (!empty($allowedContentTypes) && !empty($allowedListTypes)) {
+                                $allowedContentTypes['list'] = 'list';
+                            }
+                            unset($allowedListTypes);
+                        }
+                    } else {
+                        $allowedListTypes = [];
+                    }
+                    // get disallowed grid types
+                    $disallowedGridTypes = $layout['disallowed'][$columnKey]['tx_gridelements_backend_layout'];
+                    if (!isset($disallowedGridTypes['*']) && !empty($disallowedGridTypes)) {
+                        foreach ($disallowedGridTypes as $key => &$ctype) {
+                            $ctype = $key;
+                        }
+                    } else if(isset($disallowedGridTypes['*'])) {
+                        // when each list type is disallowed, no CType gridelements_pi1 is necessary anymore
+                        $disallowedGridTypes['*'] = '*';
+                        unset($allowedContentTypes['gridelements_pi1']);
+                    } else {
+                        $disallowedGridTypes = [];
+                    }
+                    // when each list type is disallowed, no further grid types checks are necessary
+                    if (!isset($disallowedGridTypes['*'])) {
+                        $allowedGridTypes = $layout['allowed'][$columnKey]['tx_gridelements_backend_layout'];
+                        if (!isset($allowedGridTypes['*']) && !empty($allowedGridTypes)) {
+                            foreach ($allowedGridTypes as $gridType => &$gridTypeData) {
+                                // set allowed grid types unless they are disallowed
+                                if (isset($disallowedGridTypes[$gridType])) {
+                                    unset($allowedGridTypes[$gridType]);
+                                    unset($disallowedGridTypes[$gridType]);
+                                } else {
+                                    $gridTypeData = $gridType;
+                                }
+                            }
+                        } else {
+                            if (!empty($allowedContentTypes) && !empty($allowedGridTypes)) {
+                                $allowedContentTypes['gridelements_pi1'] = 'gridelements_pi1';
+                            }
+                            unset($allowedGridTypes);
+                        }
+                    } else {
+                        $allowedGridTypes = [];
                     }
                 } else {
-                    if (!empty($allowedContentTypes) && !empty($allowedListTypes)) {
-                        $allowedContentTypes['list'] = 't3js-allow-list';
-                    }
-                    unset($allowedListTypes);
-                }
-                $allowedGridTypes = $layout['allowed'][$columnKey]['tx_gridelements_backend_layout'];
-                if (!isset($allowedGridTypes['*']) && !empty($allowedGridTypes)) {
-                    foreach ($allowedGridTypes as $gridType => &$gridTypeClass) {
-                        $gridTypeClass = 't3js-allow-gridtype-' . $gridType;
-                    }
-                } else {
-                    if (!empty($allowedContentTypes) && !empty($allowedGridTypes)) {
-                        $allowedContentTypes['gridelements_pi1'] = 't3js-allow-gridelements_pi1';
-                    }
-                    unset($allowedGridTypes);
+                    $allowedContentTypes = [];
                 }
                 // render the grid cell
                 $colSpan = (int)$columnConfig['colspan'];
                 $rowSpan = (int)$columnConfig['rowspan'];
                 $expanded = $this->helper->getBackendUser()->uc['moduleData']['page']['gridelementsCollapsedColumns'][$row['uid'] . '_' . $columnKey] ? 'collapsed' : 'expanded';
-                $grid .= '<td valign="top"' . (isset($columnConfig['colspan']) ? ' colspan="' . $colSpan . '"' : '') . (isset($columnConfig['rowspan']) ? ' rowspan="' . $rowSpan . '"' : '') . 'data-colpos="' . $columnKey . '" data-columnkey="' . $specificIds['uid'] . '_' . $columnKey . '"
-					class="t3-grid-cell t3js-page-column t3-page-column t3-page-column-' . $columnKey . (!isset($columnConfig['colPos']) || $columnConfig['colPos'] === '' ? ' t3-grid-cell-unassigned' : '') . (isset($columnConfig['colspan']) && $columnConfig['colPos'] !== '' ? ' t3-grid-cell-width' . $colSpan : '') . (isset($columnConfig['rowspan']) && $columnConfig['colPos'] !== '' ? ' t3-grid-cell-height' . $rowSpan : '') . ' ' . ($layout['horizontal'] ? ' t3-grid-cell-horizontal' : '') . (!empty($allowedContentTypes) ? ' ' . join(' ',
-                            $allowedContentTypes) : ' t3js-allow-all') . (!empty($allowedListTypes) ? ' t3js-allow-listtype ' . join(' ',
-                            $allowedListTypes) : '') . (!empty($allowedGridTypes) ? ' t3js-allow-gridtype ' . join(' ',
-                            $allowedGridTypes) : '') . ' ' . $expanded . '" data-state="' . $expanded . '">';
+                $grid .= '<td valign="top"' .
+                    (isset($columnConfig['colspan']) ? ' colspan="' . $colSpan . '"' : '') .
+                    (isset($columnConfig['rowspan']) ? ' rowspan="' . $rowSpan . '"' : '') .
+                    'data-colpos="' . $columnKey . '" data-columnkey="' . $specificIds['uid'] . '_' . $columnKey . '"
+					class="t3-grid-cell t3js-page-column t3-page-column t3-page-column-' . $columnKey .
+                    (!isset($columnConfig['colPos']) || $columnConfig['colPos'] === '' ? ' t3-grid-cell-unassigned' : '') .
+                    (isset($columnConfig['colspan']) && $columnConfig['colPos'] !== '' ? ' t3-grid-cell-width' . $colSpan : '') .
+                    (isset($columnConfig['rowspan']) && $columnConfig['colPos'] !== '' ? ' t3-grid-cell-height' . $rowSpan : '') .
+                    ($layout['horizontal'] ? ' t3-grid-cell-horizontal' : '') . ' ' . $expanded . '"' .
+                    ' data-allowed-ctype="' . (!empty($allowedContentTypes) ? join(' ', $allowedContentTypes) : '*') . '"' .
+                    (!empty($disallowedContentTypes) ? ' data-disallowed-ctype="' . join(' ', $disallowedContentTypes) . '"' : '') .
+                    (!empty($allowedListTypes) ? ' data-allowed-listtype="' . join(' ', $allowedListTypes) . '"' : '') .
+                    (!empty($disallowedListTypes) ? ' data-disallowed-listtype="' . join(' ', $disallowedListTypes) . '"' : '') .
+                    (!empty($allowedGridTypes) ? ' data-allowed-gridtype="' . join(' ', $allowedGridTypes) . '"' : '') .
+                    (!empty($disallowedGridTypes) ? ' data-disallowed-gridtype="' . join(' ', $disallowedGridTypes) . '"' : '') .
+                    ' data-state="' . $expanded . '">';
 
                 $grid .= ($this->helper->getBackendUser()->uc['hideColumnHeaders'] ? '' : $head[$columnKey]) . $gridContent[$columnKey];
                 $grid .= '</td>';
