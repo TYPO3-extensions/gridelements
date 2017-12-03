@@ -109,11 +109,11 @@ class Helper implements SingletonInterface
     public function mergeAllowedDisallowedSettings($backendLayout) {
         if (!empty($backendLayout['allowed'])) {
             foreach ($backendLayout['allowed'] as $column => &$fields) {
-                if ($fields['CType'] !== '*') {
+                if (isset($fields['CType']) && $fields['CType'] !== '*') {
                     if (!empty($fields['list_type'])) {
                         $fields['CType'] .= ',list';
                     }
-                    if (!empty($fields['tx_gridelements_backend_layout'])) {
+                    if (!empty($fields['tx_gridelements_backend_layout']) && !empty($fields['tx_gridelements_backend_layout'])) {
                         $fields['CType'] .= ',gridelements_pi1';
                     }
                 }

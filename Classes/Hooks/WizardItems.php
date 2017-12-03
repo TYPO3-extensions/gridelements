@@ -28,6 +28,7 @@ use TYPO3\CMS\Backend\Wizard\NewContentElementWizardHookInterface;
 use TYPO3\CMS\Core\Imaging\IconProvider\BitmapIconProvider;
 use TYPO3\CMS\Core\Imaging\IconProvider\SvgIconProvider;
 use TYPO3\CMS\Core\Imaging\IconRegistry;
+use TYPO3\CMS\Core\Utility\DebugUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\StringUtility;
 use TYPO3\CMS\Lang\LanguageService;
@@ -83,13 +84,11 @@ class WizardItems implements NewContentElementWizardHookInterface
         } else {
             $allowed = null;
         }
-
         if ((
-                empty($allowed) ||
+                empty($allowed['CType']) ||
                 isset($allowed['CType']['gridelements_pi1']) ||
                 isset($allowed['CType']['*'])
             ) &&
-            !isset($disallowed['CType']['*']) &&
             !isset($disallowed['tx_gridelements_backend_layout']['*'])
         ) {
             $allowedGridTypes = $allowed['tx_gridelements_backend_layout'] ?: [];
