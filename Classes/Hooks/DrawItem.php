@@ -1022,12 +1022,12 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
                     (isset($columnConfig['colspan']) && $columnConfig['colPos'] !== '' ? ' t3-grid-cell-width' . $colSpan : '') .
                     (isset($columnConfig['rowspan']) && $columnConfig['colPos'] !== '' ? ' t3-grid-cell-height' . $rowSpan : '') .
                     ($layout['horizontal'] ? ' t3-grid-cell-horizontal' : '') . ' ' . $expanded . '"' .
-                    ' data-allowed-ctype="' . (!empty($allowedContentTypes) ? join(' ', $allowedContentTypes) : '*') . '"' .
-                    (!empty($disallowedContentTypes) ? ' data-disallowed-ctype="' . join(' ', $disallowedContentTypes) . '"' : '') .
-                    (!empty($allowedListTypes) ? ' data-allowed-listtype="' . join(' ', $allowedListTypes) . '"' : '') .
-                    (!empty($disallowedListTypes) ? ' data-disallowed-listtype="' . join(' ', $disallowedListTypes) . '"' : '') .
-                    (!empty($allowedGridTypes) ? ' data-allowed-gridtype="' . join(' ', $allowedGridTypes) . '"' : '') .
-                    (!empty($disallowedGridTypes) ? ' data-disallowed-gridtype="' . join(' ', $disallowedGridTypes) . '"' : '') .
+                    ' data-allowed-CType="' . (!empty($allowedContentTypes) ? join(' ', $allowedContentTypes) : '*') . '"' .
+                    (!empty($disallowedContentTypes) ? ' data-disallowed-CType="' . join(' ', $disallowedContentTypes) . '"' : '') .
+                    (!empty($allowedListTypes) ? ' data-allowed-list_type="' . join(' ', $allowedListTypes) . '"' : '') .
+                    (!empty($disallowedListTypes) ? ' data-disallowed-list_type="' . join(' ', $disallowedListTypes) . '"' : '') .
+                    (!empty($allowedGridTypes) ? ' data-allowed-tx_gridelements_backend_layout="' . join(' ', $allowedGridTypes) . '"' : '') .
+                    (!empty($disallowedGridTypes) ? ' data-disallowed-tx_gridelements_backend_layout="' . join(' ', $disallowedGridTypes) . '"' : '') .
                     ' data-state="' . $expanded . '">';
 
                 $grid .= ($this->helper->getBackendUser()->uc['hideColumnHeaders'] ? '' : $head[$columnKey]) . $gridContent[$columnKey];

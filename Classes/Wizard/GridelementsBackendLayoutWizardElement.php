@@ -22,6 +22,7 @@ namespace GridElementsTeam\Gridelements\Wizard;
 
 use GridElementsTeam\Gridelements\Backend\LayoutSetup;
 use TYPO3\CMS\Backend\View\Wizard\Element\BackendLayoutWizardElement;
+use TYPO3\CMS\Core\TypoScript\Parser\TypoScriptParser;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -231,8 +232,24 @@ class GridelementsBackendLayoutWizardElement extends BackendLayoutWizardElement
         } else {
             /** @var LayoutSetup $layoutSetup */
             $layoutSetup = GeneralUtility::makeInstance(LayoutSetup::class)->init(0);
-            $layoutId = $this->data['databaseRow']['alias'] ?: (int)$this->data['databaseRow']['uid'];
-            $layout = $layoutSetup->getLayoutSetup($layoutId);
+            if ($this->data['tableName'] === 'tx-gridelements_backend_layout') {
+                $layoutId = $this->data['databaseRow']['alias'] ?: (int)$this->data['databaseRow']['uid'];
+                $layout = $layoutSetup->getLayoutSetup($layoutId);
+            } else {
+                $parser = GeneralUtility::makeInstance(TypoScriptParser::class);
+                $parser->parse($this->data['databaseRow']['config']);
+                $layout = ['config' => $parser->setup['backend_layout.']];
+                if (!empty($layout['config']['rows.'])) {
+                    $columns = $layoutSetup->checkAvailableColumns($layout);
+                    if ($columns['allowed'] || $columns['disallowed'] || $columns['maxitems']) {
+                        $layout['columns'] = $columns;
+                        unset($layout['columns']['allowed']);
+                        $layout['allowed'] = $columns['allowed'] ?: [];
+                        $layout['disallowed'] = $columns['disallowed'] ?: [];
+                        $layout['maxitems'] = $columns['maxitems'] ?: [];
+                    }
+                }
+            }
             $rows = [];
             $colCount = $layout['config']['colCount'];
             $rowCount = $layout['config']['rowCount'];

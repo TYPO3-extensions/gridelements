@@ -267,56 +267,65 @@ class LayoutSetup
         }
 
         if (empty($GLOBALS['tx_gridelements']['ceBackendLayoutData'][$layoutId])) {
-            $availableColumns = ['CSV' => '-2,-1'];
             if (!empty($this->layoutSetup[$layoutId]['config']['rows.'])) {
-                $allowed = [];
-                $disallowed = [];
-                $maxItems = [];
-                foreach ($this->layoutSetup[$layoutId]['config']['rows.'] as $row) {
-                    if (!empty($row['columns.'])) {
-                        foreach ($row['columns.'] as $column) {
-                            if (!isset($column['colPos'])) {
-                                continue;
-                            }
-                            $colPos = (int)$column['colPos'];
-                            if (isset($column['allowed.'])) {
-                                $column['allowed'] = $column['allowed.'];
-                            }
-                            if (isset($column['disallowed.'])) {
-                                $column['disallowed'] = $column['disallowed.'];
-                            }
-                            if (!is_array($column['allowed']) && !empty($column['allowed'])) {
-                                $allowed[$colPos] = ['CType' => $column['allowed']];
-                            } else if (empty($column['allowed'])) {
-                                $allowed[$colPos] = ['CType' => '*'];
-                            } else {
-                                $allowed[$colPos] = $column['allowed'];
-                            }
-                            if ($column['allowedGridTypes']) {
-                                $allowed[$colPos]['tx_gridelements_backend_layout'] = $column['allowedGridTypes'];
-                            }
-                            if (!empty($column['disallowed'])) {
-                                $disallowed[$colPos] = $column['disallowed'];
-                            }
-                            if (!empty($column['maxitems'])) {
-                                $maxItems[$colPos] = $column['maxitems'];
-                            }
-                            $availableColumns['CSV'] .= ',' . $colPos;
-                        }
-                    }
-                }
-                $availableColumns['allowed'] = $allowed;
-                if (!empty($disallowed)) {
-                    $availableColumns['disallowed'] = $disallowed;
-                }
-                if (!empty($maxItems)) {
-                    $availableColumns['maxitems'] = $maxItems;
-                }
-                $GLOBALS['tx_gridelements']['ceBackendLayoutData'][$layoutId] = Helper::getInstance()->mergeAllowedDisallowedSettings($availableColumns);
+                $GLOBALS['tx_gridelements']['ceBackendLayoutData'][$layoutId] = $this->checkAvailableColumns($this->layoutSetup[$layoutId]);
             }
         }
 
         return $GLOBALS['tx_gridelements']['ceBackendLayoutData'][$layoutId];
+    }
+
+    /**
+     * @param array $setup
+     * @return array
+     */
+    public function checkAvailableColumns($setup) {
+        $availableColumns = ['CSV' => '-2,-1'];
+        $allowed = [];
+        $disallowed = [];
+        $maxItems = [];
+        foreach ($setup['config']['rows.'] as $row) {
+            if (!empty($row['columns.'])) {
+                foreach ($row['columns.'] as $column) {
+                    if (!isset($column['colPos'])) {
+                        continue;
+                    }
+                    $colPos = (int)$column['colPos'];
+                    if (isset($column['allowed.'])) {
+                        $column['allowed'] = $column['allowed.'];
+                    }
+                    if (isset($column['disallowed.'])) {
+                        $column['disallowed'] = $column['disallowed.'];
+                    }
+                    if (!is_array($column['allowed']) && !empty($column['allowed'])) {
+                        $allowed[$colPos] = ['CType' => $column['allowed']];
+                    } else if (empty($column['allowed'])) {
+                        $allowed[$colPos] = ['CType' => '*'];
+                    } else {
+                        $allowed[$colPos] = $column['allowed'];
+                    }
+                    if ($column['allowedGridTypes']) {
+                        $allowed[$colPos]['tx_gridelements_backend_layout'] = $column['allowedGridTypes'];
+                    }
+                    if (!empty($column['disallowed'])) {
+                        $disallowed[$colPos] = $column['disallowed'];
+                    }
+                    if (!empty($column['maxitems'])) {
+                        $maxItems[$colPos] = $column['maxitems'];
+                    }
+                    $availableColumns['CSV'] .= ',' . $colPos;
+                }
+            }
+        }
+        $availableColumns['allowed'] = $allowed;
+        if (!empty($disallowed)) {
+            $availableColumns['disallowed'] = $disallowed;
+        }
+        if (!empty($maxItems)) {
+            $availableColumns['maxitems'] = $maxItems;
+        }
+        $availableColumns = Helper::getInstance()->mergeAllowedDisallowedSettings($availableColumns);
+        return $availableColumns;
     }
 
     /**
