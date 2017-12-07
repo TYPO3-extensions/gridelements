@@ -117,9 +117,6 @@ abstract class AbstractItemsProcFunc implements SingletonInterface
                     }
                 }
                 $backendLayoutData = Helper::getInstance()->mergeAllowedDisallowedSettings($backendLayoutData);
-                foreach ($backendLayoutData['__items'] as $key => $item) {
-                    $backendLayoutData['__items'][$key][3] = $backendLayoutData['columns'][$item[1]];
-                }
             };
             $GLOBALS['tx_gridelements']['pageBackendLayoutData'][$pageId] = $backendLayoutData;
         }

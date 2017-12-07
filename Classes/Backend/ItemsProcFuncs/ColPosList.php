@@ -21,7 +21,6 @@ namespace GridElementsTeam\Gridelements\Backend\ItemsProcFuncs;
  ***************************************************************/
 
 use TYPO3\CMS\Backend\Utility\BackendUtility;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Class/Function which manipulates the item-array for table/field tt_content colPos.
@@ -41,16 +40,20 @@ class ColPosList extends AbstractItemsProcFunc
     {
         $this->init();
         if ($params['row']['pid'] > 0) {
-            $ContentType = is_array($params['row']['CType']) ? $params['row']['CType'][0] : $params['row']['CType'];
-            $params['items'] = $this->addColPosListLayoutItems($params['row']['pid'], $params['items'], $ContentType,
-                $params['row']['tx_gridelements_container']);
+            $contentType = is_array($params['row']['CType']) ? $params['row']['CType'][0] : $params['row']['CType'];
+            $listType = is_array($params['row']['list_type']) ? $params['row']['list_type'][0] : $params['row']['list_type'];
+            $gridType = is_array($params['row']['tx_gridelements_backend_layout']) ? $params['row']['tx_gridelements_backend_layout'][0] : $params['row']['tx_gridelements_backend_layout'];
+            $params['items'] = $this->addColPosListLayoutItems($params['row']['pid'], $params['items'], $contentType,
+                $listType, $gridType, $params['row']['tx_gridelements_container']);
         } else {
             // negative uid_pid values indicate that the element has been inserted after an existing element
             // so there is no pid to get the backendLayout for and we have to get that first
-            $existingElement = BackendUtility::getRecordWSOL('tt_content', -((int)$params['row']['pid']), 'pid,CType,tx_gridelements_container');
+            $existingElement = BackendUtility::getRecordWSOL('tt_content', -((int)$params['row']['pid']),
+                'pid,CType,tx_gridelements_container');
             if ($existingElement['pid'] > 0) {
                 $params['items'] = $this->addColPosListLayoutItems($existingElement['pid'], $params['items'],
-                    $existingElement['CType'], $existingElement['tx_gridelements_container']);
+                    $existingElement['CType'], $existingElement['list_type'],
+                    $existingElement['tx_gridelements_backend_layout'], $existingElement['tx_gridelements_container']);
             }
         }
     }
@@ -60,21 +63,71 @@ class ColPosList extends AbstractItemsProcFunc
      *
      * @param int $pageId The uid of the page we are currently working on
      * @param array $items The array of items before the action
-     * @param string $CType The content type of the item holding the colPosList
+     * @param string $contentType The content type of the item holding the colPosList
+     * @param string $listType The list type of the item holding the colPosList
+     * @param string $gridType The grid type of the item holding the colPosList
      * @param int $container
      *
      * @return array $items The ready made array of items
      */
-    protected function addColPosListLayoutItems($pageId, array $items, $CType = '', $container = 0)
-    {
+    protected function addColPosListLayoutItems(
+        $pageId,
+        array $items,
+        $contentType = '',
+        $listType = '',
+        $gridType = '',
+        $container = 0
+    ) {
         if (empty($container)) {
             $layout = $this->getSelectedBackendLayout($pageId);
-
             if ($layout) {
-                if ($CType !== '' && !empty($layout['__items'])) {
+                if ($contentType !== '' && !empty($layout['__items'])) {
                     foreach ($layout['__items'] as $itemKey => $itemArray) {
-                        if ($itemArray[3] !== '' && !GeneralUtility::inList($itemArray[3],
-                                $CType) && !GeneralUtility::inList($itemArray[3], '*')) {
+                        $column = $itemArray[1];
+                        if (
+                            (
+                                isset($layout['allowed'][$column]) &&
+                                !isset($layout['allowed'][$column]['CType'][$contentType]) &&
+                                !isset($layout['allowed'][$column]['CType']['*'])
+                            ) ||
+                            (
+                                !empty($listType) &&
+                                isset($layout['allowed'][$column]) &&
+                                isset($layout['allowed'][$column]['list_type']) &&
+                                !isset($layout['allowed'][$column]['list_type'][$listType]) &&
+                                !isset($layout['allowed'][$column]['list_type']['*'])
+                            ) ||
+                            (
+                                !empty($gridType) &&
+                                isset($layout['allowed'][$column]) &&
+                                isset($layout['allowed'][$column]['tx_gridelements_backend_layout']) &&
+                                !isset($layout['allowed'][$column]['tx_gridelements_backend_layout'][$gridType]) &&
+                                !isset($layout['allowed'][$column]['tx_gridelements_backend_layout']['*'])
+                            ) ||
+                            (
+                                isset($layout['disallowed'][$column]) &&
+                                (
+                                    isset($layout['disallowed'][$column]['CType'][$contentType]) ||
+                                    isset($layout['disallowed'][$column]['CType']['*'])
+                                )
+                            ) ||
+                            (
+                                !empty($listType) &&
+                                isset($layout['disallowed'][$column]) &&
+                                (
+                                    isset($layout['disallowed'][$column]['list_type'][$listType]) ||
+                                    isset($layout['disallowed'][$column]['list_type']['*'])
+                                )
+                            ) ||
+                            (
+                                !empty($gridType) &&
+                                isset($layout['disallowed'][$column]) &&
+                                (
+                                    isset($layout['disallowed'][$column]['tx_gridelements_backend_layout'][$gridType]) ||
+                                    isset($layout['disallowed'][$column]['tx_gridelements_backend_layout']['*'])
+                                )
+                            )
+                        ) {
                             unset($layout['__items'][$itemKey]);
                         }
                     }
@@ -92,7 +145,6 @@ class ColPosList extends AbstractItemsProcFunc
                 null,
             ];
         }
-
         return $items;
     }
 }

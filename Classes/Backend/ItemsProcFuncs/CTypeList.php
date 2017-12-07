@@ -48,7 +48,8 @@ class CTypeList extends AbstractItemsProcFunc
     public function itemsProcFunc(array &$params)
     {
         if ((int)$params['row']['pid'] > 0) {
-            $this->checkForAllowedCTypes($params['items'], $params['row']['pid'], ($params['row']['colPos'][0] ?: $params['row']['colPos']),
+            $colPos = is_array($params['row']['colPos']) ? $params['row']['colPos'][0] : $params['row']['colPos'];
+            $this->checkForAllowedCTypes($params['items'], $params['row']['pid'], $colPos,
                 $params['row']['tx_gridelements_container'], $params['row']['tx_gridelements_columns']);
         } else {
             $this->init((int)$params['row']['pid']);
@@ -77,22 +78,22 @@ class CTypeList extends AbstractItemsProcFunc
         $disallowed = '';
         if ((int)$pageColumn >= 0 || (int)$pageColumn === -2) {
             $column = $pageColumn ? $pageColumn : 0;
-            $backendLayout = $this->getSelectedBackendLayout($pageId);
+            $layout = $this->getSelectedBackendLayout($pageId);
         } else {
             $this->init($pageId);
             $column = $gridColumn ? (int)$gridColumn : 0;
             $gridElement = $this->layoutSetup->cacheCurrentParent($gridContainerId, true);
-            $backendLayout = $this->layoutSetup->getLayoutSetup($gridElement['tx_gridelements_backend_layout']);
+            $layout = $this->layoutSetup->getLayoutSetup($gridElement['tx_gridelements_backend_layout']);
         }
-        if (!empty($backendLayout)) {
-            if (is_array($backendLayout['allowed']) && is_array($backendLayout['allowed'][$column]) && !empty($backendLayout['allowed'][$column]['CType'])) {
-                $allowed = $backendLayout['allowed'][$column]['CType'];
+        if (!empty($layout)) {
+            if (is_array($layout['allowed']) && is_array($layout['allowed'][$column]) && !empty($layout['allowed'][$column]['CType'])) {
+                $allowed = $layout['allowed'][$column]['CType'];
             }
-            if (is_array($backendLayout['disallowed']) && is_array($backendLayout['disallowed'][$column]) && !empty($backendLayout['disallowed'][$column]['CType'])){
-                $disallowed = $backendLayout['disallowed'][$column]['CType'];
+            if (is_array($layout['disallowed']) && is_array($layout['disallowed'][$column]) && !empty($layout['disallowed'][$column]['CType'])){
+                $disallowed = $layout['disallowed'][$column]['CType'];
             }
         }
-        if (isset($backendLayout) &&  (!empty($allowed) || !empty($disallowed))) {
+        if (isset($layout) &&  (!empty($allowed) || !empty($disallowed))) {
             foreach ($items as $key => $item) {
                 if ((
                         !empty($allowed) &&

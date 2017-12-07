@@ -159,6 +159,19 @@ class WizardItems implements NewContentElementWizardHookInterface
                             isset($disallowed['CType'][$wizardItems[$key]['tt_content_defValues']['CType']]) ||
                             isset($disallowed['CType']['*'])
                         )
+                    ) ||
+                    (
+                        isset($wizardItems[$key]['tt_content_defValues']['list_type']) &&
+                        !empty($allowed['list_type']) &&
+                        !isset($allowed['list_type'][$wizardItems[$key]['tt_content_defValues']['list_type']]) &&
+                        !isset($allowed['list_type']['*'])
+                    ) ||
+                    (
+                        isset($wizardItems[$key]['tt_content_defValues']['list_type']) &&
+                        !empty($disallowed) && (
+                            isset($disallowed['list_type'][$wizardItems[$key]['tt_content_defValues']['list_type']]) ||
+                            isset($disallowed['list_type']['*'])
+                        )
                     )
                 ) {
                     unset($wizardItems[$key]);
