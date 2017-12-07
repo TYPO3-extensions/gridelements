@@ -446,7 +446,6 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
     ) {
 
         $specificIds = $this->helper->getSpecificIds($row);
-
         $allowed = base64_encode(json_encode($values['allowed']));
         $disallowed = base64_encode(json_encode($values['disallowed']));
 

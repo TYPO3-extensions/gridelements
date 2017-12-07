@@ -78,7 +78,21 @@ class WizardItems implements NewContentElementWizardHookInterface
         $disallowed_GP = GeneralUtility::_GP('tx_gridelements_disallowed');
         if (!empty($allowed_GP) || !empty($disallowed_GP)) {
             $allowed = json_decode(base64_decode($allowed_GP), true) ?: [];
+            if (!empty($allowed)) {
+                foreach ($allowed as &$item) {
+                    if (!is_array($item)) {
+                        $item = array_flip(GeneralUtility::trimExplode(',', $item));
+                    }
+                }
+            }
             $disallowed = json_decode(base64_decode($disallowed_GP), true) ?: [];
+            if (!empty($disallowed)) {
+                foreach ($disallowed as &$item) {
+                    if (!is_array($item)) {
+                        $item = array_flip(GeneralUtility::trimExplode(',', $item));
+                    }
+                }
+            }
             $this->removeDisallowedWizardItems($allowed, $disallowed, $wizardItems);
         } else {
             $allowed = null;
