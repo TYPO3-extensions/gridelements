@@ -29,6 +29,7 @@ use TYPO3\CMS\Core\Database\Query\Restriction\DeletedRestriction;
 use TYPO3\CMS\Core\Database\Query\Restriction\HiddenRestriction;
 use TYPO3\CMS\Core\TypoScript\Parser\TypoScriptParser;
 use TYPO3\CMS\Core\Utility\ArrayUtility;
+use TYPO3\CMS\Core\Utility\DebugUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\StringUtility;
 use TYPO3\CMS\Lang\LanguageService;
@@ -277,9 +278,10 @@ class LayoutSetup
 
     /**
      * @param array $setup
+     * @param bool $csvValues
      * @return array
      */
-    public function checkAvailableColumns($setup) {
+    public function checkAvailableColumns($setup, $csvValues = false) {
         $availableColumns = ['CSV' => '-2,-1'];
         $allowed = [];
         $disallowed = [];
@@ -324,7 +326,7 @@ class LayoutSetup
         if (!empty($maxItems)) {
             $availableColumns['maxitems'] = $maxItems;
         }
-        $availableColumns = Helper::getInstance()->mergeAllowedDisallowedSettings($availableColumns);
+        $availableColumns = Helper::getInstance()->mergeAllowedDisallowedSettings($availableColumns, $csvValues);
         return $availableColumns;
     }
 

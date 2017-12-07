@@ -20,6 +20,7 @@ namespace GridElementsTeam\Gridelements\Hooks;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use GridElementsTeam\Gridelements\Backend\LayoutSetup;
 use TYPO3\CMS\Backend\Clipboard\Clipboard;
 use TYPO3\CMS\Backend\Controller\PageLayoutController;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
@@ -27,6 +28,7 @@ use TYPO3\CMS\Backend\View\BackendLayoutView;
 use TYPO3\CMS\Core\Imaging\Icon;
 use TYPO3\CMS\Core\Imaging\IconFactory;
 use TYPO3\CMS\Core\SingletonInterface;
+use TYPO3\CMS\Core\Utility\DebugUtility;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Recordlist\RecordList;
@@ -81,66 +83,28 @@ class PageRenderer implements SingletonInterface
                 }
             ';
 
-            $allowedContentTypesClassesByColPos = [];
-            $allowedGridTypesClassesByColPos = [];
             $id = (int)GeneralUtility::_GP('id');
-            $layoutSetup = GeneralUtility::callUserFunction(BackendLayoutView::class . '->getSelectedBackendLayout',
+            $layout = GeneralUtility::callUserFunction(BackendLayoutView::class . '->getSelectedBackendLayout',
                 $id, $this);
-            if (is_array($layoutSetup) && !empty($layoutSetup['__config']['backend_layout.']['rows.'])) {
-                foreach ($layoutSetup['__config']['backend_layout.']['rows.'] as $rows) {
-                    foreach ($rows as $row) {
-                        if (!empty($layoutSetup['__config']['backend_layout.']['rows.'])) {
-                            foreach ($row as $col) {
-                                $classes = '';
-                                $gridClasses = '';
-                                if ($col['allowed']) {
-                                    $allowed = explode(',', $col['allowed']);
-                                    foreach ($allowed as $contentTypes) {
-                                        $contentTypes = trim($contentTypes);
-                                        if ($contentTypes === '*') {
-                                            $classes = 't3-allow-all';
-                                            break;
-                                        } else {
-                                            $contentTypes = explode(',', $contentTypes);
-                                            foreach ($contentTypes as $contentType) {
-                                                $classes .= 't3-allow-' . $contentType . ' ';
-                                            }
-                                        }
-                                    }
-                                } else {
-                                    $classes = 't3-allow-all';
-                                }
-                                if ($col['allowedGridTypes']) {
-                                    $allowedGridTypes = explode(',', $col['allowedGridTypes']);
-                                    $classes .= 't3-allow-gridelements_pi1 ';
-                                    foreach ($allowedGridTypes as $gridTypes) {
-                                        $gridTypes = trim($gridTypes);
-                                        if ($gridTypes !== '*') {
-                                            if (empty($gridClasses)) {
-                                                $gridClasses .= 't3-allow-gridtype ';
-                                            }
-                                            $gridTypes = explode(',', $gridTypes);
-                                            foreach ($gridTypes as $gridType) {
-                                                $gridClasses .= 't3-allow-gridtype-' . $gridType . ' ';
-                                            }
-                                        }
-                                    }
-                                    if ($classes !== 't3-allow-all' && !empty($gridClasses)) {
-                                        $classes .= 't3-allow-gridelements_pi1 ';
-                                    }
-                                }
-                                $allowedContentTypesClassesByColPos[$col['colPos']] .= ' ' . trim($classes);
-                                $allowedGridTypesClassesByColPos[$col['colPos']] .= ' ' . trim($gridClasses);
-                            }
-                        }
-                    }
+            if (is_array($layout) && !empty($layout['__config']['backend_layout.']['rows.'])) {
+                /** @var LayoutSetup $layoutSetup */
+                $layoutSetup = GeneralUtility::makeInstance(LayoutSetup::class)->init(0);
+                $layout = ['config' => $layout['__config']['backend_layout.']];
+                $columns = $layoutSetup->checkAvailableColumns($layout, true);
+                if ($columns['allowed'] || $columns['disallowed'] || $columns['maxitems']) {
+                    $layout['columns'] = $columns;
+                    unset($layout['columns']['allowed']);
+                    $layout['allowed'] = $columns['allowed'] ?: [];
+                    $layout['disallowed'] = $columns['disallowed'] ?: [];
+                    $layout['maxitems'] = $columns['maxitems'] ?: [];
                 }
             }
 
             // add Ext.onReady() code from file
             $pAddExtOnReadyCode .= "
-            top.pageColumnsAllowedCTypes = " . json_encode($allowedContentTypesClassesByColPos) . ";
-            top.pageColumnsAllowedGridTypes = " . json_encode($allowedGridTypesClassesByColPos) . ";
+            top.pageColumnsAllowed = " . json_encode($layout['allowed']) . ";
+            top.pageColumnsDisallowed = " . json_encode($layout['disallowed']) . ";
+            top.pageColumnsMaxitems = " . json_encode($layout['maxitems']) . ";
             top.pasteReferenceAllowed = " . ($this->getBackendUser()->checkAuthMode('tt_content', 'CType', 'shortcut',
                     $GLOBALS['TYPO3_CONF_VARS']['BE']['explicitADmode']) ? 'true' : 'false') . ";
             top.skipDraggableDetails = " . ($this->getBackendUser()->uc['dragAndDropHideNewElementWizardInfoOverlay'] ? 'true' : 'false') . ";

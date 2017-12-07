@@ -36,7 +36,7 @@ define(['jquery', 'TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Backend/Storag
 			OnReady.activateAllGridExpander();
 		}
 		if ($('.t3js-page-columns').length) {
-			OnReady.setAllowedClasses();
+			OnReady.setAllowedData();
 			OnReady.activateAllCollapseIcons();
 			Paste.initialize();
 		}
@@ -145,13 +145,24 @@ define(['jquery', 'TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Backend/Storag
 	/**
 	 * sets the classes for allowed element types to the cells of the original page module
 	 */
-	OnReady.setAllowedClasses = function () {
+	OnReady.setAllowedData = function () {
 		$('table.t3js-page-columns > tbody > tr > td').each(function () {
 			var colPos = $(this).data('colpos') ? $(this).data('colpos') : $(this).find('> .t3-page-ce-wrapper').data('colpos');
 			if (typeof colPos !== 'undefined') {
-				$(this).addClass(top.pageColumnsAllowedCTypes[colPos]);
-				$(this).addClass(top.pageColumnsAllowedGridTypes[colPos]);
-				OnReady.setAllowedParameters($(this), colPos);
+				if (typeof top.pageColumnsAllowed[colPos] !== 'undefined') {
+                    $(this).attr('data-allowed-ctype', top.pageColumnsAllowed[colPos]['CType']);
+                    $(this).attr('data-allowed-list_type', top.pageColumnsAllowed[colPos]['list_type']);
+                    $(this).attr('data-allowed-tx_gridelements_backend_layout', top.pageColumnsAllowed[colPos]['tx_gridelements_backend_layout']);
+				}
+				if (typeof top.pageColumnsDisallowed[colPos] !== 'undefined') {
+                    $(this).attr('data-disallowed-ctype', top.pageColumnsDisallowed[colPos]['CType']);
+                    $(this).attr('data-disallowed-list_type', top.pageColumnsDisallowed[colPos]['list_type']);
+                    $(this).attr('data-disallowed-tx_gridelements_backend_layout', top.pageColumnsDisallowed[colPos]['tx_gridelements_backend_layout']);
+				}
+				if (typeof top.pageColumnsMaxitems[colPos] !== 'undefined') {
+                    $(this).attr('data-maxitems', top.pageColumnsMaxitems[colPos]);
+				}
+				// OnReady.setAllowedParameters($(this), colPos);
 			}
 		});
 	};
