@@ -8,7 +8,7 @@
  * writing. "version" and "dependencies" must not be touched!
  ***************************************************************/
 
-$EM_CONF[$_EXTKEY] = array(
+$EM_CONF[$_EXTKEY] = [
     'title' => 'Grid Elements',
     'description' => 'This extension integrates the grid layout concept also to regular content elements - the grid elements.
 It offers a lot of new features like advanced drag & drop or real references, that improve the usability of the page and list module to speed up the daily work with the backend.',
@@ -24,14 +24,14 @@ It offers a lot of new features like advanced drag & drop or real references, th
     'author' => 'Grid Elements Team',
     'author_email' => 'info@cybercraft.de',
     'author_company' => '',
-    'constraints' => array(
-        'depends' => array(
+    'constraints' => [
+        'depends' => [
             'typo3' => '8.6.0-8.99.99',
-        ),
-        'conflicts' => array(
+        ],
+        'conflicts' => [
             'templavoila' => '',
             'jfmulticontent' => '',
-        ),
-        'suggests' => array(),
-    ),
-);
+        ],
+        'suggests' => [],
+    ],
+];

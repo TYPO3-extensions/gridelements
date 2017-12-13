@@ -1,7 +1,6 @@
 <?php
 
 use GridElementsTeam\Gridelements\Hooks\WizardItems;
-use TYPO3\CMS\Core\Database\DatabaseConnection;
 use TYPO3\CMS\Core\Tests\UnitTestCase;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Lang\LanguageService;
@@ -16,10 +15,6 @@ class WizardItemmsTest extends UnitTestCase
      */
     public function testGetDatabase()
     {
-        $wizardItems = GeneralUtility::makeInstance(WizardItems::class);
-        $GLOBALS['TYPO3_DB'] = GeneralUtility::makeInstance(DatabaseConnection::class);
-        $result = $wizardItems->getDatabase();
-        $this->assertEquals($GLOBALS['TYPO3_DB'], $result);
     }
 
     /**

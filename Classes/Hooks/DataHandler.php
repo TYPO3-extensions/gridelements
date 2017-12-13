@@ -1,4 +1,5 @@
 <?php
+
 namespace GridElementsTeam\Gridelements\Hooks;
 
 /***************************************************************
@@ -22,7 +23,6 @@ namespace GridElementsTeam\Gridelements\Hooks;
 use GridElementsTeam\Gridelements\DataHandler\AfterDatabaseOperations;
 use GridElementsTeam\Gridelements\DataHandler\PreProcessFieldArray;
 use GridElementsTeam\Gridelements\DataHandler\ProcessCmdmap;
-use TYPO3\CMS\Core\Database\DatabaseConnection;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -35,14 +35,9 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class DataHandler implements SingletonInterface
 {
-    /**
-     * @var DatabaseConnection
-     */
-    protected $databaseConnection;
 
     public function __construct()
     {
-        $this->setDatabaseConnection($GLOBALS['TYPO3_DB']);
     }
 
     /**
@@ -127,23 +122,4 @@ class DataHandler implements SingletonInterface
         }
     }
 
-    /**
-     * setter for databaseConnection object
-     *
-     * @param DatabaseConnection $databaseConnection
-     */
-    public function setDatabaseConnection(DatabaseConnection $databaseConnection)
-    {
-        $this->databaseConnection = $databaseConnection;
-    }
-
-    /**
-     * getter for databaseConnection
-     *
-     * @return DatabaseConnection databaseConnection
-     */
-    public function getDatabaseConnection()
-    {
-        return $this->databaseConnection;
-    }
 }

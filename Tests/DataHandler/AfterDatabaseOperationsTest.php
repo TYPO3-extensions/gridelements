@@ -1,7 +1,6 @@
 <?php
 
 use GridElementsTeam\Gridelements\DataHandler\AfterDatabaseOperations;
-use TYPO3\CMS\Core\Database\DatabaseConnection;
 use TYPO3\CMS\Core\DataHandling\DataHandler;
 use TYPO3\CMS\Core\Tests\UnitTestCase;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -16,7 +15,6 @@ class AfterDatabaseOperationsTest extends UnitTestCase
      */
     public function testInjectLayoutSetup()
     {
-
     }
 
     /**
@@ -26,7 +24,6 @@ class AfterDatabaseOperationsTest extends UnitTestCase
      */
     public function testInit()
     {
-
     }
 
     /**
@@ -72,27 +69,12 @@ class AfterDatabaseOperationsTest extends UnitTestCase
     }
 
     /**
-     * test get database connection
-     *
-     * @test
-     */
-    public function testGetDatabaseConnection()
-    {
-        $hook = GeneralUtility::makeInstance(AfterDatabaseOperations::class);
-        $databaseConnection = GeneralUtility::makeInstance(DatabaseConnection::class);
-        $hook->setDatabaseConnection($databaseConnection);
-        $result = $hook->getDatabaseConnection();
-        $this->assertEquals($databaseConnection, $result);
-    }
-
-    /**
      * test do grid container update
      *
      * @test
      */
     public function testDoGridContainerUpdate()
     {
-
     }
 
     /**
@@ -102,7 +84,6 @@ class AfterDatabaseOperationsTest extends UnitTestCase
      */
     public function testCheckAndUpdateTranslatedChildren()
     {
-
     }
 
     /**

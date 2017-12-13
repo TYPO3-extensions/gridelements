@@ -1,4 +1,5 @@
 <?php
+
 namespace GridElementsTeam\Gridelements\Hooks;
 
 /***************************************************************
@@ -21,7 +22,6 @@ namespace GridElementsTeam\Gridelements\Hooks;
 
 use GridElementsTeam\Gridelements\Backend\LayoutSetup;
 use GridElementsTeam\Gridelements\Helper\Helper;
-use TYPO3\CMS\Core\Database\DatabaseConnection;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -35,41 +35,11 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class BackendUtilityGridelements
 {
-    /**
-     * @var DatabaseConnection
-     */
-    protected $databaseConnection;
 
     /**
      * @var LayoutSetup
      */
     protected $layoutSetup;
-
-    /**
-     * inject layout setup
-     *
-     * @param LayoutSetup $layoutSetup
-     */
-    public function injectLayoutSetup(LayoutSetup $layoutSetup)
-    {
-        $this->layoutSetup = $layoutSetup;
-    }
-
-    /**
-     * initializes this class
-     *
-     * @param int $pageUid
-     */
-    public function init($pageUid)
-    {
-        $this->setDatabaseConnection($GLOBALS['TYPO3_DB']);
-        if (!$this->layoutSetup instanceof LayoutSetup) {
-            if ($pageUid < 0) {
-                $pageUid = Helper::getInstance()->getPidFromNegativeUid($pageUid);
-            }
-            $this->injectLayoutSetup(GeneralUtility::makeInstance(LayoutSetup::class)->init($pageUid));
-        }
-    }
 
     /**
      * Overwrites the data structure of a given tt_content::pi_flexform by
@@ -90,24 +60,28 @@ class BackendUtilityGridelements
     }
 
     /**
-     * setter for databaseConnection object
+     * initializes this class
      *
-     * @param DatabaseConnection $databaseConnection
-     *
-     * @return void
+     * @param int $pageUid
      */
-    public function setDatabaseConnection(DatabaseConnection $databaseConnection)
+    public function init($pageUid)
     {
-        $this->databaseConnection = $databaseConnection;
+        if (!$this->layoutSetup instanceof LayoutSetup) {
+            if ($pageUid < 0) {
+                $pageUid = Helper::getInstance()->getPidFromNegativeUid($pageUid);
+            }
+            $this->injectLayoutSetup(GeneralUtility::makeInstance(LayoutSetup::class)->init($pageUid));
+        }
     }
 
     /**
-     * getter for databaseConnection
+     * inject layout setup
      *
-     * @return DatabaseConnection databaseConnection
+     * @param LayoutSetup $layoutSetup
      */
-    public function getDatabaseConnection()
+    public function injectLayoutSetup(LayoutSetup $layoutSetup)
     {
-        return $this->databaseConnection;
+        $this->layoutSetup = $layoutSetup;
     }
+
 }

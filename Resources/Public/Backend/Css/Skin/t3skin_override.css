@@ -394,3 +394,31 @@
 	display: inline-block;
 	vertical-align: top;
 }
+
+.grideditor div.cell_container {
+	margin-left: -25px;
+	width: 40px;
+	height: 65px;
+}
+
+.grideditor .cell_data {
+	display: inline-block;
+	border: 0!important;
+	margin-bottom: 15px;
+}
+
+.grideditor .cell_data th, .grideditor .cell_data td {
+	padding: 0 5px;
+	border: 0 !important;
+}
+
+.grideditor .cell_data td {
+	text-align: left!important;
+}
+
+.grideditor .cell_data th {
+	text-align: right;
+}
+.recordlist .expanded {
+	display: table-row!important;
+}

@@ -1,4 +1,5 @@
 <?php
+
 namespace GridElementsTeam\Gridelements\DataHandler;
 
 /***************************************************************
@@ -91,39 +92,38 @@ class PreProcessFieldArray extends AbstractDataHandler
      * set default field values for new records
      *
      * @param array $fieldArray
-     * @param int $pid
+     * @param int $uidPid
      */
-    public function setDefaultFieldValues(array &$fieldArray, $pid = 0)
+    public function setDefaultFieldValues(array &$fieldArray, $uidPid = 0)
     {
         // Default values:
-        $newRow = array(); // Used to store default values as found here:
+        $newRow = []; // Used to store default values as found here:
 
         // Default values as set in userTS:
         $TCAdefaultOverride = $this->getBackendUser()->getTSConfigProp('TCAdefaults');
         if (is_array($TCAdefaultOverride['tt_content.'])) {
-            foreach ($TCAdefaultOverride['tt_content.'] as $theF => $theV) {
-                if (isset($GLOBALS['TCA']['tt_content']['columns'][$theF])) {
-                    $newRow[$theF] = $theV;
+            foreach ($TCAdefaultOverride['tt_content.'] as $field => $value) {
+                if (isset($GLOBALS['TCA']['tt_content']['columns'][$field])) {
+                    $newRow[$field] = $value;
                 }
             }
         }
 
-        if ($pid < 0) {
-            $record = BackendUtility::getRecord('tt_content', abs($pid), 'pid');
-            $id = $record['pid'];
-            unset($record);
+        if ($uidPid < 0) {
+            $record = BackendUtility::getRecord('tt_content', abs($uidPid), 'pid');
+            $pageId = $record['pid'];
         } else {
-            $id = (int)$pid;
+            $pageId = (int)$uidPid;
         }
 
-        $pageTS = BackendUtility::getPagesTSconfig($id);
+        $pageTS = BackendUtility::getPagesTSconfig($pageId);
 
         if (isset($pageTS['TCAdefaults.'])) {
             $TCAPageTSOverride = $pageTS['TCAdefaults.'];
             if (is_array($TCAPageTSOverride['tt_content.'])) {
-                foreach ($TCAPageTSOverride['tt_content.'] as $theF => $theV) {
-                    if (isset($GLOBALS['TCA']['tt_content']['columns'][$theF])) {
-                        $newRow[$theF] = $theV;
+                foreach ($TCAPageTSOverride['tt_content.'] as $field => $value) {
+                    if (isset($GLOBALS['TCA']['tt_content']['columns'][$field])) {
+                        $newRow[$field] = $value;
                     }
                 }
             }
@@ -136,33 +136,36 @@ class PreProcessFieldArray extends AbstractDataHandler
             $this->definitionValues = $this->overrideValues;
         }
         if (is_array($this->definitionValues['tt_content'])) {
-            foreach ($this->definitionValues['tt_content'] as $theF => $theV) {
-                if (isset($GLOBALS['TCA']['tt_content']['columns'][$theF])) {
-                    $newRow[$theF] = $theV;
+            foreach ($this->definitionValues['tt_content'] as $field => $value) {
+                if (isset($GLOBALS['TCA']['tt_content']['columns'][$field])) {
+                    $newRow[$field] = $value;
                 }
             }
         }
 
         // Fetch default values if a previous record exists
-        if ($pid < 0 && $GLOBALS['TCA']['tt_content']['ctrl']['useColumnsForDefaultValues']) {
-            // Fetches the previous record:
-            $res = $this->databaseConnection->exec_SELECTquery('*', 'tt_content',
-                'uid=' . abs($id) . BackendUtility::deleteClause('tt_content'));
-            if ($row = $this->databaseConnection->sql_fetch_assoc($res)) {
-                // Gets the list of fields to copy from the previous record.
-                $fArr = explode(',', $GLOBALS['TCA']['tt_content']['ctrl']['useColumnsForDefaultValues']);
-                foreach ($fArr as $theF) {
-                    $theF = trim($theF);
-                    if ($theF === '') {
-                        continue;
-                    }
-                    if (isset($GLOBALS['TCA']['tt_content']['columns'][$theF])) {
-                        $newRow[$theF] = $row[$theF];
-                    }
+        if ($uidPid < 0 && !empty($record) && $GLOBALS['TCA']['tt_content']['ctrl']['useColumnsForDefaultValues']) {
+            // Gets the list of fields to copy from the previous record.
+            $fieldArray = explode(',', $GLOBALS['TCA']['tt_content']['ctrl']['useColumnsForDefaultValues']);
+            foreach ($fieldArray as $field) {
+                $field = trim($field);
+                if ($field === '') {
+                    continue;
+                }
+                if (isset($GLOBALS['TCA']['tt_content']['columns'][$field])) {
+                    $newRow[$field] = $record[$field];
                 }
             }
         }
         $fieldArray = array_merge($newRow, $fieldArray);
+    }
+
+    /**
+     * @return BackendUserAuthentication
+     */
+    public function getBackendUser()
+    {
+        return $GLOBALS['BE_USER'];
     }
 
     /**
@@ -190,7 +193,7 @@ class PreProcessFieldArray extends AbstractDataHandler
     public function extractDefaultDataFromDataStructure($dataStructure)
     {
         $returnXML = '';
-        $sheetArray = array();
+        $sheetArray = [];
         if ($dataStructure) {
             $structureArray = GeneralUtility::xml2array($dataStructure);
             if (!isset($structureArray['sheets']) && isset($structureArray['ROOT'])) {
@@ -200,7 +203,7 @@ class PreProcessFieldArray extends AbstractDataHandler
             if (isset($structureArray['sheets']) && !empty($structureArray['sheets'])) {
                 foreach ($structureArray['sheets'] as $sheetName => $sheet) {
                     if (is_array($sheet['ROOT']['el']) && !empty($sheet['ROOT']['el'])) {
-                        $elArray = array();
+                        $elArray = [];
                         foreach ($sheet['ROOT']['el'] as $elName => $elConf) {
                             $config = $elConf['TCEforms']['config'];
                             $elArray[$elName]['vDEF'] = $config['default'];
@@ -225,18 +228,18 @@ class PreProcessFieldArray extends AbstractDataHandler
      * set initial entries to field array
      *
      * @param array $fieldArray
-     * @param int $id
+     * @param int $contentId
      */
-    public function setFieldEntries(array &$fieldArray, $id = 0)
+    public function setFieldEntries(array &$fieldArray, $contentId = 0)
     {
-        $containerUpdateArray = array();
+        $containerUpdateArray = [];
         if (isset($fieldArray['tx_gridelements_container'])) {
             if ((int)$fieldArray['tx_gridelements_container'] > 0) {
                 $containerUpdateArray[(int)$fieldArray['tx_gridelements_container']] = 1;
             }
             if ((int)$fieldArray['tx_gridelements_container'] === 0) {
-                $originalContainer = $this->databaseConnection->exec_SELECTgetSingleRow('tx_gridelements_container, sys_language_uid',
-                    'tt_content', 'uid=' . (int)$id);
+                $originalContainer = BackendUtility::getRecord('tt_content', (int)$contentId,
+                    'tx_gridelements_container,sys_language_uid');
                 if (!empty($originalContainer)) {
                     $containerUpdateArray[(int)$originalContainer['tx_gridelements_container']] = -1;
                 }
@@ -258,24 +261,29 @@ class PreProcessFieldArray extends AbstractDataHandler
         if ((int)$fieldArray['tx_gridelements_container'] > 0 && isset($fieldArray['colPos']) && (int)$fieldArray['colPos'] !== -1) {
             $fieldArray['colPos'] = -1;
             $fieldArray['tx_gridelements_columns'] = 0;
-            $targetContainer = $this->databaseConnection->exec_SELECTgetSingleRow('sys_language_uid', 'tt_content',
-                'uid=' . (int)$fieldArray['tx_gridelements_container']);
+            $targetContainer = BackendUtility::getRecord('tt_content', (int)$fieldArray['tx_gridelements_container'],
+                'sys_language_uid');
             if ((int)$targetContainer['sys_language_uid'] > -1) {
                 $fieldArray['sys_language_uid'] = (int)$targetContainer['sys_language_uid'];
             }
-        } else if (isset($fieldArray['tx_gridelements_container']) && (int)$fieldArray['tx_gridelements_container'] === 0 && (int)$fieldArray['colPos'] === -1) {
-            $fieldArray['colPos'] = $this->checkForRootColumn((int)$this->getPageUid());
-            $fieldArray['tx_gridelements_columns'] = 0;
-            $fieldArray['tx_gridelements_container'] = 0;
-        } else if (!isset($fieldArray['sys_language_uid']) && isset($fieldArray['tx_gridelements_container']) && (int)$fieldArray['tx_gridelements_container'] > 0 && (int)$fieldArray['colPos'] === -1) {
-            $targetContainer = $this->databaseConnection->exec_SELECTgetSingleRow('sys_language_uid', 'tt_content',
-                'uid=' . (int)$fieldArray['tx_gridelements_container']);
-            if ((int)$targetContainer['sys_language_uid'] > -1) {
-                $fieldArray['sys_language_uid'] = (int)$targetContainer['sys_language_uid'];
+        } else {
+            if (isset($fieldArray['tx_gridelements_container']) && (int)$fieldArray['tx_gridelements_container'] === 0 && (int)$fieldArray['colPos'] === -1) {
+                $fieldArray['colPos'] = $this->checkForRootColumn((int)$this->getPageUid());
+                $fieldArray['tx_gridelements_columns'] = 0;
+                $fieldArray['tx_gridelements_container'] = 0;
+            } else {
+                if (!isset($fieldArray['sys_language_uid']) && isset($fieldArray['tx_gridelements_container']) && (int)$fieldArray['tx_gridelements_container'] > 0 && (int)$fieldArray['colPos'] === -1) {
+                    $targetContainer = BackendUtility::getRecord('tt_content',
+                        (int)$fieldArray['tx_gridelements_container'], 'sys_language_uid');
+                    if ((int)$targetContainer['sys_language_uid'] > -1) {
+                        $fieldArray['sys_language_uid'] = (int)$targetContainer['sys_language_uid'];
+                    }
+                }
             }
         }
         if (isset($targetContainer) && (int)$targetContainer['sys_language_uid'] === -1) {
-            $list = array_flip(GeneralUtility::trimExplode(',', $GLOBALS['TCA']['tt_content']['ctrl']['copyAfterDuplFields'], true));
+            $list = array_flip(GeneralUtility::trimExplode(',',
+                $GLOBALS['TCA']['tt_content']['ctrl']['copyAfterDuplFields'], true));
             unset($list['sys_language_uid']);
             $GLOBALS['TCA']['tt_content']['ctrl']['copyAfterDuplFields'] = implode(',', array_flip($list));
         }
@@ -292,9 +300,24 @@ class PreProcessFieldArray extends AbstractDataHandler
      */
     public function checkForRootColumn($contentId)
     {
-        $parent = $this->databaseConnection->exec_SELECTgetSingleRow('t1.colPos, t1.tx_gridelements_container',
-            'tt_content AS t1, tt_content AS t2', 't1.uid=t2.tx_gridelements_container AND t2.uid=' . (int)$contentId
-        );
+        $queryBuilder = $this->getQueryBuilder();
+        $queryBuilder
+            ->getRestrictions()
+            ->removeAll();
+        $parent = $queryBuilder
+            ->select('t1.colPos, t1.tx_gridelements_container')
+            ->from('tt_content', 't1')
+            ->join(
+                't1',
+                'tt_content',
+                't2',
+                $queryBuilder->expr()->eq('t1.uid', $queryBuilder->quoteIdentifier('t2.tx_gridelements_container'))
+            )
+            ->where(
+                $queryBuilder->expr()->eq('t2.uid',
+                    $queryBuilder->createNamedParameter((int)$contentId, \PDO::PARAM_INT))
+            )
+            ->execute();
         if (!empty($parent) && $parent['tx_gridelements_container'] > 0) {
             $colPos = $this->checkForRootColumn($parent['tx_gridelements_container']);
         } else {
@@ -302,13 +325,5 @@ class PreProcessFieldArray extends AbstractDataHandler
         }
 
         return $colPos;
-    }
-
-    /**
-     * @return BackendUserAuthentication
-     */
-    public function getBackendUser()
-    {
-        return $GLOBALS['BE_USER'];
     }
 }

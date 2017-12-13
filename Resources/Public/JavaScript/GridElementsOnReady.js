@@ -36,7 +36,7 @@ define(['jquery', 'TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Backend/Storag
 			OnReady.activateAllGridExpander();
 		}
 		if ($('.t3js-page-columns').length) {
-			OnReady.setAllowedClasses();
+			OnReady.setAllowedData();
 			OnReady.activateAllCollapseIcons();
 			Paste.initialize();
 		}
@@ -145,12 +145,23 @@ define(['jquery', 'TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Backend/Storag
 	/**
 	 * sets the classes for allowed element types to the cells of the original page module
 	 */
-	OnReady.setAllowedClasses = function () {
+	OnReady.setAllowedData = function () {
 		$('table.t3js-page-columns > tbody > tr > td').each(function () {
 			var colPos = $(this).data('colpos') ? $(this).data('colpos') : $(this).find('> .t3-page-ce-wrapper').data('colpos');
 			if (typeof colPos !== 'undefined') {
-				$(this).addClass(top.pageColumnsAllowedCTypes[colPos]);
-				$(this).addClass(top.pageColumnsAllowedGridTypes[colPos]);
+				if (typeof top.pageColumnsAllowed[colPos] !== 'undefined') {
+                    $(this).attr('data-allowed-ctype', top.pageColumnsAllowed[colPos]['CType']);
+                    $(this).attr('data-allowed-list_type', top.pageColumnsAllowed[colPos]['list_type']);
+                    $(this).attr('data-allowed-tx_gridelements_backend_layout', top.pageColumnsAllowed[colPos]['tx_gridelements_backend_layout']);
+				}
+				if (typeof top.pageColumnsDisallowed[colPos] !== 'undefined') {
+                    $(this).attr('data-disallowed-ctype', top.pageColumnsDisallowed[colPos]['CType']);
+                    $(this).attr('data-disallowed-list_type', top.pageColumnsDisallowed[colPos]['list_type']);
+                    $(this).attr('data-disallowed-tx_gridelements_backend_layout', top.pageColumnsDisallowed[colPos]['tx_gridelements_backend_layout']);
+				}
+				if (typeof top.pageColumnsMaxitems[colPos] !== 'undefined') {
+                    $(this).attr('data-maxitems', top.pageColumnsMaxitems[colPos]);
+				}
 				OnReady.setAllowedParameters($(this), colPos);
 			}
 		});
@@ -160,20 +171,16 @@ define(['jquery', 'TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Backend/Storag
 	 * sets the parameters for allowed element types to the add new content links of the original page module
 	 */
 	OnReady.setAllowedParameters = function (pageColumn, colPos) {
-		var allowedCTypes = top.pageColumnsAllowedCTypes[colPos].replace(/ t3-allow-/g, ',').substring(1);
-		var allowedGridTypes = top.pageColumnsAllowedGridTypes[colPos].replace(/ t3-allow-gridtype-/g, ',').substring(1);
-		if (allowedCTypes !== '' && allowedCTypes !== 'all' || allowedGridTypes !== '') {
-			pageColumn.find('.t3js-page-new-ce:not(".t3js-page-new-ce-allowed") a').each(function () {
-				if(typeof $(this).attr('href') !== 'undefined') {
-					$(this).attr('href', $(this).attr('href').replace(
-							'&uid_pid',
-							( allowedCTypes ? '&tx_gridelements_allowed=' + allowedCTypes : '') +
-							( allowedGridTypes ? '&tx_gridelements_allowed_grid_types=' + allowedGridTypes : '' ) +
-							'&uid_pid'
-					));
-				}
-			});
-		}
+		pageColumn.find('.t3js-page-new-ce:not(".t3js-page-new-ce-allowed") a').each(function () {
+			if(typeof $(this).attr('href') !== 'undefined') {
+				$(this).attr('href', $(this).attr('href').replace(
+						'&uid_pid',
+						(top.pageColumnsAllowed[colPos] ? ('&tx_gridelements_allowed=' +  window.btoa(JSON.stringify(top.pageColumnsAllowed[colPos]))) : '') +
+						(top.pageColumnsDisallowed[colPos] ? ('&tx_gridelements_disallowed=' + window.btoa(JSON.stringify(top.pageColumnsDisallowed[colPos]))) : '') +
+						'&uid_pid'
+				));
+			}
+		});
 	};
 
 	/**
@@ -308,10 +315,10 @@ define(['jquery', 'TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Backend/Storag
 					expandConfig[id] = isExpanded;
 					if (isExpanded === 1) {
 						$('[data-uid=' + id + ']').find('.t3js-toggle-gridelements-list').addClass('open-gridelements-container');
-						$('[data-trigger-container=' + id + ']').show();
+						$('[data-trigger-container=' + id + ']').addClass('expanded');
 					} else {
 						$('[data-uid=' + id + ']').find('.t3js-toggle-gridelements-list').removeClass('open-gridelements-container');
-						$('[data-trigger-container=' + id + ']').hide();
+						$('[data-trigger-container=' + id + ']').removeClass('expanded');
 					}
 				}
 			});
@@ -355,7 +362,7 @@ define(['jquery', 'TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Backend/Storag
 			$(this).attr('data-toggle-title', originalTitle);
 			$(this).blur();
 
-			$('[data-trigger-container=' + $(this).closest('tr').data('uid') + ']').toggle().find('.open-gridelements-container').click();
+			$('[data-trigger-container=' + $(this).closest('tr').data('uid') + ']').toggleClass('expanded').find('.open-gridelements-container').click();
 		});
 
 	};

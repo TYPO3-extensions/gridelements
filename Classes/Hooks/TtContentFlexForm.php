@@ -1,4 +1,5 @@
 <?php
+
 namespace GridElementsTeam\Gridelements\Hooks;
 
 /***************************************************************
@@ -21,7 +22,6 @@ namespace GridElementsTeam\Gridelements\Hooks;
 
 use GridElementsTeam\Gridelements\Backend\LayoutSetup;
 use GridElementsTeam\Gridelements\Helper\Helper;
-use TYPO3\CMS\Core\Database\DatabaseConnection;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -59,19 +59,19 @@ class TtContentFlexForm
                 if ($layoutSetup['pi_flexform_ds_file']) {
                     // Our data structure is in a record. Re-use core internal syntax to resolve that.
                     $identifier = [
-                        'type' => 'record',
-                        'tableName' => 'tx_gridelements_backend_layout',
-                        'uid' => $layoutId,
-                        'fieldName' => 'pi_flexform_ds_file',
-                        'flexformDS' => 'FILE:' . $layoutSetup['pi_flexform_ds_file']
+                        'type'       => 'record',
+                        'tableName'  => 'tx_gridelements_backend_layout',
+                        'uid'        => $layoutId,
+                        'fieldName'  => 'pi_flexform_ds_file',
+                        'flexformDS' => 'FILE:' . $layoutSetup['pi_flexform_ds_file'],
                     ];
                 } elseif ($layoutSetup['pi_flexform_ds']) {
                     $identifier = [
-                        'type' => 'record',
-                        'tableName' => 'tx_gridelements_backend_layout',
-                        'uid' => $layoutId,
-                        'fieldName' => 'pi_flexform_ds',
-                        'flexformDS' => $layoutSetup['pi_flexform_ds']
+                        'type'       => 'record',
+                        'tableName'  => 'tx_gridelements_backend_layout',
+                        'uid'        => $layoutId,
+                        'fieldName'  => 'pi_flexform_ds',
+                        'flexformDS' => $layoutSetup['pi_flexform_ds'],
                     ];
                 } else {
                     // This could be an additional core patch that allows referencing a DS file directly.
@@ -92,12 +92,12 @@ class TtContentFlexForm
         return $identifier;
     }
 
-   /**
-    * Deliver a dummy flex form if identifier tells us to do so.
-    *
-    * @param array $identifier
-    * @return string
-    */
+    /**
+     * Deliver a dummy flex form if identifier tells us to do so.
+     *
+     * @param array $identifier
+     * @return string
+     */
     public function parseDataStructureByIdentifierPreProcess(array $identifier)
     {
         if ($identifier['type'] === 'gridelements-dummy') {

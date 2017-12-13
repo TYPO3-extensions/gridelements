@@ -1,4 +1,5 @@
 <?php
+
 namespace GridElementsTeam\Gridelements\Backend;
 
 /***************************************************************
@@ -20,7 +21,10 @@ namespace GridElementsTeam\Gridelements\Backend;
  ***************************************************************/
 
 use GridElementsTeam\Gridelements\Helper\Helper;
-use TYPO3\CMS\Core\Database\DatabaseConnection;
+use TYPO3\CMS\Core\Database\Connection;
+use TYPO3\CMS\Core\Database\ConnectionPool;
+use TYPO3\CMS\Core\Database\Query\QueryBuilder;
+use TYPO3\CMS\Core\Database\Query\Restriction\DeletedRestriction;
 use TYPO3\CMS\Core\Utility\ArrayUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -33,41 +37,11 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class TtContent
 {
-    /**
-     * @var DatabaseConnection
-     */
-    protected $databaseConnection;
 
     /**
      * @var LayoutSetup
      */
     protected $layoutSetup;
-
-    /**
-     * inject layout setup
-     *
-     * @param LayoutSetup $layoutSetup
-     */
-    public function injectLayoutSetup(LayoutSetup $layoutSetup)
-    {
-        $this->layoutSetup = $layoutSetup;
-    }
-
-    /**
-     * initializes this class
-     *
-     * @param int $pageUid
-     */
-    public function init($pageUid)
-    {
-        $this->setDatabaseConnection($GLOBALS['TYPO3_DB']);
-        if (!$this->layoutSetup instanceof LayoutSetup) {
-            if ($pageUid < 0) {
-                $pageUid = Helper::getInstance()->getPidFromNegativeUid($pageUid);
-            }
-            $this->injectLayoutSetup(GeneralUtility::makeInstance(LayoutSetup::class)->init($pageUid));
-        }
-    }
 
     /**
      * ItemProcFunc for columns items
@@ -99,6 +73,31 @@ class TtContent
     }
 
     /**
+     * initializes this class
+     *
+     * @param int $pageId
+     */
+    public function init($pageId)
+    {
+        if (!$this->layoutSetup instanceof LayoutSetup) {
+            if ($pageId < 0) {
+                $pageId = Helper::getInstance()->getPidFromNegativeUid($pageId);
+            }
+            $this->injectLayoutSetup(GeneralUtility::makeInstance(LayoutSetup::class)->init($pageId));
+        }
+    }
+
+    /**
+     * inject layout setup
+     *
+     * @param LayoutSetup $layoutSetup
+     */
+    public function injectLayoutSetup(LayoutSetup $layoutSetup)
+    {
+        $this->layoutSetup = $layoutSetup;
+    }
+
+    /**
      * ItemProcFunc for container items
      * removes items of the children chain from the list of selectable containers
      * if the element itself already is a container
@@ -108,13 +107,12 @@ class TtContent
     public function containerItemsProcFunc(array &$params)
     {
         $this->init($params['row']['pid']);
-        $possibleContainers = array();
-        $this->removesItemsFromListOfSelectableContainers($params, $possibleContainers);
+        $possibleContainers = [];
+        $this->removeItemsFromListOfSelectableContainers($params, $possibleContainers);
 
         if (!empty($possibleContainers)) {
             $params['items'] = array_merge($params['items'], $possibleContainers);
         }
-
         $itemUidList = '';
         if (count($params['items']) > 1) {
             foreach ($params['items'] as $container) {
@@ -125,7 +123,7 @@ class TtContent
         }
 
         if ($itemUidList) {
-            $this->deleteUnallowedContainer($params, $itemUidList);
+            $this->deleteDisallowedContainers($params, $itemUidList);
         }
     }
 
@@ -135,12 +133,12 @@ class TtContent
      * @param array $params
      * @param array $possibleContainers
      */
-    public function removesItemsFromListOfSelectableContainers(array &$params, array &$possibleContainers)
+    public function removeItemsFromListOfSelectableContainers(array &$params, array &$possibleContainers)
     {
-        $ContentType = is_array($params['row']['CType']) ? $params['row']['CType'][0] : $params['row']['CType'];
-        if ($ContentType === 'gridelements_pi1' && count($params['items']) > 1) {
+        $contentType = is_array($params['row']['CType']) ? $params['row']['CType'][0] : $params['row']['CType'];
+        if ($contentType === 'gridelements_pi1' && count($params['items']) > 1) {
             $items = $params['items'];
-            $params['items'] = array(0 => array_shift($items));
+            $params['items'] = [0 => array_shift($items)];
 
             foreach ($items as $item) {
                 $possibleContainers[$item['1']] = $item;
@@ -150,51 +148,6 @@ class TtContent
                 $this->lookForChildContainersRecursively((int)$params['row']['uid'], $possibleContainers);
             }
         }
-    }
-
-    /**
-     * delete containers from params which are not allowed
-     *
-     * @param array $params
-     * @param string $itemUidList comma separated list of uids
-     */
-    public function deleteUnallowedContainer(array &$params, $itemUidList = '')
-    {
-        $ContentType = is_array($params['row']['CType']) ? $params['row']['CType'][0] : $params['row']['CType'];
-        $layoutSetups = $this->layoutSetup->getLayoutSetup();
-        if ($itemUidList) {
-            $itemUidList = implode(',', GeneralUtility::intExplode(',', $itemUidList));
-            $containerRecords = $this->databaseConnection->exec_SELECTgetRows(
-                'uid,tx_gridelements_backend_layout',
-                'tt_content',
-                'uid IN (' . $itemUidList . ')',
-                '', '', '', 'uid'
-            );
-
-            foreach ($params['items'] as $key => $container) {
-                $allowed = $layoutSetups[$containerRecords[$container[1]]['tx_gridelements_backend_layout']]['allowed'];
-                if ($container[1] > 0 && $allowed) {
-                    if (!GeneralUtility::inList($allowed, $ContentType) && !GeneralUtility::inList($allowed, '*')) {
-                        unset($params['items'][$key]);
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * ItemProcFunc for layout items
-     * removes items that are available for grid boxes on the first level only
-     * and items that are excluded for a certain branch or user
-     *
-     * @param array $params An array containing the items and parameters for the list of items
-     */
-    public function layoutItemsProcFunc(array &$params)
-    {
-        $this->init($params['row']['pid']);
-        $layoutSelectItems = $this->layoutSetup->getLayoutSelectItems($params['row']['colPos']);
-
-        $params['items'] = ArrayUtility::keepItemsInArray($layoutSelectItems, $params['items'], true);
     }
 
     /**
@@ -209,12 +162,20 @@ class TtContent
         if (!$containerIds) {
             return;
         }
-        $containerIds = implode(',', GeneralUtility::intExplode(',', $containerIds));
-        $childrenOnNextLevel = $this->databaseConnection->exec_SELECTgetRows(
-            'uid, tx_gridelements_container',
-            'tt_content',
-            'CType=\'gridelements_pi1\' AND tx_gridelements_container IN (' . $containerIds . ')'
-        );
+        $containerIds = GeneralUtility::intExplode(',', $containerIds);
+        $queryBuilder = $this->getQueryBuilder();
+        $childrenOnNextLevel = $queryBuilder
+            ->select('uid', 'tx_gridelements_container')
+            ->from('tt_content')
+            ->where(
+                $queryBuilder->expr()->andX(
+                    $queryBuilder->expr()->eq('CType', $queryBuilder->createNamedParameter('gridelements_pi1')),
+                    $queryBuilder->expr()->in('tx_gridelements_container',
+                        $queryBuilder->createNamedParameter($containerIds, Connection::PARAM_INT_ARRAY))
+                )
+            )
+            ->execute()
+            ->fetchAll();
 
         if (!empty($childrenOnNextLevel) && !empty($possibleContainers)) {
             $containerIds = '';
@@ -234,22 +195,107 @@ class TtContent
     }
 
     /**
-     * setter for databaseConnection object
+     * getter for queryBuilder
      *
-     * @param DatabaseConnection $databaseConnection
+     * @return QueryBuilder queryBuilder
      */
-    public function setDatabaseConnection(DatabaseConnection $databaseConnection)
+    public function getQueryBuilder()
     {
-        $this->databaseConnection = $databaseConnection;
+        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
+            ->getQueryBuilderForTable('tt_content');
+        $queryBuilder->getRestrictions()
+            ->removeAll()
+            ->add(GeneralUtility::makeInstance(DeletedRestriction::class));
+        return $queryBuilder;
     }
 
     /**
-     * getter for databaseConnection
+     * delete containers from params which are not allowed
      *
-     * @return DatabaseConnection databaseConnection
+     * @param array $params
+     * @param string $itemUidList comma separated list of uids
      */
-    public function getDatabaseConnection()
+    public function deleteDisallowedContainers(array &$params, $itemUidList = '')
     {
-        return $this->databaseConnection;
+        $contentType = is_array($params['row']['CType']) ? $params['row']['CType'][0] : $params['row']['CType'];
+        $listType = '';
+        if ($contentType === 'list') {
+            $listType = is_array($params['row']['list_type']) ? $params['row']['list_type'][0] : $params['row']['list_type'];
+        }
+        $layoutSetups = $this->layoutSetup->getLayoutSetup();
+        if ($itemUidList) {
+            $itemUidList = GeneralUtility::intExplode(',', $itemUidList);
+            $queryBuilder = $this->getQueryBuilder();
+            $containerQuery = $queryBuilder
+                ->select('uid', 'tx_gridelements_backend_layout')
+                ->from('tt_content')
+                ->where(
+                    $queryBuilder->expr()->in('uid',
+                        $queryBuilder->createNamedParameter($itemUidList, Connection::PARAM_INT_ARRAY))
+                )
+                ->execute();
+            $containers = [];
+            while ($container = $containerQuery->fetch()) {
+                $containers[$container['uid']] = $container;
+            }
+            foreach ($params['items'] as $key => $container) {
+                $backendLayout = $containers[$container[1]]['tx_gridelements_backend_layout'];
+                $gridColumn = $params['row']['tx_gridelements_columns'];
+                $allowed = $layoutSetups[$backendLayout]['allowed'][$gridColumn];
+                $disallowed = $layoutSetups[$backendLayout]['disallowed'][$gridColumn];
+                if ($container[1] > 0 && (!empty($allowed) || !empty($disallowed))) {
+                    if ((
+                            !empty($allowed) &&
+                            !isset($allowed['CType']['*']) &&
+                            !isset($allowed['CType'][$contentType])
+                        ) ||
+                        (
+                            !empty($disallowed) &&
+                            (
+                                isset($disallowed['CType']['*']) ||
+                                isset($disallowed['CType'][$contentType])
+                            )
+                        )) {
+                        unset($params['items'][$key]);
+                    }
+                    if (!empty($listType)) {
+                        if ((
+                                !empty($allowed) &&
+                                !isset($allowed['CType']['*']) &&
+                                !(
+                                    isset($allowed['list_type']['*']) ||
+                                    isset($allowed['list_type'][$listType])
+                                )
+                            ) ||
+                            (
+                                !empty($disallowed) &&
+                                (
+                                    isset($disallowed['CType']['*']) ||
+                                    isset($disallowed['list_type']['*']) ||
+                                    isset($disallowed['list_type'][$listType])
+                                )
+                            )) {
+                            unset($params['items'][$key]);
+                        }
+                    }
+                }
+            }
+        }
     }
+
+    /**
+     * ItemProcFunc for layout items
+     * removes items that are available for grid boxes on the first level only
+     * and items that are excluded for a certain branch or user
+     *
+     * @param array $params An array containing the items and parameters for the list of items
+     */
+    public function layoutItemsProcFunc(array &$params)
+    {
+        $this->init($params['row']['pid']);
+        $layoutSelectItems = $this->layoutSetup->getLayoutSelectItems($params['row']['colPos'][0] ?: $params['row']['colPos'], $params['row']['tx_gridelements_columns'], $params['row']['tx_gridelements_container']);
+        $params['items'] = ArrayUtility::keepItemsInArray($layoutSelectItems, $params['items'], true);
+    }
+
+
 }

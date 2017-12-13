@@ -32,7 +32,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  * @package TYPO3
  * @subpackage tx_gridelements
  */
-class CTypeList extends AbstractItemsProcFunc
+class ListTypeList extends AbstractItemsProcFunc
 {
 
     /**
@@ -49,22 +49,22 @@ class CTypeList extends AbstractItemsProcFunc
     {
         if ((int)$params['row']['pid'] > 0) {
             $colPos = is_array($params['row']['colPos']) ? $params['row']['colPos'][0] : $params['row']['colPos'];
-            $this->checkForAllowedCTypes($params['items'], $params['row']['pid'], $colPos,
+            $this->checkForAllowedListTypes($params['items'], $params['row']['pid'], $colPos,
                 $params['row']['tx_gridelements_container'], $params['row']['tx_gridelements_columns']);
         } else {
             $this->init((int)$params['row']['pid']);
             // negative uid_pid values indicate that the element has been inserted after an existing element
             // so there is no pid to get the backendLayout for and we have to get that first
-            $existingElement = BackendUtility::getRecordWSOL('tt_content', -((int)$params['row']['pid']), 'pid,CType,colPos,tx_gridelements_container,tx_gridelements_columns');
+            $existingElement = BackendUtility::getRecordWSOL('tt_content', -((int)$params['row']['pid']), 'pid,list_type,colPos,tx_gridelements_container,tx_gridelements_columns');
             if ((int)$existingElement['pid'] > 0) {
-                $this->checkForAllowedCTypes($params['items'], $existingElement['pid'], $existingElement['colPos'],
+                $this->checkForAllowedListTypes($params['items'], $existingElement['pid'], $existingElement['colPos'],
                     $existingElement['tx_gridelements_container'], $existingElement['tx_gridelements_columns']);
             }
         }
     }
 
     /**
-     * Checks if a CType is allowed in this particular page or grid column - only this one column defines the allowed CTypes regardless of any parent column
+     * Checks if a ListType is allowed in this particular page or grid column - only this one column defines the allowed CTypes regardless of any parent column
      *
      * @param array $items The items of the current CType list
      * @param int $pageId The id of the page we are currently working on
@@ -72,7 +72,7 @@ class CTypeList extends AbstractItemsProcFunc
      * @param int $gridContainerId The ID of the current container
      * @param int $gridColumn The grid column the element is a child of
      */
-    public function checkForAllowedCTypes(array &$items, $pageId, $pageColumn, $gridContainerId, $gridColumn)
+    public function checkForAllowedListTypes(array &$items, $pageId, $pageColumn, $gridContainerId, $gridColumn)
     {
         $allowed = '';
         $disallowed = '';
@@ -86,14 +86,14 @@ class CTypeList extends AbstractItemsProcFunc
             $layout = $this->layoutSetup->getLayoutSetup($gridElement['tx_gridelements_backend_layout']);
         }
         if (!empty($layout)) {
-            if (is_array($layout['allowed']) && is_array($layout['allowed'][$column]) && !empty($layout['allowed'][$column]['CType'])) {
-                $allowed = $layout['allowed'][$column]['CType'];
+            if (is_array($layout['allowed']) && is_array($layout['allowed'][$column]) && !empty($layout['allowed'][$column]['list_type'])) {
+                $allowed = $layout['allowed'][$column]['list_type'];
             }
-            if (is_array($layout['disallowed']) && is_array($layout['disallowed'][$column]) && !empty($layout['disallowed'][$column]['CType'])){
-                $disallowed = $layout['disallowed'][$column]['CType'];
+            if (is_array($layout['disallowed']) && is_array($layout['disallowed'][$column]) && !empty($layout['disallowed'][$column]['list_type'])){
+                $disallowed = $layout['disallowed'][$column]['list_type'];
             }
         }
-        if (isset($layout) &&  (!empty($allowed) || !empty($disallowed))) {
+        if (isset($layout) && (!empty($allowed) || !empty($disallowed))) {
             foreach ($items as $key => $item) {
                 if ((
                         !empty($allowed) &&
