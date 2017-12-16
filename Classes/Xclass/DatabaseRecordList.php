@@ -148,6 +148,13 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
     public $totalRowCount;
 
     /**
+     * Count of record rows in view
+     *
+     * @var int
+     */
+    public $totalColumnCount;
+
+    /**
      * Space icon used for alignment
      *
      * @var string
@@ -873,6 +880,8 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
                     // Counter of total rows incremented:
                     $this->eCounter++;
                 }
+                // The header row for the table is now created:
+                $out .= $this->renderListHeader($table, $this->currentIdList);
                 // Record navigation is added to the beginning and end of the table if in single
                 // table mode
                 if ($this->table) {
@@ -895,8 +904,6 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
 								</td></tr>';
                     }
                 }
-                // The header row for the table is now created:
-                $out .= $this->renderListHeader($table, $this->currentIdList);
             }
 
             $collapseClass = $tableCollapsed && !$this->table ? 'collapse' : 'collapse in';
@@ -1205,8 +1212,9 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
                     $theData[$fCol] .= $this->addSortLink($sortLabel, $fCol, $table);
             }
         }
+        $this->totalColumnCount = 10 + count($theData);
         $headerOutput = '<colgroup>';
-        for ($i = -11; $i < count($theData); $i++) {
+        for ($i = -10; $i < count($theData); $i++) {
             if ($i < -1) {
                 $headerOutput .= '<col class="col-icon" width="40" />';
             } else {
@@ -1341,7 +1349,7 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
 			'
         ];
 
-        return $this->addElement(1, '', $data);
+        return $this->addElement(1, '', $data, '', '', '', 'pagination');
     }
 
     /*********************************
@@ -2060,7 +2068,12 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
      */
     public function addElement($h, $icon, $data, $rowParams = '', $_ = '', $_2 = '', $colType = 'td', $level = 0)
     {
-        $colType = ($colType === 'th') ? 'th' : 'td';
+        if ($colType === 'pagination') {
+            $colType = 'td';
+            $pagination = true;
+        } else {
+            $colType = ($colType === 'th') ? 'th' : 'td';
+        }
         $noWrap = $this->no_noWrap ? '' : ' nowrap="nowrap"';
         // Start up:
         $parent = isset($data['parent']) ? (int)$data['parent'] : 0;
@@ -2100,7 +2113,7 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
         // Show icon and lines
         if ($this->showIcon) {
             $out .= '
-			<' . $colType . ' nowrap="nowrap" class="col-icon"' . ($colType === 'th' ? ' colspan="' . ($this->maxDepth - $level) . '"' : ' colspan="' . ($this->maxDepth - $level - 1) . '"') . '>';
+			<' . $colType . ' nowrap="nowrap" class="col-icon"' . ($colType === 'th' ? ' colspan="' . ($this->maxDepth - $level) . '"' : '') . '>';
             if (!$h) {
                 $out .= '&nbsp;';
             } else {
@@ -2151,8 +2164,12 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
             if (count($data) == 1) {
                 $c++;
             }
-            if ($c > 1) {
+            if ($pagination) {
+                $colsp = ' colspan="' . ($this->totalColumnCount - 1) . '"';
+            } else if ($c > 1) {
                 $colsp = ' colspan="2"';
+            } else if ($ccount === 1 && $colType === 'td') {
+                $colsp = ' colspan="' . ($this->maxDepth - $level - 1) . '"';
             } else {
                 $colsp = '';
             }
