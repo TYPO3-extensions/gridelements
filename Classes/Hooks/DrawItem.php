@@ -43,6 +43,7 @@ use TYPO3\CMS\Core\Messaging\FlashMessageService;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Type\Bitmask\Permission;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\Utility\StringUtility;
 use TYPO3\CMS\Core\Versioning\VersionState;
 use TYPO3\CMS\Lang\LanguageService;
 
@@ -163,8 +164,8 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
                     break;
             }
         }
-        $listType = $row['list_type'] && $row['CType'] === 'list' ? ' data-listtype="' . $row['list_type'] . '"' : '';
-        $gridType = $row['tx_gridelements_backend_layout'] && $row['CType'] === 'gridelements_pi1' ? ' data-gridtype="' . $row['tx_gridelements_backend_layout'] . '"' : '';
+        $listType = $row['list_type'] && $row['CType'] === 'list' ? ' data-list_type="' . $row['list_type'] . '"' : '';
+        $gridType = $row['tx_gridelements_backend_layout'] && $row['CType'] === 'gridelements_pi1' ? ' data-tx_gridelements_backend_layout="' . $row['tx_gridelements_backend_layout'] . '"' : '';
         $headerContent = '<div id="element-tt_content-' . $row['uid'] . '" class="t3-ctype-identifier " data-ctype="' . $row['CType'] . '"' . $listType . $gridType . '>' . $headerContent . '</div>';
     }
 
@@ -718,9 +719,12 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
      */
     protected function renderSingleElementHTML(PageLayoutView $parentObject, $itemRow)
     {
-        // @todo $parentObject->lP is gone, defLangBinding is proably not enough for the third param to act correctly
+        $singleElementHTML = '';
         $parentObject->tt_contentData['nextThree'][$itemRow['uid']] = $itemRow['uid'];
-        $singleElementHTML = $parentObject->tt_content_drawHeader($itemRow,
+        if (!$parentObject->tt_contentConfig['languageMode']) {
+            $singleElementHTML .= '<div class="t3-page-ce-dragitem" id="' . StringUtility::getUniqueId() . '">';
+        }
+        $singleElementHTML .= $parentObject->tt_content_drawHeader($itemRow,
             $parentObject->tt_contentConfig['showInfo'] ? 15 : 5, $parentObject->defLangBinding, true, true);
         $singleElementHTML .= (!empty($itemRow['_ORIG_uid']) ? '<div class="ver-element">' : '')
             . '<div class="t3-page-ce-body-inner t3-page-ce-body-inner-' . $itemRow['CType'] . '">'
@@ -728,6 +732,9 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
             . '</div>'
             . (!empty($itemRow['_ORIG_uid']) ? '</div>' : '');
         $singleElementHTML .= $this->tt_content_drawFooter($parentObject, $itemRow);
+        if (!$parentObject->tt_contentConfig['languageMode']) {
+            $singleElementHTML .= '</div>';
+        }
         unset($parentObject->tt_contentData['nextThree'][$itemRow['uid']]);
 
         return $singleElementHTML;
@@ -1021,12 +1028,12 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
                     (isset($columnConfig['colspan']) && $columnConfig['colPos'] !== '' ? ' t3-grid-cell-width' . $colSpan : '') .
                     (isset($columnConfig['rowspan']) && $columnConfig['colPos'] !== '' ? ' t3-grid-cell-height' . $rowSpan : '') .
                     ($layout['horizontal'] ? ' t3-grid-cell-horizontal' : '') . ' ' . $expanded . '"' .
-                    ' data-allowed-CType="' . (!empty($allowedContentTypes) ? join(' ', $allowedContentTypes) : '*') . '"' .
-                    (!empty($disallowedContentTypes) ? ' data-disallowed-CType="' . join(' ', $disallowedContentTypes) . '"' : '') .
-                    (!empty($allowedListTypes) ? ' data-allowed-list_type="' . join(' ', $allowedListTypes) . '"' : '') .
-                    (!empty($disallowedListTypes) ? ' data-disallowed-list_type="' . join(' ', $disallowedListTypes) . '"' : '') .
-                    (!empty($allowedGridTypes) ? ' data-allowed-tx_gridelements_backend_layout="' . join(' ', $allowedGridTypes) . '"' : '') .
-                    (!empty($disallowedGridTypes) ? ' data-disallowed-tx_gridelements_backend_layout="' . join(' ', $disallowedGridTypes) . '"' : '') .
+                    ' data-allowed-ctype="' . (!empty($allowedContentTypes) ? join(',', $allowedContentTypes) : '*') . '"' .
+                    (!empty($disallowedContentTypes) ? ' data-disallowed-ctype="' . join(',', $disallowedContentTypes) . '"' : '') .
+                    (!empty($allowedListTypes) ? ' data-allowed-list_type="' . join(',', $allowedListTypes) . '"' : '') .
+                    (!empty($disallowedListTypes) ? ' data-disallowed-list_type="' . join(',', $disallowedListTypes) . '"' : '') .
+                    (!empty($allowedGridTypes) ? ' data-allowed-tx_gridelements_backend_layout="' . join(',', $allowedGridTypes) . '"' : '') .
+                    (!empty($disallowedGridTypes) ? ' data-disallowed-tx_gridelements_backend_layout="' . join(',', $disallowedGridTypes) . '"' : '') .
                     ' data-state="' . $expanded . '">';
 
                 $grid .= ($this->helper->getBackendUser()->uc['hideColumnHeaders'] ? '' : $head[$columnKey]) . $gridContent[$columnKey];
