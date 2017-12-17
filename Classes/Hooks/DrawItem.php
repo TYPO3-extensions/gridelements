@@ -42,6 +42,7 @@ use TYPO3\CMS\Core\Messaging\FlashMessage;
 use TYPO3\CMS\Core\Messaging\FlashMessageService;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Type\Bitmask\Permission;
+use TYPO3\CMS\Core\Utility\DebugUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\StringUtility;
 use TYPO3\CMS\Core\Versioning\VersionState;
@@ -343,6 +344,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
                 $items = [];
             }
             // if there are any items, we can create the HTML for them just like in the original TCEform
+            $gridContent['numberOfItems'][$colPos] = count($items);
             $this->renderSingleGridColumn($parentObject, $items, $colPos, $values, $gridContent, $row, $editUidList);
             // we will need a header for each of the columns to activate mass editing for elements of that column
             $expanded = $this->helper->getBackendUser()->uc['moduleData']['page']['gridelementsCollapsedColumns'][$row['uid'] . '_' . $colPos] ? false : true;
@@ -449,7 +451,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
         $specificIds = $this->helper->getSpecificIds($row);
         $allowed = base64_encode(json_encode($values['allowed']));
         $disallowed = base64_encode(json_encode($values['disallowed']));
-
+        $maxItems = (int)$values['maxitems'];
         $url = '';
         $pageinfo = BackendUtility::readPageAccess($parentObject->id, '');
         if (get_class($this->getPageLayoutController()) === PageLayoutController::class) {
@@ -528,7 +530,9 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
 				</div>';
 
         if (!empty($items)) {
+            $counter = 0;
             foreach ($items as $itemRow) {
+                $counter++;
                 if ((int)$itemRow['t3ver_state'] === VersionState::DELETE_PLACEHOLDER) {
                     continue;
                 }
@@ -539,9 +543,10 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
                     $gridColumn = (int)$itemRow['tx_gridelements_columns'];
                     $language = (int)$itemRow['sys_language_uid'];
                     $statusHidden = $parentObject->isDisabled('tt_content', $itemRow) ? ' t3-page-ce-hidden' : '';
+                    $maxItemsReached = $counter > $maxItems && $maxItems > 0 ? ' t3-page-ce-danger' : '';
 
                     $gridContent[$colPos] .= '
-				<div class="t3-page-ce t3js-page-ce t3js-page-ce-sortable' . $statusHidden . '" 
+				<div class="t3-page-ce t3js-page-ce t3js-page-ce-sortable' . $statusHidden . $maxItemsReached . '" 
 				     data-table="tt_content" id="element-tt_content-' . $uid . '" 
 				     data-uid="' . $uid . '" 
 				     data-container="' . $container . '" 
@@ -872,7 +877,6 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
     protected function renderGridLayoutTable($layout, $row, $head, $gridContent)
     {
         $specificIds = $this->helper->getSpecificIds($row);
-
         $grid = '<div class="t3-grid-container t3-grid-element-container' . ($layout['frame'] ? ' t3-grid-container-framed t3-grid-container-' . (int)$layout['frame'] : '') . ($layout['top_level_layout'] ? ' t3-grid-tl-container' : '') . '">';
         if ($layout['frame'] || $this->helper->getBackendUser()->uc['showGridInformation'] === 1) {
             $grid .= '<h4 class="t3-grid-container-title-' . (int)$layout['frame'] . '">' .
@@ -1018,6 +1022,9 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
                 // render the grid cell
                 $colSpan = (int)$columnConfig['colspan'];
                 $rowSpan = (int)$columnConfig['rowspan'];
+                $maxItems = (int)$columnConfig['maxitems'];
+                $disableNewContent = $gridContent['numberOfItems'][$columnKey] >= $maxItems && $maxItems > 0;
+                $tooManyItems = $gridContent['numberOfItems'][$columnKey] > $maxItems && $maxItems > 0;
                 $expanded = $this->helper->getBackendUser()->uc['moduleData']['page']['gridelementsCollapsedColumns'][$row['uid'] . '_' . $columnKey] ? 'collapsed' : 'expanded';
                 $grid .= '<td valign="top"' .
                     (isset($columnConfig['colspan']) ? ' colspan="' . $colSpan . '"' : '') .
@@ -1027,6 +1034,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
                     (!isset($columnConfig['colPos']) || $columnConfig['colPos'] === '' ? ' t3-grid-cell-unassigned' : '') .
                     (isset($columnConfig['colspan']) && $columnConfig['colPos'] !== '' ? ' t3-grid-cell-width' . $colSpan : '') .
                     (isset($columnConfig['rowspan']) && $columnConfig['colPos'] !== '' ? ' t3-grid-cell-height' . $rowSpan : '') .
+                    ($disableNewContent ? ' t3-page-ce-disable-new-ce' : '').
                     ($layout['horizontal'] ? ' t3-grid-cell-horizontal' : '') . ' ' . $expanded . '"' .
                     ' data-allowed-ctype="' . (!empty($allowedContentTypes) ? join(',', $allowedContentTypes) : '*') . '"' .
                     (!empty($disallowedContentTypes) ? ' data-disallowed-ctype="' . join(',', $disallowedContentTypes) . '"' : '') .
@@ -1034,9 +1042,17 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
                     (!empty($disallowedListTypes) ? ' data-disallowed-list_type="' . join(',', $disallowedListTypes) . '"' : '') .
                     (!empty($allowedGridTypes) ? ' data-allowed-tx_gridelements_backend_layout="' . join(',', $allowedGridTypes) . '"' : '') .
                     (!empty($disallowedGridTypes) ? ' data-disallowed-tx_gridelements_backend_layout="' . join(',', $disallowedGridTypes) . '"' : '') .
+                    (!empty($maxItems) ? ' data-maxitems="' . $maxItems . '"' : '') .
                     ' data-state="' . $expanded . '">';
-
-                $grid .= ($this->helper->getBackendUser()->uc['hideColumnHeaders'] ? '' : $head[$columnKey]) . $gridContent[$columnKey];
+                $grid .= ($this->helper->getBackendUser()->uc['hideColumnHeaders'] ? '' : $head[$columnKey]);
+                if ($maxItems > 0) {
+                    $maxItemsClass = ($disableNewContent ? ' warning' : ' success');
+                    $maxItemsClass = ($tooManyItems ? ' danger' : $maxItemsClass);
+                    $grid .= '<span class="t3-grid-cell-number-of-items' . $maxItemsClass . '">' .
+                        $gridContent['numberOfItems'][$columnKey] . '/' . $maxItems . ($maxItemsClass === ' danger' ? '!' : '') .
+                        '</span>';
+                }
+                $grid .= $gridContent[$columnKey];
                 $grid .= '</td>';
             }
             $grid .= '</tr>';
