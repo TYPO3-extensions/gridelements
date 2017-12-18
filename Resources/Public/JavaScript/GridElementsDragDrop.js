@@ -36,7 +36,6 @@ define(['jquery', 'jquery-ui/droppable', 'TYPO3/CMS/Backend/LayoutModule/DragDro
             distance: 20,
             addClasses: 'active-drag',
             revert: 'invalid',
-            zIndex: 100,
             start: function (evt, ui) {
                 DragDrop.onDragStart($(this));
             },
@@ -110,6 +109,28 @@ define(['jquery', 'jquery-ui/droppable', 'TYPO3/CMS/Backend/LayoutModule/DragDro
                 $(this).closest(DragDrop.contentIdentifier).find('> ' + DragDrop.addContentIdentifier + ', > > ' + DragDrop.addContentIdentifier).show();
             }
         });
+    };
+
+
+    /**
+     * called when a draggable is released
+     * @param $element a jQuery object for the draggable
+     * @private
+     */
+    DragDrop.onDragStop = function ($element) {
+        // Remove css class for the drag shadow
+        $element.children(DragDrop.dragIdentifier).removeClass('dragitem-shadow');
+        // Show create new element button
+        $element.children(DragDrop.dropZoneIdentifier).removeClass('drag-start');
+        $element.closest(DragDrop.columnIdentifier).addClass('active');
+        $element.parents(DragDrop.columnHolderIdentifier).find(DragDrop.addContentIdentifier).show();
+        $element.find(DragDrop.dropZoneIdentifier).show();
+        $element.find('.ui-draggable-copy-message').remove();
+
+        // Reset inline style
+        $element.get(0).style.cssText = DragDrop.originalStyles.replace('z-index: 100;', '');
+
+        $(DragDrop.dropZoneIdentifier + '.' + DragDrop.validDropZoneClass).removeClass(DragDrop.validDropZoneClass);
     };
 
     /**
@@ -264,5 +285,6 @@ define(['jquery', 'jquery-ui/droppable', 'TYPO3/CMS/Backend/LayoutModule/DragDro
         }
     };
 
+    $(DragDrop.initialize);
     return DragDrop;
 });
