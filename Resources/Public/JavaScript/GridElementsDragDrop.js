@@ -24,6 +24,9 @@ define(['jquery', 'jquery-ui/droppable', 'TYPO3/CMS/Backend/LayoutModule/DragDro
     DragDrop.draggableIdentifier = '.t3js-page-ce:has(.t3-page-ce-header-draggable)';
     DragDrop.gridContainerIdentifier = '.t3-grid-element-container';
     DragDrop.newContentElementWizardIdentifier = '#new-element-drag-in-wizard';
+    DragDrop.cTypeIdentifier = '.t3-ctype-identifier';
+    DragDrop.contentWrapperIdentifier = '.t3-page-ce-wrapper';
+    DragDrop.disabledNewContentIdentifier = '.t3-page-ce-disable-new-ce';
 
     /**
      * initializes Drag+Drop for all content elements on the page
@@ -78,11 +81,13 @@ define(['jquery', 'jquery-ui/droppable', 'TYPO3/CMS/Backend/LayoutModule/DragDro
 
         // make the drop zones visible
         var ownDropZone = $element.children(DragDrop.dropZoneIdentifier);
-        var contentType = $element.find('.t3-ctype-identifier').data('ctype');
+        var siblingsDropZones = $element.parents(DragDrop.disabledNewContentIdentifier).find(DragDrop.dropZoneIdentifier);
+        var disabledDropZones = $(DragDrop.disabledNewContentIdentifier + ' > ' + DragDrop.contentWrapperIdentifier + ' > ' + DragDrop.contentIdentifier + ' > ' + DragDrop.dropZoneIdentifier);
+        var contentType = $element.find(DragDrop.cTypeIdentifier).data('ctype');
         contentType = contentType ? contentType.toString() : '';
-        var listType = $element.find('.t3-ctype-identifier').data('list_type');
+        var listType = $element.find(DragDrop.cTypeIdentifier).data('list_type');
         listType = listType ? listType.toString() : '';
-        var gridType = $element.find('.t3-ctype-identifier').data('tx_gridelements_backend_layout');
+        var gridType = $element.find(DragDrop.cTypeIdentifier).data('tx_gridelements_backend_layout');
         gridType = gridType ? gridType.toString() : '';
         $(DragDrop.dropZoneIdentifier).not(ownDropZone).each(function () {
             var closestColumn = $(this).closest(DragDrop.columnIdentifier);
@@ -102,6 +107,10 @@ define(['jquery', 'jquery-ui/droppable', 'TYPO3/CMS/Backend/LayoutModule/DragDro
                     (!allowedGridType || $.inArray('*', allowedGridType) > -1 || $.inArray(gridType, allowedGridType) > -1) &&
                     (!disallowedGridType || ($.inArray('*', disallowedGridType) === -1 && $.inArray(listType, disallowedGridType) === -1))
                 )) &&
+                (
+                    $(this).not(disabledDropZones).length ||
+                    siblingsDropZones.length
+                ) &&
                 $(this).parent().find('.icon-actions-document-new').length
             ) {
                 $(this).addClass(DragDrop.validDropZoneClass);
