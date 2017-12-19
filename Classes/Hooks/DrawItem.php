@@ -333,9 +333,16 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
         foreach ($colPosValues as $colPos => $values) {
             // first we have to create the column content separately for each column
             // so we can check for the first and the last element to provide proper sorting
+            $counter = 0;
             if ($singleColumn === false) {
                 $items = [];
                 foreach ($collectedItems as $item) {
+                    if (
+                        $row['sys_language_uid'] === $item['sys_language_uid'] ||
+                        ($row['sys_language_uid'] === -1 && $item['sys_language_uid'] === 0)
+                    ) {
+                        $counter++;
+                    }
                     if ((int)$item['tx_gridelements_columns'] === $colPos) {
                         $items[] = $item;
                     }
@@ -344,7 +351,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
                 $items = [];
             }
             // if there are any items, we can create the HTML for them just like in the original TCEform
-            $gridContent['numberOfItems'][$colPos] = count($items);
+            $gridContent['numberOfItems'][$colPos] = $counter;
             $this->renderSingleGridColumn($parentObject, $items, $colPos, $values, $gridContent, $row, $editUidList);
             // we will need a header for each of the columns to activate mass editing for elements of that column
             $expanded = $this->helper->getBackendUser()->uc['moduleData']['page']['gridelementsCollapsedColumns'][$row['uid'] . '_' . $colPos] ? false : true;
@@ -531,18 +538,23 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
 
         if (!empty($items)) {
             $counter = 0;
-            foreach ($items as $itemRow) {
-                $counter++;
-                if ((int)$itemRow['t3ver_state'] === VersionState::DELETE_PLACEHOLDER) {
+            foreach ($items as $item) {
+                if (
+                    $row['sys_language_uid'] === $item['sys_language_uid'] ||
+                    ($row['sys_language_uid'] === -1 && $item['sys_language_uid'] === 0)
+                ) {
+                    $counter++;
+                }
+                if ((int)$item['t3ver_state'] === VersionState::DELETE_PLACEHOLDER) {
                     continue;
                 }
-                if (is_array($itemRow)) {
-                    $uid = (int)$itemRow['uid'];
-                    $pid = (int)$itemRow['pid'];
-                    $container = (int)$itemRow['tx_gridelements_container'];
-                    $gridColumn = (int)$itemRow['tx_gridelements_columns'];
-                    $language = (int)$itemRow['sys_language_uid'];
-                    $statusHidden = $parentObject->isDisabled('tt_content', $itemRow) ? ' t3-page-ce-hidden' : '';
+                if (is_array($item)) {
+                    $uid = (int)$item['uid'];
+                    $pid = (int)$item['pid'];
+                    $container = (int)$item['tx_gridelements_container'];
+                    $gridColumn = (int)$item['tx_gridelements_columns'];
+                    $language = (int)$item['sys_language_uid'];
+                    $statusHidden = $parentObject->isDisabled('tt_content', $item) ? ' t3-page-ce-hidden' : '';
                     $maxItemsReached = $counter > $maxItems && $maxItems > 0 ? ' t3-page-ce-danger' : '';
 
                     $gridContent[$colPos] .= '
@@ -550,15 +562,15 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
 				     data-table="tt_content" id="element-tt_content-' . $uid . '" 
 				     data-uid="' . $uid . '" 
 				     data-container="' . $container . '" 
-				     data-ctype="' . $itemRow['CType'] . '">' .
-                        $this->renderSingleElementHTML($parentObject, $itemRow) .
+				     data-ctype="' . $item['CType'] . '">' .
+                        $this->renderSingleElementHTML($parentObject, $item) .
                         '</div>';
                     if ($contentIsNotLockedForEditors
                         && $this->getBackendUser()->doesUserHaveAccess($pageinfo, Permission::CONTENT_EDIT)
                         && (!$this->checkIfTranslationsExistInLanguage($items, $row['sys_language_uid'], $parentObject))
                     ) {
                         // New content element:
-                        $specificIds = $this->helper->getSpecificIds($itemRow);
+                        $specificIds = $this->helper->getSpecificIds($item);
                         if ($parentObject->option_newWizard) {
                             $urlParameters = [
                                 'id'                         => $parentObject->id,
@@ -654,7 +666,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
         // We jump out here since we don't need to do the expensive loop operations
         $allowInconsistentLanguageHandling = BackendUtility::getModTSconfig($parentObject->id,
             'mod.web_layout.allowInconsistentLanguageHandling');
-        if ($language === 0 || $allowInconsistentLanguageHandling['value'] === '1') {
+        if ($language === 0 || $language === -1 || $allowInconsistentLanguageHandling['value'] === '1') {
             return false;
         }
         /**
@@ -718,29 +730,29 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
      * Renders the HTML code for a single tt_content element
      *
      * @param PageLayoutView $parentObject : The parent object that triggered this hook
-     * @param array $itemRow : The data row to be rendered as HTML
+     * @param array $item : The data row to be rendered as HTML
      *
      * @return string
      */
-    protected function renderSingleElementHTML(PageLayoutView $parentObject, $itemRow)
+    protected function renderSingleElementHTML(PageLayoutView $parentObject, $item)
     {
         $singleElementHTML = '';
-        $parentObject->tt_contentData['nextThree'][$itemRow['uid']] = $itemRow['uid'];
+        $parentObject->tt_contentData['nextThree'][$item['uid']] = $item['uid'];
         if (!$parentObject->tt_contentConfig['languageMode']) {
             $singleElementHTML .= '<div class="t3-page-ce-dragitem" id="' . StringUtility::getUniqueId() . '">';
         }
-        $singleElementHTML .= $parentObject->tt_content_drawHeader($itemRow,
+        $singleElementHTML .= $parentObject->tt_content_drawHeader($item,
             $parentObject->tt_contentConfig['showInfo'] ? 15 : 5, $parentObject->defLangBinding, true, true);
-        $singleElementHTML .= (!empty($itemRow['_ORIG_uid']) ? '<div class="ver-element">' : '')
-            . '<div class="t3-page-ce-body-inner t3-page-ce-body-inner-' . $itemRow['CType'] . '">'
-            . $parentObject->tt_content_drawItem($itemRow)
+        $singleElementHTML .= (!empty($item['_ORIG_uid']) ? '<div class="ver-element">' : '')
+            . '<div class="t3-page-ce-body-inner t3-page-ce-body-inner-' . $item['CType'] . '">'
+            . $parentObject->tt_content_drawItem($item)
             . '</div>'
-            . (!empty($itemRow['_ORIG_uid']) ? '</div>' : '');
-        $singleElementHTML .= $this->tt_content_drawFooter($parentObject, $itemRow);
+            . (!empty($item['_ORIG_uid']) ? '</div>' : '');
+        $singleElementHTML .= $this->tt_content_drawFooter($parentObject, $item);
         if (!$parentObject->tt_contentConfig['languageMode']) {
             $singleElementHTML .= '</div>';
         }
-        unset($parentObject->tt_contentData['nextThree'][$itemRow['uid']]);
+        unset($parentObject->tt_contentData['nextThree'][$item['uid']]);
 
         return $singleElementHTML;
     }
@@ -1087,11 +1099,11 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
                 }
             }
             if (!empty($collectedItems)) {
-                foreach ($collectedItems as $itemRow) {
-                    if ($itemRow) {
-                        $className = $itemRow['tx_gridelements_reference_container'] ? 'reference container_reference' : 'reference';
+                foreach ($collectedItems as $item) {
+                    if ($item) {
+                        $className = $item['tx_gridelements_reference_container'] ? 'reference container_reference' : 'reference';
                         $shortcutContent .= '<div class="' . $className . '">';
-                        $shortcutContent .= $this->renderSingleElementHTML($parentObject, $itemRow);
+                        $shortcutContent .= $this->renderSingleElementHTML($parentObject, $item);
                         // NOTE: this is the end tag for <div class="t3-page-ce-body">
                         // because of bad (historic) conception, starting tag has to be placed inside tt_content_drawHeader()
                         $shortcutContent .= '<div class="reference-overlay"></div></div></div>';
@@ -1129,7 +1141,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
         $itemList = GeneralUtility::intExplode(',', $itemList);
 
         $queryBuilder = $this->getQueryBuilder();
-        $itemRows = $queryBuilder
+        $items = $queryBuilder
             ->select('*')
             ->addSelectLiteral($queryBuilder->expr()->inSet('pid',
                 $queryBuilder->createNamedParameter($itemList, Connection::PARAM_INT_ARRAY) . ' AS inSet'))
@@ -1147,12 +1159,12 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
             ->execute()
             ->fetchAll();
 
-        foreach ($itemRows as $itemRow) {
+        foreach ($items as $item) {
             if ($this->helper->getBackendUser()->workspace > 0) {
-                BackendUtility::workspaceOL('tt_content', $itemRow, $this->helper->getBackendUser()->workspace);
+                BackendUtility::workspaceOL('tt_content', $item, $this->helper->getBackendUser()->workspace);
             }
-            $itemRow['tx_gridelements_reference_container'] = $itemRow['pid'];
-            $collectedItems[] = $itemRow;
+            $item['tx_gridelements_reference_container'] = $item['pid'];
+            $collectedItems[] = $item;
         }
     }
 
@@ -1173,7 +1185,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
             if ($this->showHidden) {
                 $queryBuilder->getRestrictions()->removeByType(HiddenRestriction::class);
             }
-            $itemRow = $queryBuilder
+            $item = $queryBuilder
                 ->select('*')
                 ->from('tt_content')
                 ->where(
@@ -1187,11 +1199,11 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
             if ($this->helper->getBackendUser()->workspace > 0) {
                 BackendUtility::workspaceOL(
                     'tt_content',
-                    $itemRow,
+                    $item,
                     $this->helper->getBackendUser()->workspace
                 );
             }
-            $collectedItems[] = $itemRow;
+            $collectedItems[] = $item;
         }
     }
 
