@@ -111,7 +111,6 @@ define(['jquery', 'jquery-ui/droppable', 'TYPO3/CMS/Backend/LayoutModule/DragDro
         });
     };
 
-
     /**
      * called when a draggable is released
      * @param $element a jQuery object for the draggable
@@ -285,6 +284,5 @@ define(['jquery', 'jquery-ui/droppable', 'TYPO3/CMS/Backend/LayoutModule/DragDro
         }
     };
 
-    $(DragDrop.initialize);
     return DragDrop;
 });
