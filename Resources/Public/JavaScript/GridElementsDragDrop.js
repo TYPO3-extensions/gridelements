@@ -285,6 +285,5 @@ define(['jquery', 'jquery-ui/droppable', 'TYPO3/CMS/Backend/LayoutModule/DragDro
         }
     };
 
-    $(DragDrop.initialize);
     return DragDrop;
 });
