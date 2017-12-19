@@ -181,6 +181,9 @@ abstract class AbstractDataHandler
             if (isset($translatedContainers[$translatedElement['sys_language_uid']])) {
                 $updateArray['tx_gridelements_container'] = (int)$translatedContainers[$translatedElement['sys_language_uid']]['uid'];
                 $updateArray['tx_gridelements_columns'] = (int)$currentValues['tx_gridelements_columns'];
+            } else if ($translatedElement['tx_gridelements_container'] == $currentValues['tx_gridelements_container']) {
+                $updateArray['tx_gridelements_container'] = (int)$currentValues['tx_gridelements_container'];
+                $updateArray['tx_gridelements_columns'] = (int)$currentValues['tx_gridelements_columns'];
             }
             $updateArray['colPos'] = (int)$currentValues['colPos'];
 
