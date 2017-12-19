@@ -337,13 +337,13 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
             if ($singleColumn === false) {
                 $items = [];
                 foreach ($collectedItems as $item) {
-                    if (
-                        $row['sys_language_uid'] === $item['sys_language_uid'] ||
-                        ($row['sys_language_uid'] === -1 && $item['sys_language_uid'] === 0)
-                    ) {
-                        $counter++;
-                    }
                     if ((int)$item['tx_gridelements_columns'] === $colPos) {
+                        if (
+                            $row['sys_language_uid'] === $item['sys_language_uid'] ||
+                            ($row['sys_language_uid'] === -1 && $item['sys_language_uid'] === 0)
+                        ) {
+                            $counter++;
+                        }
                         $items[] = $item;
                     }
                 }
