@@ -441,13 +441,15 @@ class LayoutSetup
                 ) ||
                 (
                     !empty($allowed) &&
-                    !GeneralUtility::inList($allowed, '*') &&
-                    !GeneralUtility::inList($allowed, $layoutId)
+                    !isset($allowed['*']) &&
+                    !isset($allowed[$layoutId])
                 ) ||
                 (
                     !empty($disallowed) &&
-                    GeneralUtility::inList($disallowed, '*') &&
-                    GeneralUtility::inList($disallowed, $layoutId)
+                    (
+                        isset($disallowed['*']) ||
+                        isset($disallowed[$layoutId])
+                    )
                 )) {
                 continue;
             }
