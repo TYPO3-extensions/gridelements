@@ -251,14 +251,25 @@ abstract class AbstractDataHandler
     public function doGridContainerUpdate($containerUpdateArray = [])
     {
         if (is_array($containerUpdateArray) && !empty($containerUpdateArray)) {
-            foreach ($containerUpdateArray as $containerUid => $newElement) {
-                $fieldArray = ['tx_gridelements_children' => 'tx_gridelements_children + ' . (int)$newElement];
-                $this->getConnection()->update(
-                    'tt_content',
-                    $fieldArray,
-                    ['uid' => (int)$containerUid]
-                );
-                $this->getTceMain()->updateRefIndex('tt_content', (int)$containerUid);
+            $queryBuilder = $this->getQueryBuilder();
+            $currentContainers = $queryBuilder
+                ->select('uid', 'tx_gridelements_children')
+                ->from('tt_content')
+                ->where(
+                    $queryBuilder->expr()->in('uid', implode(',', array_keys($containerUpdateArray)))
+                )
+                ->execute()
+                ->fetchAll();
+            if (!empty($currentContainers)) {
+                foreach ($currentContainers as $fieldArray) {
+                    $fieldArray['tx_gridelements_children'] = (int)$fieldArray['tx_gridelements_children'] + (int)$containerUpdateArray[$fieldArray['uid']];
+                    $this->getConnection()->update(
+                        'tt_content',
+                        $fieldArray,
+                        ['uid' => (int)$fieldArray['uid']]
+                    );
+                    $this->getTceMain()->updateRefIndex('tt_content', (int)$fieldArray['uid']);
+                }
             }
         }
     }
