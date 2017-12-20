@@ -25,6 +25,7 @@ use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Configuration\FlexForm\FlexFormTools;
 use TYPO3\CMS\Core\DataHandling\DataHandler;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\Utility\MathUtility;
 
 /**
  * Class/Function which offers TCE main hook functions.
@@ -64,7 +65,13 @@ class PreProcessFieldArray extends AbstractDataHandler
         if ($table === 'tt_content') {
             $this->init($table, $id, $parentObj);
             if (!$this->getTceMain()->isImporting) {
-                $this->processFieldArrayForTtContent($fieldArray, $id);
+                if (is_array($parentObj->cmdmap['tt_content'])) {
+                    $cmdId = (int)key($parentObj->cmdmap['tt_content']);
+                }
+                $new = !MathUtility::canBeInterpretedAsInteger(key($parentObj->datamap['tt_content'])) ||
+                    !empty($parentObj->cmdmap['tt_content'][$cmdId]['copy']) ||
+                    !empty($parentObj->cmdmap['tt_content'][$cmdId]['move']);
+                $this->processFieldArrayForTtContent($fieldArray, $id, $new);
             }
         }
     }
@@ -74,18 +81,18 @@ class PreProcessFieldArray extends AbstractDataHandler
      *
      * @param array $fieldArray
      * @param int $id
+     * @param bool $new
      */
-    public function processFieldArrayForTtContent(array &$fieldArray, $id = 0)
+    public function processFieldArrayForTtContent(array &$fieldArray, $id = 0, $new = false)
     {
-        if ($this->getTable() === 'tt_content') {
-            $pid = (int)GeneralUtility::_GET('DDinsertNew');
+        $pid = (int)GeneralUtility::_GET('DDinsertNew');
 
-            if (abs($pid) > 0) {
-                $this->setDefaultFieldValues($fieldArray, $pid);
-                $this->getDefaultFlexformValues($fieldArray);
-            }
+        if (abs($pid) > 0) {
+            $this->setDefaultFieldValues($fieldArray, $pid);
+            $this->getDefaultFlexformValues($fieldArray);
         }
-        $this->setFieldEntries($fieldArray, $id);
+
+        $this->setFieldEntries($fieldArray, $id, $new);
     }
 
     /**
@@ -229,12 +236,13 @@ class PreProcessFieldArray extends AbstractDataHandler
      *
      * @param array $fieldArray
      * @param int $contentId
+     * @param bool $new
      */
-    public function setFieldEntries(array &$fieldArray, $contentId = 0)
+    public function setFieldEntries(array &$fieldArray, $contentId = 0, $new = false)
     {
         $containerUpdateArray = [];
         if (isset($fieldArray['tx_gridelements_container'])) {
-            if ((int)$fieldArray['tx_gridelements_container'] > 0) {
+            if ((int)$fieldArray['tx_gridelements_container'] > 0 && $new) {
                 $containerUpdateArray[(int)$fieldArray['tx_gridelements_container']] = 1;
             }
             if ((int)$fieldArray['tx_gridelements_container'] === 0) {
