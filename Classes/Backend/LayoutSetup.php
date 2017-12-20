@@ -423,8 +423,8 @@ class LayoutSetup
      */
     public function getLayoutSelectItems($colPos, $gridColPos = 0, $containerId = 0)
     {
-        $allowed = '*';
-        $disallowed = '';
+        $allowed = ['*' => '*'];
+        $disallowed = [];
         $selectItems = [];
         if ($containerId > 0) {
             $container = $this->cacheCurrentParent((int)$containerId, true);
