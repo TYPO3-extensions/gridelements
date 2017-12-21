@@ -160,7 +160,23 @@ define(['jquery', 'TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Backend/Storag
                     $(this).attr('data-disallowed-tx_gridelements_backend_layout', top.pageColumnsDisallowed[colPos]['tx_gridelements_backend_layout']);
 				}
 				if (typeof top.pageColumnsMaxitems[colPos] !== 'undefined') {
+					var $children = $(this).find('> .t3js-sortable > .t3js-page-ce-sortable');
+					var itemsOfMax = $children.length + '/' + top.pageColumnsMaxitems[colPos];
                     $(this).attr('data-maxitems', top.pageColumnsMaxitems[colPos]);
+                    $(this).find('> .t3-page-column-header').after('<span class="t3-grid-cell-number-of-items">' + itemsOfMax + '</span>');
+                    if ($children.length > top.pageColumnsMaxitems[colPos]) {
+                        $(this).find('> .t3-grid-cell-number-of-items').text(itemsOfMax + '!').addClass('danger');
+                        $(this).addClass('t3-page-ce-disable-new-ce');
+                        $children.each(function() {
+                        	if ($(this).index() > top.pageColumnsMaxitems[colPos]) {
+                        		$(this).addClass('t3-page-ce-danger');
+							}
+						});
+                    } else if ($children.length == top.pageColumnsMaxitems[colPos]) {
+                        $(this).find('> .t3-grid-cell-number-of-items').addClass('warning');
+					} else {
+                        $(this).find('> .t3-grid-cell-number-of-items').addClass('success');
+					}
 				}
 				OnReady.setAllowedParameters($(this), colPos);
 			}
