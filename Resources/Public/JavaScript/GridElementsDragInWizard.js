@@ -105,10 +105,18 @@ define(['jquery', 'TYPO3/CMS/Gridelements/GridElementsDragDrop', 'jquery-ui/sort
 	DragInWizard.rearrangeItems = function () {
 		var panel = $('#' + DragInWizard.wizardIdentifier + ' .t3js-tabs');
 		var CType;
-		var listType;
 		$('#' + DragInWizard.wizardIdentifier + ' .media').each(function () {
-			$(this).find('.media-left').addClass('t3-ctype-identifier');
-			var description = $(this).find('.media-body');
+            var CTypeCheck = $(this).find('input').attr('value').match(/^([^_]*?)_(.*)$/);
+            CTypeCheck.shift();
+            if (CTypeCheck[0] === 'gridelements') {
+                CType = 'gridelements_pi1';
+                var txGridelementsBackendLayout = CTypeCheck[1];
+                $(this).find('.media-left').addClass('t3-ctype-identifier').attr('data-gridtype', txGridelementsBackendLayout);
+            } else {
+                CType = CTypeCheck[1];
+            }
+            $(this).find('.media-left').addClass('t3-ctype-identifier').attr('data-ctype', CType);
+            var description = $(this).find('.media-body');
 			description = description.appendTo($(this).parent()).hide();
 			$(this).find('.media-left').on('mouseenter', function () {
 				description.show()
