@@ -93,8 +93,10 @@ class ProcessCmdmap extends AbstractDataHandler
             $containerUpdateArray = array();
             $originalContainer = $this->databaseConnection->exec_SELECTgetSingleRow('tx_gridelements_container, sys_language_uid',
                 'tt_content', 'uid=' . $id);
-            $containerUpdateArray[$originalContainer['tx_gridelements_container']] = -1;
-            $this->doGridContainerUpdate($containerUpdateArray);
+            if (!empty($originalContainer)) {
+                $containerUpdateArray[$originalContainer['tx_gridelements_container']] = -1;
+                $this->doGridContainerUpdate($containerUpdateArray);
+            }
         }
     }
 }
