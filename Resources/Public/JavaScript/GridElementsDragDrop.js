@@ -219,7 +219,7 @@ define(['jquery', 'jquery-ui/droppable', 'TYPO3/CMS/Backend/LayoutModule/DragDro
             }
             parameters['cmd'] = {tt_content: {}};
             parameters['data'] = {tt_content: {}};
-            var copyAction = (evt && evt.originalEvent.ctrlKey || $droppableElement.hasClass('t3js-paste-copy'));
+            var copyAction = (evt && evt.originalEvent && evt.originalEvent.ctrlKey || $droppableElement.hasClass('t3js-paste-copy'));
             if (DragDrop.newContentElementDefaultValues.CType) {
                 parameters['data']['tt_content']['NEW234134'] = DragDrop.newContentElementDefaultValues;
                 parameters['data']['tt_content']['NEW234134']['pid'] = targetPid;
@@ -351,7 +351,7 @@ define(['jquery', 'jquery-ui/droppable', 'TYPO3/CMS/Backend/LayoutModule/DragDro
      */
     DragDrop.getGridColumnPositionForElement = function ($element) {
         var $gridContainer = $element.closest(DragDrop.gridContainerIdentifier);
-        var $columnContainer = DragDrop.column;
+        var $columnContainer = $element.closest(DragDrop.columnIdentifier);
         if ($gridContainer.length && $columnContainer.length && $columnContainer.data('colpos') !== 'undefined') {
             return $columnContainer.data('colpos');
         } else {
