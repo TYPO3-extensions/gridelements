@@ -59,7 +59,7 @@ class PageRenderer implements SingletonInterface
             $iconFactory = GeneralUtility::makeInstance(IconFactory::class);
             $pageRenderer->loadRequireJsModule('TYPO3/CMS/Gridelements/GridElementsOnReady');
             $pageRenderer->loadRequireJsModule('TYPO3/CMS/Gridelements/GridElementsDragDrop');
-            // $pageRenderer->loadRequireJsModule('TYPO3/CMS/Gridelements/GridElementsDragInWizard');
+            $pageRenderer->loadRequireJsModule('TYPO3/CMS/Gridelements/GridElementsDragInWizard');
 
             /** @var Clipboard $clipObj */
             $clipObj = GeneralUtility::makeInstance(Clipboard::class); // Start clipboard
