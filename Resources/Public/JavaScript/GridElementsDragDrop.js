@@ -27,6 +27,12 @@ define(['jquery', 'jquery-ui/droppable', 'TYPO3/CMS/Backend/LayoutModule/DragDro
     DragDrop.cTypeIdentifier = '.t3-ctype-identifier';
     DragDrop.contentWrapperIdentifier = '.t3-page-ce-wrapper';
     DragDrop.disabledNewContentIdentifier = '.t3-page-ce-disable-new-ce';
+    DragDrop.newContentElementOnclick = '';
+    DragDrop.newContentElementDefaultValues = {};
+    DragDrop.drag = {};
+    DragDrop.types = {};
+    DragDrop.ownDropZone = {};
+    DragDrop.column = {};
 
     /**
      * initializes Drag+Drop for all content elements on the page
@@ -70,26 +76,50 @@ define(['jquery', 'jquery-ui/droppable', 'TYPO3/CMS/Backend/LayoutModule/DragDro
     DragDrop.onDragStart = function ($element) {
         // Add css class for the drag shadow
         DragDrop.originalStyles = $element.get(0).style.cssText;
-        $element.children(DragDrop.dragIdentifier).addClass('dragitem-shadow');
-        $element.append('<div class="ui-draggable-copy-message">' + TYPO3.lang['dragdrop.copy.message'] + '</div>');
+        DragDrop.drag = $element.children(DragDrop.drag);
+        DragDrop.drag.addClass('dragitem-shadow');
+        DragDrop.types = $element.find(DragDrop.cTypeIdentifier);
+        if ($element.closest(DragDrop.newContentElementWizardIdentifier).length == 0) {
+            $element.append('<div class="ui-draggable-copy-message">' + TYPO3.lang['dragdrop.copy.message'] + '</div>');
+        } else {
+            // all information about CType, list_type and other default values has to be fetched from onclick
+            DragDrop.newContentElementOnclick = $element.find('a:first').attr('onclick');
+            if (typeof DragDrop.newContentElementOnclick !== 'undefined') {
+                // this is the relevant part defining the default values for tt_content
+                // while creating content with the new element wizard the usual way
+                DragDrop.newContentElementOnclick = unescape(DragDrop.newContentElementOnclick.split('document.editForm.defValues.value=unescape(\'%26')[1].split('\');')[0]);
+                if (DragDrop.newContentElementOnclick.length) {
+                    // if there are any default values, they have to be reformatted to an object/array
+                    // this can be passed on as parameters during the onDrop action after dragging in new content
+                    // CType is available for each element in the wizard, so this will be the identifier later on
+                    DragDrop.newContentElementDefaultValues = $.parseJSON(
+                        '{' + DragDrop.newContentElementOnclick.replace(/\&/g, '",').replace(/defVals\[tt_content\]\[/g, '"').replace(/\]\=/g, '":"') + '"}'
+                    );
+                    DragDrop.types.data('ctype', DragDrop.newContentElementDefaultValues.CType);
+                    DragDrop.types.data('list_type', DragDrop.newContentElementDefaultValues.list_type);
+                    DragDrop.types.data('tx_gridelements_backend_layout', DragDrop.newContentElementDefaultValues.tx_gridelements_backend_layout);
+                }
+            }
+        }
         // Hide create new element button
-        $element.children(DragDrop.dropZoneIdentifier).addClass('drag-start');
-        $element.closest(DragDrop.columnIdentifier).removeClass('active');
+        DragDrop.ownDropZone = $element.children(DragDrop.dropZoneIdentifier);
+        DragDrop.ownDropZone.addClass('drag-start');
+        DragDrop.column = $element.closest(DragDrop.columnIdentifier);
+        DragDrop.column.removeClass('active');
 
         $element.parents(DragDrop.columnHolderIdentifier).find(DragDrop.addContentIdentifier).hide();
         $element.find(DragDrop.dropZoneIdentifier).hide();
 
         // make the drop zones visible
-        var ownDropZone = $element.children(DragDrop.dropZoneIdentifier);
         var siblingsDropZones = $element.parents(DragDrop.disabledNewContentIdentifier).find(DragDrop.dropZoneIdentifier);
         var disabledDropZones = $(DragDrop.disabledNewContentIdentifier + ' > ' + DragDrop.contentWrapperIdentifier + ' > ' + DragDrop.contentIdentifier + ' > ' + DragDrop.dropZoneIdentifier);
-        var contentType = $element.find(DragDrop.cTypeIdentifier).data('ctype');
+        var contentType = DragDrop.types.data('ctype');
         contentType = contentType ? contentType.toString() : '';
-        var listType = $element.find(DragDrop.cTypeIdentifier).data('list_type');
+        var listType = DragDrop.types.data('list_type');
         listType = listType ? listType.toString() : '';
-        var gridType = $element.find(DragDrop.cTypeIdentifier).data('tx_gridelements_backend_layout');
+        var gridType = DragDrop.types.data('tx_gridelements_backend_layout');
         gridType = gridType ? gridType.toString() : '';
-        $(DragDrop.dropZoneIdentifier).not(ownDropZone).each(function () {
+        $(DragDrop.dropZoneIdentifier).not(DragDrop.ownDropZone).each(function () {
             var closestColumn = $(this).closest(DragDrop.columnIdentifier);
             var allowedContentType = closestColumn.data('allowed-ctype') ? closestColumn.data('allowed-ctype').toString().split(',') : null;
             var disallowedContentType = closestColumn.data('disallowed-ctype') ? closestColumn.data('disallowed-ctype').toString().split(',') : null;
@@ -128,10 +158,10 @@ define(['jquery', 'jquery-ui/droppable', 'TYPO3/CMS/Backend/LayoutModule/DragDro
      */
     DragDrop.onDragStop = function ($element) {
         // Remove css class for the drag shadow
-        $element.children(DragDrop.dragIdentifier).removeClass('dragitem-shadow');
+        DragDrop.drag.removeClass('dragitem-shadow');
         // Show create new element button
-        $element.children(DragDrop.dropZoneIdentifier).removeClass('drag-start');
-        $element.closest(DragDrop.columnIdentifier).addClass('active');
+        DragDrop.ownDropZone.removeClass('drag-start');
+        DragDrop.column.addClass('active');
         $element.parents(DragDrop.columnHolderIdentifier).find(DragDrop.addContentIdentifier).show();
         $element.find(DragDrop.dropZoneIdentifier).show();
         $element.find('.ui-draggable-copy-message').remove();
@@ -166,7 +196,7 @@ define(['jquery', 'jquery-ui/droppable', 'TYPO3/CMS/Backend/LayoutModule/DragDro
 
         // send an AJAX request via the AjaxDataHandler
         var contentElementUid = $pasteAction ? $draggableElement : parseInt($draggableElement.data('uid'));
-        if (contentElementUid > 0) {
+        if (contentElementUid > 0 || (DragDrop.newContentElementDefaultValues.CType && !$pasteAction)) {
             var parameters = {};
             // add the information about a possible column position change
             var targetFound = $droppableElement.closest(DragDrop.contentIdentifier).data('uid');
@@ -190,7 +220,42 @@ define(['jquery', 'jquery-ui/droppable', 'TYPO3/CMS/Backend/LayoutModule/DragDro
             parameters['cmd'] = {tt_content: {}};
             parameters['data'] = {tt_content: {}};
             var copyAction = (evt && evt.originalEvent.ctrlKey || $droppableElement.hasClass('t3js-paste-copy'));
-            if (copyAction) {
+            if (DragDrop.newContentElementDefaultValues.CType) {
+                parameters['data']['tt_content']['NEW234134'] = DragDrop.newContentElementDefaultValues;
+                parameters['data']['tt_content']['NEW234134']['pid'] = targetPid;
+                parameters['data']['tt_content']['NEW234134']['colPos'] = colPos;
+                parameters['data']['tt_content']['NEW234134']['tx_gridelements_container'] = container;
+                parameters['data']['tt_content']['NEW234134']['tx_gridelements_columns'] = gridColumn;
+                parameters['data']['tt_content']['NEW234134']['sys_language_uid'] = language;
+
+                if (!parameters['data']['tt_content']['NEW234134']['header']) {
+                    parameters['data']['tt_content']['NEW234134']['header'] = TYPO3.l10n.localize('tx_gridelements_js.newcontentelementheader');
+                }
+
+                if (language > -1) {
+                    parameters['data']['tt_content']['NEW234134']['sys_language_uid'] = language;
+                }
+                parameters['DDinsertNew'] = 1;
+
+                // fire the request, and show a message if it has failed
+                require(['TYPO3/CMS/Backend/AjaxDataHandler'], function (DataHandler) {
+                    DataHandler.process(parameters).done(function (result) {
+                        if (!result.hasErrors) {
+                            // insert draggable on the new position
+                            if (!$pasteAction) {
+                                if (!$droppableElement.parent().hasClass(DragDrop.contentIdentifier.substring(1))) {
+                                    $draggableElement.detach().css({top: 0, left: 0})
+                                        .insertAfter($droppableElement.closest(DragDrop.dropZoneIdentifier));
+                                } else {
+                                    $draggableElement.detach().css({top: 0, left: 0})
+                                        .insertAfter($droppableElement.closest(DragDrop.contentIdentifier));
+                                }
+                            }
+                            self.location.reload(true);
+                        }
+                    });
+                });
+            } else if (copyAction) {
                 parameters['cmd']['tt_content'][contentElementUid] = {
                     copy: {
                         action: 'paste',
@@ -286,7 +351,7 @@ define(['jquery', 'jquery-ui/droppable', 'TYPO3/CMS/Backend/LayoutModule/DragDro
      */
     DragDrop.getGridColumnPositionForElement = function ($element) {
         var $gridContainer = $element.closest(DragDrop.gridContainerIdentifier);
-        var $columnContainer = $element.closest(DragDrop.columnIdentifier);
+        var $columnContainer = DragDrop.column;
         if ($gridContainer.length && $columnContainer.length && $columnContainer.data('colpos') !== 'undefined') {
             return $columnContainer.data('colpos');
         } else {
