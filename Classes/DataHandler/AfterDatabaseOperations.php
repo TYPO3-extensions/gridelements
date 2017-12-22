@@ -52,11 +52,11 @@ class AfterDatabaseOperations extends AbstractDataHandler
      */
     public function execute_afterDatabaseOperations(array &$fieldArray, $table, $uid, DataHandler $parentObj)
     {
-        if ($table === 'tt_content') {
+        if ($table === 'tt_content' || $table === 'pages') {
             $this->init($table, $uid, $parentObj);
             if (!$this->getTceMain()->isImporting) {
                 $this->saveCleanedUpFieldArray($fieldArray);
-                if ((int)$uid > 0) {
+                if ($table === 'tt_content' && (int)$uid > 0) {
                     $this->checkAndUpdateTranslatedElements($uid);
                 }
             }
@@ -104,6 +104,7 @@ class AfterDatabaseOperations extends AbstractDataHandler
                     ->from('tt_content')
                     ->where(
                         $queryBuilder->expr()->andX(
+                            $queryBuilder->expr()->gt('tx_gridelements_container', 0),
                             $queryBuilder->expr()->eq('tx_gridelements_container',
                                 $queryBuilder->createNamedParameter((int)$this->getPageUid(), \PDO::PARAM_INT)),
                             $queryBuilder->expr()->notIn('tx_gridelements_columns',
@@ -135,6 +136,7 @@ class AfterDatabaseOperations extends AbstractDataHandler
                     ->from('tt_content')
                     ->where(
                         $queryBuilder->expr()->andX(
+                            $queryBuilder->expr()->gt('tx_gridelements_container', 0),
                             $queryBuilder->expr()->eq('tx_gridelements_container',
                                 $queryBuilder->createNamedParameter((int)$this->getPageUid(), \PDO::PARAM_INT)),
                             $queryBuilder->expr()->in('tx_gridelements_columns',
@@ -365,11 +367,11 @@ class AfterDatabaseOperations extends AbstractDataHandler
      */
     public function getAvailableColumns($layout = '', $table = '', $id = 0)
     {
-        $tcaColumns = [];
+        $tcaColumns = '';
 
         if ($layout && $table === 'tt_content') {
             $tcaColumns = $this->layoutSetup->getLayoutColumns($layout);
-            $tcaColumns = $tcaColumns['CSV'];
+            $tcaColumns = '-2,-1,' . $tcaColumns['CSV'];
         } elseif ($table === 'pages') {
             $tcaColumns = GeneralUtility::callUserFunction(BackendLayoutView::class . '->getColPosListItemsParsed',
                 $id, $this);
