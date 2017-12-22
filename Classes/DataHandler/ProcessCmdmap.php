@@ -97,8 +97,10 @@ class ProcessCmdmap extends AbstractDataHandler
                 'tt_content',
                 ['uid' => (int)$id]
             )->fetch();
-            $containerUpdateArray[$originalContainer['tx_gridelements_container']] = -1;
-            $this->doGridContainerUpdate($containerUpdateArray);
+            if (!empty($originalContainer)) {
+                $containerUpdateArray[$originalContainer['tx_gridelements_container']] = -1;
+                $this->doGridContainerUpdate($containerUpdateArray);
+            }
         }
     }
 }
