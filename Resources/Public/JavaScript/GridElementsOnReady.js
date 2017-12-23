@@ -38,7 +38,6 @@ define(['jquery', 'TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Backend/Storag
 		if ($('.t3js-page-columns').length) {
 			OnReady.setAllowedData();
 			OnReady.activateAllCollapseIcons();
-			Paste.initialize();
 		}
 	};
 
@@ -65,11 +64,11 @@ define(['jquery', 'TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Backend/Storag
 					Paste.activatePasteModal($(this));
 				});
 			}
-			/* $(this).append(top.copyFromAnotherPageLinkTemplate);
+			$(this).append(top.copyFromAnotherPageLinkTemplate);
 			 $(this).find('.t3js-paste-new').on('click', function (evt) {
-			 evt.preventDefault();
-			 OnReady.copyFromAnotherPage($(this));
-			 });*/
+				 evt.preventDefault();
+				 OnReady.copyFromAnotherPage($(this));
+			 });
 		});
 	}
 
@@ -290,9 +289,7 @@ define(['jquery', 'TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Backend/Storag
 	 */
 	OnReady.copyFromAnotherPage = function (element) {
 		var url = top.backPath + top.browserUrl + '&mode=db&bparams=' + element.parent().attr('id') + '|||tt_content|';
-		var width = top.TYPO3.configuration.PopupWindow.width;
-		var height = top.TYPO3.configuration.PopupWindow.height;
-		OnReady.openedPopupWindow = window.open(url, 'Typo3WinBrowser', 'height=' + height + ',width=' + width + ',status=0,menubar=0,resizable=1,scrollbars=1');
+		OnReady.openedPopupWindow = window.open(url, 'Typo3WinBrowser', 'height=600,width=800,status=0,menubar=0,resizable=1,scrollbars=1');
 		OnReady.openedPopupWindow.focus();
 	}
 

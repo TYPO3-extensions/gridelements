@@ -219,7 +219,7 @@ define(['jquery', 'jquery-ui/droppable', 'TYPO3/CMS/Backend/LayoutModule/DragDro
             }
             parameters['cmd'] = {tt_content: {}};
             parameters['data'] = {tt_content: {}};
-            var copyAction = (evt && evt.originalEvent && evt.originalEvent.ctrlKey || $droppableElement.hasClass('t3js-paste-copy'));
+            var copyAction = (evt && evt.originalEvent && evt.originalEvent.ctrlKey || $droppableElement.hasClass('t3js-paste-copy') || evt === 'copyFromAnotherPage');
             if (DragDrop.newContentElementDefaultValues.CType) {
                 parameters['data']['tt_content']['NEW234134'] = DragDrop.newContentElementDefaultValues;
                 parameters['data']['tt_content']['NEW234134']['pid'] = targetPid;
