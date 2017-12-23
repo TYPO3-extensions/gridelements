@@ -42,7 +42,7 @@ When the Extension Manager is asking you for permission to add and/or
 modify some of the database tables, you should give your OK, so the
 necessary fields will be available.
 
-.. figure:: ../../Images/Installation/UpdateDatabase.png
+.. figure:: ../../../Images/Installation/UpdateDatabase.png
    :alt: Update database
    :width: 800
 .. :align: center

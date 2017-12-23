@@ -266,7 +266,7 @@ define(['jquery', 'TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Backend/Storag
 	 * generates the paste into / paste after modal
 	 */
 	OnReady.copyFromAnotherPage = function (element) {
-		var url = top.backPath + top.browserUrl + '&mode=db&bparams=' + element.parent().attr('id') + '|||tt_content|';
+		var url = top.backPath + top.browserUrl + '&mode=db&search_field=gridelements_pi1&bparams=' + element.parent().attr('id') + '|||tt_content|';
 		var width = top.TYPO3.configuration.PopupWindow.width;
 		var height = top.TYPO3.configuration.PopupWindow.height;
 		OnReady.openedPopupWindow = window.open(url, 'Typo3WinBrowser', 'height=' + height + ',width=' + width + ',status=0,menubar=0,resizable=1,scrollbars=1');

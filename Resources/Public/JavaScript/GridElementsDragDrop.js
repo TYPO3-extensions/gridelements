@@ -265,6 +265,7 @@ define(['jquery', 'jquery-ui/sortable', 'jquery-ui/droppable'], function ($) {
 				}
 				if (evt === 'copyFromAnotherPage') {
 					parameters['CB'] = {setCopyMode: 1};
+					alert(parameters);
 				}
 				// fire the request, and show a message if it has failed
 				require(['TYPO3/CMS/Backend/AjaxDataHandler'], function (DataHandler) {

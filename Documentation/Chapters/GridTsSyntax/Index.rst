@@ -99,7 +99,7 @@ The values for **colspan** , **rowspan**, **allowed** and
 
 The **allowed** feature is used to determine those content
 element types the user will be allowed to use within this column. You
-can use a comma separated list of Ctype values here and as soon as
+can use a comma separated list of CType values here and as soon as
 this contains at least one value, any other element type will be
 forbidden.
 

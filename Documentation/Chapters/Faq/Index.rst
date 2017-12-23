@@ -1,5 +1,4 @@
 
-
 .. ==================================================
 .. FOR YOUR INFORMATION
 .. --------------------------------------------------
@@ -57,7 +56,7 @@ individual input fields then?**
 **Answer:** It's very easy to provide a new CType for the tt\_content
 table with the TYPO3 API since this table already offers you lots of
 different fields to make use of. Just create the TCA structure and add
-a new content type via an extension or maybe via extTables.php,
+a new content type via an extension,
 provide some TypoScript for the frontend output and – voila – here you
 go with a new content element.
 
