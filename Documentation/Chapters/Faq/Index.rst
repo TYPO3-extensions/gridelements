@@ -1,5 +1,4 @@
 
-
 .. ==================================================
 .. FOR YOUR INFORMATION
 .. --------------------------------------------------
@@ -17,6 +16,16 @@
 
 FAQ
 ---
+
+**Question: What is the recommended way to create grid element configurations?**
+
+**Answer:** Even though you can easily create record based grid elements
+configurations using the grid wizard, the recommended way is to go for file
+based configurations with unique configuration names instead of autoincremented IDs.
+This will make sure each of your configurations will work on several systems
+even though someone might already have created record based configurations there.
+The most important advantage is that you can put these files into your favourite
+versioning system and deploy it just like any other code for your project.
 
 **Question: Are Grid Elements a full replacement for TemplaVoila?**
 
@@ -57,7 +66,7 @@ individual input fields then?**
 **Answer:** It's very easy to provide a new CType for the tt\_content
 table with the TYPO3 API since this table already offers you lots of
 different fields to make use of. Just create the TCA structure and add
-a new content type via an extension or maybe via extTables.php,
+a new content type via an extension,
 provide some TypoScript for the frontend output and – voila – here you
 go with a new content element.
 

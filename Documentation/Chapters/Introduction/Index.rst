@@ -1,5 +1,4 @@
 
-
 .. ==================================================
 .. FOR YOUR INFORMATION
 .. --------------------------------------------------
@@ -25,11 +24,10 @@ Since version 4.5 the TYPO3 core offers the so called  **grid view**,
 a feature developed during the user experience week, that gives
 backend users some nice options to get a more  **user friendly backend
 layout**. You can create your own table based backend layout records,
-fill in as many columns as you like with either a wizard or a
-*TSconfig* like code and arrange these columns to match your desired
+fill in as many columns as you like with either a wizard or a *TSconfig* like code and arrange these columns to match your desired
 layout, so backend users will easily recognize where to put their
 content. Each record can get an icon that will be used as with the
-layout selector box.
+layout selector box. Code can be stored and versioned in files as well.
 
 
 Grid Elements are pushing these features to the next level, namely content elements.
@@ -48,7 +46,7 @@ lots of different features, like form based select boxes and switches
 to control the frontend output of a grid elements based on this layout
 later on.
 
-Another usability improvement of Grid Elements is the new  **drag and
+Another usability improvement of Grid Elements is the **drag and
 drop behavior** added to the page module. You can drag elements
 between different columns within the page or element grid. Drop an
 element to move it or make a copy by pressing the CTRL-key while
@@ -66,6 +64,9 @@ A short roundup of the features and advantages
 """"""""""""""""""""""""""""""""""""""""""""""
 
 - Completely TypoScript based backend layout
+
+- Allowed and (brandnew) disallowed content types, list types and grid types as well
+  as maximum items per column configurable via wizard or TypoScript
 
 - Comfortable point and click wizard to create backend layout structures
   and assign columns and allowed content types
@@ -98,7 +99,7 @@ A short roundup of the features and advantages
 - Referenced content visible in the preview section of the reference
   element
 
-- Completely TypoScript based frontend output
+- Completely TypoScript or Fluid based frontend output
 
 - Flexform field values automatically added to the data set
 
@@ -111,7 +112,7 @@ A short roundup of the features and advantages
 - Completely based on hooks without XCLASSing (only exception is the
   list module due to missing hooks)
 
-Some of you might be used to similar features of TemplaVoilaand ask
+Some of you might be used to similar features of TemplaVoila and ask
 themselves why they should be using grid elements instead. If you want
 to know more details, check out the  **FAQ** section to find some
 answers

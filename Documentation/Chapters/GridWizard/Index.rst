@@ -27,10 +27,9 @@ Creating the basic grid structure
 """""""""""""""""""""""""""""""""
 
 When you want to use this wizard just go to the  **Configuration** tab
-of the layout record, click on the  **icon with the pencil** to the
-right of the of the  **Grid Configuration** area and wait for the
-popup window to open. When this is a newly created record, the wizard
-will look like this:
+of the layout record and you will find it within the editing form.
+Since TYPO3 version 8 there is no popup window for that wizard anymore.
+When this is a newly created record, the wizard will look like this:
 
 .. figure:: ../../Images/GridWizard/CreateBasicGridStructureStep1.png
    :alt: Create basic grid structure step 1
@@ -40,11 +39,11 @@ will look like this:
 
 
 Otherwise it will show a visible representation of the structure
-provided in the textarea.
+provided in the PageTS-Config area below.
 
-Now you can click on the  **small triangles** at the right and at the
-bottom to create the basic grid structure. + will increase the number
-of columns and/or rows, - will decrease it. To get the example we have
+Now you can click on the  **small arrows** at the right and at the
+bottom to create the basic grid structure. down and right will increase the number
+of columns and/or rows, up and left will decrease it. To get the example we have
 been using for the :ref:`Grid TS Syntax <GridTsSyntax>`,
 the basic grid would be looking like this:
 
@@ -81,22 +80,21 @@ should be looking like this:
 .. :align: center
 .. :name: Create basic grid structure step 3
 
+Finally you should give the cells a  **name** and a number to
+be used as the value for the internal colPos within a grid element
+using this layout. And you should decide about the available content, list
+and grid element types and maybe the maximum number of items for each cell.
+If you don't set the **column number**, the cell will be a placeholder that can
+not contain any element later on.
+To edit the values for each cell, just click on the  **pencil within
+the square** in the middle of each cell, fill in the values and save
+them by clicking on the  **disk symbol** .
 
 .. figure:: ../../Images/GridWizard/CreateBasicGridStructureStep4.png
    :alt: Create basic grid structure step 4
    :width: 600
 .. :align: center
 .. :name: Create basic grid structure step 4
-
-
-Finally you should give the cells a  **name** and a number to
-be used as the value for the internal colPos within a grid element
-using this layout. And you should decide about the available content
-and grid element types for each cell. If you don't set the **column number**,
-the cell will be a placeholder that can not contain any element later on.
-To edit the values for each cell, just click on the  **pencil within
-the square** in the middle of each cell, fill in the values and save
-them by clicking on the  **disk symbol** .
 
 
 Saving the layout to the CE backend layout record
@@ -112,8 +110,10 @@ looking like this:
 .. :name: Create basic grid structure step 5
 
 
-You can save it by clicking on the  **disk symbol at the upper left
-corner** of the popup window. Depending on the names and column values
-you have been using, the result should be close to the example we have
+It will be saved and transformed into the PageTS-Config syntax below when you save the record.
+Depending on the names and column values you have been using, the result should be close to the example we have
 used in the :ref:`Grid TS Syntax <GridTsSyntax>` section. When
 you open the wizard the next time, it will come up in the same state.
+
+Of course you don't have to save the configuration as a record in the database, but you can copy it and paste it into a file to
+include that just as any other usual PageTS-Config file.
