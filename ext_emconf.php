@@ -13,7 +13,7 @@ $EM_CONF[$_EXTKEY] = [
     'description' => 'This extension integrates the grid layout concept also to regular content elements - the grid elements.
 It offers a lot of new features like advanced drag & drop or real references, that improve the usability of the page and list module to speed up the daily work with the backend.',
     'category' => 'be',
-    'version' => '8.0.0-dev',
+    'version' => '8.0.0',
     'priority' => 'bottom',
     'module' => '',
     'state' => 'beta',
@@ -26,7 +26,7 @@ It offers a lot of new features like advanced drag & drop or real references, th
     'author_company' => '',
     'constraints' => [
         'depends' => [
-            'typo3' => '8.6.0-8.99.99',
+            'typo3' => '8.7.0-8.99.99',
         ],
         'conflicts' => [
             'templavoila' => '',

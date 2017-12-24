@@ -87,31 +87,39 @@ even though it might stay empty later on.
 Create the cells
 """"""""""""""""
 
-Each of the cells comes with up to 6 different keys: **name**,
-**colPos**, **colspan**, **rowspan**, **allowed** and
-**allowedGridTypes**. There must be at least the **name** and if
+Each of the cells comes with up to 7 different keys: **name**,
+**colPos**, **colspan**, **rowspan**, **allowed**, **disallowed**
+and **maxitems**. There must be at least the **name** and if
 you want to use the column as something else than a placeholder, there
 must be a value for **colPos** as well. Otherwise the cell will be
 marked as *inactive* in the page module.
 
-The values for **colspan** , **rowspan**, **allowed** and
-**allowedGridTypes** are optional.
+The values for **colspan** , **rowspan**, **allowed**, **disallowed**
+and **maxitems** are optional.
 
 The **allowed** feature is used to determine those content
 element types the user will be allowed to use within this column. You
-can use a comma separated list of Ctype values here and as soon as
-this contains at least one value, any other element type will be
-forbidden.
+can use an array with **CType**, **list_type** and **tx_gridelements_backend_layout**
+as keys here and as soon as one of those contains at least one value,
+any other type or layout will be forbidden.
 
-Same goes for the **allowedGridTypes** feature which is used to determine
-those grid types the user will be allowed to use within this column. You
-can use a comma separated list of Grid Identifiers here and as soon as
-this contains at least one value, any other Grid type will be forbidden
-and the value gridelements_pi1 will be silently added to **allowed**.
+**CType** determines the content element types, **list_type** the plugin types
+**tx_gridelements_backend_layout** the grid element types that are allowed
+in that particular column. The syntax matches that of the content defender
+extension so people using that will not have to change their configuration anymore.
 
-n this context a "Grid Identifier" can be a GridElement's UID or alias 
-(if you use records to define your grid elements) -- or a GridElement's ID
-(if you use TSconfig to define your grid elements).
+Same goes for the **disallowed** feature which is the black list variant of the
+**allowed** feature. While **alowed** explicitely lists those elements, the
+user may put into that column, **disallowed** will exclude specific element list
+or grid types keeping all others available. **disallowed** will override **allowed**
+in case they contain the same values.
+
+The **maxitems** feature will limit the maximum number of content elements to be put
+in that column. Columns having that limit will get a small counter box at the upper right.
+Limiting the number of elements will NOT completely restrict elements there, since users might
+switch a layout and won't be able to touch the then superfluous elements anymore.
+Still it will remove buttons and give visual feedback when the maximum number of elements
+has been reached (orange counter) or exceeded (red counter and items).
 
 The **colPos** value will be used while fetching the
 content elements from the database, since grid view and grid elements
@@ -135,7 +143,9 @@ only *text* and *text with image* allowed as a content type:
           name = Top
           colspan = 4
           colPos = 0
-          allowed = text,textpic
+          allowed {
+            CType = text,textpic
+          }
         }
       }
     }
@@ -145,17 +155,24 @@ only *text* and *text with image* allowed as a content type:
           name = Outer Left
           rowspan = 2
           colPos = 1
-          allowed = text,textpic
-          allowedGridTypes = 2ColumnContainer,3ColumnContainer
+          allowed {
+            CType = text,textpic
+            tx_gridelements_backend_layout = 2ColumnContainer,3ColumnContainer
+          }
         }
         2 {
           name = Left
           colPos = 2
           allowed = *
+          disallowed {
+            CType = text,textpic
+            tx_gridelements_backend_layout = 2ColumnContainer,3ColumnContainer
+          }
         }
         3 {
           name = Right
           colPos = 3
+          maxitems = 4
         }
         4 {
           name = Outer Right
