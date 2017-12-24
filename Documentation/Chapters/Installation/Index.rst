@@ -122,6 +122,8 @@ page, that you want to use as the container for your backend layouts
   <Flexform>` chapter to find out how to do that.
 
 Now save the record and create some more layouts if you like.
+If you want to use file based configuration for your CE backend layouts instead
+you can still use the wizard to generate the necessary configuration.
 
 
 Create new Grid Elements
@@ -139,17 +141,22 @@ column. After a few seconds the spinner symbol will disappear and show
 your newly created grid element. Drag in as many elements as necessary
 for the desired page layout.
 
-.. figure:: ../../Images/Installation/CreateGridElements.png
-   :alt: Create grid elements
+.. figure:: ../../Images/Installation/DragInWizard.png
+   :alt: Drag in wizard
    :width: 800
 .. :align: center
-.. :name: Create grid elements
-
+.. :name: Drag in wizard
 
 **Note:** Of course you can drag elements into the columns of a Grid
 Element as well, as soon as you got at least one of them on your page.
 So nesting can be done with the drag in wizard within just a few
 seconds as well.
+
+.. figure:: ../../Images/Installation/CreateGridElements.png
+   :alt: Create grid elements
+   :width: 800
+.. :align: center
+.. :name: Create grid elements
 
 
 Change existing elements into Grid Elements

@@ -1,5 +1,3 @@
-
-
 .. ==================================================
 .. FOR YOUR INFORMATION
 .. --------------------------------------------------
@@ -20,20 +18,17 @@ Reference
 
 .. ### BEGIN~OF~TABLE ###
 
-.. container:: table-row
 
-   Property
-         Property:
+.. _typoscript:
 
-   Data type
-         Data type:
+TypoScript
+^^^^^^^^
 
-   Description
-         Description:
 
-   Default
-         Default:
+.. _typoscript-setup:
 
+setup
+""""""""""""""""
 
 .. container:: table-row
 
@@ -50,6 +45,11 @@ Reference
    Default
          N/A
 
+
+.. _typoscript-setup-default:
+
+setup.default
+""""""""""""""""
 
 .. container:: table-row
 
@@ -72,6 +72,11 @@ Reference
          N/A
 
 
+.. _typoscript-setup-123:
+
+setup.123
+""""""""""""""""
+
 .. container:: table-row
 
    Property
@@ -87,6 +92,11 @@ Reference
    Default
          N/A
 
+
+.. _typoscript-columns:
+
+columns
+""""""""""""""""
 
 .. container:: table-row
 
@@ -105,6 +115,11 @@ Reference
          N/A
 
 
+.. _typoscript-columns-default:
+
+columns.default
+""""""""""""""""
+
 .. container:: table-row
 
    Property
@@ -121,6 +136,11 @@ Reference
          N/A
 
 
+.. _typoscript-columns-123:
+
+columns.123
+""""""""""""""""
+
 .. container:: table-row
 
    Property
@@ -136,6 +156,11 @@ Reference
          N/A
 
 
+.. _typoscript-renderObj:
+
+renderObj
+""""""""""""""""
+
 .. container:: table-row
 
    Property
@@ -150,6 +175,11 @@ Reference
    Default
          COA
 
+
+.. _typoscript-flexform-fieldname:
+
+flexform\_fieldname
+""""""""""""""""
 
 .. container:: table-row
 
@@ -167,6 +197,11 @@ Reference
          N/A
 
 
+.. _typoscript-parentgrid-fieldname:
+
+parentgrid\_fieldname
+""""""""""""""""
+
 .. container:: table-row
 
    Property
@@ -182,6 +217,11 @@ Reference
          N/A
 
 
+.. _typoscript-tx-gridelements-view-children:
+
+tx\_gridelements\_view\_children
+""""""""""""""""
+
 .. container:: table-row
 
    Property
@@ -196,6 +236,10 @@ Reference
    Default
          N/A
 
+.. _typoscript-tx-gridelements-view-columns:
+
+tx\_gridelements\_view\_columns
+""""""""""""""""
 
 .. container:: table-row
 
@@ -212,6 +256,11 @@ Reference
          N/A
 
 
+.. _typoscript-tx-gridelements-view-column-123:
+
+tx\_gridelements\_view\_column\_123
+""""""""""""""""
+
 .. container:: table-row
 
    Property
@@ -226,6 +275,11 @@ Reference
    Default
          N/A
 
+
+.. _typoscript-tx-gridelements-view-child-123:
+
+tx\_gridelements\_view\_child\_123
+""""""""""""""""
 
 .. container:: table-row
 
