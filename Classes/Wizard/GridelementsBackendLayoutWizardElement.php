@@ -187,19 +187,17 @@ class GridelementsBackendLayoutWizardElement extends BackendLayoutWizardElement
                     $gridType['key'] = $key;
                     if (substr($gridType['key'], 0, 2) !== '--') {
                         $gridType['label'] = $lang->sL($item['title'], true);
-                        if (!empty($item['icon']) && is_array($item['icon'])) {
-                            if (strpos($item['icon'][0], 'EXT:') === 0) {
-                                $gridType['icon'] = \TYPO3\CMS\Core\Utility\GeneralUtility::getFileAbsFileName($item['icon']);
-                            } elseif (strpos($item['icon'][0], '/typo3') === 0) {
-                                $gridType['icon'] = '../../../' . $item['icon'];
-                            } else {
-                                $gridType['icon'] = '../../../' . '../typo3/sysext/core/Resources/Public/Icons/T3Icons/content/' . $item['icon'][0];
-                            }
-                            // Check if file ending exists, therefore compare pos of last slash to pos of last dot
-                            if (!empty($gridType['icon']) && strrpos($gridType['icon'], '/') > strrpos($gridType['icon'],
-                                    '.')) {
-                                $gridType['icon'] .= '.svg';
-                            }
+                        if (strpos($item['icon'], 'EXT:') === 0) {
+                            $gridType['icon'] = \TYPO3\CMS\Core\Utility\GeneralUtility::getFileAbsFileName($item['icon']);
+                        } elseif (strpos($item['icon'], '/typo3') === 0) {
+                            $gridType['icon'] = '../../../' . $item['icon'];
+                        } else {
+                            $gridType['icon'] = '../../../' . '../typo3/sysext/core/Resources/Public/Icons/T3Icons/content/' . $item['icon'];
+                        }
+                        // Check if file ending exists, therefore compare pos of last slash to pos of last dot
+                        if (!empty($gridType['icon']) && strrpos($gridType['icon'], '/') > strrpos($gridType['icon'],
+                                '.')) {
+                            $gridType['icon'] .= '.svg';
                         }
                         $gridTypes[] = $gridType;
                     }
