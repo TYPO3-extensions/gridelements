@@ -27,6 +27,7 @@ use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Core\Database\Query\Restriction\DeletedRestriction;
 use TYPO3\CMS\Core\DataHandling\DataHandler;
+use TYPO3\CMS\Core\Utility\DebugUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -126,6 +127,7 @@ abstract class AbstractDataHandler
             ->execute()
             ->fetch();
         if (!empty($currentValues['l18n_parent'])) {
+            $originalUid = (int)$currentValues['uid'];
             $queryBuilder = $this->getQueryBuilder();
             $currentValues = $queryBuilder
                 ->select('uid', 'tx_gridelements_container', 'tx_gridelements_columns', 'sys_language_uid', 'colPos',
@@ -138,6 +140,16 @@ abstract class AbstractDataHandler
                 ->setMaxResults(1)
                 ->execute()
                 ->fetch();
+
+            $updateArray = $currentValues;
+            unset($updateArray['uid']);
+            unset($updateArray['sys_language_uid']);
+            unset($updateArray['l18n_parent']);
+            $this->getConnection()->update(
+                'tt_content',
+                $updateArray,
+                ['uid' => (int)$originalUid]
+            );
         }
         if (empty($currentValues['uid'])) {
             return;
