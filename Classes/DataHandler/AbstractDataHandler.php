@@ -27,6 +27,7 @@ use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Core\Database\Query\Restriction\DeletedRestriction;
 use TYPO3\CMS\Core\DataHandling\DataHandler;
+use TYPO3\CMS\Core\Utility\DebugUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -184,6 +185,9 @@ abstract class AbstractDataHandler
             } else if ($translatedElement['tx_gridelements_container'] == $currentValues['tx_gridelements_container']) {
                 $updateArray['tx_gridelements_container'] = (int)$currentValues['tx_gridelements_container'];
                 $updateArray['tx_gridelements_columns'] = (int)$currentValues['tx_gridelements_columns'];
+            } else {
+                $updateArray['tx_gridelements_container'] = 0;
+                $updateArray['tx_gridelements_columns'] = 0;
             }
             $updateArray['colPos'] = (int)$currentValues['colPos'];
 
