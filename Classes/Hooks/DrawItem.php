@@ -1144,7 +1144,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
         $items = $queryBuilder
             ->select('*')
             ->addSelectLiteral($queryBuilder->expr()->inSet('pid',
-                $queryBuilder->createNamedParameter($itemList, Connection::PARAM_INT_ARRAY) . ' AS inSet'))
+                $queryBuilder->createNamedParameter($itemList, Connection::PARAM_INT_ARRAY)) . ' AS inSet')
             ->from('tt_content')
             ->where(
                 $queryBuilder->expr()->neq('uid',
