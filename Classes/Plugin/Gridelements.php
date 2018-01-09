@@ -100,7 +100,7 @@ class Gridelements extends ContentObjectRenderer
         $layoutSetup->init($this->cObj->data['pid'], $conf);
 
         $availableColumns = $layoutSetup->getLayoutColumns($layout);
-        $csvColumns = str_replace('-2,-1,', '', $availableColumns['CSV']);
+        $csvColumns = ltrim(str_replace('-2,-1', '', $availableColumns['CSV']), ',');
         $this->getChildren($element, $pid, $csvColumns);
 
         // and we have to determine the frontend setup related to the backend layout record which is assigned to this container
