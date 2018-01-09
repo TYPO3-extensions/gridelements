@@ -380,7 +380,7 @@ class AfterDatabaseOperations extends AbstractDataHandler
                 }
             }
             // Implode into a CSV string as BackendLayoutView->getColPosListItemsParsed returns an array
-            $tcaColumns = '-2,-1,' . implode(',', $temp);
+            $tcaColumns = rtrim('-2,-1,' . implode(',', $temp), ',');
         }
         return $tcaColumns;
     }
