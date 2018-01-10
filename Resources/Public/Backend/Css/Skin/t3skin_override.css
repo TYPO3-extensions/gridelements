@@ -391,11 +391,44 @@
 	display: block;
 }
 
-.t3-grid-cell-horizontal {
-	white-space: nowrap;
+.t3-grid-cell-horizontal > .t3js-sortable {
+	display: table;
+	vertical-align: top;
+	width: 100%;
+}
+
+.t3-grid-cell-horizontal > .t3js-sortable > .t3js-page-ce {
+	display: table-row;
+}
+
+.t3-grid-cell-horizontal > .t3js-sortable > .t3js-page-ce > .ui-droppable {
+	margin: 10px;
+}
+
+.t3-grid-cell-horizontal > .t3js-sortable > .t3js-page-ce > .t3js-page-new-ce {
+	display: table-cell;
+	padding: 10px;
+}
+
+.t3-grid-cell-horizontal > .t3js-sortable > .t3js-page-ce-sortable > .t3js-page-new-ce {
+	display: block;
+	padding: 0!important;
 }
 
 .t3-grid-cell-horizontal > .t3js-sortable > .t3js-page-ce-sortable {
-	display: inline-block;
+	display: table-cell;
+	padding: 0px 10px 0px;
 	vertical-align: top;
+}
+
+.t3-grid-cell-horizontal > .t3js-sortable > .t3js-page-ce > .t3-page-ce-dropzone-possible {
+	margin: -28px 0 -27px 0!important;
+}
+
+.t3-grid-cell-horizontal > .t3js-sortable > .t3js-page-ce-sortable > .t3-page-ce-dropzone-available {
+	margin: 10px 0!important;
+}
+
+.t3-grid-cell-horizontal > .t3js-sortable > .t3js-page-ce-sortable > .t3-page-ce-dropzone-possible {
+	margin: -38px 0 -37px 0!important;
 }
