@@ -278,7 +278,7 @@ class AfterDatabaseOperations extends AbstractDataHandler
 
         if ($layout && $table === 'tt_content') {
             $tcaColumns = $this->layoutSetup->getLayoutColumns($layout);
-            $tcaColumns = rtrim('-2,-1,' . $tcaColumns['CSV'], ',');
+            $tcaColumns = $tcaColumns['CSV'];
         } elseif ($table === 'pages') {
             $tcaColumns = GeneralUtility::callUserFunction(BackendLayoutView::class . '->getColPosListItemsParsed',
                 $id, $this);
