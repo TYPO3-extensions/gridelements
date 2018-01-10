@@ -25,8 +25,6 @@ if (TYPO3_MODE === 'BE') {
 
     $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_befunc.php']['getFlexFormDSClass'][] = \GridElementsTeam\Gridelements\Hooks\BackendUtilityGridelements::class;
 
-    $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['typo3/template.php']['preHeaderRenderHook'][] = \GridElementsTeam\Gridelements\Hooks\PreHeaderRenderHook::class . '->main';
-
     $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['tx_templavoila_api']['apiIsRunningTCEmain'] = true;
 
     $GLOBALS['TYPO3_USER_SETTINGS']['columns']['dragAndDropHideNewElementWizardInfoOverlay'] = [
@@ -57,8 +55,8 @@ if (TYPO3_MODE === 'BE') {
             showGridInformation
             ';
 
-    $TBE_STYLES['skins']['gridelements']['name'] = 'gridelements';
-    $TBE_STYLES['skins']['gridelements']['stylesheetDirectories']['structure'] = 'EXT:' . ($_EXTKEY) . '/Resources/Public/Backend/Css/Skin/';
+    $GLOBALS['TBE_STYLES']['skins']['gridelements']['name'] = 'gridelements';
+    $GLOBALS['TBE_STYLES']['skins']['gridelements']['stylesheetDirectories']['structure'] = 'EXT:' . ($_EXTKEY) . '/Resources/Public/Backend/Css/Skin/';
 }
 
 // Hooks
