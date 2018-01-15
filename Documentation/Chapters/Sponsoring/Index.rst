@@ -23,6 +23,7 @@ Thanks in advance for your support.
 
 How to support our efforts?
 ---------------------------
+
 .. |logo0| image:: ../../Images/Sponsoring/CodersCareLogo.png
     :target: https://coders.care
     :width: 300px
