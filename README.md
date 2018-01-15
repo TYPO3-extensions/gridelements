@@ -6,6 +6,7 @@
 [amazon-url]: https://www.amazon.de/gp/registry/wishlist/2I80GX9ZSMYXX
 [documentation-url]: https://docs.typo3.org/typo3cms/extensions/gridelements
 [blog-url]: https://coders.care/blog/article/service-level-agreements-for-typo3-extensions
+
 # Gridelements
 
 This TYPO3 extension integrates the grid based backend layout concept known from the page module also to regular content elements - the grid elements.
