@@ -4,7 +4,7 @@
   "type": "typo3-cms-extension",
   "keywords": ["TYPO3 CMS", "Grids", "Gridelements"],
   "homepage": "https://forge.typo3.org/projects/extension-gridelements2",
-  "license": "GPL-2.0+",
+  "license": "GPL-2.0-or-later",
   "version": "7.2.1",
   "support": {
     "issues": "https://forge.typo3.org/"
