@@ -280,7 +280,6 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
     protected function setSingleColPosItems(PageLayoutView $parentObject, &$colPosValues, &$row)
     {
         $specificIds = $this->helper->getSpecificIds($row);
-        $parentObject->setOverridePageIdList([$specificIds['pid']]);
 
         $expressionBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
             ->getQueryBuilderForTable('tt_content')
@@ -299,8 +298,6 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
         $restrictions->removeByType(StartTimeRestriction::class);
         $restrictions->removeByType(EndTimeRestriction::class);
         $queryBuilder->setRestrictions($restrictions);
-
-        $parentObject->setOverridePageIdList([]);
 
         $colPosValues[] = [0, ''];
 
@@ -372,7 +369,6 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
     {
         $colPosList = array_keys($colPosValues);
         $specificIds = $this->helper->getSpecificIds($row);
-        $parentObject->setOverridePageIdList([$specificIds['pid']]);
 
         $queryBuilder = $this->getQueryBuilder();
         $constraints = [
