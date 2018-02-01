@@ -42,7 +42,6 @@ use TYPO3\CMS\Core\Messaging\FlashMessage;
 use TYPO3\CMS\Core\Messaging\FlashMessageService;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Type\Bitmask\Permission;
-use TYPO3\CMS\Core\Utility\DebugUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\StringUtility;
 use TYPO3\CMS\Core\Versioning\VersionState;
@@ -457,7 +456,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
         $maxItems = (int)$values['maxitems'];
         $url = '';
         $pageinfo = BackendUtility::readPageAccess($parentObject->id, '');
-        if (get_class($this->getPageLayoutController()) === PageLayoutController::class) {
+        if (!empty($this->getPageLayoutController()) && get_class($this->getPageLayoutController()) === PageLayoutController::class) {
             $contentIsNotLockedForEditors = $this->getPageLayoutController()->contentIsNotLockedForEditors();
         } else {
             $contentIsNotLockedForEditors = true;
@@ -933,10 +932,12 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
                     foreach ($disallowedContentTypes as $key => &$ctype) {
                         $ctype = $key;
                     }
-                } else if(isset($disallowedContentTypes['*'])) {
-                    $disallowedGridTypes['*'] = '*';
                 } else {
-                    $disallowedContentTypes = [];
+                    if (isset($disallowedContentTypes['*'])) {
+                        $disallowedGridTypes['*'] = '*';
+                    } else {
+                        $disallowedContentTypes = [];
+                    }
                 }
                 // when everything is disallowed, no further checks are necessary
                 if (!isset($disallowedContentTypes['*'])) {
@@ -960,12 +961,14 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
                         foreach ($disallowedListTypes as $key => &$ctype) {
                             $ctype = $key;
                         }
-                    } else if(isset($disallowedListTypes['*'])) {
-                        // when each list type is disallowed, no CType list is necessary anymore
-                        $disallowedListTypes['*'] = '*';
-                        unset($allowedContentTypes['list']);
                     } else {
-                        $disallowedListTypes = [];
+                        if (isset($disallowedListTypes['*'])) {
+                            // when each list type is disallowed, no CType list is necessary anymore
+                            $disallowedListTypes['*'] = '*';
+                            unset($allowedContentTypes['list']);
+                        } else {
+                            $disallowedListTypes = [];
+                        }
                     }
                     // when each list type is disallowed, no further list type checks are necessary
                     if (!isset($disallowedListTypes['*'])) {
@@ -995,12 +998,14 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
                         foreach ($disallowedGridTypes as $key => &$ctype) {
                             $ctype = $key;
                         }
-                    } else if(isset($disallowedGridTypes['*'])) {
-                        // when each list type is disallowed, no CType gridelements_pi1 is necessary anymore
-                        $disallowedGridTypes['*'] = '*';
-                        unset($allowedContentTypes['gridelements_pi1']);
                     } else {
-                        $disallowedGridTypes = [];
+                        if (isset($disallowedGridTypes['*'])) {
+                            // when each list type is disallowed, no CType gridelements_pi1 is necessary anymore
+                            $disallowedGridTypes['*'] = '*';
+                            unset($allowedContentTypes['gridelements_pi1']);
+                        } else {
+                            $disallowedGridTypes = [];
+                        }
                     }
                     // when each list type is disallowed, no further grid types checks are necessary
                     if (!isset($disallowedGridTypes['*'])) {
@@ -1042,14 +1047,20 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
                     (!isset($columnConfig['colPos']) || $columnConfig['colPos'] === '' ? ' t3-grid-cell-unassigned' : '') .
                     (isset($columnConfig['colspan']) && $columnConfig['colPos'] !== '' ? ' t3-grid-cell-width' . $colSpan : '') .
                     (isset($columnConfig['rowspan']) && $columnConfig['colPos'] !== '' ? ' t3-grid-cell-height' . $rowSpan : '') .
-                    ($disableNewContent ? ' t3-page-ce-disable-new-ce' : '').
+                    ($disableNewContent ? ' t3-page-ce-disable-new-ce' : '') .
                     ($layout['horizontal'] ? ' t3-grid-cell-horizontal' : '') . ' ' . $expanded . '"' .
-                    ' data-allowed-ctype="' . (!empty($allowedContentTypes) ? join(',', $allowedContentTypes) : '*') . '"' .
-                    (!empty($disallowedContentTypes) ? ' data-disallowed-ctype="' . join(',', $disallowedContentTypes) . '"' : '') .
-                    (!empty($allowedListTypes) ? ' data-allowed-list_type="' . join(',', $allowedListTypes) . '"' : '') .
-                    (!empty($disallowedListTypes) ? ' data-disallowed-list_type="' . join(',', $disallowedListTypes) . '"' : '') .
-                    (!empty($allowedGridTypes) ? ' data-allowed-tx_gridelements_backend_layout="' . join(',', $allowedGridTypes) . '"' : '') .
-                    (!empty($disallowedGridTypes) ? ' data-disallowed-tx_gridelements_backend_layout="' . join(',', $disallowedGridTypes) . '"' : '') .
+                    ' data-allowed-ctype="' . (!empty($allowedContentTypes) ? join(',',
+                        $allowedContentTypes) : '*') . '"' .
+                    (!empty($disallowedContentTypes) ? ' data-disallowed-ctype="' . join(',',
+                            $disallowedContentTypes) . '"' : '') .
+                    (!empty($allowedListTypes) ? ' data-allowed-list_type="' . join(',',
+                            $allowedListTypes) . '"' : '') .
+                    (!empty($disallowedListTypes) ? ' data-disallowed-list_type="' . join(',',
+                            $disallowedListTypes) . '"' : '') .
+                    (!empty($allowedGridTypes) ? ' data-allowed-tx_gridelements_backend_layout="' . join(',',
+                            $allowedGridTypes) . '"' : '') .
+                    (!empty($disallowedGridTypes) ? ' data-disallowed-tx_gridelements_backend_layout="' . join(',',
+                            $disallowedGridTypes) . '"' : '') .
                     (!empty($maxItems) ? ' data-maxitems="' . $maxItems . '"' : '') .
                     ' data-state="' . $expanded . '">';
                 $grid .= ($this->helper->getBackendUser()->uc['hideColumnHeaders'] ? '' : $head[$columnKey]);
@@ -1140,7 +1151,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
         $items = $queryBuilder
             ->select('*')
             ->addSelectLiteral($queryBuilder->expr()->inSet('pid',
-                $queryBuilder->createNamedParameter($itemList, Connection::PARAM_INT_ARRAY)) . ' AS inSet')
+                    $queryBuilder->createNamedParameter($itemList, Connection::PARAM_INT_ARRAY)) . ' AS inSet')
             ->from('tt_content')
             ->where(
                 $queryBuilder->expr()->neq('uid',
