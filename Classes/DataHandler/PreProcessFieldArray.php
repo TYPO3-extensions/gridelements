@@ -313,7 +313,7 @@ class PreProcessFieldArray extends AbstractDataHandler
             ->getRestrictions()
             ->removeAll();
         $parent = $queryBuilder
-            ->select('t1.colPos, t1.tx_gridelements_container')
+            ->select('t1.colPos', 't1.tx_gridelements_container')
             ->from('tt_content', 't1')
             ->join(
                 't1',
@@ -325,7 +325,8 @@ class PreProcessFieldArray extends AbstractDataHandler
                 $queryBuilder->expr()->eq('t2.uid',
                     $queryBuilder->createNamedParameter((int)$contentId, \PDO::PARAM_INT))
             )
-            ->execute();
+            ->execute()
+            ->fetch();
         if (!empty($parent) && $parent['tx_gridelements_container'] > 0) {
             $colPos = $this->checkForRootColumn($parent['tx_gridelements_container']);
         } else {
