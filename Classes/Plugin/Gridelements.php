@@ -409,13 +409,16 @@ class Gridelements extends ContentObjectRenderer
         // each of the children will now be rendered separately and the output will be added to it's particular column
         $rawColumns = [];
         if (!empty($this->cObj->data['tx_gridelements_view_children'])) {
+            $index = 0;
             foreach ($this->cObj->data['tx_gridelements_view_children'] as $child) {
                 $rawColumns[$child['tx_gridelements_columns']][] = $child;
                 $renderedChild = $child;
                 $this->renderChildIntoParentColumn($columns, $renderedChild, $parentGridData, $parentRecordNumbers,
                     $typoScriptSetup);
                 $currentParentGrid['data']['tx_gridelements_view_child_' . $child['uid']] = $renderedChild;
+                $currentParentGrid['data']['tx_gridelements_view_children'][$index]['tx_gridelements_view'] = $renderedChild;
                 unset($renderedChild);
+                ++$index;
             }
             $currentParentGrid['data']['tx_gridelements_view_raw_columns'] = $rawColumns;
         }
