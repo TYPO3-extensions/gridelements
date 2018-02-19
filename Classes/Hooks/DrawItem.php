@@ -371,10 +371,10 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
 
         $queryBuilder = $this->getQueryBuilder();
         $constraints = [
-            $queryBuilder->expr()->eq('pid', $queryBuilder->createNamedParameter($specificIds['pid'], \PDO::PARAM_INT)),
+            $queryBuilder->expr()->eq('pid', $queryBuilder->createNamedParameter($row['pid'], \PDO::PARAM_INT)),
             $queryBuilder->expr()->eq('colPos', $queryBuilder->createNamedParameter(-1, \PDO::PARAM_INT)),
             $queryBuilder->expr()->in('tx_gridelements_container',
-                $queryBuilder->createNamedParameter([(int)$specificIds['uid'], $specificIds['uid']],
+                $queryBuilder->createNamedParameter([(int)$row['uid'], $specificIds['uid']],
                     Connection::PARAM_INT_ARRAY)),
             $queryBuilder->expr()->in('tx_gridelements_columns',
                 $queryBuilder->createNamedParameter($colPosList, Connection::PARAM_INT_ARRAY)),
