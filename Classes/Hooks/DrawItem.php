@@ -1045,6 +1045,11 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
                 $disableNewContent = $gridContent['numberOfItems'][$columnKey] >= $maxItems && $maxItems > 0;
                 $tooManyItems = $gridContent['numberOfItems'][$columnKey] > $maxItems && $maxItems > 0;
                 $expanded = $this->helper->getBackendUser()->uc['moduleData']['page']['gridelementsCollapsedColumns'][$row['uid'] . '_' . $columnKey] ? 'collapsed' : 'expanded';
+                if (!empty($columnConfig['name']) && $columnKey === 32768) {
+                    $columnHead = htmlspecialchars($columnConfig['name']) . ' (' . $this->languageService->getLL('notAssigned') . ')';
+                } else {
+                    $columnHead = $head[$columnKey];
+                }
                 $grid .= '<td valign="top"' .
                     (isset($columnConfig['colspan']) ? ' colspan="' . $colSpan . '"' : '') .
                     (isset($columnConfig['rowspan']) ? ' rowspan="' . $rowSpan . '"' : '') .
@@ -1069,7 +1074,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
                             $disallowedGridTypes) . '"' : '') .
                     (!empty($maxItems) ? ' data-maxitems="' . $maxItems . '"' : '') .
                     ' data-state="' . $expanded . '">';
-                $grid .= ($this->helper->getBackendUser()->uc['hideColumnHeaders'] ? '' : $head[$columnKey]);
+                $grid .= ($this->helper->getBackendUser()->uc['hideColumnHeaders'] ? '' : $columnHead);
                 if ($maxItems > 0) {
                     $maxItemsClass = ($disableNewContent ? ' warning' : ' success');
                     $maxItemsClass = ($tooManyItems ? ' danger' : $maxItemsClass);
