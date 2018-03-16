@@ -3,3 +3,6 @@ additionalStylesheet =
 
 # cat=basic; type=boolean; label=LLL:EXT:gridelements/Resources/Private/Language/locallang.xlf:nestingInListModule
 nestingInListModule = 0
+
+# cat=basic; type=boolean; label=LLL:EXT:gridelements/Resources/Private/Language/locallang.xlf:overlayShortcutTranslation
+overlayShortcutTranslation = 0
