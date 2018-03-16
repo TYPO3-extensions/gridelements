@@ -215,7 +215,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
 
         // if we got a selected backend layout, we have to create the layout table now
         if ($layoutUid && isset($layout['config'])) {
-            $itemContent = $this->renderGridLayoutTable($layout, $gridElement, $head, $gridContent);
+            $itemContent = $this->renderGridLayoutTable($layout, $gridElement, $head, $gridContent, $parentObject);
         } else {
             $itemContent = '<div class="t3-grid-container t3-grid-element-container">';
             $itemContent .= '<table border="0" cellspacing="0" cellpadding="0" width="100%" height="100%" class="t3-page-columns t3-grid-table">';
@@ -671,10 +671,11 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
      * @param array $row : The current data row for the container item
      * @param array $head : The data for the column headers of the grid we are going to render
      * @param array $gridContent : The content data of the grid we are going to render
+     * @param PageLayoutView $parentObject
      *
      * @return string
      */
-    public function renderGridLayoutTable($layoutSetup, $row, $head, $gridContent)
+    public function renderGridLayoutTable($layoutSetup, $row, $head, $gridContent, PageLayoutView $parentObject)
     {
         $specificIds = $this->helper->getSpecificIds($row);
 
@@ -747,12 +748,17 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
                 $colSpan = (int)$columnConfig['colspan'];
                 $rowSpan = (int)$columnConfig['rowspan'];
                 $expanded = $this->helper->getBackendUser()->uc['moduleData']['page']['gridelementsCollapsedColumns'][$row['uid'] . '_' . $columnKey] ? 'collapsed' : 'expanded';
+                if (!empty($columnConfig['name']) && $columnKey === 32768) {
+                    $columnHead = $this->tt_content_drawColHeader(htmlspecialchars($columnConfig['name']) . ' (' . $this->languageService->getLL('notAssigned') . ')', '', $parentObject);
+                } else {
+                    $columnHead = $head[$columnKey];
+                }
                 $grid .= '<td valign="top"' . (isset($columnConfig['colspan']) ? ' colspan="' . $colSpan . '"' : '') . (isset($columnConfig['rowspan']) ? ' rowspan="' . $rowSpan . '"' : '') . 'data-colpos="' . $columnKey . '" data-columnkey="' . $specificIds['uid'] . '_' . $columnKey . '"
 					class="t3-grid-cell t3js-page-column t3-page-column t3-page-column-' . $columnKey . (!isset($columnConfig['colPos']) || $columnConfig['colPos'] === '' ? ' t3-grid-cell-unassigned' : '') . (isset($columnConfig['colspan']) && $columnConfig['colPos'] !== '' ? ' t3-grid-cell-width' . $colSpan : '') . (isset($columnConfig['rowspan']) && $columnConfig['colPos'] !== '' ? ' t3-grid-cell-height' . $rowSpan : '') . ' ' . ($layoutSetup['horizontal'] ? ' t3-grid-cell-horizontal' : '') . (!empty($allowedContentTypes) ? ' ' . join(' ',
                             $allowedContentTypes) : ' t3-allow-all') . (!empty($allowedGridTypes) ? ' t3-allow-gridtype ' . join(' ',
                             $allowedGridTypes) : '') . ' ' . $expanded . '" data-state="' . $expanded . '">';
 
-                $grid .= ($this->helper->getBackendUser()->uc['hideColumnHeaders'] ? '' : $head[$columnKey]) . $gridContent[$columnKey];
+                $grid .= ($this->helper->getBackendUser()->uc['hideColumnHeaders'] ? '' : $columnHead) . $gridContent[$columnKey];
                 $grid .= '</td>';
             }
             $grid .= '</tr>';
