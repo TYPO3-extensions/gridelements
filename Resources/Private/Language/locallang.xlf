@@ -9,6 +9,9 @@
 			<trans-unit id="nestingInListModule" xml:space="preserve">
 				<source>Enable nesting in list module</source>
 			</trans-unit>
+			<trans-unit id="overlayShortcutTranslation" xml:space="preserve">
+				<source>Use language overlay for content and page records referenced in shortcut elements.</source>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>

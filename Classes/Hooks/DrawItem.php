@@ -51,6 +51,11 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
 {
 
     /**
+     * @var array
+     */
+    protected $extentensionConfiguration;
+
+    /**
      * @var Helper
      */
     protected $helper;
@@ -89,6 +94,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
 
     public function __construct()
     {
+        $this->extentensionConfiguration = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['gridelements']);
         $this->setDatabaseConnection($GLOBALS['TYPO3_DB']);
         $this->setLanguageService($GLOBALS['LANG']);
         $this->helper = Helper::getInstance();
@@ -240,9 +246,9 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
                 $shortcutItem = trim($shortcutItem);
                 if (strpos($shortcutItem, 'pages_') !== false) {
                     $this->collectContentDataFromPages($shortcutItem, $collectedItems, $row['recursive'], $showHidden,
-                        $deleteClause, $row['uid']);
+                        $deleteClause, $row['uid'], $row['sys_language_uid']);
                 } else if (strpos($shortcutItem, '_') === false || strpos($shortcutItem, 'tt_content_') !== false) {
-                    $this->collectContentData($shortcutItem, $collectedItems, $showHidden, $deleteClause, $row['uid']);
+                    $this->collectContentData($shortcutItem, $collectedItems, $showHidden, $deleteClause, $row['uid'], $row['sys_language_uid']);
                 }
             }
             if (!empty($collectedItems)) {
@@ -765,6 +771,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
      * @param string $showHidden : query String containing enable fields
      * @param string $deleteClause : query String to check for deleted items
      * @param int $parentUid : uid of the referencing tt_content record
+     * @param int $language : sys_language_uid of the referencing tt_content record
      *
      * @return void
      */
@@ -774,7 +781,8 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
         $recursive = 0,
         &$showHidden,
         &$deleteClause,
-        $parentUid
+        $parentUid,
+        $language = 0
     ) {
         $itemList = str_replace('pages_', '', $shortcutItem);
         if ($recursive) {
@@ -785,8 +793,14 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
         }
         $itemRows = $this->databaseConnection->exec_SELECTgetRows('*', 'tt_content',
             'uid != ' . (int)$parentUid . ' AND pid IN (' . $itemList . ') AND colPos >= 0 ' . $showHidden . $deleteClause,
-            '', 'FIND_IN_SET(pid, \'' . $itemList . '\'),colPos,sorting');
+            '', 'sys_language_uid IN (0,-1) AND FIND_IN_SET(pid, \'' . $itemList . '\'),colPos,sorting');
         foreach ($itemRows as $itemRow) {
+            if (!empty($this->extentensionConfiguration['overlayShortcutTranslation']) && $language > 0) {
+                $translatedItem = BackendUtility::getRecordLocalization('tt_content', $itemRow['uid'], $language);
+                if (!empty($translatedItem)) {
+                    $itemRow = array_shift($translatedItem);
+                }
+            }
             if ($this->helper->getBackendUser()->workspace > 0) {
                 BackendUtility::workspaceOL('tt_content', $itemRow, $this->helper->getBackendUser()->workspace);
             }
@@ -803,15 +817,22 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
      * @param string $showHidden : query String containing enable fields
      * @param string $deleteClause : query String to check for deleted items
      * @param int $parentUid : uid of the referencing tt_content record
+     * @param int $language : sys_language_uid of the referencing tt_content record
      *
      * @return void
      */
-    public function collectContentData($shortcutItem, &$collectedItems, &$showHidden, &$deleteClause, $parentUid)
+    public function collectContentData($shortcutItem, &$collectedItems, &$showHidden, &$deleteClause, $parentUid, $language = 0)
     {
         $shortcutItem = str_replace('tt_content_', '', $shortcutItem);
         if ((int)$shortcutItem !== (int)$parentUid) {
             $itemRow = $this->databaseConnection->exec_SELECTgetSingleRow('*', 'tt_content',
                 'uid=' . (int)$shortcutItem . $showHidden . $deleteClause);
+            if (!empty($this->extentensionConfiguration['overlayShortcutTranslation']) && $language > 0) {
+                $translatedItem = BackendUtility::getRecordLocalization('tt_content', $itemRow['uid'], $language);
+                if (!empty($translatedItem)) {
+                    $itemRow = array_shift($translatedItem);
+                }
+            }
             if ($this->helper->getBackendUser()->workspace > 0) {
                 BackendUtility::workspaceOL('tt_content', $itemRow, $this->helper->getBackendUser()->workspace);
             }
