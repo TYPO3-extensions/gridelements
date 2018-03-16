@@ -427,10 +427,14 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Severity', 'TYPO
      */
     GridEditor.setName = function (newName, col, row) {
         var cell = GridEditor.getCell(col, row);
-        if (!cell || newName.trim() === '') {
+        if (!cell) {
             return false;
         }
-        cell.name = GridEditor.stripMarkup(newName);
+        if (newName.trim() === '') {
+            cell.name = undefined;
+        } else {
+            cell.name = GridEditor.stripMarkup(newName);
+        }
         return true;
     };
 
@@ -446,10 +450,14 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Severity', 'TYPO
      */
     GridEditor.setColumn = function (newColumn, col, row) {
         var cell = GridEditor.getCell(col, row);
-        if (!cell || newColumn.trim() === '') {
+        if (!cell) {
             return false;
         }
-        cell.column = parseInt(newColumn, 10);
+        if (newColumn.trim() === '') {
+            cell.column = undefined;
+        } else {
+            cell.column = parseInt(newColumn, 10);
+        }
         return true;
     };
 
@@ -465,7 +473,7 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Severity', 'TYPO
      */
     GridEditor.setMaxItems = function (newMaxItems, col, row) {
         var cell = GridEditor.getCell(col, row);
-        if (!cell || newMaxItems.trim() === '') {
+        if (!cell) {
             return false;
         }
         cell.maxitems = parseInt(newMaxItems, 10);
