@@ -56,7 +56,11 @@ if (TYPO3_MODE === 'BE') {
             ';
 
     $GLOBALS['TBE_STYLES']['skins']['gridelements']['name'] = 'gridelements';
-    $GLOBALS['TBE_STYLES']['skins']['gridelements']['stylesheetDirectories']['structure'] = 'EXT:' . ($_EXTKEY) . '/Resources/Public/Backend/Css/Skin/';
+    $GLOBALS['TBE_STYLES']['skins']['gridelements']['stylesheetDirectories']['gridelements_structure'] = 'EXT:' . ($_EXTKEY) . '/Resources/Public/Backend/Css/Skin/';
+    if ($_EXTCONF['additionalStylesheet'] && \TYPO3\CMS\Core\Utility\GeneralUtility::validPathStr($_EXTCONF['additionalStylesheet'])) {
+        $GLOBALS['TBE_STYLES']['skins']['gridelements']['stylesheetDirectories']['gridelements_additional'] = $_EXTCONF['additionalStylesheet'];
+    }
+
 }
 
 // Hooks

@@ -58,6 +58,11 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
 {
 
     /**
+     * @var array
+     */
+    protected $extentensionConfiguration;
+
+    /**
      * @var Helper
      */
     protected $helper;
@@ -96,6 +101,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
 
     public function __construct()
     {
+        $this->extentensionConfiguration = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['gridelements']);
         $this->setLanguageService($GLOBALS['LANG']);
         $this->helper = Helper::getInstance();
         $this->iconFactory = GeneralUtility::makeInstance(IconFactory::class);
@@ -1098,10 +1104,10 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
             foreach ($shortcutItems as $shortcutItem) {
                 $shortcutItem = trim($shortcutItem);
                 if (strpos($shortcutItem, 'pages_') !== false) {
-                    $this->collectContentDataFromPages($shortcutItem, $collectedItems, $row['recursive'], $row['uid']);
+                    $this->collectContentDataFromPages($shortcutItem, $collectedItems, $row['recursive'], $row['uid'], $row['sys_language_uid']);
                 } else {
                     if (strpos($shortcutItem, '_') === false || strpos($shortcutItem, 'tt_content_') !== false) {
-                        $this->collectContentData($shortcutItem, $collectedItems, $row['uid']);
+                        $this->collectContentData($shortcutItem, $collectedItems, $row['uid'], $row['sys_language_uid']);
                     }
                 }
             }
@@ -1129,6 +1135,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
      * @param array $collectedItems : The collected item data rows ordered by parent position, column position and sorting
      * @param int $recursive : The number of levels for the recursion
      * @param int $parentUid : uid of the referencing tt_content record
+     * @param int $language : sys_language_uid of the referencing tt_content record
      *
      * @return void
      */
@@ -1136,7 +1143,8 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
         $shortcutItem,
         &$collectedItems,
         $recursive = 0,
-        $parentUid
+        $parentUid,
+        $language = 0
     ) {
         $itemList = str_replace('pages_', '', $shortcutItem);
         if ($recursive) {
@@ -1148,6 +1156,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
         $itemList = GeneralUtility::intExplode(',', $itemList);
 
         $queryBuilder = $this->getQueryBuilder();
+
         $items = $queryBuilder
             ->select('*')
             ->addSelectLiteral($queryBuilder->expr()->inSet('pid',
@@ -1158,7 +1167,8 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
                     $queryBuilder->createNamedParameter((int)$parentUid, \PDO::PARAM_INT)),
                 $queryBuilder->expr()->in('pid',
                     $queryBuilder->createNamedParameter($itemList, Connection::PARAM_INT_ARRAY)),
-                $queryBuilder->expr()->gte('colPos', $queryBuilder->createNamedParameter(0, \PDO::PARAM_INT))
+                $queryBuilder->expr()->gte('colPos', $queryBuilder->createNamedParameter(0, \PDO::PARAM_INT)),
+                $queryBuilder->expr()->in('sys_language_uid', $queryBuilder->createNamedParameter([0, -1], Connection::PARAM_INT_ARRAY))
             )
             ->orderBy('inSet')
             ->addOrderBy('colPos')
@@ -1167,6 +1177,12 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
             ->fetchAll();
 
         foreach ($items as $item) {
+            if (!empty($this->extentensionConfiguration['overlayShortcutTranslation']) && $language > 0) {
+                $translatedItem = BackendUtility::getRecordLocalization('tt_content', $item['uid'], $language);
+                if (!empty($translatedItem)) {
+                    $item = array_shift($translatedItem);
+                }
+            }
             if ($this->helper->getBackendUser()->workspace > 0) {
                 BackendUtility::workspaceOL('tt_content', $item, $this->helper->getBackendUser()->workspace);
             }
@@ -1181,10 +1197,11 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
      * @param string $shortcutItem : The tt_content element to fetch the data from
      * @param array $collectedItems : The collected item data row
      * @param int $parentUid : uid of the referencing tt_content record
+     * @param int $language : sys_language_uid of the referencing tt_content record
      *
      * @return void
      */
-    protected function collectContentData($shortcutItem, &$collectedItems, $parentUid)
+    protected function collectContentData($shortcutItem, &$collectedItems, $parentUid, $language)
     {
         $shortcutItem = str_replace('tt_content_', '', $shortcutItem);
         if ((int)$shortcutItem !== (int)$parentUid) {
@@ -1202,6 +1219,13 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
                 ->setMaxResults(1)
                 ->execute()
                 ->fetch();
+
+            if (!empty($this->extentensionConfiguration['overlayShortcutTranslation']) && $language > 0) {
+                $translatedItem = BackendUtility::getRecordLocalization('tt_content', $item['uid'], $language);
+                if (!empty($translatedItem)) {
+                    $item = array_shift($translatedItem);
+                }
+            }
 
             if ($this->helper->getBackendUser()->workspace > 0) {
                 BackendUtility::workspaceOL(
