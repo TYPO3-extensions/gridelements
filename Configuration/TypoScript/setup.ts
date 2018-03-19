@@ -25,37 +25,6 @@ lib.gridelements.defaultGridSetup {
 	# or tx_gridelements_view_child_123 (123 is the UID of the child)
 }
 
-lib.tt_content.shortcut.pages = COA
-lib.tt_content.shortcut.pages {
-	10 = USER
-	10 {
-		userFunc = GridElementsTeam\Gridelements\Plugin\Gridelements->user_getTreeList
-    }
-	20 = CONTENT
-	20 {
-		table = tt_content
-		select {
-			pidInList.data = register:pidInList
-			where = colPos >= 0
-			languageField = sys_language_uid
-			orderBy = colPos,sorting
-			orderBy.dataWrap = FIND_IN_SET(pid,'{register:pidInList}'),|
-		}
-	}
-}
-
-tt_content.shortcut {
-	5 = LOAD_REGISTER
-	5 {
-		tt_content_shortcut_recursive.field = recursive
-	}
-	20 {
-		tables := addToList(pages)
-		conf.pages < lib.tt_content.shortcut.pages
-	}
-	30 = RESTORE_REGISTER
-}
-
 plugin.tx_gridelements_pi1 >
 tt_content.gridelements_pi1 >
 tt_content.gridelements_pi1 = COA
@@ -74,3 +43,54 @@ tt_content.gridelements_pi1 {
 }
 
 tt_content.gridelements_view < tt_content.gridelements_pi1
+
+lib.tt_content.shortcut.pages = COA
+lib.tt_content.shortcut.pages {
+	10 = USER
+	10 {
+		userFunc = GridElementsTeam\Gridelements\Plugin\Gridelements->user_getTreeList
+	}
+	20 = CONTENT
+	20 {
+		table = tt_content
+		select {
+			pidInList.data = register:pidInList
+			selectFields.dataWrap = *,FIND_IN_SET(pid,{register:pidInList}) AS gridelements_shortcut_page_order_by
+			where = colPos >= 0
+			languageField = sys_language_uid
+			orderBy = gridelements_shortcut_page_order_by,colPos,sorting
+		}
+	}
+}
+
+[userFunc = TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('fluid_styled_content')]
+	lib.shortcuts = COA
+	lib.shortcuts {
+		5 = LOAD_REGISTER
+		5 {
+			tt_content_shortcut_recursive.field = recursive
+		}
+		20 < tt_content.shortcut.variables.shortcuts
+		20 {
+			tables := addToList(pages)
+			conf.pages < lib.tt_content.shortcut.pages
+		}
+		30 = RESTORE_REGISTER
+	}
+	tt_content.shortcut.variables.shortcuts >
+	tt_content.shortcut.variables.shortcuts < lib.shortcuts
+[global]
+
+[userFunc = TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('css_styled_content')]
+	tt_content.shortcut {
+		5 = LOAD_REGISTER
+		5 {
+			tt_content_shortcut_recursive.field = recursive
+		}
+		20 {
+			tables := addToList(pages)
+			conf.pages < lib.tt_content.shortcut.pages
+		}
+		30 = RESTORE_REGISTER
+	}
+[global]
