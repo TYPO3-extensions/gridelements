@@ -225,7 +225,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
 
         // if we got a selected backend layout, we have to create the layout table now
         if ($layoutUid && isset($layout['config'])) {
-            $itemContent = $this->renderGridLayoutTable($layout, $gridElement, $head, $gridContent);
+            $itemContent = $this->renderGridLayoutTable($layout, $gridElement, $head, $gridContent, $parentObject);
         } else {
             $itemContent = '<div class="t3-grid-container t3-grid-element-container">';
             $itemContent .= '<table border="0" cellspacing="0" cellpadding="0" width="100%" height="100%" class="t3-page-columns t3-grid-table">';
@@ -884,10 +884,11 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
      * @param array $row : The current data row for the container item
      * @param array $head : The data for the column headers of the grid we are going to render
      * @param array $gridContent : The content data of the grid we are going to render
+     * @param PageLayoutView $parentObject
      *
      * @return string
      */
-    protected function renderGridLayoutTable($layout, $row, $head, $gridContent)
+    protected function renderGridLayoutTable($layout, $row, $head, $gridContent, PageLayoutView $parentObject)
     {
         $specificIds = $this->helper->getSpecificIds($row);
         $grid = '<div class="t3-grid-container t3-grid-element-container' . ($layout['frame'] ? ' t3-grid-container-framed t3-grid-container-' . htmlspecialchars($layout['frame']) : '') . ($layout['top_level_layout'] ? ' t3-grid-tl-container' : '') . '">';
@@ -1046,7 +1047,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
                 $tooManyItems = $gridContent['numberOfItems'][$columnKey] > $maxItems && $maxItems > 0;
                 $expanded = $this->helper->getBackendUser()->uc['moduleData']['page']['gridelementsCollapsedColumns'][$row['uid'] . '_' . $columnKey] ? 'collapsed' : 'expanded';
                 if (!empty($columnConfig['name']) && $columnKey === 32768) {
-                    $columnHead = htmlspecialchars($columnConfig['name']) . ' (' . $this->languageService->getLL('notAssigned') . ')';
+                    $columnHead = $this->tt_content_drawColHeader(htmlspecialchars($columnConfig['name']) . ' (' . $this->languageService->getLL('notAssigned') . ')', '', $parentObject);
                 } else {
                     $columnHead = $head[$columnKey];
                 }
