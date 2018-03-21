@@ -281,7 +281,8 @@ class LayoutSetup
      * @param bool $csvValues
      * @return array
      */
-    public function checkAvailableColumns($setup, $csvValues = false) {
+    public function checkAvailableColumns($setup, $csvValues = false)
+    {
         $availableColumns = ['CSV' => '-2,-1'];
         $allowed = [];
         $disallowed = [];
@@ -301,10 +302,12 @@ class LayoutSetup
                     }
                     if (!is_array($column['allowed']) && !empty($column['allowed'])) {
                         $allowed[$colPos] = ['CType' => $column['allowed']];
-                    } else if (empty($column['allowed'])) {
-                        $allowed[$colPos] = ['CType' => '*'];
                     } else {
-                        $allowed[$colPos] = $column['allowed'];
+                        if (empty($column['allowed'])) {
+                            $allowed[$colPos] = ['CType' => '*'];
+                        } else {
+                            $allowed[$colPos] = $column['allowed'];
+                        }
                     }
                     if ($column['allowedGridTypes']) {
                         $allowed[$colPos]['tx_gridelements_backend_layout'] = $column['allowedGridTypes'];
@@ -392,37 +395,15 @@ class LayoutSetup
     }
 
     /**
-     * Caches Container-Records and their setup to avoid multiple selects of the same record during a single request
-     *
-     * @param int $gridContainerId The ID of the current grid container
-     * @param bool $doReturn
-     *
-     * @return null|array
-     */
-    public function cacheCurrentParent($gridContainerId = 0, $doReturn = false)
-    {
-        if ($gridContainerId > 0) {
-            if (empty($GLOBALS['tx_gridelements']['parentElement'][$gridContainerId])) {
-                $GLOBALS['tx_gridelements']['parentElement'][$gridContainerId] = BackendUtility::getRecordWSOL('tt_content',
-                    $gridContainerId);
-            }
-        }
-        if ($doReturn) {
-            return $GLOBALS['tx_gridelements']['parentElement'][$gridContainerId];
-        };
-
-        return null;
-    }
-
-    /**
      * Returns the item array for form field selection.
      *
-     * @param int $colPos The selected content column position.     *
+     * @param int $colPos The selected content column position.
      * @param int $gridColPos
      * @param int $containerId
+     * @param int $pageId
      * @return array
      */
-    public function getLayoutSelectItems($colPos, $gridColPos = 0, $containerId = 0)
+    public function getLayoutSelectItems($colPos, $gridColPos = 0, $containerId = 0, $pageId = 0)
     {
         $allowed = ['*' => '*'];
         $disallowed = [];
@@ -433,6 +414,12 @@ class LayoutSetup
                 $containerLayout = $this->layoutSetup[$container['tx_gridelements_backend_layout']];
                 $allowed = $containerLayout['allowed'][$gridColPos]['tx_gridelements_backend_layout'];
                 $disallowed = $containerLayout['disallowed'][$gridColPos]['tx_gridelements_backend_layout'];
+            }
+        } elseif ($pageId > 0) {
+            $pageLayout = Helper::getInstance()->getSelectedBackendLayout($pageId);
+            if (!empty($pageLayout)) {
+                $allowed = $pageLayout['allowed'][$colPos]['tx_gridelements_backend_layout'];
+                $disallowed = $pageLayout['disallowed'][$colPos]['tx_gridelements_backend_layout'];
             }
         }
         foreach ($this->layoutSetup as $layoutId => $item) {
@@ -471,6 +458,29 @@ class LayoutSetup
         }
 
         return $selectItems;
+    }
+
+    /**
+     * Caches Container-Records and their setup to avoid multiple selects of the same record during a single request
+     *
+     * @param int $gridContainerId The ID of the current grid container
+     * @param bool $doReturn
+     *
+     * @return null|array
+     */
+    public function cacheCurrentParent($gridContainerId = 0, $doReturn = false)
+    {
+        if ($gridContainerId > 0) {
+            if (empty($GLOBALS['tx_gridelements']['parentElement'][$gridContainerId])) {
+                $GLOBALS['tx_gridelements']['parentElement'][$gridContainerId] = BackendUtility::getRecordWSOL('tt_content',
+                    $gridContainerId);
+            }
+        }
+        if ($doReturn) {
+            return $GLOBALS['tx_gridelements']['parentElement'][$gridContainerId];
+        };
+
+        return null;
     }
 
     /**
@@ -553,8 +563,12 @@ class LayoutSetup
      *
      * @return array
      */
-    public function getLayoutWizardItems($colPos, $excludeLayouts = '', array $allowedGridTypes = [], array $disallowedGridTypes = [])
-    {
+    public function getLayoutWizardItems(
+        $colPos,
+        $excludeLayouts = '',
+        array $allowedGridTypes = [],
+        array $disallowedGridTypes = []
+    ) {
         $wizardItems = [];
         $excludeLayouts = array_flip(explode(',', $excludeLayouts));
         foreach ($this->layoutSetup as $layoutId => $item) {
@@ -563,8 +577,7 @@ class LayoutSetup
                     !isset($allowedGridTypes[$layoutId])
                 ) ||
                 isset($disallowedGridTypes[$layoutId])
-            )
-            {
+            ) {
                 continue;
             }
             if (isset($excludeLayouts[$item['uid']]) || (int)$colPos === -1 && $item['top_level_layout']) {
