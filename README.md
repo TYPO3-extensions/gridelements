@@ -33,17 +33,17 @@ Thanks in advance for your support.
 
 |                      |                       |
 |:---------------------------|:--------------------------------|
-| [![CodersCareLogo](https://coders.care/fileadmin/CodersCareLogo.png)][coders.care-url]              | Get yourself one of the Service Level Agreements we offer together with our fellow coders. This way you make sure Gridelements and other extensions live long and prosper and you will get a hotline with a defined response time in case of emergency.              |
-| [![PatreonLogo](https://coders.care/fileadmin/PatreonLogo.png)][patreon-url]                  | A Service which allows you to become one of our Patrons on a monthly basis. You might even get a shoutout on twitter, get mentioned personally in the next release or even make a feature request depending on the amount you pick.                                  |
-| [![FlattrLogo](https://coders.care/fileadmin/FlattrLogo.png)][flattr-url]                         | Pay any amount monthly on this service and it gets spread even around the people you want to support! We would be Flattr'ed to have you.                    |
-| [![PaypalLogo](https://coders.care/fileadmin/PaypalLogo.png)][paypal-url]                       | You don't want to sponsor monthly? Don't worry you can also support us via Paypal with any desired amount you find reasonable.                        |
-| [![AmazonWishlistLogo](https://coders.care/fileadmin/AmazonLogo.png)][amazon-url]                       | Sometimes you want to give it a personal touch. When you want to thank Joey and Petra with a nice Single Malt, you should take a look here. Slàinte mhath!                  |
+| [![CodersCareLogo](Documentation/Images/Sponsoring/CodersCareLogo.png)][coders.care-url]              | Get yourself one of the Service Level Agreements we offer together with our fellow coders. This way you make sure Gridelements and other extensions live long and prosper and you will get a hotline with a defined response time in case of emergency.              |
+| [![PatreonLogo](Documentation/Images/Sponsoring/PatreonLogo.png)][patreon-url]                  | A Service which allows you to become one of our Patrons on a monthly basis. You might even get a shoutout on twitter, get mentioned personally in the next release or even make a feature request depending on the amount you pick.                                  |
+| [![FlattrLogo](Documentation/Images/Sponsoring/FlattrLogo.png)][flattr-url]                         | Pay any amount monthly on this service and it gets spread even around the people you want to support! We would be Flattr'ed to have you.                    |
+| [![PaypalLogo](Documentation/Images/Sponsoring/PaypalLogo.png)][paypal-url]                       | You don't want to sponsor monthly? Don't worry you can also support us via Paypal with any desired amount you find reasonable.                        |
+| [![AmazonWishlistLogo](Documentation/Images/Sponsoring/AmazonLogo.png)][amazon-url]                       | Sometimes you want to give it a personal touch. When you want to thank Joey and Petra with a nice Single Malt, you should take a look here. Slàinte mhath!                  |
 
 ## The Agreement
 
 Excerpt from the coders.care blog post [Service Level Agreements for TYPO3 Extensions][blog-url]
 
-![Big Orange rope pulling several colorful small ropes](https://coders.care/fileadmin/Why.jpg)
+![Big Orange rope pulling several colorful small ropes](Documentation/Images/Sponsoring/Why.jpg)
 ### Enabling companies, developers and the community to join forces and thrive
 There is one particular thing, that should be different to most of the variants of service level agreements provided by other open-source projects though. Having to buy a so called "enterprise" or "professional" edition of the extensions or TYPO3 itself just to become entitled for an SLA is a No-Go, since it will create two classes in the community and contradict the principles of free software implied by the GPL.
 
