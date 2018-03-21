@@ -35,7 +35,7 @@ class ExtTablesInclusionPostProcessing
      *
      * @param array $tca
      *
-     * @return void
+     * @return array
      */
     public function processData($tca)
     {

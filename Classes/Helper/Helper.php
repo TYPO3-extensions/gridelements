@@ -167,21 +167,18 @@ class Helper implements SingletonInterface
     }
 
     /**
-     * converts a negative tt_content uid into a positive pid
+     * converts tt_content uid into a pid
      *
-     * @param int $negativeUid the negative uid value of a tt_content record
+     * @param int $uid the uid value of a tt_content record
      *
      * @return int
      */
-    public function getPidFromNegativeUid($negativeUid = 0)
+    public function getPidFromUid($uid = 0)
     {
-        if ($negativeUid >= 0) {
-            return $negativeUid;
-        }
         $triggerElement = self::getConnection()->select(
             ['pid'],
             'tt_content',
-            ['uid' => abs($negativeUid)]
+            ['uid' => abs($uid)]
         )->fetch();
         $pid = (int)$triggerElement['pid'];
         return is_array($triggerElement) && $pid ? $pid : 0;

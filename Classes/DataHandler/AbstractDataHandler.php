@@ -74,12 +74,12 @@ abstract class AbstractDataHandler
     public function init($table, $uidPid, DataHandler $dataHandler)
     {
         $this->setTable($table);
+        if ($table === 'tt_content') {
+            $uidPid = Helper::getInstance()->getPidFromUid($uidPid);
+        }
         $this->setPageUid($uidPid);
         $this->setTceMain($dataHandler);
         if (!$this->layoutSetup instanceof LayoutSetup) {
-            if ($uidPid < 0) {
-                $uidPid = Helper::getInstance()->getPidFromNegativeUid($uidPid);
-            }
             $this->injectLayoutSetup(GeneralUtility::makeInstance(LayoutSetup::class)->init($uidPid));
         }
     }

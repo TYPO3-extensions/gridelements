@@ -50,9 +50,6 @@ class TtContentFlexForm
         if ($tableName === 'tt_content' && $fieldName === 'pi_flexform' && $row['CType'] === 'gridelements_pi1') {
             if (!empty($row['tx_gridelements_backend_layout'])) {
                 $pageUid = $row['pid'];
-                if ($pageUid < 0) {
-                    $pageUid = Helper::getInstance()->getPidFromNegativeUid($pageUid);
-                }
                 $layoutId = $row['tx_gridelements_backend_layout'];
                 $layoutSetupInstance = GeneralUtility::makeInstance(LayoutSetup::class)->init($pageUid);
                 $layoutSetup = $layoutSetupInstance->getLayoutSetup($layoutId);
