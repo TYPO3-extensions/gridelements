@@ -85,7 +85,8 @@
 	margin: 0 -10px;
 }
 
-.t3js-module-body .t3-grid-container-title-0 {
+.t3js-module-body .t3-grid-container-title-0,
+.t3js-module-body .t3-grid-container-title--1 {
 	font-size: 12px;
 	font-weight: normal;
 	color: #999999;
