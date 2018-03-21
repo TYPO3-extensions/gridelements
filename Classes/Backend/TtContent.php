@@ -20,7 +20,6 @@ namespace GridElementsTeam\Gridelements\Backend;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-use GridElementsTeam\Gridelements\Helper\Helper;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
@@ -81,9 +80,6 @@ class TtContent
     public function init($pageId)
     {
         if (!$this->layoutSetup instanceof LayoutSetup) {
-            if ($pageId < 0) {
-                $pageId = Helper::getInstance()->getPidFromNegativeUid($pageId);
-            }
             $this->injectLayoutSetup(GeneralUtility::makeInstance(LayoutSetup::class)->init($pageId));
         }
     }

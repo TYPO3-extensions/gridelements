@@ -130,9 +130,6 @@ class WizardItems implements NewContentElementWizardHookInterface
     public function init($pageUid)
     {
         if (!$this->layoutSetup instanceof LayoutSetup) {
-            if ($pageUid < 0) {
-                $pageUid = Helper::getInstance()->getPidFromNegativeUid($pageUid);
-            }
             $this->layoutSetup = GeneralUtility::makeInstance(LayoutSetup::class)->init($pageUid);
         }
     }

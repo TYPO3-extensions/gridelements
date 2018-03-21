@@ -25,6 +25,7 @@ use TYPO3\CMS\Backend\View\BackendLayoutView;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\DataHandling\DataHandler;
+use TYPO3\CMS\Core\Utility\DebugUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -126,6 +127,7 @@ class AfterDatabaseOperations extends AbstractDataHandler
                         )
                         ->set('colPos', -2)
                         ->set('backupColPos', -1)
+                        ->set('subheader', serialize($this->layoutSetup))
                         ->execute();
                     array_flip($childElementsInUnavailableColumns);
                 }
