@@ -21,6 +21,8 @@ namespace GridElementsTeam\Gridelements\Helper;
 
 use TYPO3\CMS\Core\Database\DatabaseConnection;
 use TYPO3\CMS\Core\SingletonInterface;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Backend\View\BackendLayoutView;
 
 /**
  * Gridelements helper class
@@ -142,6 +144,39 @@ class Helper implements SingletonInterface
         }
 
         return $specificIds;
+    }
+
+    /**
+     * @param $id
+     * @return mixed
+     */
+    public function getSelectedBackendLayout($id) {
+        $backendLayoutData = GeneralUtility::callUserFunction(BackendLayoutView::class . '->getSelectedBackendLayout', $id, $this);
+        // add allowed CTypes to the columns, since this is not done by the native core methods
+        if (!empty($backendLayoutData['__items'])) {
+            if (!empty($backendLayoutData['__config']['backend_layout.']['rows.'])) {
+                foreach ($backendLayoutData['__config']['backend_layout.']['rows.'] as $row) {
+                    if (!empty($row['columns.'])) {
+                        foreach ($row['columns.'] as $column) {
+                            $backendLayoutData['columns'][$column['colPos']] = $column['allowed'] ? $column['allowed'] : '*';
+                            $backendLayoutData['columns']['allowed'] .= $backendLayoutData['columns']['allowed']
+                                ? ',' . $backendLayoutData['columns'][$column['colPos']]
+                                : $backendLayoutData['columns'][$column['colPos']];
+                            if ($column['allowedGridTypes']) {
+                                $backendLayoutData['columns']['allowedGridTypes'][$column['colPos']] .= $backendLayoutData['columns']['allowedGridTypes'][$column['colPos']]
+                                    ? ',' . $column['allowedGridTypes']
+                                    : $column['allowedGridTypes'];
+                            }
+                        }
+                    }
+                }
+            }
+            foreach ($backendLayoutData['__items'] as $key => $item) {
+                $backendLayoutData['__items'][$key][3] = $backendLayoutData['columns'][$item[1]];
+            }
+        };
+
+        return $backendLayoutData;
     }
 
     /**

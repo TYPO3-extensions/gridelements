@@ -20,12 +20,11 @@ namespace GridElementsTeam\Gridelements\Backend\ItemsProcFuncs;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use GridElementsTeam\Gridelements\Helper\Helper;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
-use TYPO3\CMS\Backend\View\BackendLayoutView;
 use TYPO3\CMS\Core\Database\DatabaseConnection;
 use TYPO3\CMS\Core\Database\QueryGenerator;
 use TYPO3\CMS\Core\SingletonInterface;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Lang\LanguageService;
 
 /**
@@ -72,27 +71,7 @@ abstract class AbstractItemsProcFunc implements SingletonInterface
      */
     public function getSelectedBackendLayout($id)
     {
-        $backendLayoutData = GeneralUtility::callUserFunction(BackendLayoutView::class . '->getSelectedBackendLayout', $id, $this);
-        // add allowed CTypes to the columns, since this is not done by the native core methods
-        if (!empty($backendLayoutData['__items'])) {
-            if (!empty($backendLayoutData['__config']['backend_layout.']['rows.'])) {
-                foreach ($backendLayoutData['__config']['backend_layout.']['rows.'] as $row) {
-                    if (!empty($row['columns.'])) {
-                        foreach ($row['columns.'] as $column) {
-                            $backendLayoutData['columns'][$column['colPos']] = $column['allowed'] ? $column['allowed'] : '*';
-                            $backendLayoutData['columns']['allowed'] .= $backendLayoutData['columns']['allowed']
-                                ? ',' . $backendLayoutData['columns'][$column['colPos']]
-                                : $backendLayoutData['columns'][$column['colPos']];
-                        }
-                    }
-                }
-            }
-            foreach ($backendLayoutData['__items'] as $key => $item) {
-                $backendLayoutData['__items'][$key][3] = $backendLayoutData['columns'][$item[1]];
-            }
-        };
-
-        return $backendLayoutData;
+        return Helper::getInstance()->getSelectedBackendLayout($id);
     }
 
     /**

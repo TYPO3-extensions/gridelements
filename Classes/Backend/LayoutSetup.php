@@ -25,6 +25,7 @@ use TYPO3\CMS\Core\TypoScript\Parser\TypoScriptParser;
 use TYPO3\CMS\Core\Utility\ArrayUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Lang\LanguageService;
+use GridElementsTeam\Gridelements\Helper\Helper;
 
 /**
  * Utilities for gridelements.
@@ -231,7 +232,7 @@ class LayoutSetup
                         ? ',' . $availableColumns[$colPos]
                         : $availableColumns[$colPos];
                     if (!empty($availableGridColumns[$colPos])) {
-                        $availableColumns['allowedGridTypes'] .= $availableColumns['allowedGridTypes']
+                        $availableColumns['allowedGridTypes'][$colPos] .= $availableColumns['allowedGridTypes'][$colPos]
                             ? ',' . $availableGridColumns[$colPos]
                             : $availableGridColumns[$colPos];
                     }
@@ -246,14 +247,39 @@ class LayoutSetup
      * Returns the item array for form field selection.
      *
      * @param int $colPos The selected content column position.
+     * @param int $gridColPos
+     * @param int $containerId
+     * @param int $pageId
      *
      * @return array
      */
-    public function getLayoutSelectItems($colPos)
+    public function getLayoutSelectItems($colPos, $gridColPos = 0, $containerId = 0, $pageId = 0)
     {
+        $allowed = '*';
         $selectItems = array();
+        if ($containerId > 0) {
+            $container = $this->cacheCurrentParent((int)$containerId, true);
+            if (!empty($container)) {
+                $containerLayout = $this->layoutSetup[$container['tx_gridelements_backend_layout']];
+                $allowed = $containerLayout['columns']['allowedGridTypes'][$gridColPos];
+            }
+        } elseif ($pageId > 0) {
+            $pageLayout = Helper::getInstance()->getSelectedBackendLayout($pageId);
+            if (!empty($pageLayout)) {
+                $allowed = $pageLayout['columns']['allowedGridTypes'][(int)$colPos];
+            }
+        }
+        $allowed = array_flip(GeneralUtility::trimExplode(',', $allowed));
         foreach ($this->layoutSetup as $layoutId => $item) {
-            if ((int)$colPos === -1 && $item['top_level_layout']) {
+            if ((
+                    (int)$colPos === -1 &&
+                    $item['top_level_layout']
+                ) ||
+                (
+                    !empty($allowed) &&
+                    !isset($allowed['*']) &&
+                    !isset($allowed[$layoutId])
+                )) {
                 continue;
             }
             $icon = 'gridelements-default';
