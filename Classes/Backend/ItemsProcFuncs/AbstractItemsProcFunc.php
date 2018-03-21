@@ -23,10 +23,8 @@ namespace GridElementsTeam\Gridelements\Backend\ItemsProcFuncs;
 
 use GridElementsTeam\Gridelements\Helper\Helper;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
-use TYPO3\CMS\Backend\View\BackendLayoutView;
 use TYPO3\CMS\Core\Database\QueryGenerator;
 use TYPO3\CMS\Core\SingletonInterface;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Lang\LanguageService;
 
 /**
@@ -65,62 +63,7 @@ abstract class AbstractItemsProcFunc implements SingletonInterface
      */
     public function getSelectedBackendLayout($pageId)
     {
-        if (empty($GLOBALS['tx_gridelements']['pageBackendLayoutData'][$pageId])) {
-            $backendLayoutData = GeneralUtility::callUserFunction(BackendLayoutView::class . '->getSelectedBackendLayout',
-                $pageId, $this);
-            // add allowed CTypes to the columns, since this is not done by the native core methods
-            if (!empty($backendLayoutData['__items'])) {
-                $backendLayoutData['columns']['CSV'] = '-2,-1';
-                if (!empty($backendLayoutData['__config']['backend_layout.']['rows.'])) {
-                    $allowed = [];
-                    $disallowed = [];
-                    $maxItems = [];
-                    foreach ($backendLayoutData['__config']['backend_layout.']['rows.'] as $row) {
-                        if (!empty($row['columns.'])) {
-                            foreach ($row['columns.'] as $column) {
-                                if (!isset($column['colPos'])) {
-                                    continue;
-                                }
-                                $colPos = (int)$column['colPos'];
-                                if (isset($column['allowed.'])) {
-                                    $column['allowed'] = $column['allowed.'];
-                                }
-                                if (isset($column['disallowed.'])) {
-                                    $column['disallowed'] = $column['disallowed.'];
-                                }
-                                if (!is_array($column['allowed']) && !empty($column['allowed'])) {
-                                    $allowed[$colPos] = ['CType' => $column['allowed']];
-                                } else if (empty($column['allowed'])) {
-                                    $allowed[$colPos] = ['CType' => '*'];
-                                } else {
-                                    $allowed[$colPos] = $column['allowed'];
-                                }
-                                if ($column['allowedGridTypes']) {
-                                    $allowed[$colPos]['tx_gridelements_backend_layout'] = $column['allowedGridTypes'];
-                                }
-                                if (!empty($column['disallowed'])) {
-                                    $disallowed[$colPos] = $column['disallowed'];
-                                }
-                                if (!empty($column['maxitems'])) {
-                                    $maxItems[$colPos] = $column['maxitems'];
-                                }
-                                $backendLayoutData['columns']['CSV'] .= ',' . $colPos;
-                            }
-                        }
-                    }
-                    $backendLayoutData['allowed'] = $allowed;
-                    if (!empty($disallowed)) {
-                        $backendLayoutData['disallowed'] = $disallowed;
-                    }
-                    if (!empty($maxItems)) {
-                        $backendLayoutData['maxitems'] = $maxItems;
-                    }
-                }
-                $backendLayoutData = Helper::getInstance()->mergeAllowedDisallowedSettings($backendLayoutData);
-            };
-            $GLOBALS['tx_gridelements']['pageBackendLayoutData'][$pageId] = $backendLayoutData;
-        }
-        return $GLOBALS['tx_gridelements']['pageBackendLayoutData'][$pageId];
+        return Helper::getInstance()->getSelectedBackendLayout($pageId);
     }
 
     /**
