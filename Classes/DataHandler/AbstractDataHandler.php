@@ -74,20 +74,20 @@ abstract class AbstractDataHandler
      * initializes this class
      *
      * @param string $table : The name of the table the data should be saved to
-     * @param integer $pageUid : The uid of the page we are currently working on
+     * @param integer $uidPid : The uid of the record or page we are currently working on
      * @param DataHandler $dataHandler
      */
-    public function init($table, $pageUid, DataHandler $dataHandler)
+    public function init($table, $uidPid, DataHandler $dataHandler)
     {
         $this->setTable($table);
-        $this->setPageUid($pageUid);
+        if ($table === 'tt_content') {
+            $uidPid = Helper::getInstance()->getPidFromUid($uidPid);
+        }
+        $this->setPageUid($uidPid);
         $this->setTceMain($dataHandler);
         $this->setDatabaseConnection($GLOBALS['TYPO3_DB']);
         if (!$this->layoutSetup instanceof LayoutSetup) {
-            if ($pageUid < 0) {
-                $pageUid = Helper::getInstance()->getPidFromNegativeUid($pageUid);
-            }
-            $this->injectLayoutSetup(GeneralUtility::makeInstance(LayoutSetup::class)->init($pageUid));
+            $this->injectLayoutSetup(GeneralUtility::makeInstance(LayoutSetup::class)->init($uidPid));
         }
     }
 

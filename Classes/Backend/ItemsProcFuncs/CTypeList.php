@@ -63,9 +63,6 @@ class CTypeList extends AbstractItemsProcFunc
     {
         parent::init();
         if (!$this->layoutSetup) {
-            if ($pageUid < 0) {
-                $pageUid = Helper::getInstance()->getPidFromNegativeUid($pageUid);
-            }
             $this->injectLayoutSetup(GeneralUtility::makeInstance(LayoutSetup::class)->init($pageUid));
         }
     }
