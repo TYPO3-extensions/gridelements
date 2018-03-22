@@ -41,7 +41,7 @@
 			</trans-unit>
 			<trans-unit id="grid_disallowed">
 				<source>Restricted CE</source>
-				<target>Zulässige CE</target>
+				<target>Unzulässige CE</target>
 			</trans-unit>
 			<trans-unit id="grid_disallowedHelp">
 				<source>Select the content element types that may NOT be created or moved here.</source>
@@ -49,7 +49,7 @@
 			</trans-unit>
 			<trans-unit id="grid_disallowedGridTypes">
 				<source>Restricted Grids</source>
-				<target>Zulässige Raster-Elemente</target>
+				<target>Unzulässige Raster-Elemente</target>
 			</trans-unit>
 			<trans-unit id="grid_disallowedGridTypesHelp">
 				<source>Select the Gridelements types that may NOT be created or moved here.</source>
@@ -57,7 +57,7 @@
 			</trans-unit>
 			<trans-unit id="grid_disallowedListTypes">
 				<source>Restricted Plugins</source>
-				<target>Zulässige Plugins</target>
+				<target>Unzulässige Plugins</target>
 			</trans-unit>
 			<trans-unit id="grid_disallowedListTypesHelp">
 				<source>Select the plugin types that may NOT be created or moved here.</source>
