@@ -190,7 +190,7 @@ class TtContent
     {
         $this->init($params['row']['pid']);
         $layoutSelectItems = $this->layoutSetup->getLayoutSelectItems(isset($params['row']['colPos'][0]) ? $params['row']['colPos'][0] : $params['row']['colPos'],
-            $params['row']['tx_gridelements_columns'], $params['row']['tx_gridelements_container'], $params['row']['pid']);
+            $params['row']['tx_gridelements_columns'], $params['row']['tx_gridelements_container'], $this->layoutSetup->getRealPid());
         $params['items'] = ArrayUtility::keepItemsInArray($layoutSelectItems, $params['items'], true);
     }
 

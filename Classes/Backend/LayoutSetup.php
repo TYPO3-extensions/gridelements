@@ -57,6 +57,11 @@ class LayoutSetup
     protected $typoScriptSetup;
 
     /**
+     * @var int
+     */
+    protected $realPid;
+
+    /**
      * @var string
      */
     protected $flexformConfigurationPathAndFileName = 'EXT:gridelements/Configuration/FlexForms/default_flexform_configuration.xml';
@@ -74,6 +79,10 @@ class LayoutSetup
         $this->setDatabaseConnection($GLOBALS['TYPO3_DB']);
         $this->setLanguageService($GLOBALS['LANG']);
         $pageId = (strpos($pageId, 'NEW') === 0) ? 0 : (int)$pageId;
+        if ((int)$pageId < 0) {
+            $pageId = Helper::getInstance()->getPidFromUid($pageId);
+        }
+        $this->realPid = $pageId;
         $this->loadLayoutSetup($pageId);
         foreach ($this->layoutSetup as $key => $setup) {
             $columns = $this->getLayoutColumns($key);
@@ -269,7 +278,10 @@ class LayoutSetup
                 $allowed = $pageLayout['columns']['allowedGridTypes'][(int)$colPos];
             }
         }
-        $allowed = array_flip(GeneralUtility::trimExplode(',', $allowed));
+
+        if (!empty($allowed)) {
+            $allowed = array_flip(GeneralUtility::trimExplode(',', $allowed));
+        }
         foreach ($this->layoutSetup as $layoutId => $item) {
             if ((
                     (int)$colPos === -1 &&
@@ -554,6 +566,16 @@ class LayoutSetup
     public function getBackendUser()
     {
         return $GLOBALS['BE_USER'];
+    }
+
+    /**
+     * Gets the current real pid.
+     *
+     * @return int
+     */
+    public function getRealPid()
+    {
+        return $this->realPid;
     }
 
 }
