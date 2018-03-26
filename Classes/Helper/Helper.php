@@ -23,6 +23,10 @@ namespace GridElementsTeam\Gridelements\Helper;
 use TYPO3\CMS\Backend\View\BackendLayoutView;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\ConnectionPool;
+use TYPO3\CMS\Core\Database\Query\QueryBuilder;
+use TYPO3\CMS\Core\Database\Query\Restriction\EndTimeRestriction;
+use TYPO3\CMS\Core\Database\Query\Restriction\HiddenRestriction;
+use TYPO3\CMS\Core\Database\Query\Restriction\StartTimeRestriction;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -45,7 +49,7 @@ class Helper implements SingletonInterface
     /**
      * @var Connection
      */
-    protected static $connection;
+    private $connection;
 
     /**
      * Get instance from the class.
@@ -77,14 +81,20 @@ class Helper implements SingletonInterface
         if (trim($table) === 'tt_content' && $uid > 0) {
             $selectFieldList .= ',sorting,tx_gridelements_columns';
             $selectFieldArray = GeneralUtility::trimExplode(',', $selectFieldList);
-            $children = self::getConnection()->select(
-                $selectFieldArray,
-                'tt_content',
-                [
-                    'tx_gridelements_container' => (int)$uid,
-                    'pid'                       => (int)$pid,
-                ]
-            )->fetchAll();
+            $queryBuilder = self::getQueryBuilder();
+            $children = $queryBuilder
+                ->select(...$selectFieldArray)
+                ->from('tt_content')
+                ->where(
+                    $queryBuilder->expr()->andX(
+                        $queryBuilder->expr()->eq('tx_gridelements_container',
+                            $queryBuilder->createNamedParameter((int)$uid, \PDO::PARAM_INT)),
+                        $queryBuilder->expr()->eq('pid',
+                            $queryBuilder->createNamedParameter((int)$pid, \PDO::PARAM_INT))
+                    )
+                )
+                ->execute()
+                ->fetchAll();
 
             foreach ($children as $child) {
                 if (trim($sortingField) && isset($child[$sortingField]) && $sortingField !== 'sorting') {
@@ -154,20 +164,6 @@ class Helper implements SingletonInterface
     }
 
     /**
-     * setter for Connection object
-     *
-     * @return Connection
-     */
-    public function getConnection()
-    {
-        if (!$this->connection instanceof Connection) {
-            $this->connection = GeneralUtility::makeInstance(ConnectionPool::class)
-                ->getConnectionForTable('tt_content');
-        }
-        return $this->connection;
-    }
-
-    /**
      * converts tt_content uid into a pid
      *
      * @param int $uid the uid value of a tt_content record
@@ -176,13 +172,34 @@ class Helper implements SingletonInterface
      */
     public function getPidFromUid($uid = 0)
     {
-        $triggerElement = self::getConnection()->select(
-            ['pid'],
-            'tt_content',
-            ['uid' => abs($uid)]
-        )->fetch();
+        $queryBuilder = self::getQueryBuilder();
+        $triggerElement = $queryBuilder
+            ->select('pid')
+            ->from('tt_content')
+            ->where(
+                $queryBuilder->createNamedParameter(abs($uid), \PDO::PARAM_INT)
+            )
+            ->execute()
+            ->fetch();
         $pid = (int)$triggerElement['pid'];
         return is_array($triggerElement) && $pid ? $pid : 0;
+    }
+
+    /**
+     * getter for queryBuilder
+     *
+     * @return QueryBuilder queryBuilder
+     */
+    public function getQueryBuilder()
+    {
+        /** @var $queryBuilder QueryBuilder  */
+        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
+            ->getQueryBuilderForTable('tt_content');
+        $queryBuilder->getRestrictions()
+            ->removeByType(HiddenRestriction::class)
+            ->removeByType(StartTimeRestriction::class)
+            ->removeByType(EndTimeRestriction::class);
+        return $queryBuilder;
     }
 
     /**
