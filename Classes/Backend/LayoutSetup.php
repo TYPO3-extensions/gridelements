@@ -29,7 +29,6 @@ use TYPO3\CMS\Core\Database\Query\Restriction\DeletedRestriction;
 use TYPO3\CMS\Core\Database\Query\Restriction\HiddenRestriction;
 use TYPO3\CMS\Core\TypoScript\Parser\TypoScriptParser;
 use TYPO3\CMS\Core\Utility\ArrayUtility;
-use TYPO3\CMS\Core\Utility\DebugUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\StringUtility;
 use TYPO3\CMS\Lang\LanguageService;
@@ -70,6 +69,11 @@ class LayoutSetup
     protected $flexformConfigurationPathAndFileName = 'EXT:gridelements/Configuration/FlexForms/default_flexform_configuration.xml';
 
     /**
+     * @var int
+     */
+    protected $realPid;
+
+    /**
      * Load page TSconfig
      *
      * @param int $pageId The current page ID
@@ -81,6 +85,10 @@ class LayoutSetup
     {
         $this->setLanguageService($GLOBALS['LANG']);
         $pageId = (strpos($pageId, 'NEW') === 0) ? 0 : (int)$pageId;
+        if ((int)$pageId < 0) {
+            $pageId = Helper::getInstance()->getPidFromUid($pageId);
+        }
+        $this->realPid = $pageId;
         $this->loadLayoutSetup($pageId);
         foreach ($this->layoutSetup as $key => $setup) {
             $columns = $this->getLayoutColumns($key);
@@ -664,6 +672,17 @@ class LayoutSetup
     public function getBackendUser()
     {
         return $GLOBALS['BE_USER'];
+    }
+
+
+    /**
+     * Gets the current real pid.
+     *
+     * @return int
+     */
+    public function getRealPid()
+    {
+        return $this->realPid;
     }
 
 }
