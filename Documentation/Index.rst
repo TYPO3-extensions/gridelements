@@ -66,4 +66,5 @@ Table Of Content
        Chapters/Tsconfig/Index
        Chapters/Typoscript/Index
        Chapters/Faq/Index
+       Chapters/Sponsoring/Index
        Chapters/Notes/Index
