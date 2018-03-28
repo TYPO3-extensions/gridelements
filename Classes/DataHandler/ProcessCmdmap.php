@@ -92,11 +92,17 @@ class ProcessCmdmap extends AbstractDataHandler
 
         if ($command === 'delete' && $table === 'tt_content') {
             $containerUpdateArray = [];
-            $originalContainer = $this->getConnection()->select(
-                ['tx_gridelements_container', 'sys_language_uid'],
-                'tt_content',
-                ['uid' => (int)$id]
-            )->fetch();
+            $queryBuilder = $this->getQueryBuilder();
+            $originalContainer = $queryBuilder
+                ->select('tx_gridelements_container', 'sys_language_uid')
+                ->from('tt_content')
+                ->where(
+                    $queryBuilder->expr()->eq('uid',
+                        $queryBuilder->createNamedParameter((int)$id, \PDO::PARAM_INT))
+                )
+                ->execute()
+                ->fetch();
+
             if (!empty($originalContainer)) {
                 $containerUpdateArray[$originalContainer['tx_gridelements_container']] = -1;
                 $this->doGridContainerUpdate($containerUpdateArray);
