@@ -47,11 +47,6 @@ class Helper implements SingletonInterface
     protected static $instance = null;
 
     /**
-     * @var Connection
-     */
-    private $connection;
-
-    /**
      * Get instance from the class.
      *
      * @return Helper
@@ -177,7 +172,8 @@ class Helper implements SingletonInterface
             ->select('pid')
             ->from('tt_content')
             ->where(
-                $queryBuilder->createNamedParameter(abs($uid), \PDO::PARAM_INT)
+                $queryBuilder->expr()->eq('uid',
+                    $queryBuilder->createNamedParameter(abs($uid), \PDO::PARAM_INT))
             )
             ->execute()
             ->fetch();
