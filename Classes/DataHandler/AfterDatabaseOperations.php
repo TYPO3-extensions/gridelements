@@ -23,9 +23,7 @@ namespace GridElementsTeam\Gridelements\DataHandler;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Backend\View\BackendLayoutView;
 use TYPO3\CMS\Core\Database\Connection;
-use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\DataHandling\DataHandler;
-use TYPO3\CMS\Core\Utility\DebugUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -397,13 +395,16 @@ class AfterDatabaseOperations extends AbstractDataHandler
      */
     public function getSubPagesRecursively($pageUid, array &$subPages)
     {
-        $childPages = GeneralUtility::makeInstance(ConnectionPool::class)
-            ->getConnectionForTable('pages')
-            ->select(
-                ['uid', 'backend_layout', 'backend_layout_next_level'],
-                'pages',
-                ['pid' => (int)$pageUid]
-            )->fetchAll();
+        $queryBuilder = $this->getQueryBuilder('pages');
+        $childPages = $queryBuilder
+            ->select('uid', 'backend_layout', 'backend_layout_next_level')
+            ->from('pages')
+            ->where(
+                $queryBuilder->expr()->eq('pid',
+                    $queryBuilder->createNamedParameter((int)$pageUid, \PDO::PARAM_INT))
+            )
+            ->execute()
+            ->fetchAll();
 
         if (!empty($childPages)) {
             foreach ($childPages as $page) {
