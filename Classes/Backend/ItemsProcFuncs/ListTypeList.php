@@ -21,7 +21,6 @@ namespace GridElementsTeam\Gridelements\Backend\ItemsProcFuncs;
  ***************************************************************/
 
 use GridElementsTeam\Gridelements\Backend\LayoutSetup;
-use GridElementsTeam\Gridelements\Helper\Helper;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 

@@ -844,7 +844,7 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Severity', 'TYPO
                 typeIcon = type.icon,
                 typeLabel = type.label,
                 typeSelected = $.inArray(typeKey, selectedTypes) !== -1,
-                typeStyle = 'background: #fff url(' + typeIcon + ') 0% 50% no-repeat; height: 16px; padding: 2px 10px 0 22px;'
+                typeStyle = 'background: #fff url(' + typeIcon + ') 0% 50% no-repeat; height: 16px; padding: 2px 10px 0 22px;';
 
             allowedTypeOptions.push('<option value="' + typeKey + '" style="' + typeStyle + '"' + (typeSelected ? ' selected="selected"' : '') + '>' + typeLabel + '</option>');
         }
@@ -882,7 +882,7 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Severity', 'TYPO
      * @returns {Boolean}
      */
     GridEditor.cellCanSpanRight = function (col, row) {
-        if (col == GridEditor.colCount - 1) {
+        if (col === GridEditor.colCount - 1) {
             return false;
         }
 
@@ -913,7 +913,7 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Severity', 'TYPO
      * @returns {Boolean}
      */
     GridEditor.cellCanSpanDown = function (col, row) {
-        if (row == GridEditor.rowCount - 1) {
+        if (row === GridEditor.rowCount - 1) {
             return false;
         }
 

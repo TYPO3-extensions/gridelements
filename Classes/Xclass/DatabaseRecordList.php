@@ -1184,6 +1184,7 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
         // Preparing and getting the data-array
         $theData = [];
         $localizationMarkerClass = '';
+        list($lC1, $lC2) = $this->makeLocalizationPanel($table, $row);
         foreach ($this->fieldArray as $fCol) {
             if ($fCol == $titleCol) {
                 $recTitle = BackendUtility::getRecordTitle($table, $row, false, true);
@@ -1238,7 +1239,6 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
             } elseif ($fCol === '_CLIPBOARD_') {
                 $theData[$fCol] = $this->makeClip($table, $row);
             } elseif ($fCol === '_LOCALIZATION_') {
-                list($lC1, $lC2) = $this->makeLocalizationPanel($table, $row);
                 $theData[$fCol] = $lC1;
             } elseif ($fCol !== '_LOCALIZATION_b') {
                 $tmpProc = BackendUtility::getProcessedValueExtra($table, $fCol, $row[$fCol], 100, $row['uid']);
@@ -2125,6 +2125,7 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
             $pagination = true;
         } else {
             $colType = ($colType === 'th') ? 'th' : 'td';
+            $pagination = false;
         }
         $noWrap = $this->no_noWrap ? '' : ' nowrap="nowrap"';
         // Start up:

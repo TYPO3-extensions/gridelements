@@ -21,7 +21,6 @@ namespace GridElementsTeam\Gridelements\Helper;
  ***************************************************************/
 
 use TYPO3\CMS\Backend\View\BackendLayoutView;
-use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Core\Database\Query\Restriction\EndTimeRestriction;
@@ -119,39 +118,39 @@ class Helper implements SingletonInterface
      */
     public function mergeAllowedDisallowedSettings($backendLayout, $csvValues = false) {
         if (!empty($backendLayout['allowed'])) {
-            foreach ($backendLayout['allowed'] as $column => &$fields) {
-                if (isset($fields['CType']) && $fields['CType'] !== '*') {
-                    if (!empty($fields['list_type']) && strpos($fields['CType'], 'list') === false) {
-                        $fields['CType'] .= ',list';
+            foreach ($backendLayout['allowed'] as $column => &$allowedFields) {
+                if (isset($fields['CType']) && $allowedFields['CType'] !== '*') {
+                    if (!empty($allowedFields['list_type']) && strpos($allowedFields['CType'], 'list') === false) {
+                        $allowedFields['CType'] .= ',list';
                     }
-                    if (!empty($fields['tx_gridelements_backend_layout']) && strpos($fields['CType'], 'gridelements_pi1') === false) {
-                        $fields['CType'] .= ',gridelements_pi1';
+                    if (!empty($allowedFields['tx_gridelements_backend_layout']) && strpos($allowedFields['CType'], 'gridelements_pi1') === false) {
+                        $allowedFields['CType'] .= ',gridelements_pi1';
                     }
                 }
-                if (!isset($fields['CType'])) {
-                    $fields['CType'] = '*';
+                if (!isset($allowedFields['CType'])) {
+                    $allowedFields['CType'] = '*';
                 }
-                if (!empty($fields['CType']) && !$csvValues) {
-                    $fields['CType'] = array_flip(GeneralUtility::trimExplode(',', $fields['CType']));
+                if (!empty($allowedFields['CType']) && !$csvValues) {
+                    $allowedFields['CType'] = array_flip(GeneralUtility::trimExplode(',', $allowedFields['CType']));
                 }
-                if (!empty($fields['list_type']) && !$csvValues) {
-                    $fields['list_type'] = array_flip(GeneralUtility::trimExplode(',', $fields['list_type']));
+                if (!empty($allowedFields['list_type']) && !$csvValues) {
+                    $allowedFields['list_type'] = array_flip(GeneralUtility::trimExplode(',', $allowedFields['list_type']));
                 }
-                if (!empty($fields['tx_gridelements_backend_layout']) && !$csvValues) {
-                    $fields['tx_gridelements_backend_layout'] = array_flip(GeneralUtility::trimExplode(',', $fields['tx_gridelements_backend_layout']));
+                if (!empty($allowedFields['tx_gridelements_backend_layout']) && !$csvValues) {
+                    $allowedFields['tx_gridelements_backend_layout'] = array_flip(GeneralUtility::trimExplode(',', $allowedFields['tx_gridelements_backend_layout']));
                 }
             }
         };
         if (!empty($backendLayout['disallowed']) && !$csvValues) {
-            foreach ($backendLayout['disallowed'] as $column => &$fields) {
-                if (!empty($fields['CType'])) {
-                    $fields['CType'] = array_flip(GeneralUtility::trimExplode(',', $fields['CType']));
+            foreach ($backendLayout['disallowed'] as $column => &$disallowedFields) {
+                if (!empty($disallowedFields['CType'])) {
+                    $disallowedFields['CType'] = array_flip(GeneralUtility::trimExplode(',', $disallowedFields['CType']));
                 }
-                if (!empty($fields['list_type'])) {
-                    $fields['list_type'] = array_flip(GeneralUtility::trimExplode(',', $fields['list_type']));
+                if (!empty($disallowedFields['list_type'])) {
+                    $disallowedFields['list_type'] = array_flip(GeneralUtility::trimExplode(',', $disallowedFields['list_type']));
                 }
-                if (!empty($fields['tx_gridelements_backend_layout'])) {
-                    $fields['tx_gridelements_backend_layout'] = array_flip(GeneralUtility::trimExplode(',', $fields['tx_gridelements_backend_layout']));
+                if (!empty($disallowedFields['tx_gridelements_backend_layout'])) {
+                    $disallowedFields['tx_gridelements_backend_layout'] = array_flip(GeneralUtility::trimExplode(',', $disallowedFields['tx_gridelements_backend_layout']));
                 }
             }
         };

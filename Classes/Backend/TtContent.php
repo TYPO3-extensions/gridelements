@@ -197,6 +197,7 @@ class TtContent
      */
     public function getQueryBuilder()
     {
+        /** @var $queryBuilder QueryBuilder */
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
             ->getQueryBuilderForTable('tt_content');
         $queryBuilder->getRestrictions()
