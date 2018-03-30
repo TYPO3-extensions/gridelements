@@ -39,7 +39,6 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Severity'], func
      */
     ContextMenuActions.pasteReference = function (table, uid) {
         var $anchorElement = $(this);
-        var title = $anchorElement.data('title');
         var actionUrl = $anchorElement.data('action-url');
         var performPaste = function () {
             var url = actionUrl + '&redirect=' + top.rawurlencode(top.list_frame.document.location.pathname + top.list_frame.document.location.search);

@@ -21,7 +21,6 @@ namespace GridElementsTeam\Gridelements\Hooks;
  ***************************************************************/
 
 use GridElementsTeam\Gridelements\Backend\LayoutSetup;
-use GridElementsTeam\Gridelements\Helper\Helper;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -51,6 +50,7 @@ class TtContentFlexForm
             if (!empty($row['tx_gridelements_backend_layout'])) {
                 $pageUid = $row['pid'];
                 $layoutId = $row['tx_gridelements_backend_layout'];
+                /** @var $layoutSetupInstance LayoutSetup */
                 $layoutSetupInstance = GeneralUtility::makeInstance(LayoutSetup::class)->init($pageUid);
                 $layoutSetup = $layoutSetupInstance->getLayoutSetup($layoutId);
                 if ($layoutSetup['pi_flexform_ds_file']) {

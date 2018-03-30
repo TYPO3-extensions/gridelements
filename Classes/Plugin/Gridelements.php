@@ -378,6 +378,7 @@ class Gridelements extends ContentObjectRenderer
      */
     public function getQueryBuilder()
     {
+        /** @var $queryBuilder QueryBuilder */
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
             ->getQueryBuilderForTable('tt_content');
         $queryBuilder->setRestrictions(GeneralUtility::makeInstance(FrontendRestrictionContainer::class));
@@ -569,7 +570,7 @@ class Gridelements extends ContentObjectRenderer
      *
      * @param array $setup The adjusted setup of the grid container
      *
-     * @return array $content The raw HTML output of the grid container before stdWrap functions will be applied to it
+     * @return string $content The raw HTML output of the grid container before stdWrap functions will be applied to it
      */
     public function renderColumnsIntoParentGrid($setup = [])
     {

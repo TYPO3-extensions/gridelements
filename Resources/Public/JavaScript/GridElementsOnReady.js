@@ -70,7 +70,7 @@ define(['jquery', 'TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Backend/Storag
 				 OnReady.copyFromAnotherPage($(this));
 			 });
 		});
-	}
+	};
 
 	/**
 	 * generates the paste into / paste after modal
@@ -139,7 +139,7 @@ define(['jquery', 'TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Backend/Storag
 		} else {
 			Modal.show(title, content, severity, buttons);
 		}
-	}
+	};
 
 	/**
 	 * sets the classes for allowed element types to the cells of the original page module
@@ -171,7 +171,7 @@ define(['jquery', 'TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Backend/Storag
                         		$(this).addClass('t3-page-ce-danger');
 							}
 						});
-                    } else if ($children.length == top.pageColumnsMaxitems[colPos]) {
+                    } else if ($children.length === top.pageColumnsMaxitems[colPos]) {
                         $(this).find('> .t3-grid-cell-number-of-items').addClass('warning');
 					} else {
                         $(this).find('> .t3-grid-cell-number-of-items').addClass('success');
@@ -207,13 +207,13 @@ define(['jquery', 'TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Backend/Storag
 		var addNewIcon = $('.t3js-toggle-gridelements-column').first();
 		var newIcon = addNewIcon.clone().attr('class', 'btn btn-default btn-sm t3js-gridcolumn-toggle t3js-gridcolumn-expand').insertAfter(lastIcon);
 		newIcon.contents().filter(function () {
-			return (this.nodeType == 3);
+			return (this.nodeType === 3);
 		}).remove();
 		newIcon.find('.icon-actions-view-list-collapse').remove();
 		newIcon.removeAttr('onclick').attr('title', 'Expand all grid columns');
 		var newIcon = addNewIcon.clone().attr('class', 'btn btn-default btn-sm t3js-gridcolumn-toggle').insertAfter(lastIcon);
 		newIcon.contents().filter(function () {
-			return (this.nodeType == 3);
+			return (this.nodeType === 3);
 		}).remove();
 		newIcon.find('.icon-actions-view-list-expand').remove();
 		newIcon.removeAttr('onclick').attr('title', 'Collapse all grid columns');
@@ -241,7 +241,7 @@ define(['jquery', 'TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Backend/Storag
 			Storage.Persistent.set('moduleData.page.gridelementsCollapsedColumns', storedModuleDataPage);
 
 		});
-	}
+	};
 
 	/**
 	 * activates the arrow icons to show/hide content previews within a certain grid column
@@ -251,7 +251,6 @@ define(['jquery', 'TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Backend/Storag
 			evt.preventDefault();
 
 			var $me = $(this),
-					column = $me.closest('.t3js-page-column').data('colpos'),
 					columnKey = $me.closest('.t3js-page-column').data('columnkey'),
 					isExpanded = $me.data('state') === 'expanded';
 
@@ -282,7 +281,7 @@ define(['jquery', 'TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Backend/Storag
 			$(this).addClass('btn-group btn-group-sm');
 			$(this).find('a').addClass('btn btn-default');
 		});
-	}
+	};
 
 	/**
 	 * generates the paste into / paste after modal
@@ -291,7 +290,7 @@ define(['jquery', 'TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Backend/Storag
 		var url = top.backPath + top.browserUrl + '&mode=db&bparams=' + element.parent().attr('id') + '|||tt_content|';
 		OnReady.openedPopupWindow = window.open(url, 'Typo3WinBrowser', 'height=600,width=800,status=0,menubar=0,resizable=1,scrollbars=1');
 		OnReady.openedPopupWindow.focus();
-	}
+	};
 
 	/**
 	 * gives back the data from the popup window to the copy action

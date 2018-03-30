@@ -21,7 +21,6 @@ namespace GridElementsTeam\Gridelements\Hooks;
  ***************************************************************/
 
 use GridElementsTeam\Gridelements\Backend\LayoutSetup;
-use GridElementsTeam\Gridelements\Helper\Helper;
 use TYPO3\CMS\Backend\Controller\ContentElement\NewContentElementController;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Backend\Wizard\NewContentElementWizardHookInterface;
@@ -96,6 +95,7 @@ class WizardItems implements NewContentElementWizardHookInterface
             $this->removeDisallowedWizardItems($allowed, $disallowed, $wizardItems);
         } else {
             $allowed = null;
+            $disallowed = null;
         }
         if ((
                 empty($allowed['CType']) ||

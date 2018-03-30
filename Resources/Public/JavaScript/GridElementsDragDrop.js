@@ -45,10 +45,10 @@ define(['jquery', 'jquery-ui/droppable', 'TYPO3/CMS/Backend/LayoutModule/DragDro
             distance: 20,
             addClasses: 'active-drag',
             revert: 'invalid',
-            start: function (evt, ui) {
+            start: function () {
                 DragDrop.onDragStart($(this));
             },
-            stop: function (evt, ui) {
+            stop: function () {
                 DragDrop.onDragStop($(this));
             }
         });
@@ -79,7 +79,7 @@ define(['jquery', 'jquery-ui/droppable', 'TYPO3/CMS/Backend/LayoutModule/DragDro
         DragDrop.drag = $element.children(DragDrop.drag);
         DragDrop.drag.addClass('dragitem-shadow');
         DragDrop.types = $element.find(DragDrop.cTypeIdentifier);
-        if ($element.closest(DragDrop.newContentElementWizardIdentifier).length == 0) {
+        if ($element.closest(DragDrop.newContentElementWizardIdentifier).length === 0) {
             $element.append('<div class="ui-draggable-copy-message">' + TYPO3.lang['dragdrop.copy.message'] + '</div>');
         } else {
             // all information about CType, list_type and other default values has to be fetched from onclick

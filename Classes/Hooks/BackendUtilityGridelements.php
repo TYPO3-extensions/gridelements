@@ -21,7 +21,6 @@ namespace GridElementsTeam\Gridelements\Hooks;
  ***************************************************************/
 
 use GridElementsTeam\Gridelements\Backend\LayoutSetup;
-use GridElementsTeam\Gridelements\Helper\Helper;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**

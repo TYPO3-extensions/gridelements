@@ -30,6 +30,7 @@ use TYPO3\CMS\Backend\View\PageLayoutViewDrawItemHookInterface;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\ConnectionPool;
+use TYPO3\CMS\Core\Database\Query\Expression\ExpressionBuilder;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Core\Database\Query\Restriction\EndTimeRestriction;
 use TYPO3\CMS\Core\Database\Query\Restriction\HiddenRestriction;
@@ -39,6 +40,7 @@ use TYPO3\CMS\Core\Database\ReferenceIndex;
 use TYPO3\CMS\Core\Imaging\Icon;
 use TYPO3\CMS\Core\Imaging\IconFactory;
 use TYPO3\CMS\Core\Messaging\FlashMessage;
+use TYPO3\CMS\Core\Messaging\FlashMessageQueue;
 use TYPO3\CMS\Core\Messaging\FlashMessageService;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Type\Bitmask\Permission;
@@ -228,7 +230,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
             $itemContent = $this->renderGridLayoutTable($layout, $gridElement, $head, $gridContent, $parentObject);
         } else {
             $itemContent = '<div class="t3-grid-container t3-grid-element-container">';
-            $itemContent .= '<table border="0" cellspacing="0" cellpadding="0" width="100%" height="100%" class="t3-page-columns t3-grid-table">';
+            $itemContent .= '<table border="0" cellspacing="0" cellpadding="0" width="100%" class="t3-page-columns t3-grid-table">';
             $itemContent .= '<tr><td valign="top" class="t3-grid-cell t3-page-column t3-page-column-0">' . $gridContent[0] . '</td></tr>';
             $itemContent .= '</table></div>';
         }
@@ -286,6 +288,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
     {
         $specificIds = $this->helper->getSpecificIds($row);
 
+        /** @var $expressionBuilder ExpressionBuilder */
         $expressionBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
             ->getQueryBuilderForTable('tt_content')
             ->expr();
@@ -695,6 +698,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
                     FlashMessage::WARNING
                 );
                 $service = GeneralUtility::makeInstance(FlashMessageService::class);
+                /** @var $queue FlashMessageQueue */
                 $queue = $service->getMessageQueueByIdentifier();
                 $queue->addMessage($message);
             }
@@ -788,7 +792,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
                     throw new \UnexpectedValueException($hookClass . ' must implement interface ' . PageLayoutViewDrawFooterHookInterface::class,
                         1404378171);
                 }
-                $hookObject->preProcess($parentObject, $info, $row);
+                $hookObject->preProcess($parentObject, implode(',', $info), $row);
             }
         }
 
@@ -903,7 +907,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
                     ]
                 ) . '</h4>';
         }
-        $grid .= '<table border="0" cellspacing="0" cellpadding="0" width="100%" height="100%" class="t3-page-columns t3-grid-table">';
+        $grid .= '<table border="0" cellspacing="0" cellpadding="0" width="100%" class="t3-page-columns t3-grid-table">';
         // add colgroups
         $colCount = 0;
         $rowCount = 0;
@@ -917,7 +921,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
         }
         $grid .= '<colgroup>';
         for ($i = 0; $i < $colCount; $i++) {
-            $grid .= '<col style="width:' . (100 / $colCount) . '%"></col>';
+            $grid .= '<col style="width:' . (100 / $colCount) . '%" />';
         }
         $grid .= '</colgroup>';
         // cycle through rows

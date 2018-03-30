@@ -59,7 +59,7 @@ define(['jquery', 'TYPO3/CMS/Gridelements/GridElementsDragDrop', 'jquery-ui/drag
 		var addNewIcon = $('.t3-page-ce-wrapper-new-ce a').first();
 		var newIcon = addNewIcon.clone().attr('class', 'btn btn-default btn-sm').insertAfter(lastIcon);
 		newIcon.contents().filter(function () {
-			return (this.nodeType == 3);
+			return (this.nodeType === 3);
 		}).remove();
 		newIcon.removeAttr('onclick').attr('title', 'Toggle Drag In Wizard');
 		newIcon.click(function () {
@@ -104,8 +104,6 @@ define(['jquery', 'TYPO3/CMS/Gridelements/GridElementsDragDrop', 'jquery-ui/drag
 	 */
 	DragInWizard.rearrangeItems = function () {
 		var panel = $('#' + DragInWizard.wizardIdentifier + ' .t3js-tabs');
-		var CType;
-		var listType;
 		$('#' + DragInWizard.wizardIdentifier + ' .media').each(function () {
 			$(this).find('.media-left').addClass('t3-ctype-identifier');
 			var description = $(this).find('.media-body');
