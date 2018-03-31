@@ -47,7 +47,7 @@ define(['jquery', 'TYPO3/CMS/Gridelements/GridElementsDragDrop', 'jquery-ui/drag
 			originalWizardUrl = $newCeLink.attr('href').split('\&', 4);
 		}
 		if (typeof originalWizardUrl !== 'undefined') {
-			DragInWizard.wizardUrl = '\/typo3\/index.php?route=%2Frecord%2Fcontent%2Fnew&' + originalWizardUrl[1] + '&' + originalWizardUrl[2];
+			DragInWizard.wizardUrl = originalWizardUrl[0] + '&' + originalWizardUrl[1] + '&' + originalWizardUrl[2];
 		}
 	};
 
