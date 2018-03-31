@@ -64,7 +64,7 @@ class PageRenderer implements SingletonInterface
             $clipObj = GeneralUtility::makeInstance(Clipboard::class); // Start clipboard
             $clipObj->initializeClipboard();
             $clipObj->lockToNormal();
-
+            $clipBoard = $clipObj->clipData['normal'];
             if (!$pageRenderer->getCharSet()) {
                 $pageRenderer->setCharSet($GLOBALS['LANG']->charSet ? $GLOBALS['LANG']->charSet : 'utf-8');
             }
@@ -107,7 +107,23 @@ class PageRenderer implements SingletonInterface
                     $GLOBALS['TYPO3_CONF_VARS']['BE']['explicitADmode']) ? 'true' : 'false') . ";
             top.skipDraggableDetails = " . ($this->getBackendUser()->uc['dragAndDropHideNewElementWizardInfoOverlay'] ? 'true' : 'false') . ";
             top.backPath = '" . $GLOBALS['BACK_PATH'] . "';
-            top.browserUrl = '" . BackendUtility::getModuleUrl('wizard_element_browser') . "'";
+            top.browserUrl = '" . BackendUtility::getModuleUrl('wizard_element_browser') . "';";
+
+            if (!empty($clipBoard) && !empty($clipBoard['el'])) {
+                $clipBoardElement = GeneralUtility::trimExplode('|', key($clipBoard['el']));
+                if ($clipBoardElement[0] === 'tt_content') {
+                    $clipBoardElementData = BackendUtility::getRecord('tt_content', (int)$clipBoardElement[1]);
+                    $pAddExtOnReadyCode .= "
+            top.clipBoardElementCType = '" . $clipBoardElementData['CType'] . "';
+            top.clipBoardElementTxGridelementsBackendLayout = '" . $clipBoardElementData['tx_gridelements_backend_layout'] . "';
+            top.clipBoardElementListType = '" . $clipBoardElementData['list_type'] . "';";
+                } else {
+                    $pAddExtOnReadyCode .= "
+            top.clipBoardElementCType = '';
+            top.clipBoardElementTxGridelementsBackendLayout = '';
+            top.clipBoardElementListType = '';";
+                }
+            }
 
             $pAddExtOnReadyCode .= "
                     top.copyFromAnotherPageLinkTemplate = " . json_encode('<a class="t3js-paste-new btn btn-default" title="' . $this->getLanguageService()->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tx_gridelements_js.copyfrompage') . '">' . $iconFactory->getIcon('actions-insert-reference',
