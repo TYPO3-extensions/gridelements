@@ -63,7 +63,6 @@ class PageRenderer implements SingletonInterface
             $clipObj = GeneralUtility::makeInstance(Clipboard::class); // Start clipboard
             $clipObj->initializeClipboard();
             $clipObj->lockToNormal();
-
             if (!$pageRenderer->getCharSet()) {
                 $pageRenderer->setCharSet($GLOBALS['LANG']->charSet ? $GLOBALS['LANG']->charSet : 'utf-8');
             }
@@ -150,15 +149,18 @@ class PageRenderer implements SingletonInterface
                 $pasteTitle = $pasteRecord['header'] ? $pasteRecord['header'] : $pasteItem;
                 $copyMode = $clipObj->clipData['normal']['mode'] ? '-' . $clipObj->clipData['normal']['mode'] : '';
                 $pAddExtOnReadyCode .= "
+                    top.clipBoardElementCType = '" . $pasteRecord['CType'] . "';
+                    top.clipBoardElementGridType = '" . $pasteRecord['tx_gridelements_backend_layout'] . "';
                     top.pasteIntoLinkTemplate = " . json_encode('<a data-pasteitem="' . $pasteItem . '" data-pastetitle="' . $pasteTitle . '" class="t3js-paste t3js-paste' . $copyMode . ' t3js-paste-into btn btn-default" title="' . $this->getLanguageService()->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tx_gridelements_js.pasteinto') . '">' . $iconFactory->getIcon('actions-document-paste-into', Icon::SIZE_SMALL)->render() . '</a>') . ";
                     top.pasteAfterLinkTemplate = " . json_encode('<a data-pasteitem="' . $pasteItem . '" data-pastetitle="' . $pasteTitle . '"  class="t3js-paste t3js-paste' . $copyMode . ' t3js-paste-after btn btn-default" title="' . $this->getLanguageService()->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tx_gridelements_js.pasteafter') . '">' . $iconFactory->getIcon('actions-document-paste-into', Icon::SIZE_SMALL)->render() . '</a>') . ";";
                 if ($this->getBackendUser()->checkAuthMode('tt_content', 'CType', 'shortcut', $GLOBALS['TYPO3_CONF_VARS']['BE']['explicitADmode'])) {
                     $pAddExtOnReadyCode .= "
                         top.pasteReferencesAllowed = true;";
                 }
-
             } else {
                 $pAddExtOnReadyCode .= "
+                    top.clipBoardElementCType = '';
+                    top.clipBoardElementGridType = '';
                     top.pasteIntoLinkTemplate = '';
                     top.pasteAfterLinkTemplate = '';";
             }
