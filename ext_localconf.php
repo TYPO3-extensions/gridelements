@@ -6,17 +6,15 @@ if (!defined('TYPO3_MODE')) {
 
 $_EXTCONF = unserialize($_EXTCONF);
 
-if (TYPO3_MODE === 'BE') {
-    $GLOBALS['TYPO3_CONF_VARS']['SYS']['formEngine']['nodeRegistry'][1488914437] = [
-        'nodeName' => 'belayoutwizard',
-        'priority' => 50,
-        'class'    => \GridElementsTeam\Gridelements\Wizard\GridelementsBackendLayoutWizardElement::class,
-    ];
+$GLOBALS['TYPO3_CONF_VARS']['SYS']['formEngine']['nodeRegistry'][1488914437] = [
+    'nodeName' => 'belayoutwizard',
+    'priority' => 50,
+    'class'    => \GridElementsTeam\Gridelements\Wizard\GridelementsBackendLayoutWizardElement::class,
+];
 
-    // XCLASS
-    if ($_EXTCONF['nestingInListModule']) {
-        $GLOBALS['TYPO3_CONF_VARS']['SYS']['Objects'][\TYPO3\CMS\Recordlist\RecordList\DatabaseRecordList::class] = ['className' => \GridElementsTeam\Gridelements\Xclass\DatabaseRecordList::class];
-    }
+// XCLASS
+if ($_EXTCONF['nestingInListModule']) {
+    $GLOBALS['TYPO3_CONF_VARS']['SYS']['Objects'][\TYPO3\CMS\Recordlist\RecordList\DatabaseRecordList::class] = ['className' => \GridElementsTeam\Gridelements\Xclass\DatabaseRecordList::class];
 }
 
 \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addUserTSConfig('
