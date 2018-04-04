@@ -34,7 +34,6 @@ use TYPO3\CMS\Core\Messaging\FlashMessage;
 use TYPO3\CMS\Core\Messaging\FlashMessageService;
 use TYPO3\CMS\Core\Type\Bitmask\Permission;
 use TYPO3\CMS\Core\Utility\CsvUtility;
-use TYPO3\CMS\Core\Utility\DebugUtility;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\HttpUtility;
@@ -2071,7 +2070,6 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
         if ((int)$row[$GLOBALS['TCA'][$table]['ctrl']['languageField']] === -1) {
             return $out;
         }
-        DebugUtility::debug($this->selFieldList);
         $translations = $this->translateTools->translationInfo($table, $row['uid'], 0, $row, $this->selFieldList);
         if (is_array($translations)) {
             $this->translations = $translations['translations'];
