@@ -1184,6 +1184,7 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
         // Preparing and getting the data-array
         $theData = [];
         $localizationMarkerClass = '';
+        $lC2 = '';
         foreach ($this->fieldArray as $fCol) {
             if ($fCol == $titleCol) {
                 $recTitle = BackendUtility::getRecordTitle($table, $row, false, true);
@@ -1247,7 +1248,6 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
                     $row[$fCol] = BackendUtility::getProcessedValueExtra($table, $fCol, $row[$fCol], 0, $row['uid']);
                 }
             } elseif ($fCol === '_LOCALIZATION_b') {
-                list($lC1, $lC2) = $this->makeLocalizationPanel($table, $row);
                 $theData[$fCol] = $lC2;
             } else {
                 $theData[$fCol] = htmlspecialchars(BackendUtility::getProcessedValueExtra($table, $fCol, $row[$fCol], 0,
