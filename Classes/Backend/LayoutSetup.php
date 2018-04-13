@@ -600,6 +600,7 @@ class LayoutSetup
                 'icon'           => $item['icon'],
                 'iconIdentifier' => $item['iconIdentifier'],
                 'tll'            => $item['top_level_layout'],
+                'tt_content_defValues' => $item['tt_content_defValues.'],
             ];
 
         }
