@@ -151,6 +151,7 @@ class Gridelements extends ContentObjectRenderer
         if (!$element || $csvColumns === '') {
             return;
         }
+
         $where = '(tx_gridelements_container = ' . $element . $this->cObj->enableFields('tt_content') . ' AND colPos != -2
             AND pid = ' . (int)$pid . '
             AND tx_gridelements_columns IN (' . $csvColumns . ')
@@ -164,16 +165,20 @@ class Gridelements extends ContentObjectRenderer
                 }
 
                 if ($element) {
-                    $where .= '  OR (
-                    tx_gridelements_container = ' . $element . $this->cObj->enableFields('tt_content') . ' AND sys_language_uid IN (-1,' . $this->getTSFE()->sys_language_content . ')
+                    $where = '(tx_gridelements_container = ' . $element . $this->cObj->enableFields('tt_content') . ' AND colPos != -2
+                        AND pid = ' . (int)$pid . '
+                        AND tx_gridelements_columns IN (' . $csvColumns . ')
+                        AND sys_language_uid IN (-1,' . $this->getTSFE()->sys_language_content . ')
                         AND l18n_parent = 0
-                )';
+                    )';
                 }
             } else {
                 if ($element) {
-                    $where .= '  OR (
-                    tx_gridelements_container = ' . (int)$element . $this->cObj->enableFields('tt_content') . ' AND sys_language_uid IN (-1,' . $this->getTSFE()->sys_language_content . ')
-                )';
+                    $where = '(tx_gridelements_container = ' . $element . $this->cObj->enableFields('tt_content') . ' AND colPos != -2
+                        AND pid = ' . (int)$pid . '
+                        AND tx_gridelements_columns IN (' . $csvColumns . ')
+                        AND sys_language_uid IN (-1,' . $this->getTSFE()->sys_language_content . ')
+                    )';
                 }
             }
         }
