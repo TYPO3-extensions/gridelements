@@ -224,7 +224,7 @@ class AfterDatabaseOperations extends AbstractDataHandler
                                 $queryBuilder->createNamedParameter($elementsInUnavailableColumns,
                                     Connection::PARAM_INT_ARRAY))
                         )
-                        ->set('backupColPos', $queryBuilder->quoteIdentifier('colPos'))
+                        ->set('backupColPos', $queryBuilder->quoteIdentifier('colPos'), false)
                         ->set('colPos', -2)
                         ->execute();
                     array_flip($elementsInUnavailableColumns);
@@ -257,7 +257,7 @@ class AfterDatabaseOperations extends AbstractDataHandler
                                 $queryBuilder->createNamedParameter($elementsInAvailableColumns,
                                     Connection::PARAM_INT_ARRAY))
                         )
-                        ->set('colPos', $queryBuilder->quoteIdentifier('backupColPos'))
+                        ->set('colPos', $queryBuilder->quoteIdentifier('backupColPos'), false)
                         ->set('backupColPos', -2)
                         ->execute();
                     array_flip($elementsInAvailableColumns);
@@ -334,7 +334,7 @@ class AfterDatabaseOperations extends AbstractDataHandler
                                         $queryBuilder->createNamedParameter($subPageElementsInAvailableColumns,
                                             Connection::PARAM_INT_ARRAY))
                                 )
-                                ->set('colPos', $queryBuilder->quoteIdentifier('backupColPos'))
+                                ->set('colPos', $queryBuilder->quoteIdentifier('backupColPos'), false)
                                 ->set('backupColPos', -2)
                                 ->execute();
                             array_flip($subPageElementsInAvailableColumns);
