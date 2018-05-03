@@ -125,7 +125,6 @@ class AfterDatabaseOperations extends AbstractDataHandler
                         )
                         ->set('colPos', -2)
                         ->set('backupColPos', -1)
-                        ->set('subheader', serialize($this->layoutSetup))
                         ->execute();
                     array_flip($childElementsInUnavailableColumns);
                 }
