@@ -792,7 +792,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
                     throw new \UnexpectedValueException($hookClass . ' must implement interface ' . PageLayoutViewDrawFooterHookInterface::class,
                         1404378171);
                 }
-                $hookObject->preProcess($parentObject, implode(',', $info), $row);
+                $hookObject->preProcess($parentObject, $info, $row);
             }
         }
 
