@@ -259,7 +259,8 @@ define(['jquery', 'TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Backend/Storag
                                 $(this).addClass('t3-page-ce-danger');
                             }
                         });
-                    } else if ($children.length === top.pageColumnsMaxitems[colPos]) {
+                    } else if ($children.length === Number(top.pageColumnsMaxitems[colPos])) {
+                        $(this).addClass('t3-page-ce-disable-new-ce');
                         $(this).find('> .t3-grid-cell-number-of-items').addClass('warning');
                     } else {
                         $(this).find('> .t3-grid-cell-number-of-items').addClass('success');
