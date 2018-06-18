@@ -293,55 +293,66 @@ class Gridelements extends ContentObjectRenderer
         }
         $csvColumns = GeneralUtility::intExplode(',', $csvColumns);
         $queryBuilder = $this->getQueryBuilder();
+        $where = $queryBuilder->expr()->andX(
+            $queryBuilder->expr()->eq('tx_gridelements_container',
+                $queryBuilder->createNamedParameter((int)$element, \PDO::PARAM_INT)),
+            $queryBuilder->expr()->neq('colPos', $queryBuilder->createNamedParameter(-2, \PDO::PARAM_INT)),
+            $queryBuilder->expr()->eq('pid',
+                $queryBuilder->createNamedParameter((int)$pid, \PDO::PARAM_INT)),
+            $queryBuilder->expr()->in('tx_gridelements_columns',
+                $queryBuilder->createNamedParameter($csvColumns, Connection::PARAM_INT_ARRAY)),
+            $queryBuilder->expr()->in('sys_language_uid',
+                $queryBuilder->createNamedParameter([-1, 0], Connection::PARAM_INT_ARRAY))
+        );
+        $translationOverlay = [];
+        $translationNoOverlay = [];
+
+        if ($this->getTSFE()->sys_language_content > 0) {
+            if ($this->getTSFE()->sys_language_contentOL) {
+                if (isset($this->cObj->data['_LOCALIZED_UID']) && $this->cObj->data['_LOCALIZED_UID'] !== 0) {
+                    $element = (int)$this->cObj->data['_LOCALIZED_UID'];
+                }
+                if ($element) {
+                    $translationOverlay = $queryBuilder->expr()->andX(
+                        $queryBuilder->expr()->eq('tx_gridelements_container', $queryBuilder->createNamedParameter((int)$element, \PDO::PARAM_INT)),
+                        $queryBuilder->expr()->neq('colPos', $queryBuilder->createNamedParameter(-2, \PDO::PARAM_INT)),
+                        $queryBuilder->expr()->eq('pid',
+                            $queryBuilder->createNamedParameter((int)$pid, \PDO::PARAM_INT)),
+                        $queryBuilder->expr()->in('tx_gridelements_columns',
+                            $queryBuilder->createNamedParameter($csvColumns, Connection::PARAM_INT_ARRAY)),
+                        $queryBuilder->expr()->in('sys_language_uid',
+                            $queryBuilder->createNamedParameter([-1, $this->getTSFE()->sys_language_content],
+                                Connection::PARAM_INT_ARRAY)),
+                        $queryBuilder->expr()->eq('l18n_parent',
+                            $queryBuilder->createNamedParameter(0, \PDO::PARAM_INT))
+                    );
+                }
+            } else {
+                if ($element) {
+                    $translationNoOverlay = $queryBuilder->expr()->andX(
+                        $queryBuilder->expr()->eq('tx_gridelements_container',
+                            $queryBuilder->createNamedParameter((int)$element, \PDO::PARAM_INT)),
+                        $queryBuilder->expr()->neq('colPos', $queryBuilder->createNamedParameter(-2, \PDO::PARAM_INT)),
+                        $queryBuilder->expr()->eq('pid',
+                            $queryBuilder->createNamedParameter((int)$pid, \PDO::PARAM_INT)),
+                        $queryBuilder->expr()->in('tx_gridelements_columns',
+                            $queryBuilder->createNamedParameter($csvColumns, Connection::PARAM_INT_ARRAY)),
+                        $queryBuilder->expr()->in('sys_language_uid',
+                            $queryBuilder->createNamedParameter([-1, $this->getTSFE()->sys_language_content],
+                                Connection::PARAM_INT_ARRAY))
+                    );
+                }
+            }
+        }
+
         $children = $queryBuilder
             ->select('*')
             ->from('tt_content')
             ->where(
                 $queryBuilder->expr()->orX(
-                    empty($this->getTSFE()->sys_language_content) ?
-                        $queryBuilder->expr()->andX(
-                            $queryBuilder->expr()->eq('tx_gridelements_container',
-                                $queryBuilder->createNamedParameter((int)$element, \PDO::PARAM_INT)),
-                            $queryBuilder->expr()->neq('colPos', $queryBuilder->createNamedParameter(-2, \PDO::PARAM_INT)),
-                            $queryBuilder->expr()->eq('pid',
-                                $queryBuilder->createNamedParameter((int)$pid, \PDO::PARAM_INT)),
-                            $queryBuilder->expr()->in('tx_gridelements_columns',
-                                $queryBuilder->createNamedParameter($csvColumns, Connection::PARAM_INT_ARRAY)),
-                            $queryBuilder->expr()->in('sys_language_uid',
-                                $queryBuilder->createNamedParameter([-1, 0], Connection::PARAM_INT_ARRAY))
-                        ) : [],
-                    $this->getTSFE()->sys_language_content > 0 &&
-                    $this->getTSFE()->sys_language_contentOL &&
-                    isset($this->cObj->data['_LOCALIZED_UID']) &&
-                    (int)$this->cObj->data['_LOCALIZED_UID'] !== 0 ?
-                        $queryBuilder->expr()->andX(
-                            $queryBuilder->expr()->eq('tx_gridelements_container',
-                                $queryBuilder->createNamedParameter((int)$this->cObj->data['_LOCALIZED_UID'],
-                                    \PDO::PARAM_INT)),
-                            $queryBuilder->expr()->neq('colPos', $queryBuilder->createNamedParameter(-2, \PDO::PARAM_INT)),
-                            $queryBuilder->expr()->eq('pid',
-                                $queryBuilder->createNamedParameter((int)$pid, \PDO::PARAM_INT)),
-                            $queryBuilder->expr()->in('tx_gridelements_columns',
-                                $queryBuilder->createNamedParameter($csvColumns, Connection::PARAM_INT_ARRAY)),
-                            $queryBuilder->expr()->in('sys_language_uid',
-                                $queryBuilder->createNamedParameter([-1, $this->getTSFE()->sys_language_content],
-                                    Connection::PARAM_INT_ARRAY)),
-                            $queryBuilder->expr()->eq('l18n_parent',
-                                $queryBuilder->createNamedParameter(0, \PDO::PARAM_INT))
-                        ) : [],
-                    $this->getTSFE()->sys_language_content > 0 ?
-                        $queryBuilder->expr()->andX(
-                            $queryBuilder->expr()->eq('tx_gridelements_container',
-                                $queryBuilder->createNamedParameter((int)$element, \PDO::PARAM_INT)),
-                            $queryBuilder->expr()->neq('colPos', $queryBuilder->createNamedParameter(-2, \PDO::PARAM_INT)),
-                            $queryBuilder->expr()->eq('pid',
-                                $queryBuilder->createNamedParameter((int)$pid, \PDO::PARAM_INT)),
-                            $queryBuilder->expr()->in('tx_gridelements_columns',
-                                $queryBuilder->createNamedParameter($csvColumns, Connection::PARAM_INT_ARRAY)),
-                            $queryBuilder->expr()->in('sys_language_uid',
-                                $queryBuilder->createNamedParameter([-1, $this->getTSFE()->sys_language_content],
-                                    Connection::PARAM_INT_ARRAY))
-                        ) : []
+                    $where,
+                    $translationOverlay,
+                    $translationNoOverlay
                 )
             )
             ->orderBy('sorting', 'ASC')
