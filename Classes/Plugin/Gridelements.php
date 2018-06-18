@@ -152,7 +152,8 @@ class Gridelements extends ContentObjectRenderer
             return;
         }
 
-        $where = '(tx_gridelements_container = ' . $element . $this->cObj->enableFields('tt_content') . ' AND colPos != -2
+        $where = '(
+            tx_gridelements_container = ' . $element . $this->cObj->enableFields('tt_content') . ' AND colPos != -2
             AND pid = ' . (int)$pid . '
             AND tx_gridelements_columns IN (' . $csvColumns . ')
             AND sys_language_uid IN (-1,0)
@@ -165,7 +166,8 @@ class Gridelements extends ContentObjectRenderer
                 }
 
                 if ($element) {
-                    $where = '(tx_gridelements_container = ' . $element . $this->cObj->enableFields('tt_content') . ' AND colPos != -2
+                    $where .= ' OR (
+                        tx_gridelements_container = ' . $element . $this->cObj->enableFields('tt_content') . ' AND colPos != -2
                         AND pid = ' . (int)$pid . '
                         AND tx_gridelements_columns IN (' . $csvColumns . ')
                         AND sys_language_uid IN (-1,' . $this->getTSFE()->sys_language_content . ')
@@ -174,7 +176,8 @@ class Gridelements extends ContentObjectRenderer
                 }
             } else {
                 if ($element) {
-                    $where = '(tx_gridelements_container = ' . $element . $this->cObj->enableFields('tt_content') . ' AND colPos != -2
+                    $where .= ' OR (
+                        tx_gridelements_container = ' . $element . $this->cObj->enableFields('tt_content') . ' AND colPos != -2
                         AND pid = ' . (int)$pid . '
                         AND tx_gridelements_columns IN (' . $csvColumns . ')
                         AND sys_language_uid IN (-1,' . $this->getTSFE()->sys_language_content . ')
