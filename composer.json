@@ -16,6 +16,9 @@
     "gridelements": "self.version",
     "typo3-ter/gridelements": "self.version"
   },
+  "conflict": {
+    "typo3-ter/flux": "<8.2.1"
+  },
   "autoload": {
     "psr-4": {
       "GridElementsTeam\\Gridelements\\": "Classes/"
