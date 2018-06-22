@@ -31,6 +31,8 @@ It offers a lot of new features like advanced drag & drop or real references, th
         'conflicts' => [
             'templavoila' => '',
             'jfmulticontent' => '',
+            //https://forge.typo3.org/issues/85333
+			'flux' => '',
         ],
         'suggests' => [],
     ],
