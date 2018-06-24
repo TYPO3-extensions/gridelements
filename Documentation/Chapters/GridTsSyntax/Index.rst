@@ -109,7 +109,7 @@ in that particular column. The syntax matches that of the content defender
 extension so people using that will not have to change their configuration anymore.
 
 Same goes for the **disallowed** feature which is the black list variant of the
-**allowed** feature. While **alowed** explicitely lists those elements, the
+**allowed** feature. While **allowed** explicitly lists those elements, the
 user may put into that column, **disallowed** will exclude specific element list
 or grid types keeping all others available. **disallowed** will override **allowed**
 in case they contain the same values.
