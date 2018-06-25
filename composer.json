@@ -2,7 +2,9 @@
   "name": "gridelementsteam/gridelements",
   "description": "This extension integrates the grid layout concept also to regular content elements - the grid elements. It offers a lot of new features like advanced drag & drop or real references, that improve the usability of the page and list module to speed up the daily work with the backend.",
   "type": "typo3-cms-extension",
-  "version": "8.2.3",
+  "version": "9.0.0-dev",
+  "prefer-stable": true,
+  "minimum-stability": "dev",
   "keywords": ["TYPO3 CMS", "Grids", "Gridelements"],
   "homepage": "https://forge.typo3.org/projects/extension-gridelements2",
   "license": "GPL-2.0-or-later",
@@ -10,11 +12,11 @@
     "issues": "https://forge.typo3.org/projects/extension-gridelements2/issues"
   },
   "require": {
-    "typo3/cms-core": "^8.7",
-    "typo3/cms-backend": "^8.7",
-    "typo3/cms-recordlist": "^8.7",
-    "typo3/cms-frontend": "^8.7",
-    "typo3/cms-lang": "^8.7"
+    "typo3/cms-core": "^9.3 || dev-master",
+    "typo3/cms-backend": "^9.3 || dev-master",
+    "typo3/cms-recordlist": "^9.3 || dev-master",
+    "typo3/cms-frontend": "^9.3 || dev-master",
+    "typo3/cms-lang": "^9.3 || dev-master"
   },
   "conflict": {
     "templavoila": "*",
