@@ -26,11 +26,15 @@ It offers a lot of new features like advanced drag & drop or real references, th
     'author_company' => '',
     'constraints' => [
         'depends' => [
-            'typo3' => '8.7.0-8.99.99',
+            'typo3' => '8.7.0-8.7.99',
+            'backend' => '8.7.0-8.7.99',
+            'recordlist' => '8.7.0-8.7.99',
+            'frontend' => '8.7.0-8.7.99',
+            'lang' => '8.7.0-8.7.99',
         ],
         'conflicts' => [
             'templavoila' => '',
-            'jfmulticontent' => '',
+            'jfmulticontent' => ''
         ],
         'suggests' => [],
     ],
