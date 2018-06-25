@@ -10,7 +10,15 @@
     "issues": "https://forge.typo3.org/projects/extension-gridelements2/issues"
   },
   "require": {
-    "typo3/cms-core": ">=8.7.0,<9.0"
+    "typo3/cms-core": "^8.7",
+    "typo3/cms-backend": "^8.7",
+    "typo3/cms-recordlist": "^8.7",
+    "typo3/cms-frontend": "^8.7",
+    "typo3/cms-lang": "^8.7"
+  },
+  "conflict": {
+    "templavoila": "*",
+    "jfmulticontent": "*"
   },
   "replace": {
     "gridelements": "self.version",
