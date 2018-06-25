@@ -1,24 +1,32 @@
 {
-  "name": "GridElementsTeam/Gridelements",
-  "description": "This extension integrates the grid layout concept to regular content elements.",
+  "name": "gridelementsteam/gridelements",
+  "description": "This extension integrates the grid layout concept also to regular content elements - the grid elements. It offers a lot of new features like advanced drag & drop or real references, that improve the usability of the page and list module to speed up the daily work with the backend.",
   "type": "typo3-cms-extension",
+  "version": "7.4.2",
   "keywords": ["TYPO3 CMS", "Grids", "Gridelements"],
   "homepage": "https://forge.typo3.org/projects/extension-gridelements2",
   "license": "GPL-2.0-or-later",
-  "version": "7.4.2",
   "support": {
-    "issues": "https://forge.typo3.org/"
+    "issues": "https://forge.typo3.org/projects/extension-gridelements2/issues"
   },
   "require": {
-    "typo3/cms-core": ">=7.6.2,<8.0"
+    "typo3/cms-core": "^7.6",
+    "typo3/cms-backend": "^7.6",
+    "typo3/cms-recordlist": "^7.6",
+    "typo3/cms-frontend": "^7.6",
+    "typo3/cms-lang": "^7.6"
+  },
+  "conflict": {
+    "templavoila": "*",
+    "jfmulticontent": "*"
+  },
+  "replace": {
+    "gridelements": "self.version",
+    "typo3-ter/gridelements": "self.version"
   },
   "autoload": {
     "psr-4": {
       "GridElementsTeam\\Gridelements\\": "Classes/"
     }
-  },
-  "replace": {
-    "gridelements": "self.version",
-    "typo3-ter/gridelements": "self.version"
   }
 }
