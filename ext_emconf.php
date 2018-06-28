@@ -29,8 +29,7 @@ It offers a lot of new features like advanced drag & drop or real references, th
             'typo3' => '9.3.0-9.99.99',
             'backend' => '9.3.0-9.99.99',
             'recordlist' => '9.3.0-9.99.99',
-            'frontend' => '9.3.0-9.99.99',
-            'lang' => '9.3.0-9.99.99',
+            'frontend' => '9.3.0-9.99.99'
         ],
         'conflicts' => [
             'templavoila' => '',

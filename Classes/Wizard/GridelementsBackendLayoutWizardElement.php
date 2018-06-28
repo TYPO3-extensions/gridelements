@@ -215,7 +215,7 @@ class GridelementsBackendLayoutWizardElement extends BackendLayoutWizardElement
         $html = implode(LF, $html);
         $resultArray['html'] = $html;
         $resultArray['additionalInlineLanguageLabelFiles'][] = 'EXT:gridelements/Resources/Private/Language/locallang_wizard.xlf';
-        $resultArray['additionalInlineLanguageLabelFiles'][] = 'EXT:lang/Resources/Private/Language/locallang_wizards.xlf';
+        $resultArray['additionalInlineLanguageLabelFiles'][] = 'EXT:core/Resources/Private/Language/locallang_wizards.xlf';
         $resultArray['additionalInlineLanguageLabelFiles'][] = 'EXT:backend/Resources/Private/Language/locallang.xlf';
         $resultArray['requireJsModules'][] = 'TYPO3/CMS/Gridelements/GridEditor';
 
