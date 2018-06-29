@@ -112,7 +112,13 @@ class LayoutSetup
     protected function loadLayoutSetup($pageId)
     {
         // Load page TSconfig.
-        $pageTSconfig = BackendUtility::getPagesTSconfig($pageId);
+
+        if (TYPO3_MODE === 'FE') {
+            $pageTSconfig = $GLOBALS['TSFE']->getPagesTSconfig();
+        }
+        if (TYPO3_MODE === 'BE') {
+            $pageTSconfig = BackendUtility::getPagesTSconfig($pageId);
+        }
 
         $excludeLayoutIds = !empty($pageTSconfig['tx_gridelements.']['excludeLayoutIds'])
             ? array_flip(GeneralUtility::trimExplode(',', $pageTSconfig['tx_gridelements.']['excludeLayoutIds']))
