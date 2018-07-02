@@ -90,7 +90,11 @@ class DataHandler implements SingletonInterface
             $hook = GeneralUtility::makeInstance(AfterDatabaseOperations::class);
             if (strpos($id, 'NEW') !== false) {
                 $id = $parentObj->substNEWwithIDs[$id];
-            };
+            } else {
+                if ($table === 'tt_content' && $status === 'update') {
+                    $hook->adjustValuesAfterWorkspaceOperations($fieldArray, $id, $parentObj);
+                }
+            }
             $hook->execute_afterDatabaseOperations($fieldArray, $table, $id, $parentObj);
         }
     }

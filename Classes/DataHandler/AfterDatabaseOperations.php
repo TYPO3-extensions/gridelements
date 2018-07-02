@@ -36,6 +36,46 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 class AfterDatabaseOperations extends AbstractDataHandler
 {
     /**
+     * Function to adjust colPos, container and grid column of an element
+     * after it has been moved out of or into a container during a workspace operation
+     *
+     * @param array $fieldArray The array of fields and values that have been saved to the datamap
+     * @param int $uid the ID of the record
+     * @param DataHandler $parentObj The parent object that triggered this hook
+     */
+    public function adjustValuesAfterWorkspaceOperations(array $fieldArray, $uid, DataHandler $parentObj)
+    {
+        $workspace = $this->getBackendUser()->workspace;
+        if ($workspace && (isset($fieldArray['colPos']) || isset($fieldArray['tx_gridelements_container']) || isset($fieldArray['tx_gridelements_columns']))) {
+            $originalRecord = $parentObj->recordInfo('tt_content', (int)$uid, '*');
+            if ($originalRecord['t3ver_state'] === 4) {
+                $updateArray = [];
+                $movePlaceholder = BackendUtility::getMovePlaceholder('tt_content', (int)$uid, 'uid', $workspace);
+                if (isset($fieldArray['colPos'])) {
+                    $updateArray['colPos'] = (int)$fieldArray['colPos'];
+                }
+                if (isset($fieldArray['tx_gridelements_container'])) {
+                    $updateArray['tx_gridelements_container'] = (int)$fieldArray['tx_gridelements_container'];
+                }
+                if (isset($fieldArray['tx_gridelements_columns'])) {
+                    $updateArray['tx_gridelements_columns'] = (int)$fieldArray['tx_gridelements_columns'];
+                }
+                $parentObj->updateDB('tt_content', (int)$movePlaceholder['uid'], $updateArray);
+            }
+        }
+    }
+
+    /**
+     * Gets the current backend user.
+     *
+     * @return \TYPO3\CMS\Core\Authentication\BackendUserAuthentication
+     */
+    public function getBackendUser()
+    {
+        return $GLOBALS['BE_USER'];
+    }
+
+    /**
      * Function to set the colPos of an element depending on
      * whether it is a child of a parent container or not
      * will set colPos according to availability of the current grid column of an element
@@ -415,4 +455,5 @@ class AfterDatabaseOperations extends AbstractDataHandler
             }
         }
     }
+
 }
