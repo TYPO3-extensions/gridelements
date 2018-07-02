@@ -108,5 +108,8 @@ class ProcessCmdmap extends AbstractDataHandler
                 $this->doGridContainerUpdate($containerUpdateArray);
             }
         }
+        if ($table === 'tt_content') {
+            $this->cleanupWorkspacesAfterFinalizing();
+        }
     }
 }

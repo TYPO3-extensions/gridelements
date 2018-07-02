@@ -134,6 +134,76 @@ abstract class AbstractDataHandler
     }
 
     /**
+     * getter for pageUid
+     *
+     * @return integer pageUid
+     */
+    public function getPageUid()
+    {
+        return $this->pageUid;
+    }
+
+    /**
+     * setter for pageUid
+     *
+     * @param integer $pageUid
+     */
+    public function setPageUid($pageUid)
+    {
+        $this->pageUid = $pageUid;
+    }
+
+    /**
+     * Function to remove any remains of versioned records after finalizing a workspace action
+     * via 'Discard' or 'Publish' commands
+     *
+     */
+    public function cleanupWorkspacesAfterFinalizing()
+    {
+        $queryBuilder = $this->getQueryBuilder();
+
+        $constraints = [
+            $queryBuilder->expr()->andX(
+                $queryBuilder->expr()->eq(
+                    'pid',
+                    $queryBuilder->createNamedParameter(-1, \PDO::PARAM_INT)
+                ),
+                $queryBuilder->expr()->eq(
+                    't3ver_wsid',
+                    $queryBuilder->createNamedParameter(0, \PDO::PARAM_INT)
+                ),
+                $queryBuilder->expr()->gt(
+                    't3ver_id',
+                    $queryBuilder->createNamedParameter(0, \PDO::PARAM_INT)
+                )
+            ),
+        ];
+
+        $queryBuilder->delete('tt_content')
+            ->where(...$constraints)
+            ->execute();
+    }
+
+    /**
+     * getter for queryBuilder
+     *
+     * @param string $table
+     * @return QueryBuilder $queryBuilder
+     */
+    public function getQueryBuilder($table = 'tt_content')
+    {
+        /**@var $queryBuilder QueryBuilder */
+        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
+            ->getQueryBuilderForTable($table);
+        $queryBuilder->getRestrictions()
+            ->removeByType(HiddenRestriction::class)
+            ->removeByType(StartTimeRestriction::class)
+            ->removeByType(EndTimeRestriction::class);
+
+        return $queryBuilder;
+    }
+
+    /**
      * Function to handle record actions for current or former children of translated grid containers
      * as well as translated references
      *
@@ -253,25 +323,6 @@ abstract class AbstractDataHandler
     }
 
     /**
-     * getter for queryBuilder
-     *
-     * @param string $table
-     * @return QueryBuilder $queryBuilder
-     */
-    public function getQueryBuilder($table = 'tt_content')
-    {
-        /**@var $queryBuilder QueryBuilder */
-        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
-            ->getQueryBuilderForTable($table);
-        $queryBuilder->getRestrictions()
-            ->removeByType(HiddenRestriction::class)
-            ->removeByType(StartTimeRestriction::class)
-            ->removeByType(EndTimeRestriction::class);
-
-        return $queryBuilder;
-    }
-
-    /**
      * setter for Connection object
      *
      * @return Connection
@@ -341,26 +392,6 @@ abstract class AbstractDataHandler
     public function setTable($table)
     {
         $this->table = $table;
-    }
-
-    /**
-     * getter for pageUid
-     *
-     * @return integer pageUid
-     */
-    public function getPageUid()
-    {
-        return $this->pageUid;
-    }
-
-    /**
-     * setter for pageUid
-     *
-     * @param integer $pageUid
-     */
-    public function setPageUid($pageUid)
-    {
-        $this->pageUid = $pageUid;
     }
 
 }
