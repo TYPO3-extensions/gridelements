@@ -335,6 +335,51 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
         &$head
     ) {
         $collectedItems = $this->collectItemsForColumns($parentObject, $colPosValues, $row);
+        $workspace = $this->helper->getBackendUser()->workspace;
+        if ($workspace > 0) {
+            $workspacePreparedItems = [];
+            $moveUids = [];
+            foreach ($collectedItems as $item) {
+                if ($item['t3ver_state'] === 3) {
+                    $moveUids[] = (int)$item['t3ver_move_id'];
+                    $item = BackendUtility::getRecordWSOL('tt_content', (int)$item['uid']);
+                    $movePlaceholder = BackendUtility::getMovePlaceholder('tt_content', (int)$item['uid'], '*',
+                        $workspace);
+                    if (!empty($movePlaceholder)) {
+                        $item['sorting'] = $movePlaceholder['sorting'];
+                        $item['tx_gridelements_columns'] = $movePlaceholder['tx_gridelements_columns'];
+                        $item['tx_gridelements_container'] = $movePlaceholder['tx_gridelements_container'];
+                    };
+                } else {
+                    $item = BackendUtility::getRecordWSOL('tt_content', (int)$item['uid']);
+                    if ($item['t3ver_state'] === 4) {
+                        $movePlaceholder = BackendUtility::getMovePlaceholder('tt_content', (int)$item['uid'], '*',
+                            $workspace);
+                        if (!empty($movePlaceholder)) {
+                            $item['sorting'] = $movePlaceholder['sorting'];
+                            $item['tx_gridelements_columns'] = $movePlaceholder['tx_gridelements_columns'];
+                            $item['tx_gridelements_container'] = $movePlaceholder['tx_gridelements_container'];
+                        };
+                    }
+                }
+                $workspacePreparedItems[] = $item;
+            }
+            $moveUids = array_flip($moveUids);
+            $collectedItems = $workspacePreparedItems;
+            foreach ($collectedItems as $key => $item) {
+                if (isset($moveUids[$item['uid']]) && !$item['_MOVE_PLH']) {
+                    unset($collectedItems[$key]);
+                }
+            }
+        } else {
+            foreach ($collectedItems as $key => $item) {
+                $item = BackendUtility::getRecordWSOL('tt_content', (int)$item['uid']);
+                if ($item['t3ver_state'] > 0) {
+                    unset($collectedItems[$key]);
+                }
+            }
+        }
+
         foreach ($colPosValues as $colPos => $values) {
             // first we have to create the column content separately for each column
             // so we can check for the first and the last element to provide proper sorting
@@ -342,7 +387,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
             if ($singleColumn === false) {
                 $items = [];
                 foreach ($collectedItems as $item) {
-                    if ((int)$item['tx_gridelements_columns'] === $colPos) {
+                    if ((int)$item['tx_gridelements_columns'] === $colPos && (int)$item['tx_gridelements_container'] === (int)$row['uid']) {
                         if (
                             $row['sys_language_uid'] === $item['sys_language_uid'] ||
                             ($row['sys_language_uid'] === -1 && $item['sys_language_uid'] === 0)
@@ -355,6 +400,12 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
             } else {
                 $items = [];
             }
+            usort($items, function ($a, $b) {
+                if ($a['sorting'] === $b['sorting']) {
+                    return 0;
+                }
+                return $a['sorting'] > $b['sorting'] ? 1 : -1;
+            });
             // if there are any items, we can create the HTML for them just like in the original TCEform
             $gridContent['numberOfItems'][$colPos] = $counter;
             $this->renderSingleGridColumn($parentObject, $items, $colPos, $values, $gridContent, $row, $editUidList);
@@ -380,7 +431,9 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
 
         $queryBuilder = $this->getQueryBuilder();
         $constraints = [
-            $queryBuilder->expr()->eq('pid', $queryBuilder->createNamedParameter($row['pid'], \PDO::PARAM_INT)),
+            $queryBuilder->expr()->in('pid',
+                $queryBuilder->createNamedParameter([(int)$row['pid'], $specificIds['pid']],
+                    Connection::PARAM_INT_ARRAY)),
             $queryBuilder->expr()->eq('colPos', $queryBuilder->createNamedParameter(-1, \PDO::PARAM_INT)),
             $queryBuilder->expr()->in('tx_gridelements_container',
                 $queryBuilder->createNamedParameter([(int)$row['uid'], $specificIds['uid']],
@@ -399,9 +452,19 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
             $constraints[] = $queryBuilder->expr()->eq('sys_language_uid',
                 $queryBuilder->createNamedParameter((int)$row['sys_language_uid'], \PDO::PARAM_INT));
         }
-        if ($this->helper->getBackendUser()->workspace > 0 && $row['t3ver_wsid'] > 0) {
-            $constraints[] = $queryBuilder->expr()->eq('t3ver_wsid',
-                $queryBuilder->createNamedParameter((int)$row['t3ver_wsid'], \PDO::PARAM_INT));
+        if ($this->helper->getBackendUser()->workspace > 0) {
+            if ($row['t3ver_wsid'] > 0) {
+                $constraints[] = $queryBuilder->expr()->eq('t3ver_wsid',
+                    $queryBuilder->createNamedParameter((int)$row['t3ver_wsid'], \PDO::PARAM_INT));
+            } else {
+                $constraints[] = $queryBuilder->expr()->orX(
+                    $queryBuilder->expr()->eq('t3ver_wsid',
+                        $queryBuilder->createNamedParameter(0, \PDO::PARAM_INT)),
+                    $queryBuilder->expr()->eq('t3ver_wsid',
+                        $queryBuilder->createNamedParameter($this->helper->getBackendUser()->workspace,
+                            \PDO::PARAM_INT))
+                );
+            }
         }
 
         $queryBuilder
@@ -1051,7 +1114,8 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
                 $tooManyItems = $gridContent['numberOfItems'][$columnKey] > $maxItems && $maxItems > 0;
                 $expanded = $this->helper->getBackendUser()->uc['moduleData']['page']['gridelementsCollapsedColumns'][$row['uid'] . '_' . $columnKey] ? 'collapsed' : 'expanded';
                 if (!empty($columnConfig['name']) && $columnKey === 32768) {
-                    $columnHead = $this->tt_content_drawColHeader(htmlspecialchars($columnConfig['name']) . ' (' . $this->languageService->getLL('notAssigned') . ')', '', $parentObject);
+                    $columnHead = $this->tt_content_drawColHeader(htmlspecialchars($columnConfig['name']) . ' (' . $this->languageService->getLL('notAssigned') . ')',
+                        '', $parentObject);
                 } else {
                     $columnHead = $head[$columnKey];
                 }
@@ -1114,10 +1178,12 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
             foreach ($shortcutItems as $shortcutItem) {
                 $shortcutItem = trim($shortcutItem);
                 if (strpos($shortcutItem, 'pages_') !== false) {
-                    $this->collectContentDataFromPages($shortcutItem, $collectedItems, $row['recursive'], $row['uid'], $row['sys_language_uid']);
+                    $this->collectContentDataFromPages($shortcutItem, $collectedItems, $row['recursive'], $row['uid'],
+                        $row['sys_language_uid']);
                 } else {
                     if (strpos($shortcutItem, '_') === false || strpos($shortcutItem, 'tt_content_') !== false) {
-                        $this->collectContentData($shortcutItem, $collectedItems, $row['uid'], $row['sys_language_uid']);
+                        $this->collectContentData($shortcutItem, $collectedItems, $row['uid'],
+                            $row['sys_language_uid']);
                     }
                 }
             }
@@ -1178,7 +1244,8 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
                 $queryBuilder->expr()->in('pid',
                     $queryBuilder->createNamedParameter($itemList, Connection::PARAM_INT_ARRAY)),
                 $queryBuilder->expr()->gte('colPos', $queryBuilder->createNamedParameter(0, \PDO::PARAM_INT)),
-                $queryBuilder->expr()->in('sys_language_uid', $queryBuilder->createNamedParameter([0, -1], Connection::PARAM_INT_ARRAY))
+                $queryBuilder->expr()->in('sys_language_uid',
+                    $queryBuilder->createNamedParameter([0, -1], Connection::PARAM_INT_ARRAY))
             )
             ->orderBy('inSet')
             ->addOrderBy('colPos')
