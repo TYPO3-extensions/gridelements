@@ -14,7 +14,13 @@
 /**
  * Module: TYPO3\CMS\Gridelements\GridEditor
  */
-define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Severity', 'TYPO3/CMS/Lang/Lang', 'bootstrap'], function ($, Modal, Severity, Lang) {
+define([
+        'jquery',
+        'TYPO3/CMS/Backend/Modal',
+        'TYPO3/CMS/Backend/Severity',
+        'bootstrap'
+],
+function ($, Modal, Severity) {
     'use strict';
 
     /**
@@ -147,10 +153,10 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Severity', 'TYPO
             var $preview = $(GridEditor.selectorConfigPreview);
             var $button = $(GridEditor.selectorConfigPreviewButton);
             if ($preview.is(':visible')) {
-                $button.empty().append(Lang['button.showPageTsConfig']);
+                $button.empty().append(TYPO3.lang['button.showPageTsConfig']);
                 $(GridEditor.selectorConfigPreview).slideUp();
             } else {
-                $button.empty().append(Lang['button.hidePageTsConfig']);
+                $button.empty().append(TYPO3.lang['button.hidePageTsConfig']);
                 $(GridEditor.selectorConfigPreview).slideDown();
             }
 
@@ -354,14 +360,14 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Severity', 'TYPO
                     $anchor
                         .clone()
                         .attr('class', 't3js-grideditor-link-editor link link_editor')
-                        .attr('title', Lang['grid_editCell'])
+                        .attr('title', TYPO3.lang['grid_editCell'])
                 );
                 if (GridEditor.cellCanSpanRight(col, row)) {
                     $container.append(
                         $anchor
                             .clone()
                             .attr('class', 't3js-grideditor-link-expand-right link link_expand_right')
-                            .attr('title', Lang['grid_mergeCell'])
+                            .attr('title', TYPO3.lang['grid_mergeCell'])
                     );
                 }
                 if (GridEditor.cellCanShrinkLeft(col, row)) {
@@ -369,7 +375,7 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Severity', 'TYPO
                         $anchor
                             .clone()
                             .attr('class', 't3js-grideditor-link-shrink-left link link_shrink_left')
-                            .attr('title', Lang['grid_splitCell'])
+                            .attr('title', TYPO3.lang['grid_splitCell'])
                     );
                 }
                 if (GridEditor.cellCanSpanDown(col, row)) {
@@ -377,7 +383,7 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Severity', 'TYPO
                         $anchor
                             .clone()
                             .attr('class', 't3js-grideditor-link-expand-down link link_expand_down')
-                            .attr('title', Lang['grid_mergeCell'])
+                            .attr('title', TYPO3.lang['grid_mergeCell'])
                     );
                 }
                 if (GridEditor.cellCanShrinkUp(col, row)) {
@@ -385,21 +391,21 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Severity', 'TYPO
                         $anchor
                             .clone()
                             .attr('class', 't3js-grideditor-link-shrink-up link link_shrink_up')
-                            .attr('title', Lang['grid_splitCell'])
+                            .attr('title', TYPO3.lang['grid_splitCell'])
                     );
                 }
                 $cell.append(
                     $('<table class="cell_data">')
                         .html(
-                            '<tr><th>' + Lang['grid_name'] + ': </th><td>' + (cell.name ? GridEditor.stripMarkup(cell.name) : Lang['grid_notSet']) + '</td></tr>'
-                            + '<tr><th>' + Lang['grid_column'] + ': </th><td>' + (cell.column === undefined || typeof(cell.column) !== 'number' ? Lang['grid_notSet'] : parseInt(cell.column, 10)) + '</td></tr>'
-                            + (cell.allowed && cell.allowed.CType ? ('<tr><th>' + Lang['grid_allowed'] + ': </th><td>' + cell.allowed.CType + '</td></tr>') : '')
-                            + (cell.allowed && cell.allowed.list_type ? ('<tr><th>' + Lang['grid_allowedListTypes'] + ': </th><td>' + cell.allowed.list_type + '</td></tr>') : '')
-                            + (cell.allowed && cell.allowed.tx_gridelements_backend_layout ? ('<tr><th>' + Lang['grid_allowedGridTypes'] + ': </th><td>' + cell.allowed.tx_gridelements_backend_layout + '</td></tr>') : '')
-                            + (cell.disallowed && cell.disallowed.CType ? ('<tr><th>' + Lang['grid_disallowed'] + ': </th><td>' + cell.disallowed.CType + '</td></tr>') : '')
-                            + (cell.disallowed && cell.disallowed.list_type ? ('<tr><th>' + Lang['grid_disallowedListTypes'] + ': </th><td>' + cell.disallowed.list_type + '</td></tr>') : '')
-                            + (cell.disallowed && cell.disallowed.tx_gridelements_backend_layout ? ('<tr><th>' + Lang['grid_disallowedGridTypes'] + ': </th><td>' + cell.disallowed.tx_gridelements_backend_layout + '</td></tr>') : '')
-                            + (cell.maxitems ? ('<tr><th>' + Lang['grid_maxitems'] + ': </th><td>' + parseInt(cell.maxitems, 10) + '</td></tr>') : '')
+                            '<tr><th>' + TYPO3.lang['grid_name'] + ': </th><td>' + (cell.name ? GridEditor.stripMarkup(cell.name) : TYPO3.lang['grid_notSet']) + '</td></tr>'
+                            + '<tr><th>' + TYPO3.lang['grid_column'] + ': </th><td>' + (cell.column === undefined || typeof(cell.column) !== 'number' ? TYPO3.lang['grid_notSet'] : parseInt(cell.column, 10)) + '</td></tr>'
+                            + (cell.allowed && cell.allowed.CType ? ('<tr><th>' + TYPO3.lang['grid_allowed'] + ': </th><td>' + cell.allowed.CType + '</td></tr>') : '')
+                            + (cell.allowed && cell.allowed.list_type ? ('<tr><th>' + TYPO3.lang['grid_allowedListTypes'] + ': </th><td>' + cell.allowed.list_type + '</td></tr>') : '')
+                            + (cell.allowed && cell.allowed.tx_gridelements_backend_layout ? ('<tr><th>' + TYPO3.lang['grid_allowedGridTypes'] + ': </th><td>' + cell.allowed.tx_gridelements_backend_layout + '</td></tr>') : '')
+                            + (cell.disallowed && cell.disallowed.CType ? ('<tr><th>' + TYPO3.lang['grid_disallowed'] + ': </th><td>' + cell.disallowed.CType + '</td></tr>') : '')
+                            + (cell.disallowed && cell.disallowed.list_type ? ('<tr><th>' + TYPO3.lang['grid_disallowedListTypes'] + ': </th><td>' + cell.disallowed.list_type + '</td></tr>') : '')
+                            + (cell.disallowed && cell.disallowed.tx_gridelements_backend_layout ? ('<tr><th>' + TYPO3.lang['grid_disallowedGridTypes'] + ': </th><td>' + cell.disallowed.tx_gridelements_backend_layout + '</td></tr>') : '')
+                            + (cell.maxitems ? ('<tr><th>' + TYPO3.lang['grid_maxitems'] + ': </th><td>' + parseInt(cell.maxitems, 10) + '</td></tr>') : '')
                             + '</table>'
                         )
                 );
@@ -650,8 +656,8 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Severity', 'TYPO
                 .append([
                     $label
                         .clone()
-                        .text(Lang['grid_name'])
-                        .attr('title', Lang['grid_nameHelp'])
+                        .text(TYPO3.lang['grid_name'])
+                        .attr('title', TYPO3.lang['grid_nameHelp'])
                     ,
                     $input
                         .clone()
@@ -665,8 +671,8 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Severity', 'TYPO
                 .append([
                     $label
                         .clone()
-                        .text(Lang['grid_column'])
-                        .attr('title', Lang['grid_columnHelp'])
+                        .text(TYPO3.lang['grid_column'])
+                        .attr('title', TYPO3.lang['grid_columnHelp'])
                     ,
                     $input
                         .clone()
@@ -680,8 +686,8 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Severity', 'TYPO
                 .append([
                     $label
                         .clone()
-                        .text(Lang['grid_maxitems'])
-                        .attr('title', Lang['grid_maxitemsHelp'])
+                        .text(TYPO3.lang['grid_maxitems'])
+                        .attr('title', TYPO3.lang['grid_maxitemsHelp'])
                     ,
                     $input
                         .clone()
@@ -696,8 +702,8 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Severity', 'TYPO
                     .append([
                         $label
                             .clone()
-                            .text(Lang['grid_allowed'])
-                            .attr('title', Lang['grid_allowedHelp'])
+                            .text(TYPO3.lang['grid_allowed'])
+                            .attr('title', TYPO3.lang['grid_allowedHelp'])
                         ,
                         $select
                             .clone()
@@ -712,8 +718,8 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Severity', 'TYPO
                     .append([
                         $label
                             .clone()
-                            .text(Lang['grid_disallowed'])
-                            .attr('title', Lang['grid_disallowedHelp'])
+                            .text(TYPO3.lang['grid_disallowed'])
+                            .attr('title', TYPO3.lang['grid_disallowedHelp'])
                         ,
                         $select
                             .clone()
@@ -728,8 +734,8 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Severity', 'TYPO
                     .append([
                         $label
                             .clone()
-                            .text(Lang['grid_allowedListTypes'])
-                            .attr('title', Lang['grid_allowedListTypesHelp'])
+                            .text(TYPO3.lang['grid_allowedListTypes'])
+                            .attr('title', TYPO3.lang['grid_allowedListTypesHelp'])
                         ,
                         $select
                             .clone()
@@ -744,8 +750,8 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Severity', 'TYPO
                     .append([
                         $label
                             .clone()
-                            .text(Lang['grid_disallowedListTypes'])
-                            .attr('title', Lang['grid_disallowedListTypesHelp'])
+                            .text(TYPO3.lang['grid_disallowedListTypes'])
+                            .attr('title', TYPO3.lang['grid_disallowedListTypesHelp'])
                         ,
                         $select
                             .clone()
@@ -760,8 +766,8 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Severity', 'TYPO
                     .append([
                         $label
                             .clone()
-                            .text(Lang['grid_allowedGridTypes'])
-                            .attr('title', Lang['grid_allowedGridTypesHelp'])
+                            .text(TYPO3.lang['grid_allowedGridTypes'])
+                            .attr('title', TYPO3.lang['grid_allowedGridTypesHelp'])
                         ,
                         $select
                             .clone()
@@ -776,8 +782,8 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Severity', 'TYPO
                     .append([
                         $label
                             .clone()
-                            .text(Lang['grid_disallowedGridTypes'])
-                            .attr('title', Lang['grid_disallowedGridTypesHelp'])
+                            .text(TYPO3.lang['grid_disallowedGridTypes'])
+                            .attr('title', TYPO3.lang['grid_disallowedGridTypesHelp'])
                         ,
                         $select
                             .clone()
@@ -788,15 +794,15 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Severity', 'TYPO
                     ]) : ''
         ]);
 
-        var $modal = Modal.show(Lang['grid_windowTitle'], $markup, Severity.notice, [
+        var $modal = Modal.show(TYPO3.lang['grid_windowTitle'], $markup, Severity.notice, [
             {
-                text: $(this).data('button-close-text') || Lang['button.cancel'] || 'Cancel',
+                text: $(this).data('button-close-text') || TYPO3.lang['button.cancel'] || 'Cancel',
                 active: true,
                 btnClass: 'btn-default',
                 name: 'cancel'
             },
             {
-                text: $(this).data('button-ok-text') || Lang['button.ok'] || 'OK',
+                text: $(this).data('button-ok-text') || TYPO3.lang['button.ok'] || 'OK',
                 btnClass: 'btn-' + Severity.getCssClass(Severity.notice),
                 name: 'ok'
             }
