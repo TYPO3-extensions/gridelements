@@ -276,7 +276,7 @@ class PreProcessFieldArray extends AbstractDataHandler
             }
         } else {
             if (isset($fieldArray['tx_gridelements_container']) && (int)$fieldArray['tx_gridelements_container'] === 0 && (int)$fieldArray['colPos'] === -1) {
-                $fieldArray['colPos'] = $this->checkForRootColumn((int)$this->getPageUid());
+                $fieldArray['colPos'] = $this->checkForRootColumn((int)$this->getContentUid());
                 $fieldArray['tx_gridelements_columns'] = 0;
                 $fieldArray['tx_gridelements_container'] = 0;
             } else {

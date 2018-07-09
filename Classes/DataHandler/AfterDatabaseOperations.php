@@ -90,11 +90,10 @@ class AfterDatabaseOperations extends AbstractDataHandler
         $changedSubPageElements = [];
 
         if ($this->getTable() === 'tt_content') {
-            $changedGridElements[$this->getPageUid()] = true;
+            $changedGridElements[$this->getContentUid()] = true;
             $childElementsInUnavailableColumns = [];
             $childElementsInAvailableColumns = [];
-            $availableColumns = $this->getAvailableColumns($fieldArray['tx_gridelements_backend_layout'], 'tt_content',
-                $this->getPageUid());
+            $availableColumns = $this->getAvailableColumns($fieldArray['tx_gridelements_backend_layout'], 'tt_content');
             if (!empty($availableColumns) || $availableColumns === '0') {
                 $availableColumns = GeneralUtility::intExplode(',', $availableColumns);
                 $queryBuilder = $this->getQueryBuilder();
@@ -105,7 +104,7 @@ class AfterDatabaseOperations extends AbstractDataHandler
                         $queryBuilder->expr()->andX(
                             $queryBuilder->expr()->gt('tx_gridelements_container', 0),
                             $queryBuilder->expr()->eq('tx_gridelements_container',
-                                $queryBuilder->createNamedParameter((int)$this->getPageUid(), \PDO::PARAM_INT)),
+                                $queryBuilder->createNamedParameter((int)$this->getContentUid(), \PDO::PARAM_INT)),
                             $queryBuilder->expr()->notIn('tx_gridelements_columns',
                                 $queryBuilder->createNamedParameter($availableColumns, Connection::PARAM_INT_ARRAY))
                         )
@@ -137,7 +136,7 @@ class AfterDatabaseOperations extends AbstractDataHandler
                         $queryBuilder->expr()->andX(
                             $queryBuilder->expr()->gt('tx_gridelements_container', 0),
                             $queryBuilder->expr()->eq('tx_gridelements_container',
-                                $queryBuilder->createNamedParameter((int)$this->getPageUid(), \PDO::PARAM_INT)),
+                                $queryBuilder->createNamedParameter((int)$this->getContentUid(), \PDO::PARAM_INT)),
                             $queryBuilder->expr()->in('tx_gridelements_columns',
                                 $queryBuilder->createNamedParameter($availableColumns, Connection::PARAM_INT_ARRAY))
                         )
