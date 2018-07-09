@@ -56,6 +56,11 @@ abstract class AbstractDataHandler
     protected $pageUid;
 
     /**
+     * @var int
+     */
+    protected $contentUid = 0;
+
+    /**
      * @var DataHandler
      */
     protected $dataHandler;
@@ -75,14 +80,37 @@ abstract class AbstractDataHandler
     public function init($table, $uidPid, DataHandler $dataHandler)
     {
         $this->setTable($table);
-        if ($table === 'tt_content') {
-            $uidPid = Helper::getInstance()->getPidFromUid($uidPid);
+        if ($table === 'tt_content' && (int)$uidPid < 0) {
+            $this->setContentUid(abs($uidPid));
+            $pageUid = Helper::getInstance()->getPidFromUid($this->getContentUid());
+            $this->setPageUid($pageUid);
+        } else {
+            $this->setPageUid((int)$uidPid);
         }
-        $this->setPageUid($uidPid);
         $this->setTceMain($dataHandler);
         if (!$this->layoutSetup instanceof LayoutSetup) {
-            $this->injectLayoutSetup(GeneralUtility::makeInstance(LayoutSetup::class)->init($uidPid));
+            $this->injectLayoutSetup(GeneralUtility::makeInstance(LayoutSetup::class)->init($this->getPageUid()));
         }
+    }
+
+    /**
+     * getter for contentUid
+     *
+     * @return integer contentUid
+     */
+    public function getContentUid()
+    {
+        return $this->contentUid;
+    }
+
+    /**
+     * setter for contentUid
+     *
+     * @param integer $contentUid
+     */
+    public function setContentUid($contentUid)
+    {
+        $this->contentUid = $contentUid;
     }
 
     /**
@@ -194,12 +222,14 @@ abstract class AbstractDataHandler
             if (isset($translatedContainers[$translatedElement['sys_language_uid']])) {
                 $updateArray['tx_gridelements_container'] = (int)$translatedContainers[$translatedElement['sys_language_uid']]['uid'];
                 $updateArray['tx_gridelements_columns'] = (int)$currentValues['tx_gridelements_columns'];
-            } else if ($translatedElement['tx_gridelements_container'] == $currentValues['tx_gridelements_container']) {
-                $updateArray['tx_gridelements_container'] = (int)$currentValues['tx_gridelements_container'];
-                $updateArray['tx_gridelements_columns'] = (int)$currentValues['tx_gridelements_columns'];
             } else {
-                $updateArray['tx_gridelements_container'] = 0;
-                $updateArray['tx_gridelements_columns'] = 0;
+                if ($translatedElement['tx_gridelements_container'] == $currentValues['tx_gridelements_container']) {
+                    $updateArray['tx_gridelements_container'] = (int)$currentValues['tx_gridelements_container'];
+                    $updateArray['tx_gridelements_columns'] = (int)$currentValues['tx_gridelements_columns'];
+                } else {
+                    $updateArray['tx_gridelements_container'] = 0;
+                    $updateArray['tx_gridelements_columns'] = 0;
+                }
             }
             $updateArray['colPos'] = (int)$currentValues['colPos'];
 
@@ -230,7 +260,7 @@ abstract class AbstractDataHandler
      */
     public function getQueryBuilder($table = 'tt_content')
     {
-        /**@var $queryBuilder QueryBuilder*/
+        /**@var $queryBuilder QueryBuilder */
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
             ->getQueryBuilderForTable($table);
         $queryBuilder->getRestrictions()
@@ -240,7 +270,6 @@ abstract class AbstractDataHandler
 
         return $queryBuilder;
     }
-
 
     /**
      * setter for Connection object
