@@ -1,4 +1,5 @@
 <?php
+
 namespace GridElementsTeam\Gridelements\DataHandler;
 
 /***************************************************************
@@ -83,19 +84,19 @@ class AfterDatabaseOperations extends AbstractDataHandler
      */
     public function setUnusedElements(array &$fieldArray)
     {
-        $changedGridElements = array();
-        $changedElements = array();
-        $changedSubPageElements = array();
+        $changedGridElements = [];
+        $changedElements = [];
+        $changedSubPageElements = [];
 
         if ($this->getTable() === 'tt_content') {
-            $changedGridElements[$this->getPageUid()] = true;
-            $childElementsInUnavailableColumns = array();
-            $childElementsInAvailableColumns = array();
-            $availableColumns = $this->getAvailableColumns($fieldArray['tx_gridelements_backend_layout'], 'tt_content',
-                $this->getPageUid());
+            $changedGridElements[$this->getContentUid()] = true;
+            $childElementsInUnavailableColumns = [];
+            $childElementsInAvailableColumns = [];
+            $availableColumns = $this->getAvailableColumns($fieldArray['tx_gridelements_backend_layout'], 'tt_content');
             if (!empty($availableColumns) || $availableColumns === '0') {
                 $childElementsInUnavailableColumns = array_keys($this->databaseConnection->exec_SELECTgetRows('uid',
-                    'tt_content', 'tx_gridelements_container > 0 AND tx_gridelements_container = ' . $this->getPageUid() . '
+                    'tt_content',
+                    'tx_gridelements_container > 0 AND tx_gridelements_container = ' . $this->getContentUid() . '
 					AND tx_gridelements_columns NOT IN (' . $availableColumns . ')', '', '', '', 'uid'));
                 if (!empty($childElementsInUnavailableColumns)) {
                     $this->databaseConnection->sql_query('
@@ -107,7 +108,8 @@ class AfterDatabaseOperations extends AbstractDataHandler
                 }
 
                 $childElementsInAvailableColumns = array_keys($this->databaseConnection->exec_SELECTgetRows('uid',
-                    'tt_content', 'tx_gridelements_container > 0 AND tx_gridelements_container = ' . $this->getPageUid() . '
+                    'tt_content',
+                    'tx_gridelements_container > 0 AND tx_gridelements_container = ' . $this->getContentUid() . '
 						AND tx_gridelements_columns IN (' . $availableColumns . ')', '', '', '', 'uid'));
                 if (!empty($childElementsInAvailableColumns)) {
                     $this->databaseConnection->sql_query('
@@ -140,13 +142,17 @@ class AfterDatabaseOperations extends AbstractDataHandler
                         $backendLayoutUid = $fieldArray['backend_layout'];
                         break;
                     }
-                } else if ($selectedBackendLayoutNextLevel === -1 && $page['uid'] !== $this->getPageUid()) {
-                    // Some previous page in our rootline sets layout_next to "None"
-                    break;
-                } else if ($selectedBackendLayoutNextLevel > 0 && $page['uid'] !== $this->getPageUid()) {
-                    // Some previous page in our rootline sets some backend_layout, use it
-                    $backendLayoutUid = $selectedBackendLayoutNextLevel;
-                    break;
+                } else {
+                    if ($selectedBackendLayoutNextLevel === -1 && $page['uid'] !== $this->getPageUid()) {
+                        // Some previous page in our rootline sets layout_next to "None"
+                        break;
+                    } else {
+                        if ($selectedBackendLayoutNextLevel > 0 && $page['uid'] !== $this->getPageUid()) {
+                            // Some previous page in our rootline sets some backend_layout, use it
+                            $backendLayoutUid = $selectedBackendLayoutNextLevel;
+                            break;
+                        }
+                    }
                 }
             }
 
@@ -163,7 +169,7 @@ class AfterDatabaseOperations extends AbstractDataHandler
 					');
                     array_flip($elementsInUnavailableColumns);
                 } else {
-                    $elementsInUnavailableColumns = array();
+                    $elementsInUnavailableColumns = [];
                 }
 
                 $elementsInAvailableColumns = array_keys($this->databaseConnection->exec_SELECTgetRows('uid',
@@ -179,7 +185,7 @@ class AfterDatabaseOperations extends AbstractDataHandler
 					');
                     array_flip($elementsInAvailableColumns);
                 } else {
-                    $elementsInAvailableColumns = array();
+                    $elementsInAvailableColumns = [];
                 }
 
                 $changedElements = array_merge($elementsInUnavailableColumns, $elementsInAvailableColumns);
@@ -187,10 +193,10 @@ class AfterDatabaseOperations extends AbstractDataHandler
 
             if (isset($fieldArray['backend_layout_next_level'])) {
                 $backendLayoutUid = $backendLayoutNextLevelUid ? $backendLayoutNextLevelUid : $backendLayoutUid;
-                $subpages = array();
+                $subpages = [];
                 $this->getSubpagesRecursively($this->getPageUid(), $subpages);
                 if (!empty($subpages)) {
-                    $changedSubPageElements = array();
+                    $changedSubPageElements = [];
                     foreach ($subpages as $page) {
                         $availableColumns = $this->getAvailableColumns($backendLayoutUid, 'pages', $page['uid']);
                         $subPageElementsInUnavailableColumns = array_keys($this->databaseConnection->exec_SELECTgetRows('uid',
@@ -204,7 +210,7 @@ class AfterDatabaseOperations extends AbstractDataHandler
 							');
                             array_flip($subPageElementsInUnavailableColumns);
                         } else {
-                            $subPageElementsInUnavailableColumns = array();
+                            $subPageElementsInUnavailableColumns = [];
                         }
 
                         $subPageElementsInAvailableColumns = array_keys($this->databaseConnection->exec_SELECTgetRows('uid',
@@ -219,10 +225,11 @@ class AfterDatabaseOperations extends AbstractDataHandler
 							');
                             array_flip($subPageElementsInAvailableColumns);
                         } else {
-                            $subPageElementsInAvailableColumns = array();
+                            $subPageElementsInAvailableColumns = [];
                         }
 
-                        $changedPageElements = array_merge($subPageElementsInUnavailableColumns, $subPageElementsInAvailableColumns);
+                        $changedPageElements = array_merge($subPageElementsInUnavailableColumns,
+                            $subPageElementsInAvailableColumns);
                         $changedSubPageElements = array_merge($changedSubPageElements, $changedPageElements);
                     }
                 }
@@ -235,6 +242,38 @@ class AfterDatabaseOperations extends AbstractDataHandler
                 $this->dataHandler->updateRefIndex('tt_content', $uid);
             }
         }
+    }
+
+    /**
+     * fetches all available columns for a certain grid container based on TCA settings and layout records
+     *
+     * @param string $layout The selected backend layout of the grid container or the page
+     * @param string $table The name of the table to get the layout for
+     * @param int $id he uid of the parent container - being the page id for the table "pages"
+     *
+     * @return string The columns available for the selected layout as CSV list
+     */
+    public function getAvailableColumns($layout = '', $table = '', $id = 0)
+    {
+        $tcaColumns = '';
+
+        if ($layout && $table === 'tt_content') {
+            $tcaColumns = $this->layoutSetup->getLayoutColumns($layout);
+            $tcaColumns = '-2,-1,' . $tcaColumns['CSV'];
+        } elseif ($table === 'pages') {
+            $tcaColumns = GeneralUtility::callUserFunction(BackendLayoutView::class . '->getColPosListItemsParsed',
+                $id, $this);
+            $temp = [];
+            foreach ($tcaColumns AS $item) {
+                if (trim($item[1]) !== '') {
+                    $temp[] = (int)$item[1];
+                }
+            }
+            // Implode into a CSV string as BackendLayoutView->getColPosListItemsParsed returns an array
+            $tcaColumns = rtrim('-2,-1,' . implode(',', $temp), ',');
+        }
+
+        return $tcaColumns;
     }
 
     /**
@@ -261,37 +300,5 @@ class AfterDatabaseOperations extends AbstractDataHandler
                 }
             }
         }
-    }
-
-    /**
-     * fetches all available columns for a certain grid container based on TCA settings and layout records
-     *
-     * @param string $layout The selected backend layout of the grid container or the page
-     * @param string $table The name of the table to get the layout for
-     * @param int $id he uid of the parent container - being the page id for the table "pages"
-     *
-     * @return string The columns available for the selected layout as CSV list
-     */
-    public function getAvailableColumns($layout = '', $table = '', $id = 0)
-    {
-        $tcaColumns = '';
-
-        if ($layout && $table === 'tt_content') {
-            $tcaColumns = $this->layoutSetup->getLayoutColumns($layout);
-            $tcaColumns = '-2,-1,' . $tcaColumns['CSV'];
-        } elseif ($table === 'pages') {
-            $tcaColumns = GeneralUtility::callUserFunction(BackendLayoutView::class . '->getColPosListItemsParsed',
-                $id, $this);
-            $temp = array();
-            foreach ($tcaColumns AS $item) {
-                if (trim($item[1]) !== '') {
-                    $temp[] = (int)$item[1];
-                }
-            }
-            // Implode into a CSV string as BackendLayoutView->getColPosListItemsParsed returns an array
-            $tcaColumns = rtrim('-2,-1,' . implode(',', $temp), ',');
-        }
-
-        return $tcaColumns;
     }
 }

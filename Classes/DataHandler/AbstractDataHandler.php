@@ -46,6 +46,11 @@ abstract class AbstractDataHandler
     protected $pageUid;
 
     /**
+     * @var int
+     */
+    protected $contentUid = 0;
+
+    /**
      * @var DataHandler
      */
     protected $dataHandler;
@@ -61,16 +66,6 @@ abstract class AbstractDataHandler
     protected $layoutSetup;
 
     /**
-     * inject layout setup
-     *
-     * @param LayoutSetup $layoutSetup
-     */
-    public function injectLayoutSetup(LayoutSetup $layoutSetup)
-    {
-        $this->layoutSetup = $layoutSetup;
-    }
-
-    /**
      * initializes this class
      *
      * @param string $table : The name of the table the data should be saved to
@@ -80,55 +75,38 @@ abstract class AbstractDataHandler
     public function init($table, $uidPid, DataHandler $dataHandler)
     {
         $this->setTable($table);
-        if ($table === 'tt_content') {
-            $uidPid = Helper::getInstance()->getPidFromUid($uidPid);
+        if ($table === 'tt_content' && (int)$uidPid < 0) {
+            $this->setContentUid(abs($uidPid));
+            $pageUid = Helper::getInstance()->getPidFromUid($this->getContentUid());
+            $this->setPageUid($pageUid);
+        } else {
+            $this->setPageUid((int)$uidPid);
         }
-        $this->setPageUid($uidPid);
         $this->setTceMain($dataHandler);
         $this->setDatabaseConnection($GLOBALS['TYPO3_DB']);
         if (!$this->layoutSetup instanceof LayoutSetup) {
-            $this->injectLayoutSetup(GeneralUtility::makeInstance(LayoutSetup::class)->init($uidPid));
+            $this->injectLayoutSetup(GeneralUtility::makeInstance(LayoutSetup::class)->init($this->getPageUid()));
         }
     }
 
     /**
-     * setter for table
+     * getter for contentUid
      *
-     * @param string $table
+     * @return integer contentUid
      */
-    public function setTable($table)
+    public function getContentUid()
     {
-        $this->table = $table;
+        return $this->contentUid;
     }
 
     /**
-     * getter for table
+     * setter for contentUid
      *
-     * @return string table
+     * @param integer $contentUid
      */
-    public function getTable()
+    public function setContentUid($contentUid)
     {
-        return $this->table;
-    }
-
-    /**
-     * setter for pageUid
-     *
-     * @param integer $pageUid
-     */
-    public function setPageUid($pageUid)
-    {
-        $this->pageUid = $pageUid;
-    }
-
-    /**
-     * getter for pageUid
-     *
-     * @return integer pageUid
-     */
-    public function getPageUid()
-    {
-        return $this->pageUid;
+        $this->contentUid = $contentUid;
     }
 
     /**
@@ -142,23 +120,53 @@ abstract class AbstractDataHandler
     }
 
     /**
-     * getter for dataHandler
+     * inject layout setup
      *
-     * @return DataHandler dataHandler
+     * @param LayoutSetup $layoutSetup
      */
-    public function getTceMain()
+    public function injectLayoutSetup(LayoutSetup $layoutSetup)
     {
-        return $this->dataHandler;
+        $this->layoutSetup = $layoutSetup;
     }
 
     /**
-     * setter for databaseConnection object
+     * getter for table
      *
-     * @param DatabaseConnection $databaseConnection
+     * @return string table
      */
-    public function setDatabaseConnection(DatabaseConnection $databaseConnection)
+    public function getTable()
     {
-        $this->databaseConnection = $databaseConnection;
+        return $this->table;
+    }
+
+    /**
+     * setter for table
+     *
+     * @param string $table
+     */
+    public function setTable($table)
+    {
+        $this->table = $table;
+    }
+
+    /**
+     * getter for pageUid
+     *
+     * @return integer pageUid
+     */
+    public function getPageUid()
+    {
+        return $this->pageUid;
+    }
+
+    /**
+     * setter for pageUid
+     *
+     * @param integer $pageUid
+     */
+    public function setPageUid($pageUid)
+    {
+        $this->pageUid = $pageUid;
     }
 
     /**
@@ -172,20 +180,13 @@ abstract class AbstractDataHandler
     }
 
     /**
-     * Function to handle record actions between different grid containers
+     * setter for databaseConnection object
      *
-     * @param array $containerUpdateArray
+     * @param DatabaseConnection $databaseConnection
      */
-    public function doGridContainerUpdate($containerUpdateArray = array())
+    public function setDatabaseConnection(DatabaseConnection $databaseConnection)
     {
-        if (is_array($containerUpdateArray) && !empty($containerUpdateArray)) {
-            foreach ($containerUpdateArray as $containerUid => $newElement) {
-                $fieldArray = array('tx_gridelements_children' => 'tx_gridelements_children + ' . (int)$newElement);
-                $this->databaseConnection->exec_UPDATEquery('tt_content', 'uid=' . (int)$containerUid, $fieldArray,
-                    'tx_gridelements_children');
-                $this->getTceMain()->updateRefIndex('tt_content', (int)$containerUid);
-            }
-        }
+        $this->databaseConnection = $databaseConnection;
     }
 
     /**
@@ -226,18 +227,20 @@ abstract class AbstractDataHandler
                 '', 'sys_language_uid'
             );
         }
-        $containerUpdateArray = array();
+        $containerUpdateArray = [];
         foreach ($translatedElements as $translatedUid => $translatedElement) {
-            $updateArray = array();
+            $updateArray = [];
             if (isset($translatedContainers[$translatedElement['sys_language_uid']])) {
                 $updateArray['tx_gridelements_container'] = (int)$translatedContainers[$translatedElement['sys_language_uid']]['uid'];
                 $updateArray['tx_gridelements_columns'] = (int)$currentValues['tx_gridelements_columns'];
-            } else if ($translatedElement['tx_gridelements_container'] == $currentValues['tx_gridelements_container']) {
-                $updateArray['tx_gridelements_container'] = (int)$currentValues['tx_gridelements_container'];
-                $updateArray['tx_gridelements_columns'] = (int)$currentValues['tx_gridelements_columns'];
             } else {
-                $updateArray['tx_gridelements_container'] = 0;
-                $updateArray['tx_gridelements_columns'] = 0;
+                if ($translatedElement['tx_gridelements_container'] == $currentValues['tx_gridelements_container']) {
+                    $updateArray['tx_gridelements_container'] = (int)$currentValues['tx_gridelements_container'];
+                    $updateArray['tx_gridelements_columns'] = (int)$currentValues['tx_gridelements_columns'];
+                } else {
+                    $updateArray['tx_gridelements_container'] = 0;
+                    $updateArray['tx_gridelements_columns'] = 0;
+                }
             }
             $updateArray['colPos'] = (int)$currentValues['colPos'];
             $this->databaseConnection->exec_UPDATEquery('tt_content', 'uid=' . (int)$translatedUid,
@@ -254,6 +257,33 @@ abstract class AbstractDataHandler
         }
         if (!empty($containerUpdateArray)) {
             $this->doGridContainerUpdate($containerUpdateArray);
+        }
+    }
+
+    /**
+     * getter for dataHandler
+     *
+     * @return DataHandler dataHandler
+     */
+    public function getTceMain()
+    {
+        return $this->dataHandler;
+    }
+
+    /**
+     * Function to handle record actions between different grid containers
+     *
+     * @param array $containerUpdateArray
+     */
+    public function doGridContainerUpdate($containerUpdateArray = [])
+    {
+        if (is_array($containerUpdateArray) && !empty($containerUpdateArray)) {
+            foreach ($containerUpdateArray as $containerUid => $newElement) {
+                $fieldArray = ['tx_gridelements_children' => 'tx_gridelements_children + ' . (int)$newElement];
+                $this->databaseConnection->exec_UPDATEquery('tt_content', 'uid=' . (int)$containerUid, $fieldArray,
+                    'tx_gridelements_children');
+                $this->getTceMain()->updateRefIndex('tt_content', (int)$containerUid);
+            }
         }
     }
 }
