@@ -23,6 +23,7 @@ namespace GridElementsTeam\Gridelements\Hooks;
 use GridElementsTeam\Gridelements\Backend\LayoutSetup;
 use GridElementsTeam\Gridelements\Helper\Helper;
 use TYPO3\CMS\Backend\Controller\PageLayoutController;
+use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Backend\View\PageLayoutView;
 use TYPO3\CMS\Backend\View\PageLayoutViewDrawFooterHookInterface;
@@ -523,6 +524,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
     ) {
 
         $specificIds = $this->helper->getSpecificIds($row);
+        $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
         $allowed = base64_encode(json_encode($values['allowed']));
         $disallowed = base64_encode(json_encode($values['disallowed']));
         $maxItems = (int)$values['maxitems'];
@@ -550,7 +552,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
                         'uid_pid'                    => $parentObject->id,
                         'returnUrl'                  => GeneralUtility::getIndpEnv('REQUEST_URI'),
                     ];
-                    $url = BackendUtility::getModuleUrl('new_content_element', $urlParameters);
+                    $url = $uriBuilder->buildUriFromRoute('new_content_element', $urlParameters);
                 } else {
                     $urlParameters = [
                         'edit'      => [
@@ -570,7 +572,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
                         ],
                         'returnUrl' => GeneralUtility::getIndpEnv('REQUEST_URI'),
                     ];
-                    $url = BackendUtility::getModuleUrl('record_edit', $urlParameters);
+                    $url = $uriBuilder->buildUriFromRoute('record_edit', $urlParameters);
                 }
             }
         }
@@ -650,7 +652,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
                                 'uid_pid'                    => -$specificIds['uid'],
                                 'returnUrl'                  => GeneralUtility::getIndpEnv('REQUEST_URI'),
                             ];
-                            $url = BackendUtility::getModuleUrl('new_content_element', $urlParameters);
+                            $url = $uriBuilder->buildUriFromRoute('new_content_element', $urlParameters);
                         } else {
                             $urlParameters = [
                                 'edit'      => [
@@ -670,7 +672,7 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
                                 ],
                                 'returnUrl' => GeneralUtility::getIndpEnv('REQUEST_URI'),
                             ];
-                            $url = BackendUtility::getModuleUrl('record_edit', $urlParameters);
+                            $url = $uriBuilder->buildUriFromRoute('record_edit', $urlParameters);
                         }
                         $iconsArray = [
                             'new' => '<a 

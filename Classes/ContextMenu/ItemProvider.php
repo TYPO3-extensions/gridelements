@@ -16,7 +16,7 @@ namespace GridElementsTeam\Gridelements\ContextMenu;
  */
 
 use TYPO3\CMS\Backend\ContextMenu\ItemProviders\RecordProvider;
-use TYPO3\CMS\Backend\Utility\BackendUtility;
+use TYPO3\CMS\Backend\Routing\UriBuilder;
 
 class ItemProvider extends RecordProvider
 {
@@ -68,9 +68,11 @@ class ItemProvider extends RecordProvider
         }
 
         $attributes = $this->getPasteAdditionalAttributes('after');
+        $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
+
         $attributes += [
             'data-callback-module' => 'TYPO3/CMS/Gridelements/ClickMenuActions',
-            'data-action-url'      => htmlspecialchars(BackendUtility::getModuleUrl('tce_db', $urlParameters)),
+            'data-action-url'      => htmlspecialchars($uriBuilder->buildUriFromRoute('tce_db', $urlParameters)),
         ];
         return $attributes;
     }

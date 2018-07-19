@@ -23,6 +23,7 @@ namespace GridElementsTeam\Gridelements\Hooks;
 use GridElementsTeam\Gridelements\Backend\LayoutSetup;
 use TYPO3\CMS\Backend\Clipboard\Clipboard;
 use TYPO3\CMS\Backend\Controller\PageLayoutController;
+use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Backend\View\BackendLayoutView;
 use TYPO3\CMS\Core\Imaging\Icon;
@@ -98,6 +99,8 @@ class PageRenderer implements SingletonInterface
                 }
             }
 
+            $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
+
             // add Ext.onReady() code from file
             $pAddExtOnReadyCode .= "
             top.pageColumnsAllowed = " . json_encode($layout['allowed']) . ";
@@ -107,7 +110,7 @@ class PageRenderer implements SingletonInterface
                     $GLOBALS['TYPO3_CONF_VARS']['BE']['explicitADmode']) ? 'true' : 'false') . ";
             top.skipDraggableDetails = " . ($this->getBackendUser()->uc['dragAndDropHideNewElementWizardInfoOverlay'] ? 'true' : 'false') . ";
             top.backPath = '" . $GLOBALS['BACK_PATH'] . "';
-            top.browserUrl = '" . BackendUtility::getModuleUrl('wizard_element_browser') . "';";
+            top.browserUrl = '" . $uriBuilder->buildUriFromRoute('wizard_element_browser') . "';";
 
             if (!empty($clipBoard) && !empty($clipBoard['el'])) {
                 $clipBoardElement = GeneralUtility::trimExplode('|', key($clipBoard['el']));
