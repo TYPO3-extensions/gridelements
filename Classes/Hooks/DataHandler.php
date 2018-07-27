@@ -126,4 +126,22 @@ class DataHandler implements SingletonInterface
         }
     }
 
+
+    /**
+     * Function to process the drag & drop move action
+     *
+     */
+    public function moveRecord($table, $uid, $destPid, $propArr, $moveRec, $resolvedPid, &$recordWasMoved, $parent) {
+    	if($table === 'tt_content') {
+  			$parent = $GLOBALS['TYPO3_DB']->exec_SELECTgetSingleRow(
+  				'tx_gridelements_container',
+  				'tt_content',
+  				'uid = ' . (int)$uid . ' AND tstamp = ' . $GLOBALS['EXEC_TIME']
+  			)['tx_gridelements_container'];
+  			if($parent > 0) {
+  				$recordWasMoved = true;
+  			}
+  		}
+    }
+
 }
