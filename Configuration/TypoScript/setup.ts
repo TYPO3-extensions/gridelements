@@ -46,6 +46,10 @@ tt_content.gridelements_view < tt_content.gridelements_pi1
 
 lib.tt_content.shortcut.pages = COA
 lib.tt_content.shortcut.pages {
+	5 = LOAD_REGISTER
+	5 {
+		tt_content_shortcut_recursive.field = recursive
+	}
 	10 = USER
 	10 {
 		userFunc = GridElementsTeam\Gridelements\Plugin\Gridelements->user_getTreeList
@@ -61,36 +65,21 @@ lib.tt_content.shortcut.pages {
 			orderBy = gridelements_shortcut_page_order_by,colPos,sorting
 		}
 	}
+	30 = RESTORE_REGISTER
 }
 
 [userFunc = TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('fluid_styled_content')]
-	lib.shortcuts = COA
-	lib.shortcuts {
-		5 = LOAD_REGISTER
-		5 {
-			tt_content_shortcut_recursive.field = recursive
-		}
-		20 < tt_content.shortcut.variables.shortcuts
-		20 {
-			tables := addToList(pages)
-			conf.pages < lib.tt_content.shortcut.pages
-		}
-		30 = RESTORE_REGISTER
+	tt_content.shortcut.variables.shortcuts {
+		tables := addToList(pages)
+		conf.pages < lib.tt_content.shortcut.pages
 	}
-	tt_content.shortcut.variables.shortcuts >
-	tt_content.shortcut.variables.shortcuts < lib.shortcuts
 [global]
 
 [userFunc = TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('css_styled_content')]
 	tt_content.shortcut {
-		5 = LOAD_REGISTER
-		5 {
-			tt_content_shortcut_recursive.field = recursive
-		}
 		20 {
 			tables := addToList(pages)
 			conf.pages < lib.tt_content.shortcut.pages
 		}
-		30 = RESTORE_REGISTER
 	}
 [global]
