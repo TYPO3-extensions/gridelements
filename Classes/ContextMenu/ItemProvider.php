@@ -16,10 +16,20 @@ namespace GridElementsTeam\Gridelements\ContextMenu;
  */
 
 use TYPO3\CMS\Backend\ContextMenu\ItemProviders\RecordProvider;
+use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class ItemProvider extends RecordProvider
 {
+    /**
+     * @var UriBuilder
+     */
+    protected $uriBuilder;
+
+    /**
+     * @var array
+     */
     protected $itemsConfiguration = [
         'pastereference' => [
             'type'           => 'item',
@@ -32,10 +42,12 @@ class ItemProvider extends RecordProvider
     /**
      * @param array $items
      * @return array
+     * @throws \TYPO3\CMS\Backend\Routing\Exception\RouteNotFoundException
      */
     public function addItems(array $items): array
     {
         $this->initialize();
+        $this->uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
 
         if (isset($items['pasteAfter'])) {
             $localItems = $this->prepareItems($this->itemsConfiguration);
@@ -50,6 +62,11 @@ class ItemProvider extends RecordProvider
         return $items;
     }
 
+    /**
+     * @param string $itemName
+     * @return array
+     * @throws \TYPO3\CMS\Backend\Routing\Exception\RouteNotFoundException
+     */
     protected function getAdditionalAttributes(string $itemName): array
     {
         $urlParameters = [
@@ -70,7 +87,7 @@ class ItemProvider extends RecordProvider
         $attributes = $this->getPasteAdditionalAttributes('after');
         $attributes += [
             'data-callback-module' => 'TYPO3/CMS/Gridelements/ClickMenuActions',
-            'data-action-url'      => htmlspecialchars(BackendUtility::getModuleUrl('tce_db', $urlParameters)),
+            'data-action-url'      => htmlspecialchars($this->uriBuilder->buildUriFromRoute('tce_db', $urlParameters)),
         ];
         return $attributes;
     }

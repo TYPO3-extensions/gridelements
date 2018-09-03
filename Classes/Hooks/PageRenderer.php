@@ -23,6 +23,7 @@ namespace GridElementsTeam\Gridelements\Hooks;
 use GridElementsTeam\Gridelements\Backend\LayoutSetup;
 use TYPO3\CMS\Backend\Clipboard\Clipboard;
 use TYPO3\CMS\Backend\Controller\PageLayoutController;
+use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Backend\View\BackendLayoutView;
 use TYPO3\CMS\Core\Imaging\Icon;
@@ -40,11 +41,19 @@ use TYPO3\CMS\Recordlist\RecordList;
  */
 class PageRenderer implements SingletonInterface
 {
+
+    /**
+     * @var UriBuilder
+     */
+    protected $uriBuilder;
+
+
     /**
      * wrapper function called by hook (\TYPO3\CMS\Core\Page\PageRenderer->render-preProcess)
      *
      * @param array $parameters An array of available parameters
      * @param \TYPO3\CMS\Core\Page\PageRenderer $pageRenderer The parent object that triggered this hook
+     * @throws \TYPO3\CMS\Backend\Routing\Exception\RouteNotFoundException
      */
     public function addJSCSS(array $parameters, \TYPO3\CMS\Core\Page\PageRenderer $pageRenderer)
     {
@@ -55,6 +64,7 @@ class PageRenderer implements SingletonInterface
         }
         if (!empty($GLOBALS['SOBE']) && (get_class($GLOBALS['SOBE']) === PageLayoutController::class || is_subclass_of($GLOBALS['SOBE'],
                     PageLayoutController::class))) {
+            $this->uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
             $iconFactory = GeneralUtility::makeInstance(IconFactory::class);
             $pageRenderer->loadRequireJsModule('TYPO3/CMS/Gridelements/GridElementsOnReady');
             $pageRenderer->loadRequireJsModule('TYPO3/CMS/Gridelements/GridElementsDragDrop');
@@ -107,7 +117,7 @@ class PageRenderer implements SingletonInterface
                     $GLOBALS['TYPO3_CONF_VARS']['BE']['explicitADmode']) ? 'true' : 'false') . ";
             top.skipDraggableDetails = " . ($this->getBackendUser()->uc['dragAndDropHideNewElementWizardInfoOverlay'] ? 'true' : 'false') . ";
             top.backPath = '" . $GLOBALS['BACK_PATH'] . "';
-            top.browserUrl = '" . BackendUtility::getModuleUrl('wizard_element_browser') . "';";
+            top.browserUrl = '" . $this->uriBuilder->buildUriFromRoute('wizard_element_browser') . "';";
 
             if (!empty($clipBoard) && !empty($clipBoard['el'])) {
                 $clipBoardElement = GeneralUtility::trimExplode('|', key($clipBoard['el']));
