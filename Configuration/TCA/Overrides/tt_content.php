@@ -54,9 +54,6 @@
                 'inline' => [
                     'inlineNewButtonStyle' => 'display: inline-block;',
                 ],
-                'behaviour' => [
-                    'localizeChildrenAtParentLocalization' => true,
-                ],
                 'foreign_table' => 'tt_content',
                 'foreign_field' => 'tx_gridelements_container',
                 'overrideChildTca' => [
