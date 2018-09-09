@@ -19,6 +19,11 @@
                 'type' => 'select',
                 'renderType' => 'selectSingle',
                 'itemsProcFunc' => 'GridElementsTeam\Gridelements\Backend\TtContent->layoutItemsProcFunc',
+                'fieldWizard' => [
+                    'selectIcons' => [
+                        'disabled' => ''
+                    ]
+                ],
                 'size' => 1,
                 'maxitems' => 1,
                 'default' => 0
