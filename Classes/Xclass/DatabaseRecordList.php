@@ -38,6 +38,7 @@ use TYPO3\CMS\Core\Utility\CsvUtility;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\HttpUtility;
+use TYPO3\CMS\Extbase\Persistence\Generic\Query;
 use TYPO3\CMS\Frontend\Page\PageRepository;
 use TYPO3\CMS\Recordlist\RecordList\RecordListHookInterface;
 
@@ -1324,9 +1325,16 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
                     // $lRow isn't always what we want - if record was moved we've to work with the
                     // placeholder records otherwise the list is messed up a bit
                     if ($row['_MOVE_PLH_uid'] && $row['_MOVE_PLH_pid']) {
-                        $where = 't3ver_move_id="' . (int)$lRow['uid'] . '" AND pid="' . $row['_MOVE_PLH_pid']
-                            . '" AND t3ver_wsid=' . $row['t3ver_wsid'] . BackendUtility::deleteClause($table);
-                        $tmpRow = BackendUtility::getRecordRaw($table, $where, $this->selFieldList);
+                        /** @var QueryBuilder $qbuilder */
+                        $qBuilder = GeneralUtility::makeInstance( QueryBuilder::class );
+                        $qBuilder->select($this->selFieldList)
+                                 ->from($table)
+                                 ->where([
+                                     't3ver_move_id' => (int)$lRow['uid'],
+                                     'pid'           => $row['_MOVE_PLH_pid'],
+                                     't3ver_wsid'    => $row['t3ver_wsid'] . BackendUtility::deleteClause($table)
+                                 ]);
+                        $tmpRow = $qBuilder->execute()->fetchAll();
                         $lRow = is_array($tmpRow) ? $tmpRow : $lRow;
                     }
                     // In offline workspace, look for alternative record:
