@@ -76,7 +76,7 @@ class PageRenderer implements SingletonInterface
             $clipObj->lockToNormal();
             $clipBoard = $clipObj->clipData['normal'];
             if (!$pageRenderer->getCharSet()) {
-                $pageRenderer->setCharSet($GLOBALS['LANG']->charSet ? $GLOBALS['LANG']->charSet : 'utf-8');
+                $pageRenderer->setCharSet('utf-8');
             }
 
             // pull locallang_db.xml to JS side - only the tx_gridelements_js-prefixed keys
