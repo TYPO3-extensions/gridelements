@@ -2784,7 +2784,7 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
         return ($table === '_FILE' ? $uriBuilder->buildUriFromRoute('tce_file', [])
                 : $uriBuilder->buildUriFromRoute('tce_db', []))
             . ($setRedirect ? '&redirect=' . rawurlencode(GeneralUtility::linkThisScript(['CB' => ''])) : '')
-            . '&vC=' . $this->getBackendUserAuthentication()->veriCode() . '&prErr=1&uPT=1' . '&CB[paste]='
+            . '&prErr=1&uPT=1' . '&CB[paste]='
             . rawurlencode($table . '|' . $uid) . '&CB[pad]=' . $this->clipObj->current
             . (is_array($update) ? GeneralUtility::implodeArrayForUrl('CB[update]', $update) : '')
             . '&formToken=' . $formProtection->generateToken('tceAction');
