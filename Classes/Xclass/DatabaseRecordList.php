@@ -17,6 +17,7 @@ namespace GridElementsTeam\Gridelements\Xclass;
 
 use TYPO3\CMS\Backend\Module\BaseScriptClass;
 use TYPO3\CMS\Backend\RecordList\RecordListGetTableHookInterface;
+use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Backend\Template\Components\ButtonBar;
 use TYPO3\CMS\Backend\Template\DocumentTemplate;
 use TYPO3\CMS\Backend\Template\ModuleTemplate;
@@ -37,6 +38,7 @@ use TYPO3\CMS\Core\Utility\CsvUtility;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\HttpUtility;
+use TYPO3\CMS\Extbase\Persistence\Generic\Query;
 use TYPO3\CMS\Frontend\Page\PageRepository;
 use TYPO3\CMS\Recordlist\RecordList\RecordListHookInterface;
 
@@ -303,8 +305,9 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
             }
             // New record on pages that are not locked by editlock
             if (!$module->modTSconfig['properties']['noCreateRecordsLink'] && $this->editLockPermissions()) {
-                $onClick = htmlspecialchars('return jumpExt(' . GeneralUtility::quoteJSvalue(BackendUtility::getModuleUrl('db_new',
-                        ['id' => $this->id])) . ');');
+                $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
+                $onClick = htmlspecialchars('return jumpExt(' . GeneralUtility::quoteJSvalue(
+                        $uriBuilder->buildUriFromRoute('db_new', ['id' => $this->id])) . ');');
                 $buttons['new_record'] = '<a href="#" onclick="' . $onClick . '" title="'
                     . htmlspecialchars($lang->getLL('newRecordGeneral')) . '">'
                     . $this->iconFactory->getIcon('actions-add', Icon::SIZE_SMALL)->render() . '</a>';
@@ -350,7 +353,8 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
                     . $this->iconFactory->getIcon('actions-document-export-csv', Icon::SIZE_SMALL)->render() . '</a>';
                 // Export
                 if (ExtensionManagementUtility::isLoaded('impexp')) {
-                    $url = BackendUtility::getModuleUrl('xMOD_tximpexp', ['tx_impexp[action]' => 'export']);
+                    $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
+                    $url = $uriBuilder->buildUriFromRoute('xMOD_tximpexp', ['tx_impexp[action]' => 'export']);
                     $buttons['export'] = '<a href="' . htmlspecialchars($url . '&tx_impexp[list][]='
                             . rawurlencode($this->table . ':' . $this->id)) . '" title="'
                         . htmlspecialchars($lang->sL('LLL:EXT:core/Resources/Private/Language/locallang_core.xlf:rm.export')) . '">'
@@ -449,8 +453,9 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
             }
             // New record on pages that are not locked by editlock
             if (!$module->modTSconfig['properties']['noCreateRecordsLink'] && $this->editLockPermissions()) {
-                $onClick = 'return jumpExt(' . GeneralUtility::quoteJSvalue(BackendUtility::getModuleUrl('db_new',
-                        ['id' => $this->id])) . ');';
+                $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
+                $onClick = 'return jumpExt(' . GeneralUtility::quoteJSvalue(
+                        $uriBuilder->buildUriFromRoute('db_new', ['id' => $this->id])) . ');';
                 $newRecordButton = $buttonBar->makeLinkButton()
                     ->setHref('#')
                     ->setOnClick($onClick)
@@ -516,7 +521,8 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
                 $buttonBar->addButton($csvButton, ButtonBar::BUTTON_POSITION_LEFT, 40);
                 // Export
                 if (ExtensionManagementUtility::isLoaded('impexp')) {
-                    $url = BackendUtility::getModuleUrl('xMOD_tximpexp', ['tx_impexp[action]' => 'export']);
+                    $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
+                    $url = $uriBuilder->buildUriFromRoute('xMOD_tximpexp', ['tx_impexp[action]' => 'export']);
                     $exportButton = $buttonBar->makeLinkButton()
                         ->setHref($url . '&tx_impexp[list][]=' . rawurlencode($this->table . ':' . $this->id))
                         ->setTitle($lang->sL('LLL:EXT:core/Resources/Private/Language/locallang_core.xlf:rm.export'))
@@ -712,7 +718,7 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
         $this->selFieldList = $selFieldList;
         if (is_array($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['typo3/class.db_list_extra.inc']['getTable'])) {
             foreach ($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['typo3/class.db_list_extra.inc']['getTable'] as $classData) {
-                $hookObject = GeneralUtility::getUserObj($classData);
+                $hookObject = GeneralUtility::makeInstance($classData);
                 if (!$hookObject instanceof RecordListGetTableHookInterface) {
                     throw new \UnexpectedValueException($classData . ' must implement interface ' . RecordListGetTableHookInterface::class,
                         1195114460);
@@ -1279,7 +1285,7 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
          */
         if (is_array($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['typo3/class.db_list_extra.inc']['actions'])) {
             foreach ($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['typo3/class.db_list_extra.inc']['actions'] as $classData) {
-                $hookObject = GeneralUtility::getUserObj($classData);
+                $hookObject = GeneralUtility::makeInstance($classData);
                 if (is_object($hookObject) && method_exists($hookObject, 'checkChildren')) {
                     $hookObject->checkChildren($table, $row, $level, $theData, $this);
                 }
@@ -1319,9 +1325,16 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
                     // $lRow isn't always what we want - if record was moved we've to work with the
                     // placeholder records otherwise the list is messed up a bit
                     if ($row['_MOVE_PLH_uid'] && $row['_MOVE_PLH_pid']) {
-                        $where = 't3ver_move_id="' . (int)$lRow['uid'] . '" AND pid="' . $row['_MOVE_PLH_pid']
-                            . '" AND t3ver_wsid=' . $row['t3ver_wsid'] . BackendUtility::deleteClause($table);
-                        $tmpRow = BackendUtility::getRecordRaw($table, $where, $this->selFieldList);
+                        /** @var QueryBuilder $qbuilder */
+                        $qBuilder = GeneralUtility::makeInstance( QueryBuilder::class );
+                        $qBuilder->select($this->selFieldList)
+                                 ->from($table)
+                                 ->where([
+                                     't3ver_move_id' => (int)$lRow['uid'],
+                                     'pid'           => $row['_MOVE_PLH_pid'],
+                                     't3ver_wsid'    => $row['t3ver_wsid'] . BackendUtility::deleteClause($table)
+                                 ]);
+                        $tmpRow = $qBuilder->execute()->fetchAll();
                         $lRow = is_array($tmpRow) ? $tmpRow : $lRow;
                     }
                     // In offline workspace, look for alternative record:
@@ -1513,7 +1526,9 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
         $this->addActionToCellGroup($cells, $viewBigAction, 'viewBig');
         // "Move" wizard link for pages/tt_content elements:
         if ($permsEdit && ($table === 'tt_content' || $table === 'pages')) {
-            $onClick = 'return jumpExt(' . GeneralUtility::quoteJSvalue(BackendUtility::getModuleUrl('move_element') . '&table=' . $table . '&uid=' . $row['uid']) . ');';
+            $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
+            $onClick = 'return jumpExt(' . GeneralUtility::quoteJSvalue(
+                $uriBuilder->buildUriFromRoute('move_element' ) . '&table=' . $table . '&uid=' . $row['uid']) . ');';
             $linkTitleLL = htmlspecialchars($this->getLanguageService()->getLL('move_' . ($table === 'tt_content' ? 'record' : 'page')));
             $icon = ($table === 'pages' ? $this->iconFactory->getIcon('actions-page-move',
                 Icon::SIZE_SMALL) : $this->iconFactory->getIcon('actions-document-move', Icon::SIZE_SMALL));
@@ -1523,7 +1538,8 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
         // If the table is NOT a read-only table, then show these links:
         if ($this->isEditable($table)) {
             // "Revert" link (history/undo)
-            $moduleUrl = BackendUtility::getModuleUrl('record_history', ['element' => $table . ':' . $row['uid']]);
+            $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
+            $moduleUrl = $uriBuilder->buildUriFromRoute('record_history', ['element' => $table . ':' . $row['uid']]);
             $onClick = 'return jumpExt(' . GeneralUtility::quoteJSvalue($moduleUrl) . ',\'#latest\');';
             $historyAction = '<a class="btn btn-default" href="#" onclick="' . htmlspecialchars($onClick) . '" title="'
                 . htmlspecialchars($this->getLanguageService()->getLL('history')) . '">'
@@ -1535,7 +1551,8 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
                     $this->getBackendUserAuthentication()->workspace, false, $row);
                 // If table can be versionized.
                 if (is_array($vers)) {
-                    $href = BackendUtility::getModuleUrl('web_txversionM1', [
+                    $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
+                    $href = $uriBuilder->buildUriFromRoute('web_txversionM1', [
                         'table' => $table,
                         'uid'   => $row['uid'],
                     ]);
@@ -1548,7 +1565,8 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
             // "Edit Perms" link:
             if ($table === 'pages' && $this->getBackendUserAuthentication()->check('modules',
                     'system_BeuserTxPermission') && ExtensionManagementUtility::isLoaded('beuser')) {
-                $href = BackendUtility::getModuleUrl('system_BeuserTxPermission') . '&id=' . $row['uid'] . '&returnId=' . $row['uid'] . '&tx_beuser_system_beusertxpermission[action]=edit';
+                $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
+                $href = $uriBuilder->buildUriFromRoute('system_BeuserTxPermission') . '&id=' . $row['uid'] . '&returnId=' . $row['uid'] . '&tx_beuser_system_beusertxpermission[action]=edit';
                 $permsAction = '<a class="btn btn-default" href="' . htmlspecialchars($href) . '" title="'
                     . htmlspecialchars($this->getLanguageService()->getLL('permissions')) . '">'
                     . $this->iconFactory->getIcon('actions-lock', Icon::SIZE_SMALL)->render() . '</a>';
@@ -1731,7 +1749,7 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
                 }
             }
             foreach ($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['typo3/class.db_list_extra.inc']['actions'] as $classData) {
-                $hookObject = GeneralUtility::getUserObj($classData);
+                $hookObject = GeneralUtility::makeInstance($classData);
                 if (!$hookObject instanceof RecordListHookInterface) {
                     throw new \UnexpectedValueException($classData . ' must implement interface ' . RecordListHookInterface::class,
                         1195567840);
@@ -2033,7 +2051,7 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
          */
         if (is_array($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['typo3/class.db_list_extra.inc']['actions'])) {
             foreach ($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['typo3/class.db_list_extra.inc']['actions'] as $classData) {
-                $hookObject = GeneralUtility::getUserObj($classData);
+                $hookObject = GeneralUtility::makeInstance($classData);
                 if (!$hookObject instanceof RecordListHookInterface) {
                     throw new \UnexpectedValueException($classData . ' must implement interface ' . RecordListHookInterface::class,
                         1195567845);
@@ -2150,7 +2168,7 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
                  */
                 if (is_array($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['typo3/class.db_list_extra.inc']['actions'])) {
                     foreach ($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['typo3/class.db_list_extra.inc']['actions'] as $classData) {
-                        $hookObject = GeneralUtility::getUserObj($classData);
+                        $hookObject = GeneralUtility::makeInstance($classData);
                         if (is_object($hookObject) && method_exists($hookObject, 'contentCollapseIcon')) {
                             $hookObject->contentCollapseIcon($data, $sortField, $level, $contentCollapseIcon, $this);
                         }
@@ -2466,7 +2484,7 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
                      */
                     if (is_array($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['typo3/class.db_list_extra.inc']['actions'])) {
                         foreach ($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['typo3/class.db_list_extra.inc']['actions'] as $classData) {
-                            $hookObject = GeneralUtility::getUserObj($classData);
+                            $hookObject = GeneralUtility::makeInstance($classData);
                             if (!$hookObject instanceof RecordListHookInterface) {
                                 throw new \UnexpectedValueException($classData . ' must implement interface ' . RecordListHookInterface::class,
                                     1195567850);
@@ -2509,7 +2527,8 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
                                 $newContentElementWizard = isset($tmpTSc['properties']['newContentElementWizard.']['override'])
                                     ? $tmpTSc['properties']['newContentElementWizard.']['override']
                                     : 'new_content_element';
-                                $newContentWizScriptPath = BackendUtility::getModuleUrl($newContentElementWizard,
+                                $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
+                                $newContentWizScriptPath = $uriBuilder->buildUriFromRoute($newContentElementWizard,
                                     ['id' => $this->id]);
 
                                 $onClick = 'return jumpExt(' . GeneralUtility::quoteJSvalue($newContentWizScriptPath) . ');';
@@ -2521,7 +2540,8 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
                                     'pagesOnly' => 1,
                                     'returnUrl' => GeneralUtility::getIndpEnv('REQUEST_URI'),
                                 ];
-                                $href = BackendUtility::getModuleUrl('db_new', $parameters);
+                                $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
+                                $href = $uriBuilder->buildUriFromRoute('db_new', $parameters);
                                 $icon = '<a class="btn btn-default" href="' . htmlspecialchars($href) . '" title="' . htmlspecialchars($lang->getLL('new')) . '">'
                                     . $spriteIcon->render() . '</a>';
                             } else {
@@ -2628,7 +2648,7 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
          */
         if (is_array($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['typo3/class.db_list_extra.inc']['actions'])) {
             foreach ($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['typo3/class.db_list_extra.inc']['actions'] as $classData) {
-                $hookObject = GeneralUtility::getUserObj($classData);
+                $hookObject = GeneralUtility::makeInstance($classData);
                 if (!$hookObject instanceof RecordListHookInterface) {
                     throw new \UnexpectedValueException($classData . ' must implement interface ' . RecordListHookInterface::class,
                         1195567855);
@@ -2760,10 +2780,11 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
     public function pasteUrl($table, $uid, $setRedirect = true, array $update = null)
     {
         $formProtection = FormProtectionFactory::get();
-        return ($table === '_FILE' ? BackendUtility::getModuleUrl('tce_file',
-                []) : BackendUtility::getModuleUrl('tce_db', []))
+        $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
+        return ($table === '_FILE' ? $uriBuilder->buildUriFromRoute('tce_file', [])
+                : $uriBuilder->buildUriFromRoute('tce_db', []))
             . ($setRedirect ? '&redirect=' . rawurlencode(GeneralUtility::linkThisScript(['CB' => ''])) : '')
-            . '&vC=' . $this->getBackendUserAuthentication()->veriCode() . '&prErr=1&uPT=1' . '&CB[paste]='
+            . '&prErr=1&uPT=1' . '&CB[paste]='
             . rawurlencode($table . '|' . $uid) . '&CB[pad]=' . $this->clipObj->current
             . (is_array($update) ? GeneralUtility::implodeArrayForUrl('CB[update]', $update) : '')
             . '&formToken=' . $formProtection->generateToken('tceAction');

@@ -30,7 +30,7 @@ use TYPO3\CMS\Core\Imaging\Icon;
 use TYPO3\CMS\Core\Imaging\IconFactory;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Recordlist\RecordList;
+use TYPO3\CMS\Recordlist\Controller\RecordListController;
 
 /**
  * Class/Function which adds the necessary ExtJS and pure JS stuff for the grid elements.
@@ -57,8 +57,8 @@ class PageRenderer implements SingletonInterface
      */
     public function addJSCSS(array $parameters, \TYPO3\CMS\Core\Page\PageRenderer $pageRenderer)
     {
-        if (!empty($GLOBALS['SOBE']) && (get_class($GLOBALS['SOBE']) === RecordList::class || is_subclass_of($GLOBALS['SOBE'],
-                    RecordList::class))) {
+        if (!empty($GLOBALS['SOBE']) && (get_class($GLOBALS['SOBE']) === RecordListController::class || is_subclass_of($GLOBALS['SOBE'],
+                    RecordListController::class))) {
             $pageRenderer->loadRequireJsModule('TYPO3/CMS/Gridelements/GridElementsOnReady');
             return;
         }
@@ -76,7 +76,7 @@ class PageRenderer implements SingletonInterface
             $clipObj->lockToNormal();
             $clipBoard = $clipObj->clipData['normal'];
             if (!$pageRenderer->getCharSet()) {
-                $pageRenderer->setCharSet($GLOBALS['LANG']->charSet ? $GLOBALS['LANG']->charSet : 'utf-8');
+                $pageRenderer->setCharSet('utf-8');
             }
 
             // pull locallang_db.xml to JS side - only the tx_gridelements_js-prefixed keys
