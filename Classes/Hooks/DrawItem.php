@@ -805,7 +805,11 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
     protected function renderSingleElementHTML(PageLayoutView $parentObject, $item)
     {
         $singleElementHTML = '';
-        $parentObject->tt_contentData['nextThree'][$item['uid']] = $item['uid'];
+        $unset = false;
+        if (!isset($parentObject->tt_contentData['nextThree'][$item['uid']])) {
+            $unset = true;
+            $parentObject->tt_contentData['nextThree'][$item['uid']] = $item['uid'];
+        }
         if (!$parentObject->tt_contentConfig['languageMode']) {
             $singleElementHTML .= '<div class="t3-page-ce-dragitem" id="' . StringUtility::getUniqueId() . '">';
         }
@@ -820,7 +824,9 @@ class DrawItem implements PageLayoutViewDrawItemHookInterface, SingletonInterfac
         if (!$parentObject->tt_contentConfig['languageMode']) {
             $singleElementHTML .= '</div>';
         }
-        unset($parentObject->tt_contentData['nextThree'][$item['uid']]);
+        if ($unset) {
+            unset($parentObject->tt_contentData['nextThree'][$item['uid']]);
+        }
 
         return $singleElementHTML;
     }
