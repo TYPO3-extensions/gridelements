@@ -24,6 +24,7 @@ use GridElementsTeam\Gridelements\Backend\LayoutSetup;
 use TYPO3\CMS\Backend\Controller\ContentElement\NewContentElementController;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Backend\Wizard\NewContentElementWizardHookInterface;
+use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Imaging\IconProvider\BitmapIconProvider;
 use TYPO3\CMS\Core\Imaging\IconProvider\SvgIconProvider;
 use TYPO3\CMS\Core\Imaging\IconRegistry;
@@ -64,8 +65,12 @@ class WizardItems implements NewContentElementWizardHookInterface
      */
     public function manipulateWizardItems(&$wizardItems, &$parentObject)
     {
-        if (GeneralUtility::inList($GLOBALS['BE_USER']->groupData['explicit_allowdeny'],
-            'tt_content:CType:gridelements_pi1:DENY')) {
+        if (!$this->getBackendUser()->checkAuthMode(
+            'tt_content',
+            'CType',
+            'gridelements_pi1',
+            $GLOBALS['TYPO3_CONF_VARS']['BE']['explicitADmode']
+        )) {
             return;
         }
         $pageID = $parentObject->id;
@@ -379,6 +384,16 @@ class WizardItems implements NewContentElementWizardHookInterface
                 }
             }
         }
+    }
+
+    /**
+     * Gets the current backend user.
+     *
+     * @return BackendUserAuthentication
+     */
+    public function getBackendUser()
+    {
+        return $GLOBALS['BE_USER'];
     }
 
 }
