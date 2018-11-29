@@ -115,7 +115,7 @@ class PageRenderer implements SingletonInterface
                     $clipBoardElementData = BackendUtility::getRecord('tt_content', (int)$clipBoardElement[1]);
                     $pAddExtOnReadyCode .= "
             top.clipBoardElementCType = '" . $clipBoardElementData['CType'] . "';
-            top.clipBoardElementTxGridelementsBackendLayout = '" . $clipBoardElementData['tx_gridelements_backend_layout'] . "';
+            top.clipBoardElementTxGridelementsBackendLayout = '" . (($clipBoardElementData['CType'] == 'gridelements_pi1') ? $clipBoardElementData['tx_gridelements_backend_layout'] : '') . "';
             top.clipBoardElementListType = '" . $clipBoardElementData['list_type'] . "';";
                 } else {
                     $pAddExtOnReadyCode .= "
