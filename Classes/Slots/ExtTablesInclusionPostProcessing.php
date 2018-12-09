@@ -24,8 +24,6 @@ use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 
 /**
  * Class ExtTablesInclusionPostProcessing
- *
- * @package GridElementsTeam\Gridelements\Hooks
  */
 class ExtTablesInclusionPostProcessing
 {
@@ -43,8 +41,10 @@ class ExtTablesInclusionPostProcessing
         $GLOBALS['TCA'] = $tca;
 
         ExtensionManagementUtility::addToAllTCAtypes('tt_content', 'recursive', 'shortcut', 'after:records');
-        ExtensionManagementUtility::addToAllTCAtypes('tt_content',
-            '--div--;LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xlf:gridElements,tx_gridelements_container,tx_gridelements_columns');
+        ExtensionManagementUtility::addToAllTCAtypes(
+            'tt_content',
+            '--div--;LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xlf:gridElements,tx_gridelements_container,tx_gridelements_columns'
+        );
 
         // return the modified global TCA definition
         return [$GLOBALS['TCA']];

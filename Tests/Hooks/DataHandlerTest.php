@@ -31,5 +31,4 @@ class DataHandlerTest extends UnitTestCase
     public function testProcessCmdmap()
     {
     }
-
 }

@@ -26,8 +26,6 @@ use TYPO3\CMS\Backend\Utility\BackendUtility;
  * Class/Function which manipulates the item-array for table/field tt_content CType.
  *
  * @author Jo Hasenau <info@cybercraft.de>
- * @package TYPO3
- * @subpackage tx_gridelements
  */
 class SysLanguageUidList extends AbstractItemsProcFunc
 {
@@ -61,6 +59,6 @@ class SysLanguageUidList extends AbstractItemsProcFunc
                     unset($items[$item]);
                 }
             }
-        };
+        }
     }
 }

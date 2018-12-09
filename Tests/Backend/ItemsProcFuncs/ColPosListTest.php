@@ -63,5 +63,4 @@ class ColPosListTest extends UnitTestCase
     public function testAddColPosListLayoutItems()
     {
     }
-
 }

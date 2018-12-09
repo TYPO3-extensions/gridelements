@@ -35,8 +35,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  * Class/Function which offers TCE main hook functions.
  *
  * @author Jo Hasenau <info@cybercraft.de>
- * @package TYPO3
- * @subpackage tx_gridelements
  */
 abstract class AbstractDataHandler
 {
@@ -74,7 +72,7 @@ abstract class AbstractDataHandler
      * initializes this class
      *
      * @param string $table : The name of the table the data should be saved to
-     * @param integer $uidPid : The uid of the record or page we are currently working on
+     * @param int $uidPid : The uid of the record or page we are currently working on
      * @param DataHandler $dataHandler
      */
     public function init($table, $uidPid, DataHandler $dataHandler)
@@ -96,7 +94,7 @@ abstract class AbstractDataHandler
     /**
      * getter for contentUid
      *
-     * @return integer contentUid
+     * @return int contentUid
      */
     public function getContentUid()
     {
@@ -106,7 +104,7 @@ abstract class AbstractDataHandler
     /**
      * setter for contentUid
      *
-     * @param integer $contentUid
+     * @param int $contentUid
      */
     public function setContentUid($contentUid)
     {
@@ -136,7 +134,7 @@ abstract class AbstractDataHandler
     /**
      * getter for pageUid
      *
-     * @return integer pageUid
+     * @return int pageUid
      */
     public function getPageUid()
     {
@@ -146,7 +144,7 @@ abstract class AbstractDataHandler
     /**
      * setter for pageUid
      *
-     * @param integer $pageUid
+     * @param int $pageUid
      */
     public function setPageUid($pageUid)
     {
@@ -156,7 +154,6 @@ abstract class AbstractDataHandler
     /**
      * Function to remove any remains of versioned records after finalizing a workspace action
      * via 'Discard' or 'Publish' commands
-     *
      */
     public function cleanupWorkspacesAfterFinalizing()
     {
@@ -216,8 +213,14 @@ abstract class AbstractDataHandler
         }
         $queryBuilder = $this->getQueryBuilder();
         $currentValues = $queryBuilder
-            ->select('uid', 'tx_gridelements_container', 'tx_gridelements_columns', 'sys_language_uid', 'colPos',
-                'l18n_parent')
+            ->select(
+                'uid',
+                'tx_gridelements_container',
+                'tx_gridelements_columns',
+                'sys_language_uid',
+                'colPos',
+                'l18n_parent'
+            )
             ->from('tt_content')
             ->where(
                 $queryBuilder->expr()->eq('uid', $queryBuilder->createNamedParameter((int)$uid, \PDO::PARAM_INT))
@@ -229,12 +232,20 @@ abstract class AbstractDataHandler
             $originalUid = (int)$currentValues['uid'];
             $queryBuilder = $this->getQueryBuilder();
             $currentValues = $queryBuilder
-                ->select('uid', 'tx_gridelements_container', 'tx_gridelements_columns', 'sys_language_uid', 'colPos',
-                    'l18n_parent')
+                ->select(
+                    'uid',
+                    'tx_gridelements_container',
+                    'tx_gridelements_columns',
+                    'sys_language_uid',
+                    'colPos',
+                    'l18n_parent'
+                )
                 ->from('tt_content')
                 ->where(
-                    $queryBuilder->expr()->eq('uid',
-                        $queryBuilder->createNamedParameter((int)$currentValues['l18n_parent'], \PDO::PARAM_INT))
+                    $queryBuilder->expr()->eq(
+                        'uid',
+                        $queryBuilder->createNamedParameter((int)$currentValues['l18n_parent'], \PDO::PARAM_INT)
+                    )
                 )
                 ->setMaxResults(1)
                 ->execute()
@@ -255,12 +266,20 @@ abstract class AbstractDataHandler
         }
         $queryBuilder = $this->getQueryBuilder();
         $translatedElementQuery = $queryBuilder
-            ->select('uid', 'tx_gridelements_container', 'tx_gridelements_columns', 'sys_language_uid', 'colPos',
-                'l18n_parent')
+            ->select(
+                'uid',
+                'tx_gridelements_container',
+                'tx_gridelements_columns',
+                'sys_language_uid',
+                'colPos',
+                'l18n_parent'
+            )
             ->from('tt_content')
             ->where(
-                $queryBuilder->expr()->eq('l18n_parent',
-                    $queryBuilder->createNamedParameter((int)$currentValues['uid'], \PDO::PARAM_INT))
+                $queryBuilder->expr()->eq(
+                    'l18n_parent',
+                    $queryBuilder->createNamedParameter((int)$currentValues['uid'], \PDO::PARAM_INT)
+                )
             )
             ->execute();
         $translatedElements = [];
@@ -277,9 +296,13 @@ abstract class AbstractDataHandler
                 ->select('uid', 'sys_language_uid')
                 ->from('tt_content')
                 ->where(
-                    $queryBuilder->expr()->eq('l18n_parent',
-                        $queryBuilder->createNamedParameter((int)$currentValues['tx_gridelements_container'],
-                            \PDO::PARAM_INT))
+                    $queryBuilder->expr()->eq(
+                        'l18n_parent',
+                        $queryBuilder->createNamedParameter(
+                            (int)$currentValues['tx_gridelements_container'],
+                            \PDO::PARAM_INT
+                        )
+                    )
                 )
                 ->execute();
             while ($translatedContainer = $translatedContainerQuery->fetch()) {
@@ -330,7 +353,7 @@ abstract class AbstractDataHandler
     public function getConnection()
     {
         return GeneralUtility::makeInstance(ConnectionPool::class)
-            ->getConnectionForTable('tt_content');;
+            ->getConnectionForTable('tt_content');
     }
 
     /**
@@ -393,5 +416,4 @@ abstract class AbstractDataHandler
     {
         $this->table = $table;
     }
-
 }

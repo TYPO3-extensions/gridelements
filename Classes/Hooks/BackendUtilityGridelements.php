@@ -29,8 +29,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  * @author Jo Hasenau <info@cybercraft.de>
  * @author Dirk Hoffmann <hoffmann@vmd-jena.de>
  * @author Stephan Schuler <stephan.schuler@netlogix.de>
- * @package TYPO3
- * @subpackage tx_gridelements
  */
 class BackendUtilityGridelements
 {
@@ -79,5 +77,4 @@ class BackendUtilityGridelements
     {
         $this->layoutSetup = $layoutSetup;
     }
-
 }

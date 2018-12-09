@@ -94,8 +94,12 @@ class ItemProvider extends RecordProvider
     {
         $canRender = false;
         if ($itemName === 'pastereference') {
-            $canRender = $this->canBePastedAfter() && $this->clipboard->currentMode() === 'copy' && $this->backendUser->checkAuthMode('tt_content',
-                    'CType', 'shortcut', $GLOBALS['TYPO3_CONF_VARS']['BE']['explicitADmode']);
+            $canRender = $this->canBePastedAfter() && $this->clipboard->currentMode() === 'copy' && $this->backendUser->checkAuthMode(
+                'tt_content',
+                    'CType',
+                'shortcut',
+                $GLOBALS['TYPO3_CONF_VARS']['BE']['explicitADmode']
+            );
         }
         return $canRender;
     }

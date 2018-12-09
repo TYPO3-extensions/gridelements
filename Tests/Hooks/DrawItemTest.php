@@ -197,5 +197,4 @@ class DrawItemTest extends UnitTestCase
     public function tesCheckIfTranslationsExistInLanguage()
     {
     }
-
 }

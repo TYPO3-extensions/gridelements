@@ -43,5 +43,4 @@ class PageRendererTest extends UnitTestCase
     public function testAddJsCss()
     {
     }
-
 }

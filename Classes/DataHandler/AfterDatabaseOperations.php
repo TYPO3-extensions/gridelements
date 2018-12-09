@@ -30,8 +30,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  * Class/Function which offers TCE main hook functions.
  *
  * @author  Jo Hasenau <info@cybercraft.de>
- * @package  TYPO3
- * @subpackage tx_gridelements
  */
 class AfterDatabaseOperations extends AbstractDataHandler
 {
@@ -143,10 +141,14 @@ class AfterDatabaseOperations extends AbstractDataHandler
                     ->where(
                         $queryBuilder->expr()->andX(
                             $queryBuilder->expr()->gt('tx_gridelements_container', 0),
-                            $queryBuilder->expr()->eq('tx_gridelements_container',
-                                $queryBuilder->createNamedParameter((int)$this->getContentUid(), \PDO::PARAM_INT)),
-                            $queryBuilder->expr()->notIn('tx_gridelements_columns',
-                                $queryBuilder->createNamedParameter($availableColumns, Connection::PARAM_INT_ARRAY))
+                            $queryBuilder->expr()->eq(
+                                'tx_gridelements_container',
+                                $queryBuilder->createNamedParameter((int)$this->getContentUid(), \PDO::PARAM_INT)
+                            ),
+                            $queryBuilder->expr()->notIn(
+                                'tx_gridelements_columns',
+                                $queryBuilder->createNamedParameter($availableColumns, Connection::PARAM_INT_ARRAY)
+                            )
                         )
                     )
                     ->execute();
@@ -158,9 +160,13 @@ class AfterDatabaseOperations extends AbstractDataHandler
                     $queryBuilder
                         ->update('tt_content')
                         ->where(
-                            $queryBuilder->expr()->in('uid',
-                                $queryBuilder->createNamedParameter($childElementsInUnavailableColumns,
-                                    Connection::PARAM_INT_ARRAY))
+                            $queryBuilder->expr()->in(
+                                'uid',
+                                $queryBuilder->createNamedParameter(
+                                    $childElementsInUnavailableColumns,
+                                    Connection::PARAM_INT_ARRAY
+                                )
+                            )
                         )
                         ->set('colPos', -2)
                         ->set('backupColPos', -1)
@@ -175,10 +181,14 @@ class AfterDatabaseOperations extends AbstractDataHandler
                     ->where(
                         $queryBuilder->expr()->andX(
                             $queryBuilder->expr()->gt('tx_gridelements_container', 0),
-                            $queryBuilder->expr()->eq('tx_gridelements_container',
-                                $queryBuilder->createNamedParameter((int)$this->getContentUid(), \PDO::PARAM_INT)),
-                            $queryBuilder->expr()->in('tx_gridelements_columns',
-                                $queryBuilder->createNamedParameter($availableColumns, Connection::PARAM_INT_ARRAY))
+                            $queryBuilder->expr()->eq(
+                                'tx_gridelements_container',
+                                $queryBuilder->createNamedParameter((int)$this->getContentUid(), \PDO::PARAM_INT)
+                            ),
+                            $queryBuilder->expr()->in(
+                                'tx_gridelements_columns',
+                                $queryBuilder->createNamedParameter($availableColumns, Connection::PARAM_INT_ARRAY)
+                            )
                         )
                     )
                     ->execute();
@@ -190,9 +200,13 @@ class AfterDatabaseOperations extends AbstractDataHandler
                     $queryBuilder
                         ->update('tt_content')
                         ->where(
-                            $queryBuilder->expr()->in('uid',
-                                $queryBuilder->createNamedParameter($childElementsInAvailableColumns,
-                                    Connection::PARAM_INT_ARRAY))
+                            $queryBuilder->expr()->in(
+                                'uid',
+                                $queryBuilder->createNamedParameter(
+                                    $childElementsInAvailableColumns,
+                                    Connection::PARAM_INT_ARRAY
+                                )
+                            )
                         )
                         ->set('colPos', -1)
                         ->set('backupColPos', -2)
@@ -208,8 +222,11 @@ class AfterDatabaseOperations extends AbstractDataHandler
             $backendLayoutNextLevelUid = 0;
             $rootline = BackendUtility::BEgetRootLine($this->getPageUid());
             for ($i = count($rootline); $i > 0; $i--) {
-                $page = BackendUtility::getRecord('pages', (int)$rootline[$i]['uid'],
-                    'uid,backend_layout,backend_layout_next_level');
+                $page = BackendUtility::getRecord(
+                    'pages',
+                    (int)$rootline[$i]['uid'],
+                    'uid,backend_layout,backend_layout_next_level'
+                );
                 $selectedBackendLayoutNextLevel = (int)$page['backend_layout_next_level'];
                 if ($page['uid'] === $this->getPageUid()) {
                     if ($fieldArray['backend_layout_next_level'] !== 0) {
@@ -225,12 +242,11 @@ class AfterDatabaseOperations extends AbstractDataHandler
                     if ($selectedBackendLayoutNextLevel === -1 && $page['uid'] !== $this->getPageUid()) {
                         // Some previous page in our rootline sets layout_next to "None"
                         break;
-                    } else {
-                        if ($selectedBackendLayoutNextLevel > 0 && $page['uid'] !== $this->getPageUid()) {
-                            // Some previous page in our rootline sets some backend_layout, use it
-                            $backendLayoutUid = $selectedBackendLayoutNextLevel;
-                            break;
-                        }
+                    }
+                    if ($selectedBackendLayoutNextLevel > 0 && $page['uid'] !== $this->getPageUid()) {
+                        // Some previous page in our rootline sets some backend_layout, use it
+                        $backendLayoutUid = $selectedBackendLayoutNextLevel;
+                        break;
                     }
                 }
             }
@@ -244,10 +260,14 @@ class AfterDatabaseOperations extends AbstractDataHandler
                     ->from('tt_content')
                     ->where(
                         $queryBuilder->expr()->andX(
-                            $queryBuilder->expr()->eq('pid',
-                                $queryBuilder->createNamedParameter((int)$this->getPageUid(), \PDO::PARAM_INT)),
-                            $queryBuilder->expr()->notIn('colPos',
-                                $queryBuilder->createNamedParameter($availableColumns, Connection::PARAM_INT_ARRAY))
+                            $queryBuilder->expr()->eq(
+                                'pid',
+                                $queryBuilder->createNamedParameter((int)$this->getPageUid(), \PDO::PARAM_INT)
+                            ),
+                            $queryBuilder->expr()->notIn(
+                                'colPos',
+                                $queryBuilder->createNamedParameter($availableColumns, Connection::PARAM_INT_ARRAY)
+                            )
                         )
                     )
                     ->execute();
@@ -259,9 +279,13 @@ class AfterDatabaseOperations extends AbstractDataHandler
                     $queryBuilder
                         ->update('tt_content')
                         ->where(
-                            $queryBuilder->expr()->in('uid',
-                                $queryBuilder->createNamedParameter($elementsInUnavailableColumns,
-                                    Connection::PARAM_INT_ARRAY))
+                            $queryBuilder->expr()->in(
+                                'uid',
+                                $queryBuilder->createNamedParameter(
+                                    $elementsInUnavailableColumns,
+                                    Connection::PARAM_INT_ARRAY
+                                )
+                            )
                         )
                         ->set('backupColPos', $queryBuilder->quoteIdentifier('colPos'), false)
                         ->set('colPos', -2)
@@ -275,12 +299,18 @@ class AfterDatabaseOperations extends AbstractDataHandler
                     ->from('tt_content')
                     ->where(
                         $queryBuilder->expr()->andX(
-                            $queryBuilder->expr()->eq('pid',
-                                $queryBuilder->createNamedParameter((int)$this->getPageUid(), \PDO::PARAM_INT)),
-                            $queryBuilder->expr()->neq('backupColPos',
-                                $queryBuilder->createNamedParameter(-2, \PDO::PARAM_INT)),
-                            $queryBuilder->expr()->in('backupColPos',
-                                $queryBuilder->createNamedParameter($availableColumns, Connection::PARAM_INT_ARRAY))
+                            $queryBuilder->expr()->eq(
+                                'pid',
+                                $queryBuilder->createNamedParameter((int)$this->getPageUid(), \PDO::PARAM_INT)
+                            ),
+                            $queryBuilder->expr()->neq(
+                                'backupColPos',
+                                $queryBuilder->createNamedParameter(-2, \PDO::PARAM_INT)
+                            ),
+                            $queryBuilder->expr()->in(
+                                'backupColPos',
+                                $queryBuilder->createNamedParameter($availableColumns, Connection::PARAM_INT_ARRAY)
+                            )
                         )
                     )
                     ->execute();
@@ -292,9 +322,13 @@ class AfterDatabaseOperations extends AbstractDataHandler
                     $queryBuilder
                         ->update('tt_content')
                         ->where(
-                            $queryBuilder->expr()->in('uid',
-                                $queryBuilder->createNamedParameter($elementsInAvailableColumns,
-                                    Connection::PARAM_INT_ARRAY))
+                            $queryBuilder->expr()->in(
+                                'uid',
+                                $queryBuilder->createNamedParameter(
+                                    $elementsInAvailableColumns,
+                                    Connection::PARAM_INT_ARRAY
+                                )
+                            )
                         )
                         ->set('colPos', $queryBuilder->quoteIdentifier('backupColPos'), false)
                         ->set('backupColPos', -2)
@@ -319,11 +353,17 @@ class AfterDatabaseOperations extends AbstractDataHandler
                             ->from('tt_content')
                             ->where(
                                 $queryBuilder->expr()->andX(
-                                    $queryBuilder->expr()->eq('pid',
-                                        $queryBuilder->createNamedParameter((int)$page['uid'], \PDO::PARAM_INT)),
-                                    $queryBuilder->expr()->notIn('colPos',
-                                        $queryBuilder->createNamedParameter($availableColumns,
-                                            Connection::PARAM_INT_ARRAY))
+                                    $queryBuilder->expr()->eq(
+                                        'pid',
+                                        $queryBuilder->createNamedParameter((int)$page['uid'], \PDO::PARAM_INT)
+                                    ),
+                                    $queryBuilder->expr()->notIn(
+                                        'colPos',
+                                        $queryBuilder->createNamedParameter(
+                                            $availableColumns,
+                                            Connection::PARAM_INT_ARRAY
+                                        )
+                                    )
                                 )
                             )
                             ->execute();
@@ -335,9 +375,13 @@ class AfterDatabaseOperations extends AbstractDataHandler
                             $queryBuilder
                                 ->update('tt_content')
                                 ->where(
-                                    $queryBuilder->expr()->in('uid',
-                                        $queryBuilder->createNamedParameter($subPageElementsInUnavailableColumns,
-                                            Connection::PARAM_INT_ARRAY))
+                                    $queryBuilder->expr()->in(
+                                        'uid',
+                                        $queryBuilder->createNamedParameter(
+                                            $subPageElementsInUnavailableColumns,
+                                            Connection::PARAM_INT_ARRAY
+                                        )
+                                    )
                                 )
                                 ->set('backupColPos', $queryBuilder->quoteIdentifier('colPos'), false)
                                 ->set('colPos', -2)
@@ -351,13 +395,21 @@ class AfterDatabaseOperations extends AbstractDataHandler
                             ->from('tt_content')
                             ->where(
                                 $queryBuilder->expr()->andX(
-                                    $queryBuilder->expr()->eq('pid',
-                                        $queryBuilder->createNamedParameter((int)$page['uid'], \PDO::PARAM_INT)),
-                                    $queryBuilder->expr()->neq('backupColPos',
-                                        $queryBuilder->createNamedParameter(-2, \PDO::PARAM_INT)),
-                                    $queryBuilder->expr()->in('backupColPos',
-                                        $queryBuilder->createNamedParameter($availableColumns,
-                                            Connection::PARAM_INT_ARRAY))
+                                    $queryBuilder->expr()->eq(
+                                        'pid',
+                                        $queryBuilder->createNamedParameter((int)$page['uid'], \PDO::PARAM_INT)
+                                    ),
+                                    $queryBuilder->expr()->neq(
+                                        'backupColPos',
+                                        $queryBuilder->createNamedParameter(-2, \PDO::PARAM_INT)
+                                    ),
+                                    $queryBuilder->expr()->in(
+                                        'backupColPos',
+                                        $queryBuilder->createNamedParameter(
+                                            $availableColumns,
+                                            Connection::PARAM_INT_ARRAY
+                                        )
+                                    )
                                 )
                             )
                             ->execute();
@@ -369,9 +421,13 @@ class AfterDatabaseOperations extends AbstractDataHandler
                             $queryBuilder
                                 ->update('tt_content')
                                 ->where(
-                                    $queryBuilder->expr()->in('uid',
-                                        $queryBuilder->createNamedParameter($subPageElementsInAvailableColumns,
-                                            Connection::PARAM_INT_ARRAY))
+                                    $queryBuilder->expr()->in(
+                                        'uid',
+                                        $queryBuilder->createNamedParameter(
+                                            $subPageElementsInAvailableColumns,
+                                            Connection::PARAM_INT_ARRAY
+                                        )
+                                    )
                                 )
                                 ->set('colPos', $queryBuilder->quoteIdentifier('backupColPos'), false)
                                 ->set('backupColPos', -2)
@@ -411,10 +467,13 @@ class AfterDatabaseOperations extends AbstractDataHandler
             $tcaColumns = $this->layoutSetup->getLayoutColumns($layout);
             $tcaColumns = '-2,-1,' . $tcaColumns['CSV'];
         } elseif ($table === 'pages') {
-            $tcaColumns = GeneralUtility::callUserFunction(BackendLayoutView::class . '->getColPosListItemsParsed',
-                $id, $this);
+            $tcaColumns = GeneralUtility::callUserFunction(
+                BackendLayoutView::class . '->getColPosListItemsParsed',
+                $id,
+                $this
+            );
             $temp = [];
-            foreach ($tcaColumns AS $item) {
+            foreach ($tcaColumns as $item) {
                 if (trim($item[1]) !== '') {
                     $temp[] = (int)$item[1];
                 }
@@ -438,8 +497,10 @@ class AfterDatabaseOperations extends AbstractDataHandler
             ->select('uid', 'backend_layout', 'backend_layout_next_level')
             ->from('pages')
             ->where(
-                $queryBuilder->expr()->eq('pid',
-                    $queryBuilder->createNamedParameter((int)$pageUid, \PDO::PARAM_INT))
+                $queryBuilder->expr()->eq(
+                    'pid',
+                    $queryBuilder->createNamedParameter((int)$pageUid, \PDO::PARAM_INT)
+                )
             )
             ->execute()
             ->fetchAll();
@@ -455,5 +516,4 @@ class AfterDatabaseOperations extends AbstractDataHandler
             }
         }
     }
-
 }

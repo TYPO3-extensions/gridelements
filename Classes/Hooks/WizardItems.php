@@ -36,8 +36,6 @@ use TYPO3\CMS\Lang\LanguageService;
  * Class/Function which manipulates the rendering of items within the new content element wizard
  *
  * @author Jo Hasenau <info@cybercraft.de>, Tobias Ferger <tobi@tt36.de>
- * @package TYPO3
- * @subpackage tx_gridelements
  */
 class WizardItems implements NewContentElementWizardHookInterface
 {
@@ -256,8 +254,10 @@ class WizardItems implements NewContentElementWizardHookInterface
                     if (StringUtility::beginsWith($largeIcon, '../uploads/tx_gridelements/')) {
                         $largeIcon = str_replace('../', '', $largeIcon);
                     } else {
-                        if (!StringUtility::beginsWith($largeIcon, 'EXT:') && strpos($largeIcon,
-                                '/') === false
+                        if (!StringUtility::beginsWith($largeIcon, 'EXT:') && strpos(
+                            $largeIcon,
+                                '/'
+                        ) === false
                         ) {
                             $largeIcon = GeneralUtility::resolveBackPath($item['icon'][1]);
                         }
@@ -268,10 +268,13 @@ class WizardItems implements NewContentElementWizardHookInterface
                                 'source' => $largeIcon,
                             ]);
                         } else {
-                            $iconRegistry->registerIcon($item['iconIdentifierLarge'], BitmapIconProvider::class,
+                            $iconRegistry->registerIcon(
+                                $item['iconIdentifierLarge'],
+                                BitmapIconProvider::class,
                                 [
                                     'source' => $largeIcon,
-                                ]);
+                                ]
+                            );
                         }
                     }
                 } else {
@@ -395,5 +398,4 @@ class WizardItems implements NewContentElementWizardHookInterface
     {
         return $GLOBALS['BE_USER'];
     }
-
 }

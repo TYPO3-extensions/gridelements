@@ -83,5 +83,4 @@ class WizardItemmsTest extends UnitTestCase
     public function testAddGridValuesToWizardItems()
     {
     }
-
 }

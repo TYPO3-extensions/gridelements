@@ -31,8 +31,6 @@ use TYPO3\CMS\Lang\LanguageService;
  * Class/Function which offers TCE main hook functions.
  *
  * @author Jo Hasenau <info@cybercraft.de>
- * @package TYPO3
- * @subpackage tx_gridelements
  */
 abstract class AbstractItemsProcFunc implements SingletonInterface
 {
@@ -109,5 +107,4 @@ abstract class AbstractItemsProcFunc implements SingletonInterface
     {
         return $GLOBALS['BE_USER'];
     }
-
 }

@@ -35,8 +35,6 @@ use TYPO3\CMS\Recordlist\RecordList;
  * Class/Function which adds the necessary ExtJS and pure JS stuff for the grid elements.
  *
  * @author Jo Hasenau <info@cybercraft.de>, Tobias Ferger <tobi@tt36.de>
- * @package TYPO3
- * @subpackage tx_gridelements
  */
 class PageRenderer implements SingletonInterface
 {
@@ -48,13 +46,17 @@ class PageRenderer implements SingletonInterface
      */
     public function addJSCSS(array $parameters, \TYPO3\CMS\Core\Page\PageRenderer $pageRenderer)
     {
-        if (!empty($GLOBALS['SOBE']) && (get_class($GLOBALS['SOBE']) === RecordList::class || is_subclass_of($GLOBALS['SOBE'],
-                    RecordList::class))) {
+        if (!empty($GLOBALS['SOBE']) && (get_class($GLOBALS['SOBE']) === RecordList::class || is_subclass_of(
+            $GLOBALS['SOBE'],
+                    RecordList::class
+        ))) {
             $pageRenderer->loadRequireJsModule('TYPO3/CMS/Gridelements/GridElementsOnReady');
             return;
         }
-        if (!empty($GLOBALS['SOBE']) && (get_class($GLOBALS['SOBE']) === PageLayoutController::class || is_subclass_of($GLOBALS['SOBE'],
-                    PageLayoutController::class))) {
+        if (!empty($GLOBALS['SOBE']) && (get_class($GLOBALS['SOBE']) === PageLayoutController::class || is_subclass_of(
+            $GLOBALS['SOBE'],
+                    PageLayoutController::class
+        ))) {
             $iconFactory = GeneralUtility::makeInstance(IconFactory::class);
             $pageRenderer->loadRequireJsModule('TYPO3/CMS/Gridelements/GridElementsOnReady');
             $pageRenderer->loadRequireJsModule('TYPO3/CMS/Gridelements/GridElementsDragDrop');
@@ -70,8 +72,10 @@ class PageRenderer implements SingletonInterface
             }
 
             // pull locallang_db.xml to JS side - only the tx_gridelements_js-prefixed keys
-            $pageRenderer->addInlineLanguageLabelFile('EXT:gridelements/Resources/Private/Language/locallang_db.xml',
-                'tx_gridelements_js');
+            $pageRenderer->addInlineLanguageLabelFile(
+                'EXT:gridelements/Resources/Private/Language/locallang_db.xml',
+                'tx_gridelements_js'
+            );
 
             $pAddExtOnReadyCode = '
                 TYPO3.l10n = {
@@ -82,8 +86,11 @@ class PageRenderer implements SingletonInterface
             ';
 
             $id = (int)GeneralUtility::_GP('id');
-            $layout = GeneralUtility::callUserFunction(BackendLayoutView::class . '->getSelectedBackendLayout',
-                $id, $this);
+            $layout = GeneralUtility::callUserFunction(
+                BackendLayoutView::class . '->getSelectedBackendLayout',
+                $id,
+                $this
+            );
             if (is_array($layout) && !empty($layout['__config']['backend_layout.']['rows.'])) {
                 /** @var LayoutSetup $layoutSetup */
                 $layoutSetup = GeneralUtility::makeInstance(LayoutSetup::class)->init(0);
@@ -99,13 +106,17 @@ class PageRenderer implements SingletonInterface
             }
 
             // add Ext.onReady() code from file
-            $pAddExtOnReadyCode .= "
-            top.pageColumnsAllowed = " . json_encode($layout['allowed']) . ";
-            top.pageColumnsDisallowed = " . json_encode($layout['disallowed']) . ";
-            top.pageColumnsMaxitems = " . json_encode($layout['maxitems']) . ";
-            top.pasteReferenceAllowed = " . ($this->getBackendUser()->checkAuthMode('tt_content', 'CType', 'shortcut',
-                    $GLOBALS['TYPO3_CONF_VARS']['BE']['explicitADmode']) ? 'true' : 'false') . ";
-            top.skipDraggableDetails = " . ($this->getBackendUser()->uc['dragAndDropHideNewElementWizardInfoOverlay'] ? 'true' : 'false') . ";
+            $pAddExtOnReadyCode .= '
+            top.pageColumnsAllowed = ' . json_encode($layout['allowed']) . ';
+            top.pageColumnsDisallowed = ' . json_encode($layout['disallowed']) . ';
+            top.pageColumnsMaxitems = ' . json_encode($layout['maxitems']) . ';
+            top.pasteReferenceAllowed = ' . ($this->getBackendUser()->checkAuthMode(
+                'tt_content',
+                'CType',
+                'shortcut',
+                    $GLOBALS['TYPO3_CONF_VARS']['BE']['explicitADmode']
+            ) ? 'true' : 'false') . ';
+            top.skipDraggableDetails = ' . ($this->getBackendUser()->uc['dragAndDropHideNewElementWizardInfoOverlay'] ? 'true' : 'false') . ";
             top.backPath = '" . $GLOBALS['BACK_PATH'] . "';
             top.browserUrl = '" . BackendUtility::getModuleUrl('wizard_element_browser') . "';";
 
@@ -125,9 +136,11 @@ class PageRenderer implements SingletonInterface
                 }
             }
 
-            $pAddExtOnReadyCode .= "
-                    top.copyFromAnotherPageLinkTemplate = " . json_encode('<a class="t3js-paste-new btn btn-default" title="' . $this->getLanguageService()->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tx_gridelements_js.copyfrompage') . '">' . $iconFactory->getIcon('actions-insert-reference',
-                        Icon::SIZE_SMALL)->render() . '</a>') . ";";
+            $pAddExtOnReadyCode .= '
+                    top.copyFromAnotherPageLinkTemplate = ' . json_encode('<a class="t3js-paste-new btn btn-default" title="' . $this->getLanguageService()->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tx_gridelements_js.copyfrompage') . '">' . $iconFactory->getIcon(
+                'actions-insert-reference',
+                        Icon::SIZE_SMALL
+            )->render() . '</a>') . ';';
 
             $pageRenderer->addJsInlineCode('gridelementsExtOnReady', $pAddExtOnReadyCode);
         }

@@ -126,5 +126,4 @@ class LayoutSetupTest extends UnitTestCase
     public function testLoadLayoutSetup()
     {
     }
-
 }

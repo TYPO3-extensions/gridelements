@@ -88,5 +88,4 @@ class DatabaseRecordListTest extends UnitTestCase
     public function testContentCollapseIcon()
     {
     }
-
 }

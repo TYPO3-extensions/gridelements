@@ -145,5 +145,4 @@ class PreProcessFieldArrayTest extends UnitTestCase
         $result = $hook->getBackendUser();
         $this->assertEquals($backendUserAuthentication, $result);
     }
-
 }

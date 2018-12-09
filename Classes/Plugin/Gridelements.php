@@ -35,8 +35,6 @@ use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
  * Plugin 'Grid Element' for the 'gridelements' extension.
  *
  * @author Jo Hasenau <info@cybercraft.de>
- * @package TYPO3
- * @subpackage tx_gridelements
  */
 class Gridelements extends ContentObjectRenderer
 {
@@ -124,8 +122,10 @@ class Gridelements extends ContentObjectRenderer
         unset($csvColumns);
 
         if (isset($typoScriptSetup['jsFooterInline']) || isset($typoScriptSetup['jsFooterInline.'])) {
-            $jsFooterInline = isset($typoScriptSetup['jsFooterInline.']) ? $this->cObj->stdWrap($typoScriptSetup['jsFooterInline'],
-                $typoScriptSetup['jsFooterInline.']) : $typoScriptSetup['jsFooterInline'];
+            $jsFooterInline = isset($typoScriptSetup['jsFooterInline.']) ? $this->cObj->stdWrap(
+                $typoScriptSetup['jsFooterInline'],
+                $typoScriptSetup['jsFooterInline.']
+            ) : $typoScriptSetup['jsFooterInline'];
 
             $this->getPageRenderer()->addJsFooterInlineCode('gridelements' . $element, $jsFooterInline);
             unset($typoScriptSetup['jsFooterInline']);
@@ -143,11 +143,19 @@ class Gridelements extends ContentObjectRenderer
      * Converts $this->cObj->data['pi_flexform'] from XML string to flexForm array.
      *
      * @param string $field Field name to convert
+     * @param array $child
      */
-    public function initPluginFlexForm($field = 'pi_flexform')
+    public function initPluginFlexForm($field = 'pi_flexform', &$child = null)
     {
         // Converting flexform data into array:
-        if (!is_array($this->cObj->data[$field]) && $this->cObj->data[$field]) {
+        if (!empty($child)) {
+            if (!is_array($child[$field]) && $child[$field]) {
+                $child[$field] = GeneralUtility::xml2array($child[$field]);
+                if (!is_array($child[$field])) {
+                    $child[$field] = [];
+                }
+            }
+        } elseif (!is_array($this->cObj->data[$field]) && $this->cObj->data[$field]) {
             $this->cObj->data[$field] = GeneralUtility::xml2array($this->cObj->data[$field]);
             if (!is_array($this->cObj->data[$field])) {
                 $this->cObj->data[$field] = [];
@@ -157,10 +165,17 @@ class Gridelements extends ContentObjectRenderer
 
     /**
      * fetches values from the grid flexform and assigns them to virtual fields in the data array
+     * @param array $child
      */
-    public function getPluginFlexFormData()
+    public function getPluginFlexFormData(&$child = [])
     {
-        $pluginFlexForm = $this->cObj->data['pi_flexform'];
+        if (!empty($child)) {
+            $cObjData = $child;
+        } else {
+            $cObjData = $this->cObj->data;
+        }
+
+        $pluginFlexForm = $cObjData['pi_flexform'];
 
         if (is_array($pluginFlexForm) && is_array($pluginFlexForm['data'])) {
             foreach ($pluginFlexForm['data'] as $sheet => $data) {
@@ -168,8 +183,11 @@ class Gridelements extends ContentObjectRenderer
                     foreach ((array)$data as $language => $value) {
                         if (is_array($value)) {
                             foreach ((array)$value as $key => $val) {
-                                $this->cObj->data['flexform_' . $key] = $this->getFlexFormValue($pluginFlexForm, $key,
-                                    $sheet);
+                                $cObjData['flexform_' . $key] = $this->getFlexFormValue(
+                                    $pluginFlexForm,
+                                    $key,
+                                    $sheet
+                                );
                             }
                         }
                     }
@@ -178,6 +196,14 @@ class Gridelements extends ContentObjectRenderer
         }
 
         unset($pluginFlexForm);
+
+        if (!empty($child)) {
+            $child = $cObjData;
+        } else {
+            $this->cObj->data = $cObjData;
+        }
+
+        unset($cObjData);
     }
 
     /**
@@ -213,7 +239,6 @@ class Gridelements extends ContentObjectRenderer
      * @param string $value Value for outermost key, typ. "vDEF" depending on language.
      *
      * @return mixed The value, typ. string.
-     * @access private
      * @see pi_getFlexFormValue()
      */
     public function getFlexFormValueFromSheetArray($sheetArray, $fieldNameArr, $value)
@@ -294,15 +319,23 @@ class Gridelements extends ContentObjectRenderer
         $csvColumns = GeneralUtility::intExplode(',', $csvColumns);
         $queryBuilder = $this->getQueryBuilder();
         $where = $queryBuilder->expr()->andX(
-            $queryBuilder->expr()->eq('tx_gridelements_container',
-                $queryBuilder->createNamedParameter((int)$element, \PDO::PARAM_INT)),
+            $queryBuilder->expr()->eq(
+                'tx_gridelements_container',
+                $queryBuilder->createNamedParameter((int)$element, \PDO::PARAM_INT)
+            ),
             $queryBuilder->expr()->neq('colPos', $queryBuilder->createNamedParameter(-2, \PDO::PARAM_INT)),
-            $queryBuilder->expr()->eq('pid',
-                $queryBuilder->createNamedParameter((int)$pid, \PDO::PARAM_INT)),
-            $queryBuilder->expr()->in('tx_gridelements_columns',
-                $queryBuilder->createNamedParameter($csvColumns, Connection::PARAM_INT_ARRAY)),
-            $queryBuilder->expr()->in('sys_language_uid',
-                $queryBuilder->createNamedParameter([-1, 0], Connection::PARAM_INT_ARRAY))
+            $queryBuilder->expr()->eq(
+                'pid',
+                $queryBuilder->createNamedParameter((int)$pid, \PDO::PARAM_INT)
+            ),
+            $queryBuilder->expr()->in(
+                'tx_gridelements_columns',
+                $queryBuilder->createNamedParameter($csvColumns, Connection::PARAM_INT_ARRAY)
+            ),
+            $queryBuilder->expr()->in(
+                'sys_language_uid',
+                $queryBuilder->createNamedParameter([-1, 0], Connection::PARAM_INT_ARRAY)
+            )
         );
         $translationOverlay = [];
         $translationNoOverlay = [];
@@ -316,30 +349,50 @@ class Gridelements extends ContentObjectRenderer
                     $translationOverlay = $queryBuilder->expr()->andX(
                         $queryBuilder->expr()->eq('tx_gridelements_container', $queryBuilder->createNamedParameter((int)$element, \PDO::PARAM_INT)),
                         $queryBuilder->expr()->neq('colPos', $queryBuilder->createNamedParameter(-2, \PDO::PARAM_INT)),
-                        $queryBuilder->expr()->eq('pid',
-                            $queryBuilder->createNamedParameter((int)$pid, \PDO::PARAM_INT)),
-                        $queryBuilder->expr()->in('tx_gridelements_columns',
-                            $queryBuilder->createNamedParameter($csvColumns, Connection::PARAM_INT_ARRAY)),
-                        $queryBuilder->expr()->in('sys_language_uid',
-                            $queryBuilder->createNamedParameter([-1, $this->getTSFE()->sys_language_content],
-                                Connection::PARAM_INT_ARRAY)),
-                        $queryBuilder->expr()->eq('l18n_parent',
-                            $queryBuilder->createNamedParameter(0, \PDO::PARAM_INT))
+                        $queryBuilder->expr()->eq(
+                            'pid',
+                            $queryBuilder->createNamedParameter((int)$pid, \PDO::PARAM_INT)
+                        ),
+                        $queryBuilder->expr()->in(
+                            'tx_gridelements_columns',
+                            $queryBuilder->createNamedParameter($csvColumns, Connection::PARAM_INT_ARRAY)
+                        ),
+                        $queryBuilder->expr()->in(
+                            'sys_language_uid',
+                            $queryBuilder->createNamedParameter(
+                                [-1, $this->getTSFE()->sys_language_content],
+                                Connection::PARAM_INT_ARRAY
+                            )
+                        ),
+                        $queryBuilder->expr()->eq(
+                            'l18n_parent',
+                            $queryBuilder->createNamedParameter(0, \PDO::PARAM_INT)
+                        )
                     );
                 }
             } else {
                 if ($element) {
                     $translationNoOverlay = $queryBuilder->expr()->andX(
-                        $queryBuilder->expr()->eq('tx_gridelements_container',
-                            $queryBuilder->createNamedParameter((int)$element, \PDO::PARAM_INT)),
+                        $queryBuilder->expr()->eq(
+                            'tx_gridelements_container',
+                            $queryBuilder->createNamedParameter((int)$element, \PDO::PARAM_INT)
+                        ),
                         $queryBuilder->expr()->neq('colPos', $queryBuilder->createNamedParameter(-2, \PDO::PARAM_INT)),
-                        $queryBuilder->expr()->eq('pid',
-                            $queryBuilder->createNamedParameter((int)$pid, \PDO::PARAM_INT)),
-                        $queryBuilder->expr()->in('tx_gridelements_columns',
-                            $queryBuilder->createNamedParameter($csvColumns, Connection::PARAM_INT_ARRAY)),
-                        $queryBuilder->expr()->in('sys_language_uid',
-                            $queryBuilder->createNamedParameter([-1, $this->getTSFE()->sys_language_content],
-                                Connection::PARAM_INT_ARRAY))
+                        $queryBuilder->expr()->eq(
+                            'pid',
+                            $queryBuilder->createNamedParameter((int)$pid, \PDO::PARAM_INT)
+                        ),
+                        $queryBuilder->expr()->in(
+                            'tx_gridelements_columns',
+                            $queryBuilder->createNamedParameter($csvColumns, Connection::PARAM_INT_ARRAY)
+                        ),
+                        $queryBuilder->expr()->in(
+                            'sys_language_uid',
+                            $queryBuilder->createNamedParameter(
+                                [-1, $this->getTSFE()->sys_language_content],
+                                Connection::PARAM_INT_ARRAY
+                            )
+                        )
                     );
                 }
             }
@@ -368,10 +421,18 @@ class Gridelements extends ContentObjectRenderer
             if (is_array($child)) {
                 $child['sorting'] = $sorting;
                 if ($this->getTSFE()->sys_language_contentOL) {
-                    $child = $this->getTSFE()->sys_page->getRecordOverlay('tt_content', $child,
-                        $this->getTSFE()->sys_language_content, $this->getTSFE()->sys_language_contentOL);
+                    $child = $this->getTSFE()->sys_page->getRecordOverlay(
+                        'tt_content',
+                        $child,
+                        $this->getTSFE()->sys_language_content,
+                        $this->getTSFE()->sys_language_contentOL
+                    );
                 }
                 if (!empty($child)) {
+                    if ($child['CType'] === 'gridelements_pi1') {
+                        $this->initPluginFlexForm('pi_flexform', $child);
+                        $this->getPluginFlexFormData($child);
+                    }
                     $this->cObj->data['tx_gridelements_view_children'][] = $child;
                     unset($child);
                 }
@@ -381,17 +442,15 @@ class Gridelements extends ContentObjectRenderer
         $compareFunction = function ($child_a, $child_b) {
             if ($child_a['sorting'] > $child_b['sorting']) {
                 return 1;
-            } elseif ($child_a['sorting'] === $child_b['sorting']) {
-                return 0;
-            } else {
-                return -1;
             }
+            if ($child_a['sorting'] === $child_b['sorting']) {
+                return 0;
+            }
+            return -1;
         };
 
         usort($this->cObj->data['tx_gridelements_view_children'], $compareFunction);
-
     }
-
 
     /**
      * getter for queryBuilder
@@ -435,8 +494,13 @@ class Gridelements extends ContentObjectRenderer
             foreach ($this->cObj->data['tx_gridelements_view_children'] as $child) {
                 $rawColumns[$child['tx_gridelements_columns']][] = $child;
                 $renderedChild = $child;
-                $this->renderChildIntoParentColumn($columns, $renderedChild, $parentGridData, $parentRecordNumbers,
-                    $typoScriptSetup);
+                $this->renderChildIntoParentColumn(
+                    $columns,
+                    $renderedChild,
+                    $parentGridData,
+                    $parentRecordNumbers,
+                    $typoScriptSetup
+                );
                 $currentParentGrid['data']['tx_gridelements_view_child_' . $child['uid']] = $renderedChild;
                 unset($renderedChild);
             }
@@ -635,10 +699,11 @@ class Gridelements extends ContentObjectRenderer
     public function user_getTreeList()
     {
         $pidList = $this->getTSFE()->register['tt_content_shortcut_recursive']
-            ? $this->cObj->getTreeList($this->cObj->data['uid'],
-                $this->getTSFE()->register['tt_content_shortcut_recursive'])
+            ? $this->cObj->getTreeList(
+                $this->cObj->data['uid'],
+                $this->getTSFE()->register['tt_content_shortcut_recursive']
+            )
             : '';
         $this->getTSFE()->register['pidInList'] = trim($this->cObj->data['uid'] . ',' . $pidList, ',');
     }
-
 }

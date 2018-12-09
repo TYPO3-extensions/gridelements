@@ -63,5 +63,4 @@ class CTypeListTest extends UnitTestCase
     public function testCheckForAllowedCTypes()
     {
     }
-
 }

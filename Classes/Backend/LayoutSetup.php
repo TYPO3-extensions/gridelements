@@ -37,8 +37,6 @@ use TYPO3\CMS\Lang\LanguageService;
  * Utilities for gridelements.
  *
  * @author Arno Dudek <webmaster@adgrafik.at>
- * @package TYPO3
- * @subpackage tx_gridelements
  */
 class LayoutSetup
 {
@@ -170,8 +168,10 @@ class LayoutSetup
             ? (int)$pageTSconfig['TCEFORM.']['pages.']['_STORAGE_PID']
             : 0;
         $pageTSconfigId = isset($pageTSconfig['TCEFORM.']['tt_content.']['tx_gridelements_backend_layout.']['PAGE_TSCONFIG_ID'])
-            ? implode(',', GeneralUtility::intExplode(',',
-                $pageTSconfig['TCEFORM.']['tt_content.']['tx_gridelements_backend_layout.']['PAGE_TSCONFIG_ID']))
+            ? implode(',', GeneralUtility::intExplode(
+                ',',
+                $pageTSconfig['TCEFORM.']['tt_content.']['tx_gridelements_backend_layout.']['PAGE_TSCONFIG_ID']
+            ))
             : 0;
 
         // Load records.
@@ -186,15 +186,21 @@ class LayoutSetup
                         $queryBuilder->expr()->comparison($storagePid, '=', 0)
                     ),
                     $queryBuilder->expr()->orX(
-                        $queryBuilder->expr()->eq('pid',
-                            $queryBuilder->createNamedParameter((int)$pageTSconfigId, \PDO::PARAM_INT)),
-                        $queryBuilder->expr()->eq('pid',
-                            $queryBuilder->createNamedParameter((int)$storagePid, \PDO::PARAM_INT))
+                        $queryBuilder->expr()->eq(
+                            'pid',
+                            $queryBuilder->createNamedParameter((int)$pageTSconfigId, \PDO::PARAM_INT)
+                        ),
+                        $queryBuilder->expr()->eq(
+                            'pid',
+                            $queryBuilder->createNamedParameter((int)$storagePid, \PDO::PARAM_INT)
+                        )
                     ),
                     $queryBuilder->expr()->andX(
                         $queryBuilder->expr()->comparison($pageTSconfigId, '=', 0),
-                        $queryBuilder->expr()->eq('pid',
-                            $queryBuilder->createNamedParameter((int)$pageId, \PDO::PARAM_INT))
+                        $queryBuilder->expr()->eq(
+                            'pid',
+                            $queryBuilder->createNamedParameter((int)$pageId, \PDO::PARAM_INT)
+                        )
                     )
                 )
             )
@@ -234,7 +240,6 @@ class LayoutSetup
             }
 
             $gridLayoutRecords[$layoutId] = $item;
-
         }
 
         if ($overruleRecords === true) {
@@ -475,19 +480,21 @@ class LayoutSetup
      * @param int $gridContainerId The ID of the current grid container
      * @param bool $doReturn
      *
-     * @return null|array
+     * @return array|null
      */
     public function cacheCurrentParent($gridContainerId = 0, $doReturn = false)
     {
         if ($gridContainerId > 0) {
             if (empty($GLOBALS['tx_gridelements']['parentElement'][$gridContainerId])) {
-                $GLOBALS['tx_gridelements']['parentElement'][$gridContainerId] = BackendUtility::getRecordWSOL('tt_content',
-                    $gridContainerId);
+                $GLOBALS['tx_gridelements']['parentElement'][$gridContainerId] = BackendUtility::getRecordWSOL(
+                    'tt_content',
+                    $gridContainerId
+                );
             }
         }
         if ($doReturn) {
             return $GLOBALS['tx_gridelements']['parentElement'][$gridContainerId];
-        };
+        }
 
         return null;
     }
@@ -601,7 +608,6 @@ class LayoutSetup
                 'iconIdentifier' => $item['iconIdentifier'],
                 'tll'            => $item['top_level_layout'],
             ];
-
         }
 
         return $wizardItems;
@@ -621,8 +627,10 @@ class LayoutSetup
         if ($layoutSetup['pi_flexform_ds_file']) {
             $flexformConfiguration = GeneralUtility::getUrl(GeneralUtility::getFileAbsFileName($layoutSetup['pi_flexform_ds_file']));
         } elseif (strpos($layoutSetup['pi_flexform_ds'], 'FILE:') === 0) {
-            $flexformConfiguration = GeneralUtility::getUrl(GeneralUtility::getFileAbsFileName(substr($layoutSetup['pi_flexform_ds'],
-                5)));
+            $flexformConfiguration = GeneralUtility::getUrl(GeneralUtility::getFileAbsFileName(substr(
+                $layoutSetup['pi_flexform_ds'],
+                5
+            )));
         } elseif ($layoutSetup['pi_flexform_ds']) {
             $flexformConfiguration = $layoutSetup['pi_flexform_ds'];
         } else {
@@ -675,7 +683,6 @@ class LayoutSetup
         return $GLOBALS['BE_USER'];
     }
 
-
     /**
      * Gets the current real pid.
      *
@@ -685,5 +692,4 @@ class LayoutSetup
     {
         return $this->realPid;
     }
-
 }

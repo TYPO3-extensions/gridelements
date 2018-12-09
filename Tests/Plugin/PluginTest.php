@@ -164,5 +164,4 @@ class PluginTest extends UnitTestCase
     public function testGetFlexformSectionsRecursively()
     {
     }
-
 }
