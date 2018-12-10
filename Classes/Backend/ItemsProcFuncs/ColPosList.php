@@ -26,8 +26,6 @@ use TYPO3\CMS\Backend\Utility\BackendUtility;
  * Class/Function which manipulates the item-array for table/field tt_content colPos.
  *
  * @author Jo Hasenau <info@cybercraft.de>
- * @package TYPO3
- * @subpackage tx_gridelements
  */
 class ColPosList extends AbstractItemsProcFunc
 {
@@ -43,17 +41,31 @@ class ColPosList extends AbstractItemsProcFunc
             $contentType = is_array($params['row']['CType']) ? $params['row']['CType'][0] : $params['row']['CType'];
             $listType = is_array($params['row']['list_type']) ? $params['row']['list_type'][0] : $params['row']['list_type'];
             $gridType = is_array($params['row']['tx_gridelements_backend_layout']) ? $params['row']['tx_gridelements_backend_layout'][0] : $params['row']['tx_gridelements_backend_layout'];
-            $params['items'] = $this->addColPosListLayoutItems($params['row']['pid'], $params['items'], $contentType,
-                $listType, $gridType, $params['row']['tx_gridelements_container']);
+            $params['items'] = $this->addColPosListLayoutItems(
+                $params['row']['pid'],
+                $params['items'],
+                $contentType,
+                $listType,
+                $gridType,
+                $params['row']['tx_gridelements_container']
+            );
         } else {
             // negative uid_pid values indicate that the element has been inserted after an existing element
             // so there is no pid to get the backendLayout for and we have to get that first
-            $existingElement = BackendUtility::getRecordWSOL('tt_content', -((int)$params['row']['pid']),
-                'pid,CType,tx_gridelements_container');
+            $existingElement = BackendUtility::getRecordWSOL(
+                'tt_content',
+                -((int)$params['row']['pid']),
+                'pid,CType,tx_gridelements_container'
+            );
             if ($existingElement['pid'] > 0) {
-                $params['items'] = $this->addColPosListLayoutItems($existingElement['pid'], $params['items'],
-                    $existingElement['CType'], $existingElement['list_type'],
-                    $existingElement['tx_gridelements_backend_layout'], $existingElement['tx_gridelements_container']);
+                $params['items'] = $this->addColPosListLayoutItems(
+                    $existingElement['pid'],
+                    $params['items'],
+                    $existingElement['CType'],
+                    $existingElement['list_type'],
+                    $existingElement['tx_gridelements_backend_layout'],
+                    $existingElement['tx_gridelements_container']
+                );
             }
         }
     }

@@ -20,13 +20,10 @@ define(['jquery', 'TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Backend/Storag
 
     var OnReady = {
         openedPopupWindow: []
-    };
-
-
-    AjaxDataHandler.identifier.allGridelementsToggle = '.t3js-toggle-gridelements-all';
-    AjaxDataHandler.identifier.gridelementToggle = '.t3js-toggle-gridelements-list';
-    AjaxDataHandler.identifier.allGridelementsColumnsToggle = '.t3js-toggle-gridelements-columns-all';
-    AjaxDataHandler.identifier.gridelementColumnToggle = '.t3js-toggle-gridelements-column';
+    },
+    AllGridelementsToggle = '.t3js-toggle-gridelements-all',
+    GridelementsToggle = '.t3js-toggle-gridelements-list',
+    GridelementsColumnToggle = '.t3js-toggle-gridelements-column';
 
     /**
      * initializes Drag+Drop for all content elements on the page
@@ -50,7 +47,7 @@ define(['jquery', 'TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Backend/Storag
         OnReady.setAllowedData();
         $('.icon-actions-document-paste-into').parent().remove();
         $('.t3-page-ce-wrapper-new-ce').each(function () {
-            if (!$(this).find('.icon-actions-document-new').length) {
+            if (!$(this).find('.icon-actions-add').length) {
                 return true;
             }
             $(this).addClass('btn-group btn-group-sm');
@@ -184,7 +181,7 @@ define(['jquery', 'TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Backend/Storag
                     btnClass: 'btn-' + top.TYPO3.Severity.getCssClass(severity),
                     trigger: function (ev) {
                         Modal.currentModal.trigger('modal-dismiss');
-                        DragDrop.onDrop($element.data('content'), $element, ev);
+                        DragDrop.default.onDrop($element.data('content'), $element, ev);
                     }
                 },
                 {
@@ -192,7 +189,7 @@ define(['jquery', 'TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Backend/Storag
                     btnClass: 'btn-' + top.TYPO3.Severity.getCssClass(severity),
                     trigger: function (ev) {
                         Modal.currentModal.trigger('modal-dismiss');
-                        DragDrop.onDrop($element.data('content'), $element, ev, 'reference');
+                        DragDrop.default.onDrop($element.data('content'), $element, ev, 'reference');
                     }
                 }
             ];
@@ -215,7 +212,7 @@ define(['jquery', 'TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Backend/Storag
                     btnClass: 'btn-' + Severity.getCssClass(severity),
                     trigger: function () {
                         Modal.currentModal.trigger('modal-dismiss');
-                        DragDrop.onDrop($element.data('content'), $element, null);
+                        DragDrop.default.onDrop($element.data('content'), $element, null);
                     }
                 }
             ];
@@ -276,8 +273,8 @@ define(['jquery', 'TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Backend/Storag
      */
     OnReady.setAllowedParameters = function (pageColumn, colPos) {
         pageColumn.find('.t3js-page-new-ce:not(".t3js-page-new-ce-allowed") a').each(function () {
-            if (typeof $(this).attr('href') !== 'undefined') {
-                $(this).attr('href', $(this).attr('href').replace(
+            if (typeof $(this).data('url') !== 'undefined') {
+                $(this).data('url', $(this).data('url').replace(
                     '&uid_pid',
                     (top.pageColumnsAllowed[colPos] ? ('&tx_gridelements_allowed=' + window.btoa(JSON.stringify(top.pageColumnsAllowed[colPos]))) : '') +
                     (top.pageColumnsDisallowed[colPos] ? ('&tx_gridelements_disallowed=' + window.btoa(JSON.stringify(top.pageColumnsDisallowed[colPos]))) : '') +
@@ -336,7 +333,7 @@ define(['jquery', 'TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Backend/Storag
      * activates the arrow icons to show/hide content previews within a certain grid column
      */
     OnReady.activateCollapseIcons = function () {
-        $(document).on('click', AjaxDataHandler.identifier.gridelementColumnToggle, function (evt) {
+        $(document).on('click', GridelementsColumnToggle, function (evt) {
             evt.preventDefault();
 
             var $me = $(this),
@@ -387,7 +384,7 @@ define(['jquery', 'TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Backend/Storag
     if (!$('.typo3-TCEforms').length) {
         OnReady.setSelectOptionFromExternalSource = setFormValueFromBrowseWin = function (elementId, tableUid) {
             tableUid = tableUid.replace('tt_content_', '') * 1;
-            DragDrop.onDrop(tableUid, $('#' + elementId).find('.t3js-paste-new'), 'copyFromAnotherPage');
+            DragDrop.default.onDrop(tableUid, $('#' + elementId).find('.t3js-paste-new'), 'copyFromAnotherPage');
         }
     }
 
@@ -396,7 +393,7 @@ define(['jquery', 'TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Backend/Storag
      */
     OnReady.activateAllGridExpander = function () {
         OnReady.activateGridExpander();
-        $(document).on('click', AjaxDataHandler.identifier.allGridelementsToggle, function (evt) {
+        $(document).on('click', AllGridelementsToggle, function (evt) {
             evt.preventDefault();
 
             var $me = $(this),
@@ -435,7 +432,7 @@ define(['jquery', 'TYPO3/CMS/Backend/AjaxDataHandler', 'TYPO3/CMS/Backend/Storag
      * activates the toggle icons to open listings of nested grid container structure in the list module
      */
     OnReady.activateGridExpander = function () {
-        $(document).on('click', AjaxDataHandler.identifier.gridelementToggle, function (evt) {
+        $(document).on('click', GridelementsToggle, function (evt) {
             evt.preventDefault();
 
             var $me = $(this),

@@ -1,0 +1,81 @@
+// stdWrap functions being applied to each element
+lib.gridelements.defaultGridSetup = FLUIDTEMPLATE
+lib.gridelements.defaultGridSetup {
+	templateName.field = tx_gridelements_backend_layout
+	templateName.ifEmpty = default
+	layoutRootPaths {
+		10 = EXT:gridelements/Resources/Private/Layouts/
+	}
+	partialRootPaths {
+		10 = EXT:gridelements/Resources/Private/Partials/
+	}
+	templateRootPaths {
+		10 = EXT:gridelements/Resources/Private/Templates/
+	}
+	dataProcessing {
+		10 = GridElementsTeam\Gridelements\DataProcessing\GridChildrenProcessor
+		10 {
+			default {
+				as = children
+				# Default options of the grid children processor
+				# Change them according to the needs of your layout
+				# Read more about it in the TypoScript section of the manual
+				# options {
+				#	sortingDirection = ASC
+				#	sortingField = sorting
+				#	recursive = 0
+				#	resolveFlexFormData = 1
+				#	resolveBackendLayout = 1
+				#	respectColumns = 1
+				#	respectRows = 1
+				#}
+			}
+		}
+	}
+}
+
+plugin.tx_gridelements_pi1 >
+tt_content.gridelements_pi1 >
+tt_content.gridelements_pi1 < lib.gridelements.defaultGridSetup
+
+tt_content.gridelements_view < tt_content.gridelements_pi1
+
+lib.tt_content.shortcut.pages = COA
+lib.tt_content.shortcut.pages {
+	5 = LOAD_REGISTER
+	5 {
+		tt_content_shortcut_recursive.field = recursive
+	}
+	10 = USER
+	10 {
+		userFunc = GridElementsTeam\Gridelements\Plugin\Gridelements->user_getTreeList
+	}
+	20 = CONTENT
+	20 {
+		table = tt_content
+		select {
+			pidInList.data = register:pidInList
+			selectFields.dataWrap = *,FIND_IN_SET(pid,{register:pidInList}) AS gridelements_shortcut_page_order_by
+			where = colPos >= 0
+			languageField = sys_language_uid
+			orderBy = gridelements_shortcut_page_order_by,colPos,sorting
+		}
+	}
+	30 = RESTORE_REGISTER
+}
+
+[userFunc = TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('fluid_styled_content')]
+	tt_content.shortcut.variables.shortcuts {
+		tables := addToList(pages)
+		conf.pages < lib.tt_content.shortcut.pages
+	}
+[global]
+
+[userFunc = TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('css_styled_content')]
+	tt_content.shortcut {
+		20 {
+			tables := addToList(pages)
+			conf.pages < lib.tt_content.shortcut.pages
+		}
+	}
+[global]

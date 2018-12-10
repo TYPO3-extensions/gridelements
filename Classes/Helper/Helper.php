@@ -33,8 +33,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  * Gridelements helper class
  *
  * @author Dirk Hoffmann <dirk-hoffmann@telekom.de>
- * @package TYPO3
- * @subpackage tx_gridelements
  */
 class Helper implements SingletonInterface
 {
@@ -68,7 +66,7 @@ class Helper implements SingletonInterface
      * @param string $selectFieldList
      * @return array
      */
-    public function getChildren($table = '', $uid = 0, $pid = 0, $sortingField = '', $sortRev = 0, $selectFieldList)
+    public function getChildren($table = '', $uid = 0, $pid = 0, $sortingField = '', $sortRev = 0, $selectFieldList = '')
     {
         $retVal = [];
 
@@ -81,10 +79,14 @@ class Helper implements SingletonInterface
                 ->from('tt_content')
                 ->where(
                     $queryBuilder->expr()->andX(
-                        $queryBuilder->expr()->eq('tx_gridelements_container',
-                            $queryBuilder->createNamedParameter((int)$uid, \PDO::PARAM_INT)),
-                        $queryBuilder->expr()->eq('pid',
-                            $queryBuilder->createNamedParameter((int)$pid, \PDO::PARAM_INT))
+                        $queryBuilder->expr()->eq(
+                            'tx_gridelements_container',
+                            $queryBuilder->createNamedParameter((int)$uid, \PDO::PARAM_INT)
+                        ),
+                        $queryBuilder->expr()->eq(
+                            'pid',
+                            $queryBuilder->createNamedParameter((int)$pid, \PDO::PARAM_INT)
+                        )
                     )
                 )
                 ->execute()
@@ -96,8 +98,10 @@ class Helper implements SingletonInterface
                 } else {
                     $sortField = sprintf('%1$011d', $child['sorting']);
                 }
-                $sortKey = sprintf('%1$011d',
-                        $child['tx_gridelements_columns']) . '.' . $sortField . ':' . sprintf('%1$011d', $child['uid']);
+                $sortKey = sprintf(
+                    '%1$011d',
+                        $child['tx_gridelements_columns']
+                ) . '.' . $sortField . ':' . sprintf('%1$011d', $child['uid']);
 
                 $retVal[$sortKey] = $child;
             }
@@ -116,7 +120,8 @@ class Helper implements SingletonInterface
      * @param bool $csvValues
      * @return mixed
      */
-    public function mergeAllowedDisallowedSettings($backendLayout, $csvValues = false) {
+    public function mergeAllowedDisallowedSettings($backendLayout, $csvValues = false)
+    {
         if (!empty($backendLayout['allowed'])) {
             foreach ($backendLayout['allowed'] as $column => &$allowedFields) {
                 if (isset($fields['CType']) && $allowedFields['CType'] !== '*') {
@@ -140,7 +145,7 @@ class Helper implements SingletonInterface
                     $allowedFields['tx_gridelements_backend_layout'] = array_flip(GeneralUtility::trimExplode(',', $allowedFields['tx_gridelements_backend_layout']));
                 }
             }
-        };
+        }
         if (!empty($backendLayout['disallowed']) && !$csvValues) {
             foreach ($backendLayout['disallowed'] as $column => &$disallowedFields) {
                 if (!empty($disallowedFields['CType'])) {
@@ -153,7 +158,7 @@ class Helper implements SingletonInterface
                     $disallowedFields['tx_gridelements_backend_layout'] = array_flip(GeneralUtility::trimExplode(',', $disallowedFields['tx_gridelements_backend_layout']));
                 }
             }
-        };
+        }
         return $backendLayout;
     }
 
@@ -171,8 +176,10 @@ class Helper implements SingletonInterface
             ->select('pid')
             ->from('tt_content')
             ->where(
-                $queryBuilder->expr()->eq('uid',
-                    $queryBuilder->createNamedParameter(abs($uid), \PDO::PARAM_INT))
+                $queryBuilder->expr()->eq(
+                    'uid',
+                    $queryBuilder->createNamedParameter(abs($uid), \PDO::PARAM_INT)
+                )
             )
             ->execute()
             ->fetch();
@@ -224,10 +231,14 @@ class Helper implements SingletonInterface
      * @param $pageId
      * @return mixed
      */
-    public function getSelectedBackendLayout($pageId) {
+    public function getSelectedBackendLayout($pageId)
+    {
         if (empty($GLOBALS['tx_gridelements']['pageBackendLayoutData'][$pageId])) {
-            $backendLayoutData = GeneralUtility::callUserFunction(BackendLayoutView::class . '->getSelectedBackendLayout',
-                $pageId, $this);
+            $backendLayoutData = GeneralUtility::callUserFunction(
+                BackendLayoutView::class . '->getSelectedBackendLayout',
+                $pageId,
+                $this
+            );
             // add allowed CTypes to the columns, since this is not done by the native core methods
             if (!empty($backendLayoutData['__items'])) {
                 $backendLayoutData['columns']['CSV'] = '-2,-1';
@@ -250,7 +261,7 @@ class Helper implements SingletonInterface
                                 }
                                 if (!is_array($column['allowed']) && !empty($column['allowed'])) {
                                     $allowed[$colPos] = ['CType' => $column['allowed']];
-                                } else if (empty($column['allowed'])) {
+                                } elseif (empty($column['allowed'])) {
                                     $allowed[$colPos] = ['CType' => '*'];
                                 } else {
                                     $allowed[$colPos] = $column['allowed'];
@@ -277,7 +288,7 @@ class Helper implements SingletonInterface
                     }
                 }
                 $backendLayoutData = $this->mergeAllowedDisallowedSettings($backendLayoutData);
-            };
+            }
             $GLOBALS['tx_gridelements']['pageBackendLayoutData'][$pageId] = $backendLayoutData;
         }
         return $GLOBALS['tx_gridelements']['pageBackendLayoutData'][$pageId];
@@ -292,5 +303,4 @@ class Helper implements SingletonInterface
     {
         return $GLOBALS['BE_USER'];
     }
-
 }

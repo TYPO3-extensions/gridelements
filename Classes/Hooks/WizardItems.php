@@ -24,6 +24,7 @@ use GridElementsTeam\Gridelements\Backend\LayoutSetup;
 use TYPO3\CMS\Backend\Controller\ContentElement\NewContentElementController;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Backend\Wizard\NewContentElementWizardHookInterface;
+use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Imaging\IconProvider\BitmapIconProvider;
 use TYPO3\CMS\Core\Imaging\IconProvider\SvgIconProvider;
 use TYPO3\CMS\Core\Imaging\IconRegistry;
@@ -35,8 +36,6 @@ use TYPO3\CMS\Lang\LanguageService;
  * Class/Function which manipulates the rendering of items within the new content element wizard
  *
  * @author Jo Hasenau <info@cybercraft.de>, Tobias Ferger <tobi@tt36.de>
- * @package TYPO3
- * @subpackage tx_gridelements
  */
 class WizardItems implements NewContentElementWizardHookInterface
 {
@@ -64,8 +63,12 @@ class WizardItems implements NewContentElementWizardHookInterface
      */
     public function manipulateWizardItems(&$wizardItems, &$parentObject)
     {
-        if (GeneralUtility::inList($GLOBALS['BE_USER']->groupData['explicit_allowdeny'],
-            'tt_content:CType:gridelements_pi1:DENY')) {
+        if (!$this->getBackendUser()->checkAuthMode(
+            'tt_content',
+            'CType',
+            'gridelements_pi1',
+            $GLOBALS['TYPO3_CONF_VARS']['BE']['explicitADmode']
+        )) {
             return;
         }
         $pageID = $parentObject->id;
@@ -251,8 +254,10 @@ class WizardItems implements NewContentElementWizardHookInterface
                     if (StringUtility::beginsWith($largeIcon, '../uploads/tx_gridelements/')) {
                         $largeIcon = str_replace('../', '', $largeIcon);
                     } else {
-                        if (!StringUtility::beginsWith($largeIcon, 'EXT:') && strpos($largeIcon,
-                                '/') === false
+                        if (!StringUtility::beginsWith($largeIcon, 'EXT:') && strpos(
+                            $largeIcon,
+                                '/'
+                        ) === false
                         ) {
                             $largeIcon = GeneralUtility::resolveBackPath($item['icon'][1]);
                         }
@@ -263,10 +268,13 @@ class WizardItems implements NewContentElementWizardHookInterface
                                 'source' => $largeIcon,
                             ]);
                         } else {
-                            $iconRegistry->registerIcon($item['iconIdentifierLarge'], BitmapIconProvider::class,
+                            $iconRegistry->registerIcon(
+                                $item['iconIdentifierLarge'],
+                                BitmapIconProvider::class,
                                 [
                                     'source' => $largeIcon,
-                                ]);
+                                ]
+                            );
                         }
                     }
                 } else {
@@ -381,4 +389,13 @@ class WizardItems implements NewContentElementWizardHookInterface
         }
     }
 
+    /**
+     * Gets the current backend user.
+     *
+     * @return BackendUserAuthentication
+     */
+    public function getBackendUser()
+    {
+        return $GLOBALS['BE_USER'];
+    }
 }

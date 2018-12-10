@@ -34,8 +34,6 @@ use TYPO3\CMS\Recordlist\RecordList\RecordListHookInterface;
  *
  * @author Jo Hasenau <info@cybercraft.de>
  * @author Dirk Hoffmann <hoffmann@vmd-jena.de>
- * @package TYPO3
- * @subpackage tx_gridelements
  */
 class DatabaseRecordList implements RecordListHookInterface, SingletonInterface
 {
@@ -133,8 +131,14 @@ class DatabaseRecordList implements RecordListHookInterface, SingletonInterface
     public function checkChildren($table, array $row, $level, array &$theData, DatabaseRecordListXclass $parentObj)
     {
         if ($table === 'tt_content' && $row['CType'] === 'gridelements_pi1') {
-            $elementChildren = Helper::getInstance()->getChildren($table, $row['uid'], $row['pid'], '', 0,
-                $parentObj->selFieldList);
+            $elementChildren = Helper::getInstance()->getChildren(
+                $table,
+                $row['uid'],
+                $row['pid'],
+                '',
+                0,
+                $parentObj->selFieldList
+            );
             if (!empty($elementChildren)) {
                 $theData['_EXPANDABLE_'] = true;
                 $theData['_EXPAND_ID_'] = $table . ':' . $row['uid'];
@@ -210,7 +214,6 @@ class DatabaseRecordList implements RecordListHookInterface, SingletonInterface
      *
      * @param LanguageService $languageService
      */
-
     public function setLanguageService(LanguageService $languageService)
     {
         $this->languageService = $languageService;

@@ -28,8 +28,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  * Class/Function which offers TCE main hook functions.
  *
  * @author         Jo Hasenau <info@cybercraft.de>
- * @package        TYPO3
- * @subpackage     tx_gridelements
  */
 class ProcessCmdmap extends AbstractDataHandler
 {
@@ -51,13 +49,12 @@ class ProcessCmdmap extends AbstractDataHandler
         $value,
         &$commandIsProcessed,
         DataHandler $parentObj = null,
-        $pasteUpdate
+        $pasteUpdate = false
     ) {
         $this->init($table, $id, $parentObj);
         $reference = (int)GeneralUtility::_GET('reference');
 
         if ($command === 'copy' && $reference === 1 && !$commandIsProcessed && $table === 'tt_content' && !$this->getTceMain()->isImporting) {
-
             $dataArray = [
                 'pid'     => $value,
                 'CType'   => 'shortcut',
@@ -87,7 +84,6 @@ class ProcessCmdmap extends AbstractDataHandler
             $parentObj->registerDBList = null;
             $parentObj->remapStack = null;
             $commandIsProcessed = true;
-
         }
 
         if ($command === 'delete' && $table === 'tt_content') {
@@ -97,8 +93,10 @@ class ProcessCmdmap extends AbstractDataHandler
                 ->select('tx_gridelements_container', 'sys_language_uid')
                 ->from('tt_content')
                 ->where(
-                    $queryBuilder->expr()->eq('uid',
-                        $queryBuilder->createNamedParameter((int)$id, \PDO::PARAM_INT))
+                    $queryBuilder->expr()->eq(
+                        'uid',
+                        $queryBuilder->createNamedParameter((int)$id, \PDO::PARAM_INT)
+                    )
                 )
                 ->execute()
                 ->fetch();

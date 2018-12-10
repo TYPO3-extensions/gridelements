@@ -13,5 +13,4 @@ class PreHeaderRendererHookTest extends UnitTestCase
     public function testMain()
     {
     }
-
 }

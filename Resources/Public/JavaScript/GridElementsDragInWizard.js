@@ -39,13 +39,8 @@ define(['jquery', 'TYPO3/CMS/Gridelements/GridElementsDragDrop', 'jquery-ui/drag
 	 * get the URL for the new element wizard the correct module token
 	 */
 	DragInWizard.getWizardUrl = function () {
-		var originalWizardUrl;
-		var $newCeLink = $('.t3js-page-new-ce a').first();
-		if ($newCeLink.attr('onclick')) {
-			originalWizardUrl = $newCeLink.attr('onclick').split('\\u0026', 4);
-		} else if ($newCeLink.attr('href')) {
-			originalWizardUrl = $newCeLink.attr('href').split('\&', 4);
-		}
+		var $newCeLink = $('.t3js-toggle-new-content-element-wizard').first();
+		var originalWizardUrl = $newCeLink.data('url').split('\&', 4);
 		if (typeof originalWizardUrl !== 'undefined') {
 			DragInWizard.wizardUrl = originalWizardUrl[0] + '&' + originalWizardUrl[1] + '&' + originalWizardUrl[2];
 		}
@@ -56,12 +51,12 @@ define(['jquery', 'TYPO3/CMS/Gridelements/GridElementsDragDrop', 'jquery-ui/drag
 	 */
 	DragInWizard.createToggleIcon = function () {
 		var lastIcon = $('.module-docheader-bar-column-left .btn-group .icon').last().parent();
-		var addNewIcon = $('.t3-page-ce-wrapper-new-ce a').first();
-		var newIcon = addNewIcon.clone().attr('class', 'btn btn-default btn-sm').insertAfter(lastIcon);
+		var addNewIcon = $('.t3js-toggle-new-content-element-wizard').first();
+		var newIcon = addNewIcon.clone().attr('class', 'btn btn-default btn-sm t3js-toggle-new-content-element-wizard').insertAfter(lastIcon);
 		newIcon.contents().filter(function () {
 			return (this.nodeType === 3);
 		}).remove();
-		newIcon.removeAttr('onclick').attr('title', 'Toggle Drag In Wizard');
+		newIcon.attr('title', 'Toggle Drag In Wizard');
 		newIcon.click(function () {
 			top.dragInWizardActive = !top.dragInWizardActive;
 			DragInWizard.toggleWizard();
@@ -79,15 +74,31 @@ define(['jquery', 'TYPO3/CMS/Gridelements/GridElementsDragDrop', 'jquery-ui/drag
 	DragInWizard.toggleWizard = function () {
 		var $wizard = $('#' + DragInWizard.wizardIdentifier);
 		if ($wizard.length) {
-			$wizard.toggle();
+			if (!$wizard.hasClass('active')) {
+				$wizard.show();
+				$wizard.addClass('active');
+			} else {
+                $wizard.removeClass('active');
+                setTimeout(function() {
+                    $wizard.hide();
+                }, 800);
+			}
 		} else {
 			$wizard = $('<div id="' + DragInWizard.wizardIdentifier + '"></div>');
 			$('.t3js-module-docheader').append($wizard);
-			$wizard.load(DragInWizard.wizardUrl + ' .t3js-module-body div[role=\'tabpanel\']:first', function () {
+			$wizard.load(DragInWizard.wizardUrl + ' #new-content-element-wizard-carousel div[role=\'tabpanel\']:first', function () {
 				DragInWizard.makeItemsDraggable();
 				DragInWizard.rearrangeItems();
 			});
-			$wizard.css('visibility', 'visible');
+            if (!$wizard.hasClass('active')) {
+                $wizard.show();
+                $wizard.addClass('active');
+            } else {
+                $wizard.removeClass('active');
+                setTimeout(function() {
+                    $wizard.hide();
+                }, 800);
+            }
 		}
 	};
 
@@ -96,7 +107,7 @@ define(['jquery', 'TYPO3/CMS/Gridelements/GridElementsDragDrop', 'jquery-ui/drag
 	 */
 	DragInWizard.makeItemsDraggable = function () {
 		$('#' + DragInWizard.wizardIdentifier + ' .panel-body .media').attr('language-uid', 0).find('.media-left img').addClass('t3js-page-ce-draghandle').parent().addClass('t3-page-ce-dragitem t3-page-ce-header-draggable').closest('.media').addClass('t3js-page-ce t3js-page-ce-draggable');
-		DragDrop.initialize();
+		DragDrop.default.initialize();
 	};
 
 	/**

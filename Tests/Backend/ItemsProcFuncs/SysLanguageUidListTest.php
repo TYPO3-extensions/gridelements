@@ -63,5 +63,4 @@ class SysLanguageUidListTest extends UnitTestCase
     public function testCheckForAllowedLanguages()
     {
     }
-
 }

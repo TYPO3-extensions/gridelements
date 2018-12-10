@@ -1,0 +1,61 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" data-namespace-typo3-fluid="true">
+<f:spaceless>
+    <f:if condition="{data.frame_class} != none">
+        <f:then>
+
+            <div id="c{data.uid}"
+                 class="ge-container frame frame-{data.frame_class} frame-type-{data.CType} frame-layout-{data.layout} {f:if(
+                        condition: data.space_before_class,
+                        then: ' frame-space-before-{data.space_before_class}'
+                    )}{f:if(
+                        condition: data.space_after_class,
+                        then: ' frame-space-after-{data.space_after_class}'
+                    )}">
+                <f:if condition="{data._LOCALIZED_UID}">
+                    <a id="c{data._LOCALIZED_UID}"></a>
+                </f:if>
+                <f:if condition="{options.respectColumns}">
+                    <f:then>
+                        <f:if condition="{options.respectRows}">
+                            <f:then>
+                                <f:render section="Rows"/>
+                            </f:then>
+                            <f:else>
+                                <f:render section="Columns"/>
+                            </f:else>
+                        </f:if>
+                    </f:then>
+                    <f:else>
+                        <f:render section="Default"/>
+                    </f:else>
+                </f:if>
+            </div>
+
+        </f:then>
+        <f:else>
+
+            <div id="c{data.uid}" class="ge-container">
+                <f:if condition="{data._LOCALIZED_UID}">
+                    <a id="c{data._LOCALIZED_UID}"></a>
+                </f:if>
+                <f:if condition="{options.respectColumns}">
+                    <f:then>
+                        <f:if condition="{options.respectRows}">
+                            <f:then>
+                                <f:render section="Rows"/>
+                            </f:then>
+                            <f:else>
+                                <f:render section="Columns"/>
+                            </f:else>
+                        </f:if>
+                    </f:then>
+                    <f:else>
+                        <f:render section="Default"/>
+                    </f:else>
+                </f:if>
+            </div>
+
+        </f:else>
+    </f:if>
+</f:spaceless>
+</html>

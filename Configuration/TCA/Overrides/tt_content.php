@@ -1,7 +1,7 @@
 <?php
 
-
 \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addStaticFile('gridelements', 'Configuration/TypoScript/', 'Gridelements');
+\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addStaticFile('gridelements', 'Configuration/TypoScript/DataProcessing', 'Gridelements w/DataProcessing');
 
 \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addPlugin([
     'LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tt_content.CType_pi1',

@@ -1,0 +1,76 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" data-namespace-typo3-fluid="true">
+
+<f:switch expression="{data.CType}">
+    <f:case value="gridelements_pi1">
+        <div id="c{data.uid}"
+             class="ge-container frame frame-{data.frame_class} frame-type-{data.CType} frame-layout-{data.layout} {f:if(
+                        condition: data.space_before_class,
+                        then: ' frame-space-before-{data.space_before_class}'
+                    )}{f:if(
+                        condition: data.space_after_class,
+                        then: ' frame-space-after-{data.space_after_class}'
+                    )}">
+            <f:if condition="{options.respectColumns}">
+                <f:then>
+                    <f:if condition="{options.respectRows}">
+                        <f:then>
+                            <f:render section="Rows" arguments="{_all}"/>
+                        </f:then>
+                        <f:else>
+                            <f:render section="Columns" arguments="{_all}"/>
+                        </f:else>
+                    </f:if>
+                </f:then>
+                <f:else>
+                    <f:render section="Default" arguments="{_all}"/>
+                </f:else>
+            </f:if>
+        </div>
+    </f:case>
+    <f:defaultCase>
+        <f:if condition="{data.CType}">
+            <f:cObject typoscriptObjectPath="tt_content.{data.CType}" data="{data}"/>
+        </f:if>
+    </f:defaultCase>
+</f:switch>
+
+<f:section name="Default">
+    <f:if condition="{children}">
+        <f:for each="{children}" as="child">
+            <f:render partial="Default"
+                      arguments="{data: child.data, children: child.children, options: options}"/>
+        </f:for>
+    </f:if>
+</f:section>
+
+<f:section name="Columns">
+    <f:if condition="{children}">
+        <f:for each="{children}" as="column" key="columnNumber">
+            <div id="c{data.uid}-{columnNumber} ge-column">
+                <f:for each="{column}" as="child">
+                    <f:render partial="Default"
+                              arguments="{data: child.data, children: child.children, options: options}"/>
+                </f:for>
+            </div>
+        </f:for>
+    </f:if>
+</f:section>
+
+<f:section name="Rows">
+    <f:if condition="{children}">
+        <f:for each="{children}" as="row" key="rowNumber">
+            <div id="c{data.uid}-{rowNumber} ge-row">
+                <f:for each="{row}" as="column" key="columnNumber">
+                    <div id="c{data.uid}-{rowNumber}-{columnNumber} ge-column">
+                        <f:for each="{column}" as="child">
+                            <f:render partial="Default"
+                                      arguments="{data: child.data, children: child.children, options: options}"/>
+                        </f:for>
+                    </div>
+                </f:for>
+            </div>
+        </f:for>
+    </f:if>
+</f:section>
+
+</html>

@@ -31,8 +31,6 @@ use TYPO3\CMS\Core\Utility\MathUtility;
  * Class/Function which offers TCE main hook functions.
  *
  * @author Jo Hasenau <info@cybercraft.de>
- * @package TYPO3
- * @subpackage tx_gridelements
  */
 class PreProcessFieldArray extends AbstractDataHandler
 {
@@ -65,6 +63,7 @@ class PreProcessFieldArray extends AbstractDataHandler
         if ($table === 'tt_content') {
             $this->init($table, $id, $parentObj);
             if (!$this->getTceMain()->isImporting) {
+                $cmdId = '';
                 if (is_array($parentObj->cmdmap['tt_content'])) {
                     $cmdId = (int)key($parentObj->cmdmap['tt_content']);
                 }
@@ -107,7 +106,7 @@ class PreProcessFieldArray extends AbstractDataHandler
         $newRow = []; // Used to store default values as found here:
 
         // Default values as set in userTS:
-        $TCAdefaultOverride = $this->getBackendUser()->getTSConfigProp('TCAdefaults');
+        $TCAdefaultOverride = (array)($this->getBackendUser()->getTSConfig()['TCAdefaults'] ?? []);
         if (is_array($TCAdefaultOverride['tt_content.'])) {
             foreach ($TCAdefaultOverride['tt_content.'] as $field => $value) {
                 if (isset($GLOBALS['TCA']['tt_content']['columns'][$field])) {
@@ -220,7 +219,7 @@ class PreProcessFieldArray extends AbstractDataHandler
                         }
                         $sheetArray['data'][$sheetName]['lDEF'] = $elArray;
                     }
-                };
+                }
             }
             if (!empty($sheetArray)) {
                 $flexformTools = GeneralUtility::makeInstance(FlexFormTools::class);
@@ -246,8 +245,11 @@ class PreProcessFieldArray extends AbstractDataHandler
                 $containerUpdateArray[(int)$fieldArray['tx_gridelements_container']] = 1;
             }
             if ((int)$fieldArray['tx_gridelements_container'] === 0) {
-                $originalContainer = BackendUtility::getRecord('tt_content', (int)$contentId,
-                    'tx_gridelements_container,sys_language_uid');
+                $originalContainer = BackendUtility::getRecord(
+                    'tt_content',
+                    (int)$contentId,
+                    'tx_gridelements_container,sys_language_uid'
+                );
                 if (!empty($originalContainer)) {
                     $containerUpdateArray[(int)$originalContainer['tx_gridelements_container']] = -1;
                 }
@@ -269,8 +271,11 @@ class PreProcessFieldArray extends AbstractDataHandler
         if ((int)$fieldArray['tx_gridelements_container'] > 0 && isset($fieldArray['colPos']) && (int)$fieldArray['colPos'] !== -1) {
             $fieldArray['colPos'] = -1;
             $fieldArray['tx_gridelements_columns'] = 0;
-            $targetContainer = BackendUtility::getRecord('tt_content', (int)$fieldArray['tx_gridelements_container'],
-                'sys_language_uid');
+            $targetContainer = BackendUtility::getRecord(
+                'tt_content',
+                (int)$fieldArray['tx_gridelements_container'],
+                'sys_language_uid'
+            );
             if ((int)$targetContainer['sys_language_uid'] > -1) {
                 $fieldArray['sys_language_uid'] = (int)$targetContainer['sys_language_uid'];
             }
@@ -281,8 +286,11 @@ class PreProcessFieldArray extends AbstractDataHandler
                 $fieldArray['tx_gridelements_container'] = 0;
             } else {
                 if (!isset($fieldArray['sys_language_uid']) && isset($fieldArray['tx_gridelements_container']) && (int)$fieldArray['tx_gridelements_container'] > 0 && (int)$fieldArray['colPos'] === -1) {
-                    $targetContainer = BackendUtility::getRecord('tt_content',
-                        (int)$fieldArray['tx_gridelements_container'], 'sys_language_uid');
+                    $targetContainer = BackendUtility::getRecord(
+                        'tt_content',
+                        (int)$fieldArray['tx_gridelements_container'],
+                        'sys_language_uid'
+                    );
                     if ((int)$targetContainer['sys_language_uid'] > -1) {
                         $fieldArray['sys_language_uid'] = (int)$targetContainer['sys_language_uid'];
                     }
@@ -290,8 +298,11 @@ class PreProcessFieldArray extends AbstractDataHandler
             }
         }
         if (isset($targetContainer) && (int)$targetContainer['sys_language_uid'] === -1) {
-            $list = array_flip(GeneralUtility::trimExplode(',',
-                $GLOBALS['TCA']['tt_content']['ctrl']['copyAfterDuplFields'], true));
+            $list = array_flip(GeneralUtility::trimExplode(
+                ',',
+                $GLOBALS['TCA']['tt_content']['ctrl']['copyAfterDuplFields'],
+                true
+            ));
             unset($list['sys_language_uid']);
             $GLOBALS['TCA']['tt_content']['ctrl']['copyAfterDuplFields'] = implode(',', array_flip($list));
         }
@@ -322,8 +333,10 @@ class PreProcessFieldArray extends AbstractDataHandler
                 $queryBuilder->expr()->eq('t1.uid', $queryBuilder->quoteIdentifier('t2.tx_gridelements_container'))
             )
             ->where(
-                $queryBuilder->expr()->eq('t2.uid',
-                    $queryBuilder->createNamedParameter((int)$contentId, \PDO::PARAM_INT))
+                $queryBuilder->expr()->eq(
+                    't2.uid',
+                    $queryBuilder->createNamedParameter((int)$contentId, \PDO::PARAM_INT)
+                )
             )
             ->execute()
             ->fetch();

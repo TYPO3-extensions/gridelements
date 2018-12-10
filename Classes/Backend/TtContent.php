@@ -31,8 +31,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  * Class/Function which manipulates the item-array for table/field tt_content_tx_gridelements_columns.
  *
  * @author Jo Hasenau <info@cybercraft.de>
- * @package TYPO3
- * @subpackage tx_gridelements
  */
 class TtContent
 {
@@ -166,8 +164,10 @@ class TtContent
             ->where(
                 $queryBuilder->expr()->andX(
                     $queryBuilder->expr()->eq('CType', $queryBuilder->createNamedParameter('gridelements_pi1')),
-                    $queryBuilder->expr()->in('tx_gridelements_container',
-                        $queryBuilder->createNamedParameter($containerIds, Connection::PARAM_INT_ARRAY))
+                    $queryBuilder->expr()->in(
+                        'tx_gridelements_container',
+                        $queryBuilder->createNamedParameter($containerIds, Connection::PARAM_INT_ARRAY)
+                    )
                 )
             )
             ->execute()
@@ -227,8 +227,10 @@ class TtContent
                 ->select('uid', 'tx_gridelements_backend_layout')
                 ->from('tt_content')
                 ->where(
-                    $queryBuilder->expr()->in('uid',
-                        $queryBuilder->createNamedParameter($itemUidList, Connection::PARAM_INT_ARRAY))
+                    $queryBuilder->expr()->in(
+                        'uid',
+                        $queryBuilder->createNamedParameter($itemUidList, Connection::PARAM_INT_ARRAY)
+                    )
                 )
                 ->execute();
             $containers = [];
@@ -290,10 +292,12 @@ class TtContent
     public function layoutItemsProcFunc(array &$params)
     {
         $this->init($params['row']['pid']);
-        $layoutSelectItems = $this->layoutSetup->getLayoutSelectItems(isset($params['row']['colPos'][0]) ? $params['row']['colPos'][0] : $params['row']['colPos'],
-            $params['row']['tx_gridelements_columns'], $params['row']['tx_gridelements_container'], $this->layoutSetup->getRealPid());
+        $layoutSelectItems = $this->layoutSetup->getLayoutSelectItems(
+            isset($params['row']['colPos'][0]) ? $params['row']['colPos'][0] : $params['row']['colPos'],
+            $params['row']['tx_gridelements_columns'],
+            $params['row']['tx_gridelements_container'],
+            $this->layoutSetup->getRealPid()
+        );
         $params['items'] = ArrayUtility::keepItemsInArray($layoutSelectItems, $params['items'], true);
     }
-
-
 }

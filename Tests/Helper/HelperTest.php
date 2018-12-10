@@ -112,5 +112,4 @@ class HelperTest extends UnitTestCase
         $result = $helper->getSpecificIds($record);
         $this->assertEquals($expected, $result);
     }
-
 }

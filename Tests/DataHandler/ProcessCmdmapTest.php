@@ -76,5 +76,4 @@ class ProcessCmdmapTest extends UnitTestCase
     public function testExecute_processCmdmap()
     {
     }
-
 }

@@ -30,41 +30,34 @@ use TYPO3\CMS\Core\Imaging\Icon;
 use TYPO3\CMS\Core\Imaging\IconFactory;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Recordlist\RecordList;
+use TYPO3\CMS\Recordlist\Controller\RecordListController;
 
 /**
  * Class/Function which adds the necessary ExtJS and pure JS stuff for the grid elements.
  *
  * @author Jo Hasenau <info@cybercraft.de>, Tobias Ferger <tobi@tt36.de>
- * @package TYPO3
- * @subpackage tx_gridelements
  */
 class PageRenderer implements SingletonInterface
 {
-
-    /**
-     * @var UriBuilder
-     */
-    protected $uriBuilder;
-
-
     /**
      * wrapper function called by hook (\TYPO3\CMS\Core\Page\PageRenderer->render-preProcess)
      *
      * @param array $parameters An array of available parameters
      * @param \TYPO3\CMS\Core\Page\PageRenderer $pageRenderer The parent object that triggered this hook
-     * @throws \TYPO3\CMS\Backend\Routing\Exception\RouteNotFoundException
      */
     public function addJSCSS(array $parameters, \TYPO3\CMS\Core\Page\PageRenderer $pageRenderer)
     {
-        if (!empty($GLOBALS['SOBE']) && (get_class($GLOBALS['SOBE']) === RecordList::class || is_subclass_of($GLOBALS['SOBE'],
-                    RecordList::class))) {
+        if (!empty($GLOBALS['SOBE']) && (get_class($GLOBALS['SOBE']) === RecordListController::class || is_subclass_of(
+            $GLOBALS['SOBE'],
+                    RecordListController::class
+        ))) {
             $pageRenderer->loadRequireJsModule('TYPO3/CMS/Gridelements/GridElementsOnReady');
             return;
         }
-        if (!empty($GLOBALS['SOBE']) && (get_class($GLOBALS['SOBE']) === PageLayoutController::class || is_subclass_of($GLOBALS['SOBE'],
-                    PageLayoutController::class))) {
-            $this->uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
+        if (!empty($GLOBALS['SOBE']) && (get_class($GLOBALS['SOBE']) === PageLayoutController::class || is_subclass_of(
+            $GLOBALS['SOBE'],
+                    PageLayoutController::class
+        ))) {
             $iconFactory = GeneralUtility::makeInstance(IconFactory::class);
             $pageRenderer->loadRequireJsModule('TYPO3/CMS/Gridelements/GridElementsOnReady');
             $pageRenderer->loadRequireJsModule('TYPO3/CMS/Gridelements/GridElementsDragDrop');
@@ -76,12 +69,14 @@ class PageRenderer implements SingletonInterface
             $clipObj->lockToNormal();
             $clipBoard = $clipObj->clipData['normal'];
             if (!$pageRenderer->getCharSet()) {
-                $pageRenderer->setCharSet($GLOBALS['LANG']->charSet ? $GLOBALS['LANG']->charSet : 'utf-8');
+                $pageRenderer->setCharSet('utf-8');
             }
 
             // pull locallang_db.xml to JS side - only the tx_gridelements_js-prefixed keys
-            $pageRenderer->addInlineLanguageLabelFile('EXT:gridelements/Resources/Private/Language/locallang_db.xml',
-                'tx_gridelements_js');
+            $pageRenderer->addInlineLanguageLabelFile(
+                'EXT:gridelements/Resources/Private/Language/locallang_db.xml',
+                'tx_gridelements_js'
+            );
 
             $pAddExtOnReadyCode = '
                 TYPO3.l10n = {
@@ -92,8 +87,11 @@ class PageRenderer implements SingletonInterface
             ';
 
             $id = (int)GeneralUtility::_GP('id');
-            $layout = GeneralUtility::callUserFunction(BackendLayoutView::class . '->getSelectedBackendLayout',
-                $id, $this);
+            $layout = GeneralUtility::callUserFunction(
+                BackendLayoutView::class . '->getSelectedBackendLayout',
+                $id,
+                $this
+            );
             if (is_array($layout) && !empty($layout['__config']['backend_layout.']['rows.'])) {
                 /** @var LayoutSetup $layoutSetup */
                 $layoutSetup = GeneralUtility::makeInstance(LayoutSetup::class)->init(0);
@@ -109,15 +107,20 @@ class PageRenderer implements SingletonInterface
             }
 
             // add Ext.onReady() code from file
-            $pAddExtOnReadyCode .= "
-            top.pageColumnsAllowed = " . json_encode($layout['allowed']) . ";
-            top.pageColumnsDisallowed = " . json_encode($layout['disallowed']) . ";
-            top.pageColumnsMaxitems = " . json_encode($layout['maxitems']) . ";
-            top.pasteReferenceAllowed = " . ($this->getBackendUser()->checkAuthMode('tt_content', 'CType', 'shortcut',
-                    $GLOBALS['TYPO3_CONF_VARS']['BE']['explicitADmode']) ? 'true' : 'false') . ";
-            top.skipDraggableDetails = " . ($this->getBackendUser()->uc['dragAndDropHideNewElementWizardInfoOverlay'] ? 'true' : 'false') . ";
+            $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
+            $pAddExtOnReadyCode .= '
+            top.pageColumnsAllowed = ' . json_encode($layout['allowed']) . ';
+            top.pageColumnsDisallowed = ' . json_encode($layout['disallowed']) . ';
+            top.pageColumnsMaxitems = ' . json_encode($layout['maxitems']) . ';
+            top.pasteReferenceAllowed = ' . ($this->getBackendUser()->checkAuthMode(
+                'tt_content',
+                'CType',
+                'shortcut',
+                    $GLOBALS['TYPO3_CONF_VARS']['BE']['explicitADmode']
+            ) ? 'true' : 'false') . ';
+            top.skipDraggableDetails = ' . ($this->getBackendUser()->uc['dragAndDropHideNewElementWizardInfoOverlay'] ? 'true' : 'false') . ";
             top.backPath = '" . $GLOBALS['BACK_PATH'] . "';
-            top.browserUrl = '" . $this->uriBuilder->buildUriFromRoute('wizard_element_browser') . "';";
+            top.browserUrl = '" . htmlspecialchars($uriBuilder->buildUriFromRoute('wizard_element_browser')) . "';";
 
             if (!empty($clipBoard) && !empty($clipBoard['el'])) {
                 $clipBoardElement = GeneralUtility::trimExplode('|', key($clipBoard['el']));
@@ -125,7 +128,7 @@ class PageRenderer implements SingletonInterface
                     $clipBoardElementData = BackendUtility::getRecord('tt_content', (int)$clipBoardElement[1]);
                     $pAddExtOnReadyCode .= "
             top.clipBoardElementCType = '" . $clipBoardElementData['CType'] . "';
-            top.clipBoardElementTxGridelementsBackendLayout = '" . $clipBoardElementData['tx_gridelements_backend_layout'] . "';
+            top.clipBoardElementTxGridelementsBackendLayout = '" . (($clipBoardElementData['CType'] == 'gridelements_pi1') ? $clipBoardElementData['tx_gridelements_backend_layout'] : '') . "';
             top.clipBoardElementListType = '" . $clipBoardElementData['list_type'] . "';";
                 } else {
                     $pAddExtOnReadyCode .= "
@@ -135,9 +138,11 @@ class PageRenderer implements SingletonInterface
                 }
             }
 
-            $pAddExtOnReadyCode .= "
-                    top.copyFromAnotherPageLinkTemplate = " . json_encode('<a class="t3js-paste-new btn btn-default" title="' . $this->getLanguageService()->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tx_gridelements_js.copyfrompage') . '">' . $iconFactory->getIcon('actions-insert-reference',
-                        Icon::SIZE_SMALL)->render() . '</a>') . ";";
+            $pAddExtOnReadyCode .= '
+                    top.copyFromAnotherPageLinkTemplate = ' . json_encode('<a class="t3js-paste-new btn btn-default" title="' . $this->getLanguageService()->sL('LLL:EXT:gridelements/Resources/Private/Language/locallang_db.xml:tx_gridelements_js.copyfrompage') . '">' . $iconFactory->getIcon(
+                'actions-insert-reference',
+                        Icon::SIZE_SMALL
+            )->render() . '</a>') . ';';
 
             $pageRenderer->addJsInlineCode('gridelementsExtOnReady', $pAddExtOnReadyCode);
         }

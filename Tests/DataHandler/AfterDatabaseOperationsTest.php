@@ -130,5 +130,4 @@ class AfterDatabaseOperationsTest extends UnitTestCase
     public function testGetAvailableColumns()
     {
     }
-
 }

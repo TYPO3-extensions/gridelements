@@ -1,6 +1,6 @@
 <?php
 
-namespace GridelementsTeam\Gridelements\Hooks;
+namespace GridElementsTeam\Gridelements\Hooks;
 
 /***************************************************************
  *  Copyright notice

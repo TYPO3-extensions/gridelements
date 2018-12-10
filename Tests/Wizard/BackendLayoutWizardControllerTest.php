@@ -1,6 +1,5 @@
 <?php
 
-use GridElementsTeam\Gridelements\Wizard\BackendLayoutWizardController;
 use TYPO3\CMS\Core\Tests\UnitTestCase;
 
 class BackendLayoutWizardControllerTest extends UnitTestCase
@@ -23,5 +22,4 @@ class BackendLayoutWizardControllerTest extends UnitTestCase
     public function testGetIconFactory()
     {
     }
-
 }

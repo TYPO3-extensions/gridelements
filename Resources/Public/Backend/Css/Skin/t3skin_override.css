@@ -174,14 +174,21 @@
 #new-element-drag-in-wizard {
 	position: absolute;
 	/*height: auto;*/
-	top: 34px;
+	top: 33px;
 	right: 120px;
 	max-width: 60%;
 	z-index: 20000;
 	float: right;
+	opacity: 0;
 	/* setting overflow makes items disappear when dragging
 	   * solution:  when dragging starts, put the element right after body in DOM
 	   */
+	transition: opacity 0.7s;
+	-webkit-transition: opacity 0.7s;
+}
+
+#new-element-drag-in-wizard.active {
+	opacity: 1;
 }
 
 #new-element-drag-in-wizard .nav-tabs {
@@ -247,6 +254,8 @@
 #new-element-drag-in-wizard .media {
 	display: inline-block;
 	margin-top: 0;
+	float: none;
+	width: initial;
 }
 
 #new-element-drag-in-wizard .media-left {
