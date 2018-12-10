@@ -4,7 +4,6 @@
   "type": "typo3-cms-extension",
   "version": "9.0.0",
   "prefer-stable": true,
-  "minimum-stability": "dev",
   "keywords": ["TYPO3 CMS", "Grids", "Gridelements"],
   "homepage": "https://forge.typo3.org/projects/extension-gridelements2",
   "license": "GPL-2.0-or-later",
@@ -12,10 +11,10 @@
     "issues": "https://forge.typo3.org/projects/extension-gridelements2/issues"
   },
   "require": {
-    "typo3/cms-core": "^9.5 || dev-master",
-    "typo3/cms-backend": "^9.5 || dev-master",
-    "typo3/cms-recordlist": "^9.5 || dev-master",
-    "typo3/cms-frontend": "^9.5 || dev-master"
+    "typo3/cms-core": "^9.5",
+    "typo3/cms-backend": "^9.5",
+    "typo3/cms-recordlist": "^9.5",
+    "typo3/cms-frontend": "^9.5"
   },
   "conflict": {
     "templavoila": "*",

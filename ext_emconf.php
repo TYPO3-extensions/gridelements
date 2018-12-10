@@ -26,10 +26,10 @@ It offers a lot of new features like advanced drag & drop or real references, th
     'author_company' => '',
     'constraints' => [
         'depends' => [
-            'typo3' => '9.5.0-9.99.99',
-            'backend' => '9.5.0-9.99.99',
-            'recordlist' => '9.5.0-9.99.99',
-            'frontend' => '9.5.0-9.99.99'
+            'typo3' => '9.5.0-9.5.99',
+            'backend' => '9.5.0-9.5.99',
+            'recordlist' => '9.5.0-9.5.99',
+            'frontend' => '9.5.0-9.5.99'
         ],
         'conflicts' => [
             'templavoila' => '',
