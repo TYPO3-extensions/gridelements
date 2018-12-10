@@ -40,18 +40,42 @@ Step by step:
 Start with the number of columns and rows
 """""""""""""""""""""""""""""""""""""""""
 
-Go to the **Configuration** tab of the layout record and edit the
-**Grid Configuration** there. The wrapper for the whole block is the
-same as for pages: **backend\_layout** – Use the keys **colCount**
-and **rowCount** to create the basic grid structure. Both values
-should be at least the lowest common multiple of the column sizes you
-want to create. They represent the actual grid behind the cell
-structure. The calculation should take into account that you might be
-using colspan and rowspan as well.
+Go to the **Configuration** tab of the layout record and use the
+wizard to create the **Grid Configuration** there. It is not possible
+to directly edit the configuration there anymore, but you will get an
+overview about the TypoScript structure of the configuration, when you
+click on the button below the wizard.
+
+Historically the wrapper for the whole block was the same as for pages:
+**backend\_layout** – when you are providing the configuration via files,
+**this has to be removed though!**
+
 
 ::
 
-  backend_layout {
+  config {
+    backend_layout {
+      ...
+    }
+  }
+
+becomes
+
+::
+
+  config {
+    ...
+  }
+
+Use the keys **colCount** and **rowCount** to create the basic grid
+structure. Both values should be at least the lowest common multiple of
+the column sizes you want to create. They represent the actual grid behind
+the cell structure. The calculation should take into account that you
+might be using colspan and rowspan as well.
+
+::
+
+  config {
     colCount = 4
     rowCount = 3
   }
@@ -67,7 +91,7 @@ even though it might stay empty later on.
 
 ::
 
-  backend_layout {
+  config {
     colCount = 4
     rowCount = 3
     rows {
@@ -133,7 +157,7 @@ only *text* and *text with image* allowed as a content type:
 
 ::
 
-  backend_layout {
+  config {
     colCount = 4
     rowCount = 3
     rows {
