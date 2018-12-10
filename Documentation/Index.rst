@@ -21,7 +21,7 @@ Grid Elements
           gridelements
 
 :Version:
-          8.0.0
+          8.3.0
 
 :Language:
           en
