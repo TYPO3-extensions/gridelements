@@ -25,8 +25,6 @@ lib.gridelements.defaultGridSetup {
 	# or tx_gridelements_view_child_123 (123 is the UID of the child)
 }
 
-plugin.tx_gridelements_pi1 >
-tt_content.gridelements_pi1 >
 tt_content.gridelements_pi1 = COA
 tt_content.gridelements_pi1 {
 	#10 =< lib.stdheader
