@@ -34,8 +34,6 @@ lib.gridelements.defaultGridSetup {
 	}
 }
 
-plugin.tx_gridelements_pi1 >
-tt_content.gridelements_pi1 >
 tt_content.gridelements_pi1 < lib.gridelements.defaultGridSetup
 
 tt_content.gridelements_view < tt_content.gridelements_pi1
