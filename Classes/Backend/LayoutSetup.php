@@ -82,6 +82,13 @@ class LayoutSetup
     public function init($pageId, array $typoScriptSetup = [])
     {
         $this->setLanguageService($GLOBALS['LANG']);
+
+        // new element inserted after existing one
+        if(\TYPO3\CMS\Core\Utility\MathUtility::canBeInterpretedAsInteger($pageId) &&  $pageId < 0) {
+            $pidRec = BackendUtility::getRecord('tt_content', abs($pageId), 'pid');
+            $pageId = is_array($pidRec) ? (int)$pidRec['pid'] : 0;
+        }
+
         $pageId = (strpos($pageId, 'NEW') === 0) ? 0 : (int)$pageId;
         if ((int)$pageId < 0) {
             $pageId = Helper::getInstance()->getPidFromUid($pageId);
@@ -101,6 +108,7 @@ class LayoutSetup
         $this->setTypoScriptSetup($typoScriptSetup);
         return $this;
     }
+
 
     /**
      * Returns the page TSconfig merged with the grid layout records
