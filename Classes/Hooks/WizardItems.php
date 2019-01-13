@@ -284,12 +284,25 @@ class WizardItems implements NewContentElementWizardHookInterface
                     ]);
                 }
             }
+
+            // Traverse defVals
+            $defVals = '';
+
+            if ($item['tt_content_defValues']) {
+                foreach ($item['tt_content_defValues'] as $field => $value) {
+                    if ($field == 'header') {
+                        $value = $GLOBALS['LANG']->sL($value);
+                    }
+                    $defVals .= '&defVals[tt_content][' . $field . ']=' . $value;
+                }
+            }
+
             $itemIdentifier = $item['alias'] ? $item['alias'] : $item['uid'];
             $wizardItems['gridelements_' . $itemIdentifier] = [
                 'title'                => $item['title'],
                 'description'          => $item['description'],
                 'params'               => ($largeIcon ? '&largeIconImage=' . $largeIcon : '')
-                    . '&defVals[tt_content][CType]=gridelements_pi1&defVals[tt_content][tx_gridelements_backend_layout]=' . $item['uid']
+                    . '&defVals[tt_content][CType]=gridelements_pi1' . $defVals . '&defVals[tt_content][tx_gridelements_backend_layout]=' . $item['uid']
                     . ($item['tll'] ? '&isTopLevelLayout' : ''),
                 'tt_content_defValues' => [
                     'CType'                          => 'gridelements_pi1',
