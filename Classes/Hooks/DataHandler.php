@@ -25,6 +25,7 @@ use GridElementsTeam\Gridelements\DataHandler\ProcessCmdmap;
 use TYPO3\CMS\Core\Database\DatabaseConnection;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Backend\Utility\BackendUtility;
 
 /**
  * Class/Function which offers TCE main hook functions.
@@ -95,7 +96,51 @@ class DataHandler implements SingletonInterface
             $hook = GeneralUtility::makeInstance(AfterDatabaseOperations::class);
             if (strpos($id, 'NEW') !== false) {
                 $id = $parentObj->substNEWwithIDs[$id];
-            };
+            } else {
+                /***************************************************************************************
+                 * The backend module display contents elements using the "colPos" from the
+                 * MovePlaceHolder but publishing from a workspace to Live takes "colPos" from the
+                 * new record. This following code synchronize "colPos" value for the new record and
+                 * its MovePlaceHolder record.
+                 */
+
+                if( $table == 'tt_content' && $status == 'update' ){
+                    if( isset( $fieldArray['colPos'] ) ){
+                        //In this case, a tt_content has been moved in or out of a Grid Element
+                        //Now looking for a MovePlaceHolder record associated with the current update
+                        $additionnalFields = $parentObj->recordInfo($table, $id, "t3_origuid, t3ver_state, sorting");
+                        if ((int)$additionnalFields['t3ver_state'] === 4) {
+                            $movePlaceHolderRecords = BackendUtility::getRecordsByField($table, 't3ver_move_id', $additionnalFields['t3_origuid'], " AND t3ver_state = 3 AND deleted = 0");
+                            if (is_array($movePlaceHolderRecords) && count($movePlaceHolderRecords) == 1 && is_array($movePlaceHolderRecords[0])) {
+                                $movePlaceHolderRecord = $movePlaceHolderRecords[0];
+                                $parentObj->updateDB($table, $movePlaceHolderRecord['uid'], array('colPos' => $fieldArray['colPos'] ));
+                            }
+                        }
+                    }
+                    if( isset( $fieldArray['tx_gridelements_container'] ) ) {
+                        $additionnalFields = $parentObj->recordInfo($table, $id, "t3_origuid, t3ver_state, sorting");
+                        if ((int)$additionnalFields['t3ver_state'] === 4) {
+                            $movePlaceHolderRecords = BackendUtility::getRecordsByField($table, 't3ver_move_id', $additionnalFields['t3_origuid'], " AND t3ver_state = 3 AND deleted = 0");
+                            if (is_array($movePlaceHolderRecords) && count($movePlaceHolderRecords) == 1 && is_array($movePlaceHolderRecords[0])) {
+                                $movePlaceHolderRecord = $movePlaceHolderRecords[0];
+                                $parentObj->updateDB($table, $movePlaceHolderRecord['uid'], array( 'tx_gridelements_container' => $fieldArray['tx_gridelements_container'] ) );
+                            }
+                        }
+                    }
+                    if( isset( $fieldArray['tx_gridelements_columns'] ) ){
+                        $additionnalFields = $parentObj->recordInfo($table, $id, "t3_origuid, t3ver_state, sorting");
+                        if ((int)$additionnalFields['t3ver_state'] === 4) {
+                            $movePlaceHolderRecords = BackendUtility::getRecordsByField($table, 't3ver_move_id', $additionnalFields['t3_origuid'], " AND t3ver_state = 3 AND deleted = 0");
+                            if (is_array($movePlaceHolderRecords) && count($movePlaceHolderRecords) == 1 && is_array($movePlaceHolderRecords[0])) {
+                                $movePlaceHolderRecord = $movePlaceHolderRecords[0];
+                                $parentObj->updateDB($table, $movePlaceHolderRecord['uid'], array('tx_gridelements_columns' => $fieldArray['tx_gridelements_columns'] ));
+                            }
+                        }
+                    }
+                }
+
+                /**************************************************************************************/
+            }
             $hook->execute_afterDatabaseOperations($fieldArray, $table, $id, $parentObj);
         }
     }
