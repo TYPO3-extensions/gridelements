@@ -205,6 +205,7 @@ class GridChildrenProcessor implements DataProcessorInterface
 
         if ($this->options['resolveFlexFormData'] && !empty($data['pi_flexform'])) {
             $this->gridelements->initPluginFlexForm('pi_flexform', $data);
+            $this->gridelements->getPluginFlexfFormData($data);
         }
         if ($this->options['resolveBackendLayout']) {
             if (!empty($this->layoutSetup->getLayoutSetup($data['tx_gridelements_backend_layout']))) {
